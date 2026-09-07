@@ -1,0 +1,39 @@
+.sessionLogButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 5px 10px;
+  gap: 5px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: 13px;
+  color: var(--dsw-alias-label-primary);
+  background: transparent;
+  font-family: var(--dsw-font-family);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  cursor: pointer;
+}
+
+.sessionLogButton:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.sessionLogButton:disabled {
+  color: var(--dsw-alias-label-dimmed);
+  cursor: wait;
+}
+
+.sessionLogButton span,
+.sessionLogButton svg {
+  flex: none;
+}
+
+.sessionLogButton svg {
+  color: var(--dsw-alias-label-secondary);
+}
+
+.sessionLogButton span {
+  white-space: nowrap;
+}
