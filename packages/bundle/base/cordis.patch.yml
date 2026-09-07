@@ -72,11 +72,13 @@
 
     # The transport-independent default for Agents created by entry points.
     # Settings may supply a saved selection; consumers read it at creation time.
+    # Sovereign default: the local llama.cpp route below. No external API key
+    # or endpoint is configured anywhere in this composition.
     - id: agent-default-model
       name: '@deepseek-ai/dsh-agent-default-model'
       config:
-        provider: deepseek-official
-        model: deepseek-v4-flash
+        provider: local
+        model: hyperion-default
 
     - id: jobs
       name: '@deepseek-ai/dsh-jobs-local'
@@ -97,15 +99,23 @@
     - id: credentials
       name: '@deepseek-ai/dsh-credentials-local'
 
-    # The pi-ai multi-provider twin, mounted dormant: zero routes (and no extra
-    # models in the picker) until a `llm-pi-ai:` settings section supplies provider
-    # profiles — then those routes register live, keys resolving per request
-    # through their apiKeyEnv references, and drop again when the section empties.
-    # Supplying those profiles is exactly what the web Models page does. Which
-    # adapters exist is composition; which providers run is the user's settings
-    # document.
+    # The pi-ai multi-provider twin with the sovereign local route built in:
+    # `local` speaks the OpenAI-compatible protocol against a llama.cpp server
+    # (default `llama-server` endpoint) with no credential. A `llm-pi-ai:`
+    # settings section may supply further provider profiles; keys resolve per
+    # request through their apiKeyEnv references. Which adapters exist is
+    # composition; which providers run is the user's settings document.
     - id: llm-pi-ai
       name: '@deepseek-ai/dsh-llm-pi-ai'
+      config:
+        providers:
+          local:
+            displayName: Local models
+            api: openai-completions
+            baseURL: http://127.0.0.1:8080/v1
+            models:
+              - id: hyperion-default
+                name: Hyperion default
 
     - id: session-persistence-jsonl
       name: '@deepseek-ai/dsh-session-persistence-jsonl'
