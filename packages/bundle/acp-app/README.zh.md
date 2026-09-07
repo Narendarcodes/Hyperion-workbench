@@ -26,7 +26,7 @@ kind: "package-bundle"
 
 启动提供方把 stdin EOF 绑定到启动器的有界成功关闭。ACP 连接关闭、SIGINT 与 SIGTERM 会在退出前排空 bridge 自有 agent 以及根 profile 树。Stdout 仅保留给换行分隔的 ACP JSON-RPC frame。ACP 不提供 title 表层，因此本组合包禁用模型生成的 session title；确定性的 fallback title 仍会持久化，但不发起辅助模型请求。继承的投影缓存会为 ACP 创建的会话写入检查点，供后续消费方使用；其持久性屏障会在发布缓存行前 flush 所覆盖的日志前缀，因此可能拆分原本会合并的 JSONL 行。部署方通过 profile 组合包与 patch 文件选择另一套完整组合，而不是使用另一个 app bin。
 
-随附配置项使用 `deepseek-official` 与 `deepseek-v4-flash` 创建 session；后续 patch 可以替换该配置项的完整 config。base profile 负责适配器、工具、持久化、策略、settings 与 credentials；ACP client 为每个 session 提供工作区。
+随附配置项使用自主 `local` 路由与 `hyperion-default` 模型创建 session；后续 patch 可以替换该配置项的完整 config。base profile 负责适配器、工具、持久化、策略、settings 与 credentials；ACP client 为每个 session 提供工作区。
 
 -----
 
