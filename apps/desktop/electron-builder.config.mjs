@@ -47,7 +47,7 @@ export function createElectronBuilderConfig(
   const buildPaths = desktopTargetBuildPaths(update.target)
   return {
     appId,
-    productName: 'DeepSeek Harness',
+    productName: 'HYPERION',
     artifactName: 'deepseek-harness-${version}-${os}-${arch}.${ext}',
     directories: { output: buildPaths.artifacts },
     asar: true,
