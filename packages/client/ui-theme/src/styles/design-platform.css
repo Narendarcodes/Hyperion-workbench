@@ -30,7 +30,11 @@ body {
   --dsw-static-deepseek-700-delete: rgb(47, 76, 143);
   --dsw-static-deepseek-800: rgb(52, 65, 91);
   --dsw-static-deepseek-900: rgb(40, 49, 66);
-  --dsw-static-green-100: rgb(230, 250, 237);
+  --dsw-static-hyperion-cream: rgb(253, 218, 152);
+  --dsw-static-hyperion-navy: rgb(11, 18, 32);
+  --dsw-static-hyperion-deep-navy: rgb(7, 12, 22);
+  --dsw-static-hyperion-surface-navy: rgb(17, 24, 39);
+  --dsw-static-hyperion-raised: rgb(23, 32, 51);
   --dsw-static-green-400: rgb(78, 209, 126);
   --dsw-static-green-500: rgb(34, 197, 94);
   --dsw-static-green-900: rgb(35, 60, 44);
@@ -106,6 +110,11 @@ body[data-ds-dark-theme] {
   --dsw-static-deepseek-700-delete: rgb(47, 76, 143);
   --dsw-static-deepseek-800: rgb(52, 65, 91);
   --dsw-static-deepseek-900: rgb(40, 49, 66);
+  --dsw-static-hyperion-cream: rgb(253, 218, 152);
+  --dsw-static-hyperion-navy: rgb(11, 18, 32);
+  --dsw-static-hyperion-deep-navy: rgb(7, 12, 22);
+  --dsw-static-hyperion-surface-navy: rgb(17, 24, 39);
+  --dsw-static-hyperion-raised: rgb(23, 32, 51);
   --dsw-static-green-100: rgb(230, 250, 237);
   --dsw-static-green-400: rgb(78, 209, 126);
   --dsw-static-green-500: rgb(34, 197, 94);
@@ -175,7 +184,7 @@ body {
   --dsw-alias-border-l3: rgba(0, 0, 0, 0.12);
   --dsw-alias-border-l4: rgba(0, 0, 0, 0.16);
   --dsw-alias-brand-primary-invert: var(--dsw-static-neutral-bluish-1000);
-  --dsw-alias-brand-primary-new-colorprimary-new-color: rgb(65, 118, 230);
+  --dsw-alias-brand-primary-new-colorprimary-new-color: var(--dsw-static-hyperion-cream);
   --dsw-alias-brand-primary: var(--dsw-static-neutral-bluish-1000);
   --dsw-alias-brand-text: var(--dsw-static-neutral-bluish-1000);
   --dsw-alias-button-contrast-fill: var(--dsw-static-neutral-bluish-700);
@@ -268,7 +277,7 @@ body[data-ds-dark-theme] {
   --dsw-alias-border-l3: rgba(255, 255, 255, 0.16);
   --dsw-alias-border-l4: rgba(255, 255, 255, 0.2);
   --dsw-alias-brand-primary-invert: var(--dsw-static-neutral-bluish-50);
-  --dsw-alias-brand-primary-new-colorprimary-new-color: var(--dsw-static-deepseek-450);
+  --dsw-alias-brand-primary-new-colorprimary-new-color: var(--dsw-static-hyperion-cream);
   --dsw-alias-brand-primary: var(--dsw-static-neutral-bluish-50);
   --dsw-alias-brand-text: var(--dsw-static-neutral-bluish-50);
   --dsw-alias-button-contrast-fill: var(--dsw-static-neutral-bluish-50);
