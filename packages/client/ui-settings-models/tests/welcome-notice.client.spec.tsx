@@ -100,8 +100,8 @@ function mount(
 describe('WelcomeNotice', () => {
   it('uses the exact owner copy in both GUI locales', () => {
     expect(WELCOME_NOTICE_COPY.en).toEqual({
-      title: 'Internal Testing Notice',
-      body: "DeepSeek Harness 0.1 remains in testing for Harness developers. Many areas need further improvement, and we welcome feedback from the developer community. DeepSeek Harness's core plugins and foundational APIs will continue to evolve rapidly over the coming months.\n\nWe look forward to exploring the limits of intelligence with developers around the world, building on open-source, open, reusable, and composable infrastructure. We welcome Harness developers everywhere to join the DSH plugin ecosystem.",
+      title: 'Developer Preview Notice',
+      body: "HYPERION is an On-Premise Agentic AI Workbench for confidential industrial work, built on the open-source DeepSeek Harness agent runtime. This developer preview remains in testing: many areas need further improvement, and core plugins and foundational APIs will continue to evolve rapidly over the coming months.\n\nAnalyze confidential information locally with controlled models, evidence-backed knowledge, bounded tools, and human verification. Upstream attribution, license, and safety notices remain with the DeepSeek Harness project.",
       continueLabel: 'Continue',
     })
     expect(en.welcomeBody).toBe(WELCOME_NOTICE_COPY.en.body)

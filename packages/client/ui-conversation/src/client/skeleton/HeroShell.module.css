@@ -60,6 +60,13 @@
   font-weight: 500;
   white-space: nowrap;
 }
+.tagline {
+  margin: 8px 0 0;
+  text-align: center;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 14px;
+  line-height: 20px;
+}
 
 /* Keep hover detection on a stationary box while the mark moves within it;
    hover rules target the hitbox so a slot-occupant mark swims too. */
