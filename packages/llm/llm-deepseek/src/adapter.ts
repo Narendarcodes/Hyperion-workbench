@@ -359,7 +359,7 @@ export class DeepSeekAdapter extends LlmAdapter {
   }
 
   override providerInfo(provider: string): LlmProviderInfo {
-    return { id: provider, name: 'DeepSeek' }
+    return { id: provider, name: 'External API' }
   }
 
   override providerRetryPolicy(_provider: string): ResolvedRetryPolicy {
