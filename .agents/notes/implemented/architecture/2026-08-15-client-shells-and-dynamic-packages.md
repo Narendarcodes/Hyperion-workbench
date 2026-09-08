@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-15-client-shells-and-dynamic-packages.zh.md)
+English
 
 > The [client plugin loading model](2026-07-23-client-plugin-loading-model.md) owns module arrival, Cordis lifecycle, and HMR. This note owns package placement, build faces, shared module requests, and npm dependency declarations; those decisions supersede the older package taxonomy and import-edge rules in the loading note.
 

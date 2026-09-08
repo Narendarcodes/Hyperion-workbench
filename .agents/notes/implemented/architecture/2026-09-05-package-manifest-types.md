@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-05-package-manifest-types.zh.md)
+English
 
 ## Problem
 

@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-30-web-config-plane.zh.md)
+English
 
 > Scope: the wire face and web UI deferred from the [request-level LLM configuration note](2026-07-29-request-level-llm-config-credentials.md) — the `settings.*`/`credentials.*`/`llm.*` RPC domains with pushed invalidations, layered+redacted `describe()`, the local settings-document handoff, the llm configurable-provider directory and topology event, the `ctx.settingsSchema` model service owned by `dsh-client-ui-settings`, and the Models settings page with its hand-written provider editor. The `deepseek` → `deepseek-official` provider-route rename rides along as the enabling breaking change.
 

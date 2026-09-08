@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-25-promote-open-anywhere-plugin.zh.md)
+English
 
 ## Problem
 

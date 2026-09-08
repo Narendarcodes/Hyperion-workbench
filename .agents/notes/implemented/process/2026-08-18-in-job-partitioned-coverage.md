@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-18-in-job-partitioned-coverage.zh.md)
+English
 
 ## Problem
 

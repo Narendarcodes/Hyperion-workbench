@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-22
 
-English | [中文](2026-08-13-remove-first-run-beta-notice.zh.md)
+English
 
 ## Problem
 

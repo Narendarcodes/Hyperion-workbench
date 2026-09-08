@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-26-ptc-chat-subcall-rows.zh.md)
+English
 
 > Scope: how the web chat view renders a `run_code` turn — the client-side half of the PTC mode UI stack, built on the [host foundation](2026-07-26-ptc-dispatch-ui-foundation.md) (full-content `tool/code-dispatch`, the required `description` parameter). The [toolview dissolution](../architecture/2026-07-23-toolview-dissolution.md) owns the slot model this rides on.
 

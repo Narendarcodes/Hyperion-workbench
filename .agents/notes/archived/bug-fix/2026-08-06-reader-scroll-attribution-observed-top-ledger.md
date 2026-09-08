@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-06-reader-scroll-attribution-observed-top-ledger.zh.md)
+English
 
 ## Problem
 

@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-24-browser-token-authentication.zh.md)
+English
 
 ## Problem
 

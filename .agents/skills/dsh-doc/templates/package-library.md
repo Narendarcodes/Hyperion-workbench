@@ -18,7 +18,7 @@ kind: "package-library"
 ```markdown
 # @deepseek-ai/dsh-<name>
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

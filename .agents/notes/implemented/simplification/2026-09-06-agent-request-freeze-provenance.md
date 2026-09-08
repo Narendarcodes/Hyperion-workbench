@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-06-agent-request-freeze-provenance.zh.md)
+English
 
 ## Problem
 

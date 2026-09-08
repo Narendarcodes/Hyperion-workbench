@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-23-python-sdk-windows-x64-runtime.zh.md)
+English
 
 ## Problem
 

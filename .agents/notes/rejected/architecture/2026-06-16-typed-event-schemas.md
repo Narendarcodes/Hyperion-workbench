@@ -2,7 +2,7 @@
 
 Status: rejected — runtime event-schema registry declined; event maps stay compile-time, Zod validates projection state, migrations validate durable payloads
 
-English | [中文](2026-06-16-typed-event-schemas.zh.md)
+English
 
 ## Problem
 

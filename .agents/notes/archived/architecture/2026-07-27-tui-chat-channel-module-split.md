@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-04
 
-English | [中文](2026-07-27-tui-chat-channel-module-split.zh.md)
+English
 
 ## Problem
 

@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-04
 
-English | [中文](2026-07-30-tui-adapter-registration-race.zh.md)
+English
 
 ## Problem
 

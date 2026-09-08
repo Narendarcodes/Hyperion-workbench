@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-06-30-interception-extension-points.zh.md)
+English
 
 ## Problem
 

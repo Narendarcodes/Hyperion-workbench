@@ -2,7 +2,7 @@
 
 Status: rejected — premise gone: plugins depend on dsh-agent-loop by design; dsh-llm/invariant and the hygiene dependency gates own conformance
 
-English | [中文](2026-06-11-architectural-conformance.zh.md)
+English
 
 ## Problem
 

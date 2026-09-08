@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-25-session-observations-and-projection-owned-client-state.zh.md)
+English
 
 ## Problem
 

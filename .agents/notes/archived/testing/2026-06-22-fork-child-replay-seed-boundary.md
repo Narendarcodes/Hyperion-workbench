@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-06-22-fork-child-replay-seed-boundary.zh.md)
+English
 
 ## Problem
 

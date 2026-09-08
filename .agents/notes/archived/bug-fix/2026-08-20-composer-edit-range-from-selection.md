@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-20
 
-English | [中文](2026-08-20-composer-edit-range-from-selection.zh.md)
+English
 
 ## Problem
 

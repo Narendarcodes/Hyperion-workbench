@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-06-19-acp-snapshot-tests.zh.md)
+English
 
 ## Problem
 

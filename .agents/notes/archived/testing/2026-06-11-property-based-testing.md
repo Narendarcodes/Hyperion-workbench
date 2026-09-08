@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-06-11-property-based-testing.zh.md)
+English
 
 > The property suite found a real BlockAssembler duplicate-`block-end` bug on its first run.
 

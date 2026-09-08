@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-03-opt-in-reasoning-chunk-browser-stress.zh.md)
+English
 
 ## Problem
 

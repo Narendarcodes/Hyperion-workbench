@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-30-jsonl-only-session-persistence.zh.md)
+English
 
 ## Problem
 

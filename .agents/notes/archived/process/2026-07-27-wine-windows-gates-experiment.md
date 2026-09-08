@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-08
 
-English | [中文](2026-07-27-wine-windows-gates-experiment.zh.md)
+English
 
 ## Problem
 

@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-26
 
-English | [中文](2026-07-20-tui-startup-slogans.zh.md)
+English
 
 > **Superseded** for the slogan/animation half by the [banner sweep Agent Note](2026-07-21-tui-banner-sweep.md): the slogan bank and typewriter reveal shipped, read as weird in use, and were replaced by a subtitle-free banner with a whole-banner sweep. The removal of the configured demo welcome and the animation-lifecycle groundwork (start after `ui.start()`, clear through `detachListeners`) stand.
 

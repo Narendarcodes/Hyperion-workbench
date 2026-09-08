@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-29-dsh-source-launch-tsx-esm.zh.md)
+English
 
 > Supersedes [native TypeScript source launch](../../archived/architecture/2026-07-28-dsh-native-typescript-source-launch.md): Node removed the capability that decision was built on.
 

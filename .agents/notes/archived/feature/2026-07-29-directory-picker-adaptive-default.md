@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-29-directory-picker-adaptive-default.zh.md)
+English
 
 ## Problem
 

@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-13-shared-modal-product-onboarding.zh.md)
+English
 
 ## Problem
 

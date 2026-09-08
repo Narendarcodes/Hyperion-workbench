@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-06-standard-hosted-benchmark-runner.zh.md)
+English
 
 ## Problem
 

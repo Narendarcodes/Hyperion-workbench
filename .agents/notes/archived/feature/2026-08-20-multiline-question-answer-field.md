@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-20-multiline-question-answer-field.zh.md)
+English
 
 ## Problem
 

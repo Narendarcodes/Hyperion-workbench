@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-29-drill-claim-precedes-the-drill-edit.zh.md)
+English
 
 ## Problem
 

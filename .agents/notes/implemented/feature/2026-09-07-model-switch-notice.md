@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-07-model-switch-notice.zh.md)
+English
 
 ## Problem
 

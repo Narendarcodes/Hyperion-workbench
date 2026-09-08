@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-24-web-gui-browser-e2e-lane.zh.md)
+English
 
 ## Problem
 

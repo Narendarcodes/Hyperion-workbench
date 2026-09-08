@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-07
 
-English | [中文](2026-07-30-sidebar-resize-without-visible-pill.zh.md)
+English
 
 ## Problem
 

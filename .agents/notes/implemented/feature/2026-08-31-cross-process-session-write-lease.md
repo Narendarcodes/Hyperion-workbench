@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-31-cross-process-session-write-lease.zh.md)
+English
 
 ## Problem
 

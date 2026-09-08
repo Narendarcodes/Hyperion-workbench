@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-26-published-dependency-faces.zh.md)
+English
 
 ## Problem
 

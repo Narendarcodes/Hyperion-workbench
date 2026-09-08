@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-27-web-subagent-conversations.zh.md)
+English
 
 ## Problem
 

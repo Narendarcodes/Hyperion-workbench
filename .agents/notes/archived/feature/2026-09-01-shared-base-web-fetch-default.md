@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-09-01-shared-base-web-fetch-default.zh.md)
+English
 
 This decision partially supersedes the fetch opt-in choice in [Default Web search in shipped compositions](2026-07-31-web-default-search.md). That record continues to own search provider selection, credentials, endpoint, timeout, and the separation between provider availability and model-tool registration; no active Agent Note is fully superseded or eligible for archival.
 

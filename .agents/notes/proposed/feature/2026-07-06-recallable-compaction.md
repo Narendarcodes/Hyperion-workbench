@@ -2,7 +2,7 @@
 
 Status: proposed
 
-English | [中文](2026-07-06-recallable-compaction.zh.md)
+English
 
 ## Problem
 

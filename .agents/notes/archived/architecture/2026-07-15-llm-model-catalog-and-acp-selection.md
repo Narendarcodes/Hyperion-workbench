@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-15-llm-model-catalog-and-acp-selection.zh.md)
+English
 
 > The catalog and scoped-selection decisions remain current. The temporary removal of ACP selection is superseded by [standard ACP v1 automation controls](../feature/2026-08-22-standard-acp-automation-controls.md), which exposes the catalog through standard session configuration without restoring UI projections.
 

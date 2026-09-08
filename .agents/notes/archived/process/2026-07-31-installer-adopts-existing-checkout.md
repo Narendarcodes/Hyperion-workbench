@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-10
 
-English | [中文](2026-07-31-installer-adopts-existing-checkout.zh.md)
+English
 
 ## Problem
 

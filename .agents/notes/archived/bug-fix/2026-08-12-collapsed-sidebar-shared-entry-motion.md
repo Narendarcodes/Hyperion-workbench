@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-12
 
-English | [中文](2026-08-12-collapsed-sidebar-shared-entry-motion.zh.md)
+English
 
 ## Problem
 

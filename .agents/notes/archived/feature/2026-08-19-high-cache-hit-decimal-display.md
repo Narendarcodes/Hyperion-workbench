@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-22
 
-English | [中文](2026-08-19-high-cache-hit-decimal-display.zh.md)
+English
 
 ## Problem
 

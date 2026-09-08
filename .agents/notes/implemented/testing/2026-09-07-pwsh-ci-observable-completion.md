@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-07-pwsh-ci-observable-completion.zh.md)
+English
 
 ## Problem
 

@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-05-session-reference-spill-reuse.zh.md)
+English
 
 ## Problem
 

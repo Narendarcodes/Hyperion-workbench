@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-10-event-directed-pr-review-status.zh.md)
+English
 
 ## Problem
 

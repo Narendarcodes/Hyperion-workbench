@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-24-alpha-routed-image-quality-ladders.zh.md)
+English
 
 ## Problem
 

@@ -2,7 +2,7 @@
 
 Status: proposed
 
-English | [中文](2026-06-30-pre-tool-input-rewrite.zh.md)
+English
 
 ## Problem
 

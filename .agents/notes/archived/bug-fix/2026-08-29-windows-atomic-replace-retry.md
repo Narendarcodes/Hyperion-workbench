@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-29-windows-atomic-replace-retry.zh.md)
+English
 
 ## Problem
 

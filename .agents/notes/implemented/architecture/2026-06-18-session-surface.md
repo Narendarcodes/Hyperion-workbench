@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-06-18-session-surface.zh.md)
+English
 
 ## Problem
 

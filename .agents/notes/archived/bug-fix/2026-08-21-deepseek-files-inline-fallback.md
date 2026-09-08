@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-21-deepseek-files-inline-fallback.zh.md)
+English
 
 ## Problem
 

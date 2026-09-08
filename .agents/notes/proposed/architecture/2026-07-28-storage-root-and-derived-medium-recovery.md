@@ -2,7 +2,7 @@
 
 Status: proposed
 
-English | [中文](2026-07-28-storage-root-and-derived-medium-recovery.zh.md)
+English
 
 ## Problem
 

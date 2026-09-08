@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-07
 
-English | [中文](2026-07-26-execa-for-test-subprocess-plumbing.zh.md)
+English
 
 ## Problem
 

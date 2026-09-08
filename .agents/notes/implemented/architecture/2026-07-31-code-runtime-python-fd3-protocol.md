@@ -4,7 +4,7 @@ Status: implemented
 
 The CPython code runtime now lives at `packages/experimental/code-runtime-python` (private, npm name `@deepseek-ai/dsh-experimental-code-runtime-python`); promotion to a released package follows the experimental-packages decision.
 
-English | [中文](2026-07-31-code-runtime-python-fd3-protocol.zh.md)
+English
 
 ## Problem
 

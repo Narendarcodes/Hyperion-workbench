@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-26
 
-English | [中文](2026-07-21-tui-auto-pane-title.zh.md)
+English
 
 > **Superseded** by the [session-title consolidation Agent Note](../simplification/2026-07-22-tui-titles-from-session-title-service.md): the TUI-local `autoTitle` generation is removed; titles come from the log-backed session-title service, and the terminal rename consumes `session/title` events.
 

@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-04-web-clickable-link-styles.zh.md)
+English
 
 ## Problem
 

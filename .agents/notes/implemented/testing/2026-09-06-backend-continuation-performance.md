@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-06-backend-continuation-performance.zh.md)
+English
 
 ## Problem
 

@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-27
 
-English | [中文](2026-06-20-package-hierarchy.zh.md)
+English
 
 The [redundant-agent removal](../simplification/2026-07-20-remove-stdio-and-echo-agents.md) deletes the original `support/ui-stdio` surface instead of relocating it, and the [automation-only ACP decision](../simplification/2026-07-23-acp-automation-only-protocol.md) places ACP under `packages/acp/acp` instead of the human-UI group. The uniform depth-two hierarchy remains the decision owned here.
 

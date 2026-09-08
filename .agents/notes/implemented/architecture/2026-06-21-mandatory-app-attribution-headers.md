@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-06-21-mandatory-app-attribution-headers.zh.md)
+English
 
 ## Problem
 

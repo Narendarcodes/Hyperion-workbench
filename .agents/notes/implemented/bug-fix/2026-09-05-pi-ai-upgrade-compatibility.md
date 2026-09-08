@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-05-pi-ai-upgrade-compatibility.zh.md)
+English
 
 ## Problem
 

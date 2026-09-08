@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-31-win32-picker-path-string-read.zh.md)
+English
 
 ## Problem
 

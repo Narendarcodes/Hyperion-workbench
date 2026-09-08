@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-26
 
-English | [中文](2026-07-21-tui-no-banner.zh.md)
+English
 
 > **Superseded** by the [borderless-banner Agent Note](2026-07-21-tui-borderless-banner.md): the banner and its sweep return without the box. The model's footer home this note added stays.
 

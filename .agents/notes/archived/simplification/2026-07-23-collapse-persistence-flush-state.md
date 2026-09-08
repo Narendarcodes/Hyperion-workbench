@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-23-collapse-persistence-flush-state.zh.md)
+English
 
 The [bounded write-batching decision](../architecture/2026-08-08-bounded-session-persistence-write-batching.md) supersedes this note's immediate scheduling cadence. The single-controller ownership, failure retention, per-id serialization, retirement, and quiescent-disposal decisions remain current.
 

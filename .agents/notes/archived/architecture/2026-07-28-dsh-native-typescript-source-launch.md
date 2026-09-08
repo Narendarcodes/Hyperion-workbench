@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-07
 
-English | [中文](2026-07-28-dsh-native-typescript-source-launch.zh.md)
+English
 
 > The Node-native launch vector is superseded by [dsh source launch through the tsx ESM hook](2026-07-29-dsh-source-launch-tsx-esm.md): Node 26.0.0 removed `--experimental-transform-types`, and the paths loader described here is deleted. The Cordis-config declaration gate (`verify-cordis-config`), the app-boot fail-loud plugin diagnostic, and the vendored `import type` marks remain current.
 

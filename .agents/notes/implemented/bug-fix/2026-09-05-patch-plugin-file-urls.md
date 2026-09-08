@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-05-patch-plugin-file-urls.zh.md)
+English
 
 ## Problem
 

@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-22-single-dsh-application-launcher.zh.md)
+English
 
 ## Problem
 

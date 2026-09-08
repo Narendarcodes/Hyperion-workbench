@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-07-mcp-client-plugin.zh.md)
+English
 
 ## Problem
 

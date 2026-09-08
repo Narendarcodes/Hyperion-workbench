@@ -2,7 +2,7 @@
 
 Status: rejected — superseded by 2026-08-10-npm-release-sequences: numbered versions and pack→protected publish shipped; timestamp versions were not adopted
 
-English | [中文](2026-08-04-artifact-first-npm-baseline-publication.zh.md)
+English
 
 ## Problem
 

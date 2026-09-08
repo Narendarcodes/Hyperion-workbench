@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-22
 
-English | [中文](2026-08-18-web-home-path-tilde.zh.md)
+English
 
 ## Problem
 

@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-11-background-job-completion-wakes-an-idle-owner.zh.md)
+English
 
 ## Problem
 

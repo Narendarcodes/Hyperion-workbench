@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-27-workspace-registration-deletion.zh.md)
+English
 
 ## Problem
 

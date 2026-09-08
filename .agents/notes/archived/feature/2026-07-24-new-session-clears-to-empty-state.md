@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-26
 
-English | [中文](2026-07-24-new-session-clears-to-empty-state.zh.md)
+English
 
 ## Problem
 

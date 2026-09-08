@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-03-semantic-issue-templates-and-policy.zh.md)
+English
 
 ## Problem
 

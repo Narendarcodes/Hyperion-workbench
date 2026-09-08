@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-23-client-plugin-loading-model.zh.md)
+English
 
 > Scope: the browser-side plugin loading machinery — how code arrives, how Cordis governs it, and how hot reload rides on that model. This note owns the loading chain; the [client shell layering note](2026-08-15-client-shells-and-dynamic-packages.md) owns package categories, build faces, shared-module requests, and npm dependency declarations, while the [web client architecture note](2026-07-19-gui-web-client-architecture.md) owns slots and the data object layer.
 

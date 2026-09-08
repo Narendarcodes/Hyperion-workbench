@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-24-agent-loop-observable-state-machine.zh.md)
+English
 
 ## Problem
 

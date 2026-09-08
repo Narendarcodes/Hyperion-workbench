@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-08
 
-English | [中文](2026-08-03-explicit-config-dsh-entrypoint.zh.md)
+English
 
 ## Problem
 

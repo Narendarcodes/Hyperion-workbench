@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-07
 
-English | [中文](2026-07-26-eventsource-parser-for-deepseek-sse.zh.md)
+English
 
 ## Problem
 

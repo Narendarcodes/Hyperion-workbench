@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-07
 
-English | [中文](2026-07-31-hero-visible-while-blank-session-opens.zh.md)
+English
 
 ## Problem
 

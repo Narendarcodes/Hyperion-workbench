@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-22
 
-English | [中文](2026-08-12-documentation-site-navigation-and-chrome.zh.md)
+English
 
 ## Problem
 

@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-25
 
-English | [中文](2026-08-24-system-prompt-section-order-ties.zh.md)
+English
 
 ## Problem
 

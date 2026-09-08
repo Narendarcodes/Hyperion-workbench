@@ -2,7 +2,7 @@
 
 Status: rejected — session/prompt became an enqueue receipt without status (2026-07-30-followup-enqueue-and-owned-runs); transport narrowing may be re-proposed alone
 
-English | [中文](2026-07-19-make-jsonrpc-directional.zh.md)
+English
 
 ## Problem
 

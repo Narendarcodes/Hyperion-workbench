@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-05-composer-context-meter-breakdown.zh.md)
+English
 
 ## Problem
 

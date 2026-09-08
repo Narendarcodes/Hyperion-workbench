@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-25-electron-desktop-packaging-and-updates.zh.md)
+English
 
 ## Problem
 

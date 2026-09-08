@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-04
 
-English | [中文](2026-07-17-dedicated-full-screen-tui-front-door.zh.md)
+English
 
 ## Problem
 

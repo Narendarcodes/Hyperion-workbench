@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-27-intent-named-subagent-continuation-operations.zh.md)
+English
 
 The provider-request and session-flush decisions remain current. [Adjacent Agents share one Steer messaging operation](../architecture/2026-08-27-adjacent-agent-steer-messaging.md) supersedes this record's `followup` naming and options: the public operation is now `sendMessage(sender, targetId, content, { signal })` for either adjacent direction.
 

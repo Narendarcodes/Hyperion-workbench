@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-07-web-inline-file-mentions.zh.md)
+English
 
 > Scope: guiding final responses to name primary output files as inline code, then linking those tokens to files the turn changed. Not in scope: recognizing paths in plain prose, linking files absent from successful mutation locations, and mentions in streaming or mid-turn messages.
 

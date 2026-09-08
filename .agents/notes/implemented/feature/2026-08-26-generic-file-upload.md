@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-26-generic-file-upload.zh.md)
+English
 
 ## Problem
 

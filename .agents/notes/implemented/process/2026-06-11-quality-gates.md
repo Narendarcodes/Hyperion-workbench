@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-06-11-quality-gates.zh.md)
+English
 
 The hook/CI symmetry in this record is superseded by [Fast local Git hooks](../../archived/process/2026-07-22-fast-local-git-hooks.md); CI remains the exhaustive enforcement path.
 

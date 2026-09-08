@@ -4,7 +4,7 @@ Status: implemented
 
 > Path update (2026-08-27, Remote migration): the three-tier philosophy and golden-path method here remain current; object-layer specs live across `packages/api/session-controller/tests/` and `packages/test-support/client-runtime/tests/`, while Remote and carrier specs live across `packages/api/gateway/tests/` and `packages/client/connection/tests/`. Component specs are per-plugin jsdom suites under each `packages/client/*/tests/`. Component-spec shape follows the [slot system standard](../architecture/2026-07-22-slot-type-chain-implementation.md): feed props directly — the store share comes from `createXXXStore().create()` (the real engine, the sanctioned zero-machinery path), framework hooks are plain stubs; no render machinery, no provider mounting. Slot ownership and registry semantics are tier-2 territory (`ui-renderer` + `ui-slots` suites), not component specs.
 
-English | [中文](2026-07-20-gui-testing-system.zh.md)
+English
 
 > Division of labor: this note covers only the test structure specific to the GUI (`packages/{client,host}/*` + `apps/web`); repo-wide testing policy (tiering principles, the with-key policy, real-implementation-first, REAL-composition) lives in [docs/testing.md](../../../../docs/testing.md) and is not restated here.
 

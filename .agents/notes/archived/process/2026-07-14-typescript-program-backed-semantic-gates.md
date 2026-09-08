@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-14-typescript-program-backed-semantic-gates.zh.md)
+English
 
 ## Problem
 

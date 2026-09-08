@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-28-ci-node-compile-cache-data-disk.zh.md)
+English
 
 ## Problem
 

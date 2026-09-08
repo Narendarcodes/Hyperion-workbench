@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-06-11-vendor-cordis-as-source.zh.md)
+English
 
 ## Problem
 

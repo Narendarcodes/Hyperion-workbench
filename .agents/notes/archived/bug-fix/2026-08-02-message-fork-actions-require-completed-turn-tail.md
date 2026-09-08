@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-02-message-fork-actions-require-completed-turn-tail.zh.md)
+English
 
 ## Problem
 

@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-05-dynamic-workflows.zh.md)
+English
 
 ## Problem
 

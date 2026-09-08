@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-28-omit-unneeded-invariant-companions.zh.md)
+English
 
 ## Problem
 

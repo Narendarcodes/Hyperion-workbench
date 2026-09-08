@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-31-web-telemetry-default-mount.zh.md)
+English
 
 ## Problem
 

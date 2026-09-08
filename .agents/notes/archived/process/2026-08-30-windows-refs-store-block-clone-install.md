@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-30-windows-refs-store-block-clone-install.zh.md)
+English
 
 ## Problem
 

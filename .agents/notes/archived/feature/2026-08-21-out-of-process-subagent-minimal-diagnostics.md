@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-21-out-of-process-subagent-minimal-diagnostics.zh.md)
+English
 
 ## Problem
 

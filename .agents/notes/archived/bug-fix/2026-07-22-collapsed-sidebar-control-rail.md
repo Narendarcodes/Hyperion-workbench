@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-26
 
-English | [中文](2026-07-22-collapsed-sidebar-control-rail.zh.md)
+English
 
 ## Problem
 

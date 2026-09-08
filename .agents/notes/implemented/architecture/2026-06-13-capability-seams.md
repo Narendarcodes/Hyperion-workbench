@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-06-13-capability-seams.zh.md)
+English
 
 ## Problem
 

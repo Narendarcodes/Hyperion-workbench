@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-27
 
-English | [中文](2026-07-08-shared-acp-snapshot-package.zh.md)
+English
 
 ## Problem
 

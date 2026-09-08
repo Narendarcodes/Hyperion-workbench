@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-07-31-web-default-search.zh.md)
+English
 
 The [shared-base Web fetch default](../../archived/feature/2026-09-01-shared-base-web-fetch-default.md) supersedes this record's fetch opt-in decision. This record remains authoritative for the default search provider, credential resolution, endpoint, timeout, and the separation between provider availability and model-tool registration.
 

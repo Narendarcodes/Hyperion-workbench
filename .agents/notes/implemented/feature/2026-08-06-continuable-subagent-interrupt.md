@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-06-continuable-subagent-interrupt.zh.md)
+English
 
 ## Problem
 

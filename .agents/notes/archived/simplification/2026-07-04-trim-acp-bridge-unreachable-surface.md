@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-26
 
-English | [中文](2026-07-04-trim-acp-bridge-unreachable-surface.zh.md)
+English
 
 > The handshake-identity simplification remains current. The generic-card fallback was removed when [ACP became automation-only](2026-07-23-acp-automation-only-protocol.md); UI transports retain the provider-neutral presentation contract.
 

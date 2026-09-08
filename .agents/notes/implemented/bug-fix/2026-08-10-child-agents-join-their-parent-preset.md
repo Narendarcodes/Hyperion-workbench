@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-10-child-agents-join-their-parent-preset.zh.md)
+English
 
 ## Problem
 

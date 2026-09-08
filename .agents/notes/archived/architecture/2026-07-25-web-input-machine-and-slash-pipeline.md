@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-25-web-input-machine-and-slash-pipeline.zh.md)
+English
 
 > Scope: the input state machine (the claim watch + the submit transaction), the hub/facade and send orchestration, the three scoped bail events for cross-plugin input rewrites, `/` and `@` trigger detection and the menu pipeline (ui-input-trigger), and the slot system around the composer. It depends on the [session scope note](2026-07-25-web-client-session-scope-and-provide-channel.md)'s sctx / provide / session-maybe and blank entity model; command knowledge (the three kinds, the directory, popups) is untouched here — that is the [command surfaces note](2026-07-25-web-command-surfaces-and-assembly.md)'s territory. The editing surface half of the original decision — the textarea + occurrence table, the self-managed undo log, the paste-match pipeline, and the backdrop decorations — was superseded by [the Lexical composer note](2026-08-20-web-composer-lexical-editor.md); this note remains the owner of the machine's submit plane, the bail-event contract, the trigger pipeline, and the composer slots.
 

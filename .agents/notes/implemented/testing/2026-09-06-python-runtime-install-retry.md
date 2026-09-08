@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-06-python-runtime-install-retry.zh.md)
+English
 
 ## Problem
 

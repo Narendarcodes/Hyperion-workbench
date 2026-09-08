@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-05-canonical-feedback-log.zh.md)
+English
 
 ## Problem
 

@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-06-14-acp-multi-session.zh.md)
+English
 
 > Written when ACP was an editor bridge, motivated by Zed's multi-session client model. [ACP as an automation-only protocol](../simplification/2026-07-23-acp-automation-only-protocol.md) removed the editor surfaces; the multiplexing decision itself is unchanged and this note now states it against the automation contract.
 

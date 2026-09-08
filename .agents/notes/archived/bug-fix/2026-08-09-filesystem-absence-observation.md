@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-09-filesystem-absence-observation.zh.md)
+English
 
 ## Problem
 

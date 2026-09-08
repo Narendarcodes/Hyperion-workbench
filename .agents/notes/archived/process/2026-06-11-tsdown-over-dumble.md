@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-27
 
-English | [中文](2026-06-11-tsdown-over-dumble.zh.md)
+English
 
 ## Problem
 

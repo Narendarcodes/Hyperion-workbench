@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-08-11-remove-sdk-project-toolchain.zh.md)
+English
 
 ## Problem
 

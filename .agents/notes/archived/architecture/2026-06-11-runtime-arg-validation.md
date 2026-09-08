@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-06-11-runtime-arg-validation.zh.md)
+English
 
 ## Problem
 

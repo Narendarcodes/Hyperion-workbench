@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-28
 
-English | [中文](2026-07-26-code-mode-trajectory-waterfall-spans.zh.md)
+English
 
 > Scope: the final PR of the Code Mode UI stack — sub-dispatch rendering in the two non-chat views. Chat nesting is owned by the [sub-call rows note](2026-07-26-code-mode-chat-subcall-rows.md); the timing this consumes is the [live-parallel note](2026-07-26-code-mode-live-parallel-dispatch.md)'s start/settle pair.
 

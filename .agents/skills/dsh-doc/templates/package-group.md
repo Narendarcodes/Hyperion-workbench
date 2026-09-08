@@ -16,7 +16,7 @@ kind: "package-group"
 ```markdown
 # <group>/ — <one-line subject>
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

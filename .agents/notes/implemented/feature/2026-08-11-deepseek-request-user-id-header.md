@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-11-deepseek-request-user-id-header.zh.md)
+English
 
 ## Problem
 

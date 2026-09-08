@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-24-model-facing-session-query-tools.zh.md)
+English
 
 ## Problem
 

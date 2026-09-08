@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-22
 
-English | [中文](2026-07-30-versioned-gui-welcome-onboarding.zh.md)
+English
 
 ## Problem
 

@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-03
 
-English | [中文](2026-07-28-dsh-guided-skill-session-commands.zh.md)
+English
 
 ## Problem
 

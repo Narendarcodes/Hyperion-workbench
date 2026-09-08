@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-08-05-context-form-vocabulary.zh.md)
+English
 
 ## Problem
 

@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-06-preview-hosted-runner-sizing.zh.md)
+English
 
 ## Problem
 

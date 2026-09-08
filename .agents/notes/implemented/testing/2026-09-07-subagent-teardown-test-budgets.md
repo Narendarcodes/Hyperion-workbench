@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-07-subagent-teardown-test-budgets.zh.md)
+English
 
 ## Problem
 

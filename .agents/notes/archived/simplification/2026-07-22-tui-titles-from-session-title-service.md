@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-07-27
 
-English | [中文](2026-07-22-tui-titles-from-session-title-service.zh.md)
+English
 
 ## Problem
 

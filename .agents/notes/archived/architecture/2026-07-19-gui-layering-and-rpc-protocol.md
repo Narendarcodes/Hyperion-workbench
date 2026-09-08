@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-27
 
-English | [中文](2026-07-19-gui-layering-and-rpc-protocol.zh.md)
+English
 
 > Division of labor: this document = the layering model + the channel-independent RPC protocol; the protocol's Web implementation combines HTTP uplink with the [WebSocket downlink carrier](2026-08-04-websocket-downlink-carrier.md), while the browser object layer is in the [web client architecture note](2026-07-19-gui-web-client-architecture.md).
 

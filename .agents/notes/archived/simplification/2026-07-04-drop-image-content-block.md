@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-08-19
 
-English | [中文](2026-07-04-drop-image-content-block.zh.md)
+English
 
 ## Problem
 

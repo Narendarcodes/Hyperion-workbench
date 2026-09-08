@@ -2,7 +2,7 @@
 
 Status: rejected — closed as a proposal: the shipped packages/extensions runtime and its READMEs own the design
 
-English | [中文](2026-08-08-cordis-web-dynamic-packages.zh.md)
+English
 
 ## Problem
 

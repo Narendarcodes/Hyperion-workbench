@@ -2,7 +2,7 @@
 
 Status: implemented
 
-English | [中文](2026-09-06-windows-python-console-spawn-wait.zh.md)
+English
 
 ## Problem
 

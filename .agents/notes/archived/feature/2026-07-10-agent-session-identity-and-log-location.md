@@ -3,7 +3,7 @@
 Status: implemented
 Archived: 2026-09-04
 
-English | [中文](2026-07-10-agent-session-identity-and-log-location.zh.md)
+English
 
 ## Problem
 
