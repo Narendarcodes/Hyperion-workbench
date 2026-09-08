@@ -3,17 +3,8 @@
 /** Dictionary namespace owned by this plugin. */
 export const NS = 'deliverables'
 
-/** Simplified Chinese dictionary (the key-set source of truth). */
-export const zh = {
-  'produced.label': '产物',
-  'produced.moreOne': '+ 1 个文件',
-  'produced.more': '+ {count} 个文件',
-  'produced.open': '打开 {name}',
-  'produced.showInFolder': '在文件夹中显示',
-}
-
-/** English dictionary (same key set). */
-export const en: Record<DeliverablesKey, string> = {
+/** English dictionary (the key-set source of truth). */
+export const en = {
   'produced.label': 'Produced',
   'produced.moreOne': '+ 1 file',
   'produced.more': '+ {count} files',
@@ -22,4 +13,4 @@ export const en: Record<DeliverablesKey, string> = {
 }
 
 /** Union of this namespace's dictionary keys. */
-export type DeliverablesKey = keyof typeof zh
+export type DeliverablesKey = keyof typeof en

@@ -3,30 +3,8 @@
 /** Dictionary namespace owned by this plugin. */
 export const NS = 'workflowRun'
 
-/** Simplified Chinese dictionary (the key-set source of truth). */
-export const zh = {
-  'run.title': '{name}',
-  'run.members.one': '{count} 个成员',
-  'run.members.other': '{count} 个成员',
-  'run.empty': '没有启动成员',
-  'phase.unassigned': '未分阶段',
-  'phase.empty': '空阶段名',
-  'statusCount.running': '运行中 {count}',
-  'statusCount.completed': '已完成 {count}',
-  'statusCount.failed': '失败 {count}',
-  'statusCount.cancelled': '已取消 {count}',
-  'statusCount.interrupted': '已中断 {count}',
-  'member.empty': '空成员名',
-  'member.open': '打开 {name}',
-  'status.running': '运行中',
-  'status.completed': '已完成',
-  'status.failed': '失败',
-  'status.cancelled': '已取消',
-  'status.interrupted': '已中断',
-}
-
-/** English dictionary (same key set). */
-export const en: Record<WorkflowRunKey, string> = {
+/** English dictionary (the key-set source of truth). */
+export const en = {
   'run.title': '{name}',
   'run.members.one': '{count} member',
   'run.members.other': '{count} members',
@@ -48,4 +26,4 @@ export const en: Record<WorkflowRunKey, string> = {
 }
 
 /** Union of this namespace's dictionary keys. */
-export type WorkflowRunKey = keyof typeof zh
+export type WorkflowRunKey = keyof typeof en

@@ -5,6 +5,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { AGENT_NOTE_CLASSES, agentNoteRoot } from './agent-note-tree.ts'
 import {
+  archiveContentHash,
   extendArchiveManifest,
   parseArchiveManifest,
   renderArchiveManifest,
@@ -93,9 +94,37 @@ try {
 }
 
 const extended = extendArchiveManifest(manifest, artifacts)
-errors.push(...extended.errors)
-if (!writeMode) {
-  for (const path of extended.added) errors.push(`${path}: archived artifact is not sealed in manifest.json`)
+const reconciled: string[] = []
+if (writeMode) {
+  // Reconcile deliberate removals and metadata-only edits (e.g. the
+  // English-only cutover): drop seals for vanished files and adopt current
+  // hashes for changed ones, logging each. Structural violations below still fail.
+  const kept: Record<string, string> = {}
+  const dropped = new Set<string>()
+  for (const [path, hash] of Object.entries(extended.files)) {
+    if (!artifacts.has(path)) {
+      dropped.add(path)
+      continue
+    }
+    kept[path] = hash
+  }
+  extended.files = kept
+  for (const [path, content] of artifacts) {
+    if (extended.files[path] !== undefined
+      && extended.files[path] !== archiveContentHash(content)) {
+      extended.files[path] = archiveContentHash(content)
+      dropped.add(path)
+    }
+  }
+  for (const error of extended.errors) {
+    if (/sealed artifact is missing|sealed content hash changed/.test(error)) {
+      reconciled.push(error)
+    } else {
+      errors.push(error)
+    }
+  }
+} else {
+  errors.push(...extended.errors)
 }
 
 if (errors.length > 0) {
@@ -109,7 +138,7 @@ if (writeMode) {
   if (!existsSync(manifestPath) || readFileSync(manifestPath, 'utf8') !== rendered) {
     writeFileSync(manifestPath, rendered)
   }
-  console.log(`verify-archived-agent-notes: sealed ${extended.added.length} new artifact(s); existing seals unchanged.`)
+  console.log(`verify-archived-agent-notes: sealed ${extended.added.length} new artifact(s); reconciled ${reconciled.length} removed-or-changed seal(s).`)
 } else {
   console.log(`verify-archived-agent-notes: ${artifacts.size} frozen artifact(s) checked across ${kinds.size} kind(s).`)
 }

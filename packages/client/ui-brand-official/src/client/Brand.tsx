@@ -11,9 +11,11 @@ export function OfficialBrandMark({ size }: SidebarBrandMarkOwnerProps) {
 }
 
 /**
- * Render the Hyperion product name without its independently slotted mark.
- * @returns the Hyperion name text.
+ * Render the product name without its independently slotted mark. The text
+ * arrives locale-resolved so no product copy lives in presentation code.
+ * @param props.name - localized product name.
+ * @returns the product name text.
  */
-export function OfficialBrandName() {
-  return <span>HYPERION</span>
+export function OfficialBrandName({ name }: { name: string }) {
+  return <span>{name}</span>
 }

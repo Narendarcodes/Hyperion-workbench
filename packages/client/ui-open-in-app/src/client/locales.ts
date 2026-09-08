@@ -3,7 +3,7 @@
 /** Dictionary namespace owned by this plugin. */
 export const NS = 'open-in-app'
 
-/** Application labels shared verbatim by both dictionaries (product names). */
+/** Application labels shared verbatim (product names). */
 const PRODUCT_NAMES = {
   'app.cursor': 'Cursor',
   'app.vscode': 'VS Code',
@@ -37,22 +37,8 @@ const PRODUCT_NAMES = {
   'app.konsole': 'Konsole',
 } as const
 
-/** Simplified Chinese dictionary (the key-set source of truth). */
-export const zh = {
-  'open.title': '在 {app} 中打开工作目录',
-  'open.tooltip': '在本地打开',
-  'open.error': '打开失败',
-  'menu.toggle': '选择打开方式',
-  'menu.aria': '打开方式',
-  ...PRODUCT_NAMES,
-  'app.finder': '访达',
-  'app.explorer': '文件资源管理器',
-  'app.filemanager': '文件管理器',
-  'app.terminal': '终端',
-} as const
-
-/** English dictionary, key-identical to the Chinese source of truth. */
-export const en: Record<OpenInAppKey, string> = {
+/** English dictionary (the key-set source of truth). */
+export const en = {
   'open.title': 'Open workspace in {app}',
   'open.tooltip': 'Open locally',
   'open.error': 'Failed to open',
@@ -65,5 +51,5 @@ export const en: Record<OpenInAppKey, string> = {
   'app.terminal': 'Terminal',
 }
 
-/** Key domain of the `open-in-app` namespace (zh is the source of truth). */
-export type OpenInAppKey = keyof typeof zh
+/** Key domain of the `open-in-app` namespace. */
+export type OpenInAppKey = keyof typeof en

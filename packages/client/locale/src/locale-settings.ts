@@ -11,8 +11,8 @@ export const LOCALE_PREFERENCE_FIELD = 'preference'
 /** Accepted BCP 47-style language ids. */
 export const LOCALE_ID_PATTERN = /^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$/u
 
-/** Locale identifiers shipped by the browser client. */
-export const LOCALE_IDS = ['zh', 'en'] as const
+/** Locale identifier shipped by the browser client. */
+export const LOCALE_IDS = ['en'] as const
 
 /** Locale identifier shipped by the browser client. */
 export type BuiltInLocaleId = typeof LOCALE_IDS[number]

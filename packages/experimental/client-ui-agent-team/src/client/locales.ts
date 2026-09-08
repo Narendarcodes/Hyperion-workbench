@@ -1,51 +1,12 @@
-/** Agent Teams Web dictionaries. */
+/** Agent Teams Web dictionary. */
 
 /** Locale namespace owned by the Agent Teams Web UI. */
 export const NS = 'agent-team'
 
-/** Simplified Chinese dictionary and key source. */
-export const zh = {
-  trigger: 'Agent Team',
-  refresh: '刷新 Team',
-  close: '关闭',
-  loading: '正在加载 Team…',
-  empty: '还没有共享任务',
-  roster: '成员',
-  tasks: '共享任务',
-  model: '模型',
-  open: '打开 teammate 会话',
-  create: '新建任务',
-  subject: '任务标题',
-  description: '任务描述',
-  blockers: '依赖任务 id（逗号分隔）',
-  scopes: '写入范围（逗号分隔）',
-  save: '保存',
-  cancel: '取消',
-  edit: '编辑',
-  complete: '完成',
-  reopen: '重开',
-  delete: '删除',
-  owner: 'Owner',
-  unowned: '未分配',
-  blockedBy: '依赖',
-  writeScopes: '写入范围',
-  ready: '可开始',
-  blocked: '被依赖阻塞',
-  conflict: '任务状态已变化，已重新加载；请检查后重试。',
-  'memberStatus.running': '运行中',
-  'memberStatus.idle': '空闲',
-  'memberStatus.inactive': '未运行',
-  'memberStatus.provisioning': '准备中',
-  'memberStatus.failed': '失败',
-  'status.pending': '待处理',
-  'status.in_progress': '进行中',
-  'status.completed': '已完成',
-} satisfies Record<string, string>
-
 /** Agent Teams locale key union. */
-export type TeamKey = keyof typeof zh
+export type TeamKey = keyof typeof en
 
-/** English dictionary checked against the Chinese key set. */
+/** English dictionary (the key-set source of truth). */
 export const en = {
   trigger: 'Agent Team',
   refresh: 'Refresh Team',
@@ -82,4 +43,4 @@ export const en = {
   'status.pending': 'Pending',
   'status.in_progress': 'In progress',
   'status.completed': 'Completed',
-} satisfies Record<TeamKey, string>
+}

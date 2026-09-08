@@ -1,63 +1,10 @@
-/** Cordis dynamic-plugin UI dictionaries. */
+/** Cordis dynamic-plugin UI dictionary. */
 
 export const NS = 'cordis'
 
-/** Simplified Chinese Cordis UI messages. */
-export const zh = {
-  'row.defineTitle': '注册 Cordis 插件',
-  'row.runTitle': '运行 Cordis 插件',
-  'row.updateTitle': '更新 Cordis 插件',
-  'row.stopTitle': '停止 Cordis 插件',
-  'row.removeTitle': '移除 Cordis 插件',
-  'purpose.missing': '(未填写用途)',
-  'status.idle': '待激活',
-  'status.awaitingApproval': '待审批',
-  'status.failed': '运行失败',
-  'status.clientPending': 'Client 待激活',
-  'status.running': '运行中',
-  'status.removed': '已移除',
-  'status.superseded': '已有更新',
-  'run.removed': '包已不存在',
-  'run.superseded': '已有更新的运行卡片，请查看下方',
-  'panel.hint': '运行控制在左下角设置上方的 Cordis 面板',
-  'panel.plugins.aria': 'Cordis 插件',
-  'panel.approvals.aria': 'Cordis 审批',
-  'panel.trigger': 'Cordis Plugin',
-  'panel.runningCount': '{count} running',
-  'panel.title': 'Cordis 插件',
-  'panel.empty': '还没有定义任何插件',
-  'panel.loading': '读取中…',
-  'panel.readFailed': '读取插件清单失败：{message}',
-  'panel.group.current': '当前会话',
-  'panel.group.others': '其他会话',
-  'panel.version': '版本',
-  'panel.current': '当前：{packageId}',
-  'panel.next': '待切换：{packageId}',
-  'action.approve': '允许',
-  'action.approveOnce': '仅允许此版本',
-  'action.approvePlugin': '允许此插件的后续版本',
-  'action.decline': '拒绝',
-  'action.run': '运行',
-  'action.stop': '停止',
-  'action.remove': '移除',
-  'action.retry': '重试',
-  'action.rollback': '回退',
-  'action.inspect': '查看',
-  'render.failedAbdicated': '{slot} 渲染失败，已恢复默认界面：',
-  'render.failedHeld': '{slot} 渲染失败：',
-  'a11y.defining': '正在定义插件',
-  'a11y.failed': '定义失败',
-  'a11y.stopped': '定义已中断',
-  'body.source': '插件代码',
-  'body.hostCode': 'Host',
-  'body.clientCode': 'Client',
-  'body.output': '结果',
-  'body.copy': '复制',
-  'body.copied': '已复制',
-} satisfies Record<string, string>
 
 /** Translation keys owned by the Cordis UI namespace. */
-export type CordisKey = keyof typeof zh
+export type CordisKey = keyof typeof en
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
@@ -118,4 +65,4 @@ export const en = {
   'body.output': 'Result',
   'body.copy': 'Copy',
   'body.copied': 'Copied',
-} satisfies Record<CordisKey, string>
+}

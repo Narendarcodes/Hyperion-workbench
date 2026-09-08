@@ -4,77 +4,10 @@
  * messages (wire error strings) pass through untranslated by policy.
  */
 
-/** Simplified Chinese dictionary (the key-set source of truth). */
-export const zh = {
-  'group.ungrouped': '未分组',
-  'session.new': '新会话',
-  'section.workspaces': '工作区',
-  'section.sessions': '会话',
-  'viewOptions.label': '视图选项',
-  'groupBy.label': '分组方式',
-  'groupBy.workspace': '按工作区',
-  'groupBy.flat': '单列表',
-  'orderBy.label': '排序方式',
-  'orderBy.manual': '手动排序',
-  'orderBy.updated': '最近更新',
-  'sessions.expand': '展开其余 {n} 个会话',
-  'sessions.collapse': '收起',
-  'empty.none': '暂无会话',
-  'empty.noMatches': '无匹配结果',
-  'workspace.add': '添加工作区',
-  'search.sessions.aria': '搜索会话',
-  'search.placeholder': '搜索会话…',
-  'search.clear': '清除搜索',
-  'search.results.aria': '搜索结果',
-  'search.pending': '正在搜索会话历史…',
-  'search.unavailable': '内容搜索暂不可用，仅显示名称匹配。',
-  'search.noMatches': '无匹配会话',
-  'search.hasMore': '仅显示前 {n} 条结果，请缩小搜索范围。',
-  'menu.addWorkspace': '添加工作区…',
-  'picker.loading': '正在加载工作区…',
-  'conflict.named': '已存在名为“{name}”的工作区。',
-  'folderError.title': '无法打开文件夹',
-  'folderError.retry': '重新选择',
-  'rename': '重命名',
-  'rename.workspace.title': '重命名工作区',
-  'rename.session.title': '重命名会话',
-  'field.workspaceName': '工作区名称',
-  'field.sessionName': '会话名称',
-  'delete.workspace': '删除工作区',
-  'delete.desc': '将把“{name}”从工作区列表中移除。文件夹与会话记录会保留，其会话将显示在“未分组”下。',
-  'delete.pending': '正在删除工作区…',
-  'menu.fork': '分叉会话',
-  'menu.archiveSession': '归档会话',
-  'sessions.count.one': '{n} 个会话',
-  'sessions.count.other': '{n} 个会话',
-  'actions.workspace.aria': '工作区“{name}”的操作',
-  'actions.session.aria': '会话“{name}”的操作',
-  'actions.newSession.aria': '在“{name}”中新建会话',
-  'status.running': '进行中',
-  'status.subagentsRunning.one': '{n} 个子代理运行中',
-  'status.subagentsRunning.other': '{n} 个子代理运行中',
-  'status.idle': '空闲',
-  'status.waitingApproval': '等待审批',
-  'status.planReview': '计划待审',
-  'status.waitingAnswer': '等待回答',
-  'status.completed': '已完成',
-  'schedule.active': '有活动定时任务',
-  'hover.created': '创建于 {time}',
-  'hover.copied': '已复制',
-  'date.ymd': '{y}年{m}月{d}日',
-  'time.now': '刚刚',
-  'time.minutes': '{n}分钟',
-  'time.hours': '{n}小时',
-  'time.days': '{n}天',
-  'time.months': '{n}个月',
-  'time.years': '{n}年',
-  'time.ago': '{t}前',
-} satisfies Record<string, string>
-
 /** The workspace namespace key union. */
-export type WorkspaceKey = keyof typeof zh
+export type WorkspaceKey = keyof typeof en
 
-/** English dictionary, checked complete against the zh key set. */
+/** English dictionary (the key-set source of truth). */
 export const en = {
   'group.ungrouped': 'Ungrouped',
   'session.new': 'New Session',
@@ -139,4 +72,4 @@ export const en = {
   'time.months': '{n}mo',
   'time.years': '{n}y',
   'time.ago': '{t} ago',
-} satisfies Record<WorkspaceKey, string>
+}

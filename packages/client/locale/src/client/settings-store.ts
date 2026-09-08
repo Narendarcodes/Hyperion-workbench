@@ -9,7 +9,7 @@ import { defineStore, type EngineStoreHandle } from '@deepseek-ai/dsh-client-sto
 export interface LanguageOptionRow {
   /** Locale id (the setLocale argument). */
   id: string
-  /** Display name in its own language (中文 / English). */
+  /** Display name in its own language (English). */
   label: string
 }
 

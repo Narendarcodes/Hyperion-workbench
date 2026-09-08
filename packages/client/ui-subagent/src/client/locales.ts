@@ -3,49 +3,8 @@
 /** Dictionary namespace owned by this plugin. */
 export const NS = 'subagent'
 
-/** Simplified Chinese dictionary (the key-set source of truth). */
-export const zh = {
-  'diagnostic.corrupt': '会话记录损坏',
-  'diagnostic.unsupported': '子代理记录版本不受支持',
-  'diagnostic.unavailable': '会话记录暂不可用',
-  'duration.seconds': '{seconds}秒',
-  'duration.minutes': '{minutes}分{seconds}秒',
-  'duration.hours': '{hours}小时{minutes}分{seconds}秒',
-  'duration.days': '{days}天',
-  'duration.daysHours': '{days}天{hours}小时',
-  'duration.months': '约{months}个月',
-  'duration.monthsDays': '约{months}个月{days}天',
-  'duration.years': '约{years}年',
-  'duration.yearsMonths': '约{years}年{months}个月',
-  'duration.exactDays': '{days}天{hours}小时{minutes}分{seconds}秒',
-  'duration.exactTitle': '总活跃耗时：{duration}',
-  'tokens.thousand': '{value}K',
-  'tokens.million': '{value}M',
-  'tokens.total': '{value} tok',
-  'loading.label': '正在加载子代理…',
-  'loading.aria': '正在加载子代理',
-  'load.error': '无法加载子代理',
-  'retry': '重试',
-  'mode.oneShot': '一次性',
-  'mode.continuable': '可继续',
-  'activity.running': '正在运行',
-  'activity.inactive': '当前未运行',
-  'branch.collapse': '收起 {label} 的下级子代理',
-  'branch.expand': '展开 {label} 的下级子代理',
-  'count.total.one': '{count} 个子代理',
-  'count.total.other': '{count} 个子代理',
-  'count.running.one': '{count} 个子代理，正在运行',
-  'count.running.other': '{count} 个子代理，正在运行',
-  'switcher.aria': '切换子代理：{title}',
-  'tree.aria': '子代理会话',
-  'readonly.oneShot.title': '一次性子代理记录',
-  'readonly.title': '此子代理暂时只读',
-  'readonly.oneShot.body': '一次性任务不支持后续消息，可在这里查看完整执行记录。',
-  'readonly.body': '父会话当前不在线，重新打开父会话后即可继续发送消息。',
-} as const
-
-/** English dictionary, key-identical to the Chinese source of truth. */
-export const en: Record<SubagentKey, string> = {
+/** English dictionary (the key-set source of truth). */
+export const en = {
   'diagnostic.corrupt': 'corrupted session record',
   'diagnostic.unsupported': 'unsupported subagent record version',
   'diagnostic.unavailable': 'session record temporarily unavailable',
@@ -85,5 +44,5 @@ export const en: Record<SubagentKey, string> = {
   'readonly.body': 'The parent session is offline; reopen it to continue sending messages.',
 }
 
-/** Key domain of the `subagent` namespace (zh is the source of truth). */
-export type SubagentKey = keyof typeof zh
+/** Key domain of the `subagent` namespace. */
+export type SubagentKey = keyof typeof en
