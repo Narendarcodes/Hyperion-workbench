@@ -25,8 +25,8 @@ HYPERION 处于 _开发者预览_ 阶段，正在快速迭代。**未来将出�
 ### 从源码运行
 
 ```sh
-git clone https://github.com/Narendarcodes/deepseek-harness.git
-cd deepseek-harness
+git clone https://github.com/Narendarcodes/hyperion-workbench.git
+cd hyperion-workbench
 pnpm install
 pnpm run build --profile official
 pnpm dsh web

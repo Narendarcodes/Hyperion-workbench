@@ -25,8 +25,8 @@ Review the [safety notice](SAFETY.md) before running the project.
 ### Run from source
 
 ```sh
-git clone https://github.com/Narendarcodes/deepseek-harness.git
-cd deepseek-harness
+git clone https://github.com/Narendarcodes/hyperion-workbench.git
+cd hyperion-workbench
 pnpm install
 pnpm run build --profile official
 pnpm dsh web
