@@ -5,7 +5,7 @@ kind: "package-group"
 
 # webhook/ — verified external events to DSH Sessions
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

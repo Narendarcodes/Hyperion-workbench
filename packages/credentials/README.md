@@ -5,7 +5,7 @@ kind: "package-group"
 
 # credentials/ — credentials and authorization
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

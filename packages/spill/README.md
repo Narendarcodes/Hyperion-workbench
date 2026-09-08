@@ -5,7 +5,7 @@ kind: "package-group"
 
 # spill/ — text spill capability family
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

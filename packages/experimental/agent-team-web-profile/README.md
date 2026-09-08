@@ -5,7 +5,7 @@ kind: "package-bundle"
 
 # @deepseek-ai/dsh-experimental-agent-team-web-profile
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

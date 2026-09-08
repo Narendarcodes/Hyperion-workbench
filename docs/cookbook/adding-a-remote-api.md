@@ -1,6 +1,6 @@
 # Cookbook: adding a Remote API
 
-English | [中文](adding-a-remote-api.zh.md)
+English
 
 Adding or changing a `ctx.remote` endpoint takes the five steps on this page: declare the method, declare its failures, register it on the package, consume it on the Client, and test it. Decorator semantics, lookup resolution, the generation pipeline, and the `/api` route are the mechanism and belong to the [API Gateway reference](../api-gateway.md); this page gives the action for each step and the conventions it must satisfy. Why the programming interface looks like this is in the [Typert Remote method calls Agent Note](../../.agents/notes/implemented/architecture/2026-08-02-typert-remote-method-calls.md), and why a failure is one `RemoteError` plus a code table is in the [failure vocabulary Agent Note](../../.agents/notes/implemented/architecture/2026-08-28-ctx-remote-failure-vocabulary.md).
 

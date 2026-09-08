@@ -1,96 +1,96 @@
-- dialog "设置":
+- dialog "Settings":
   - navigation:
-    - text: 设置
-    - button "通用设置":
+    - text: Settings
+    - button "General":
       - img
-      - text: 通用设置
-    - button "模型":
+      - text: General
+    - button "Models":
       - img
-      - text: 模型
-    - button "插件":
+      - text: Models
+    - button "Plugins":
       - img
-      - text: 插件
-    - button "Agent 预设":
+      - text: Plugins
+    - button "Agent presets":
       - img
-      - text: Agent 预设
-  - button "打开配置文件"
-  - button "关闭":
+      - text: Agent presets
+  - button "Open configuration file"
+  - button "Close":
     - img
-    - text: 关闭
-  - heading "Agent 预设" [level=2]
-  - paragraph: 预设即一个会话的 Agent 所运行的插件组装 —— 它的工具、提示词与能力。复制一份既有预设改成自己的，或用「创造模式」让 Agent 帮你创建。
-  - heading "内置" [level=3]
+    - text: Close
+  - heading "Agent presets" [level=2]
+  - paragraph: A preset is the plugin composition one session's agent runs — its tools, prompt, and capabilities. Duplicate an existing one and make it yours, or let the agent draft one for you in Creator mode.
+  - heading "Built-in" [level=3]
   - list:
     - listitem:
-      - 'button "当前使用: 标准模式" [disabled] [pressed]':
-        - text: 标准模式 内置 当前使用 功能完整的编码 Agent，支持文件编辑、Shell、文件与网页检索、Skills、计划、目标、子代理和工作流。
+      - 'button "In use: Standard mode" [disabled] [pressed]':
+        - text: Standard mode Built-in In use Full coding agent with file editing, shell, file and web search, skills, planning, goals, subagents, and workflows.
         - code: standard
-      - 'button "查看: 标准模式"':
+      - 'button "View: Standard mode"':
         - img
-        - text: 查看
-      - 'button "复制: 标准模式"':
+        - text: View
+      - 'button "Duplicate: Standard mode"':
         - img
-        - text: 复制
+        - text: Duplicate
     - listitem:
-      - 'button "设为默认: PTC 模式"':
-        - text: PTC 模式 内置 功能完整的编码 Agent，但默认不提供 workflow 工具；其他工具通过 PTC 模式 SDK 呈现，让模型用一个 TypeScript 程序组合多步操作。
+      - 'button "Set as default: PTC mode"':
+        - text: PTC mode Built-in Full coding agent without the workflow tool; other tools are exposed through the PTC mode SDK so the model can combine multi-step operations in one TypeScript program.
         - code: ptc
-      - 'button "查看: PTC 模式"':
+      - 'button "View: PTC mode"':
         - img
-        - text: 查看
-      - 'button "复制: PTC 模式"':
+        - text: View
+      - 'button "Duplicate: PTC mode"':
         - img
-        - text: 复制
+        - text: Duplicate
     - listitem:
-      - 'button "设为默认: 极简模式"':
-        - text: 极简模式 内置 仅提供持久 bash 与 str_replace_editor 的双工具编码 Agent。
+      - 'button "Set as default: Minimal mode"':
+        - text: Minimal mode Built-in Two-tool coding agent with persistent bash and str_replace_editor.
         - code: minimal
-      - 'button "查看: 极简模式"':
+      - 'button "View: Minimal mode"':
         - img
-        - text: 查看
-      - 'button "复制: 极简模式"':
+        - text: View
+      - 'button "Duplicate: Minimal mode"':
         - img
-        - text: 复制
+        - text: Duplicate
     - listitem:
-      - 'button "设为默认: 创造模式"':
-        - text: 创造模式 内置 用于创建自定义 Agent preset：具备标准模式的全部能力，并提供运行时检查、插件实验和 preset 创作指导。
+      - 'button "Set as default: Creator mode"':
+        - text: Creator mode Built-in Built for creating custom agent presets, with all Standard mode capabilities plus runtime inspection, plugin experiments, and preset-authoring guidance.
         - code: cordis
-      - 'button "查看: 创造模式"':
+      - 'button "View: Creator mode"':
         - img
-        - text: 查看
-      - 'button "复制: 创造模式"':
+        - text: View
+      - 'button "Duplicate: Creator mode"':
         - img
-        - text: 复制
-  - heading "自定义" [level=3]
+        - text: Duplicate
+  - heading "Custom" [level=3]
   - list:
     - listitem:
-      - 'button "加载失败: broken-yaml" [disabled]':
-        - text: broken-yaml 加载失败 自定义 暂无描述。
+      - 'button "Failed to load: broken-yaml" [disabled]':
+        - text: broken-yaml Failed to load Custom No description.
         - alert: "the composition is not valid YAML: unexpected end of the stream within a flow collection (3:1)"
         - code: broken-yaml
-      - 'button "查看路径: broken-yaml"':
+      - 'button "Show location: broken-yaml"':
         - img
-        - text: 查看路径
-      - 'button "复制: broken-yaml" [disabled]':
+        - text: Show location
+      - 'button "Duplicate: broken-yaml" [disabled]':
         - img
-        - text: 预设加载失败，不能复制
-      - 'button "删除: broken-yaml"':
+        - text: A preset that failed to load cannot be duplicated
+      - 'button "Delete: broken-yaml"':
         - img
-        - text: 删除
+        - text: Delete
     - listitem:
-      - 'button "加载失败: 幽灵预设" [disabled]':
-        - text: 幽灵预设 加载失败 自定义 composition 已被手动删除。
+      - 'button "Failed to load: Ghost preset" [disabled]':
+        - text: Ghost preset Failed to load Custom composition was deleted by hand.
         - alert: the composition file agent.cordis.yml is missing — the directory still occupies the id; delete it or restore the file
         - code: ghost
-      - 'button "查看路径: 幽灵预设"':
+      - 'button "Show location: Ghost preset"':
         - img
-        - text: 查看路径
-      - 'button "复制: 幽灵预设" [disabled]':
+        - text: Show location
+      - 'button "Duplicate: Ghost preset" [disabled]':
         - img
-        - text: 预设加载失败，不能复制
-      - 'button "删除: 幽灵预设"':
+        - text: A preset that failed to load cannot be duplicated
+      - 'button "Delete: Ghost preset"':
         - img
-        - text: 删除
-  - button "用「创造模式」创作自定义预设":
+        - text: Delete
+  - button "Draft a custom preset with Creator mode":
     - img
-    - text: 用「创造模式」创作自定义预设
+    - text: Draft a custom preset with Creator mode

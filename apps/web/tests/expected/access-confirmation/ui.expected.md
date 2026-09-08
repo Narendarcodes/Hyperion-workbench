@@ -1,10 +1,10 @@
-- dialog "确认启用完全权限？":
-  - heading "确认启用完全权限？" [level=2]
-  - button "关闭":
+- dialog "Enable Full access?":
+  - heading "Enable Full access?" [level=2]
+  - button "Close":
     - img
   - img
-  - paragraph: 启用完全权限后，智能体将减少确认步骤，并且可以直接执行更多操作，包括敏感操作、文件修改或外部命令。仅建议在你信任当前任务时使用。
-  - checkbox "我已了解风险，并愿意继续"
-  - text: 我已了解风险，并愿意继续
-  - button "取消"
-  - button "启用完全权限" [disabled]
+  - paragraph: Full access reduces confirmation steps and lets the agent perform more actions directly, including sensitive operations, file changes, or external commands. Only use it when you trust the current task.
+  - checkbox "I understand the risks and want to continue"
+  - text: I understand the risks and want to continue
+  - button "Cancel"
+  - button "Enable Full access" [disabled]

@@ -1,6 +1,6 @@
 # Run DSH behind a network proxy
 
-English | [中文](network-proxy.zh.md)
+English
 
 DSH routes its outbound requests — model calls, web search, page fetches, and MCP servers over HTTP — through the proxy named by the standard proxy environment variables. It reads them at launch; nothing else needs configuring. A few paths stay direct by design or by runtime limit, listed under "What stays direct" below.
 

@@ -1,42 +1,42 @@
-- dialog "设置":
+- dialog "Settings":
   - navigation:
-    - text: 设置
-    - button "通用设置":
+    - text: Settings
+    - button "General":
       - img
-      - text: 通用设置
-    - button "模型":
+      - text: General
+    - button "Models":
       - img
-      - text: 模型
-    - button "插件":
+      - text: Models
+    - button "Plugins":
       - img
-      - text: 插件
-    - button "Agent 预设":
+      - text: Plugins
+    - button "Agent presets":
       - img
-      - text: Agent 预设
-  - button "打开配置文件"
-  - button "关闭":
+      - text: Agent presets
+  - button "Open configuration file"
+  - button "Close":
     - img
-    - text: 关闭
-  - heading "插件" [level=2]
-  - paragraph: 配置和查看本部署已安装的插件。
-  - tablist "插件视图":
-    - tab "插件配置" [selected]
-    - tab "插件列表"
-  - tabpanel "插件配置":
+    - text: Close
+  - heading "Plugins" [level=2]
+  - paragraph: Configure and inspect the plugins installed in this deployment.
+  - tablist "Plugin views":
+    - tab "Plugin configuration" [selected]
+    - tab "Plugin list"
+  - tabpanel "Plugin configuration":
     - list:
       - listitem:
-        - 'button "展开设置: 终端"':
-          - text: 终端 限制 agent 运行的每一条命令。
+        - 'button "Show settings: Shell"':
+          - text: Shell Limits every command the agent runs.
           - img
       - listitem:
-        - 'button "展开设置: Agent 循环"':
-          - text: Agent 循环 Agent 如何派发工具调用。
+        - 'button "Show settings: Agent loop"':
+          - text: Agent loop How the agent dispatches tool calls.
           - img
       - listitem:
-        - 'button "展开设置: Subagent"':
-          - text: Subagent 控制 Agent 为 Subagent 选择模型的权限。
+        - 'button "Show settings: Subagent"':
+          - text: Subagent Control which models agents may choose for subagents.
           - img
       - listitem:
-        - 'button "展开设置: 网页搜索"':
-          - text: 网页搜索 DeepSeek 搜索提供方。
+        - 'button "Show settings: Web search"':
+          - text: Web search The DeepSeek search provider.
           - img

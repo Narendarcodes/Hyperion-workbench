@@ -5,7 +5,7 @@ kind: "package-group"
 
 # packages/typert
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

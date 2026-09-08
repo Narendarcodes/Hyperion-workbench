@@ -5,7 +5,7 @@ kind: "package-reference"
 
 # @deepseek-ai/dsh-llm-pi-ai
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

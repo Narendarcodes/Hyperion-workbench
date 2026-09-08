@@ -5,7 +5,7 @@ kind: "package-library"
 
 # @deepseek-ai/dsh-util-values
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

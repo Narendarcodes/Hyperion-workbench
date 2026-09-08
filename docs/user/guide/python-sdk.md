@@ -1,6 +1,6 @@
 # Get started with the Python SDK
 
-English | [中文](python-sdk.zh.md)
+English
 
 This tutorial installs the published Python SDK, runs the shipped standalone minimal profile, and shows how to customize the same `dsh` profile from your own program.
 

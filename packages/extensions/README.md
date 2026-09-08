@@ -5,7 +5,7 @@ kind: "package-group"
 
 # packages/extensions
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

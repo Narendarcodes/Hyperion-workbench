@@ -1,6 +1,6 @@
 # Cookbook: adding a settings card
 
-English | [中文](adding-a-settings-card.zh.md)
+English
 
 How a plugin puts its own configuration on the web settings page. Nothing in this path needs a change inside this repository: the Host serves every registered settings namespace, and the **Plugins** section keys its cards on the namespace they edit, so a plugin that registers both halves is paired up automatically.
 

@@ -1,6 +1,6 @@
 # Three-role capability design
 
-English | [中文](index.zh.md)
+English
 
 This page has two parts: a concept reference for the three-role capability pattern, followed by an advanced tutorial that builds one capability. Complete the [basic plugin path](../basic/index.md) and [services tutorial](../framework/service.md) first.
 

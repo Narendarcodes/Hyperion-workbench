@@ -5,7 +5,7 @@ kind: "package-group"
 
 # shell/ — bash capability family
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

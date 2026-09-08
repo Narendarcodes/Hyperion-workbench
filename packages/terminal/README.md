@@ -5,7 +5,7 @@ kind: "package-group"
 
 # terminal/ — persistent PTY capability family
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

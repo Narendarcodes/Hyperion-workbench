@@ -1,6 +1,6 @@
 # HYPERION
 
-English | [中文](README.zh.md)
+English
 
 **Sovereign Intelligence for Industrial Work — Intelligence That Stays On-Premise.**
 

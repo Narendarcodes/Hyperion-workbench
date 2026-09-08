@@ -1,6 +1,6 @@
 # Testing policy
 
-English | [中文](testing.zh.md)
+English
 
 How this repo tests, tier by tier, and the rules that keep a green suite meaningful. Commands live in root [AGENTS.md](../AGENTS.md); linked Agent Notes carry the rationale.
 

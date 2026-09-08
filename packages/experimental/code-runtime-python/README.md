@@ -5,7 +5,7 @@ kind: "package-reference"
 
 # @deepseek-ai/dsh-experimental-code-runtime-python
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

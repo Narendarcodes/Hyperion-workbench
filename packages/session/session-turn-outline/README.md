@@ -5,7 +5,7 @@ kind: "package-reference"
 
 # @deepseek-ai/dsh-session-turn-outline
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

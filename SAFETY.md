@@ -1,6 +1,6 @@
 # Safety
 
-English | [中文](SAFETY.zh.md)
+English
 
 ## Experimental status
 

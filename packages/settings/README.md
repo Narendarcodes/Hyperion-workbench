@@ -5,7 +5,7 @@ kind: "package-group"
 
 # settings/ — user-editable configuration
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

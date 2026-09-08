@@ -5,7 +5,7 @@ kind: "package-group"
 
 # attachment/ — durable attachment capability family
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

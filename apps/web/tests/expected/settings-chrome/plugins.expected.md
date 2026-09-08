@@ -1,6 +1,6 @@
 - listitem:
-  - button "ui-settings, 已启用":
+  - button "ui-settings, Enabled":
     - strong: ui-settings
-    - img "运行中"
-    - text: 已启用
+    - img "Running"
+    - text: Enabled
     - img

@@ -5,7 +5,7 @@ kind: "package-library"
 
 # @deepseek-ai/dsh-app-boot
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

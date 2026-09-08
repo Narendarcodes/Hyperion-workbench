@@ -5,7 +5,7 @@ kind: "package-group"
 
 # subagent/ — subagent capability family
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

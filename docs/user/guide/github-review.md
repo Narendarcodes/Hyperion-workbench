@@ -1,6 +1,6 @@
 # Create review Sessions from GitHub webhooks
 
-English | [中文](github-review.zh.md)
+English
 
 This opt-in overlay adds a signed GitHub endpoint to `dsh web`. When a pull request in the configured repository changes from draft to ready for review, the rule creates a titled root Session under the repository's Web Workspace and starts a read-only review prompt.
 

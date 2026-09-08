@@ -5,7 +5,7 @@ kind: "package-reference"
 
 # @deepseek-ai/dsh-sandbox
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

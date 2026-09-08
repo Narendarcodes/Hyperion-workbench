@@ -5,7 +5,7 @@ kind: "package-bundle"
 
 # @deepseek-ai/dsh-subagent-claude-code
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

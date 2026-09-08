@@ -1,6 +1,6 @@
 # DeepSeek Harness Python SDK
 
-English | [中文](README.zh.md)
+English
 
 Python subprocess SDK for driving DeepSeek Harness over newline-delimited JSON-RPC on stdio. Install `deepseek-harness-sdk`; it installs the exact same-version `deepseek-harness-runtime-bin` wheel for the current platform.
 

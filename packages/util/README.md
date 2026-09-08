@@ -5,7 +5,7 @@ kind: "package-group"
 
 # util/ — shared utilities
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

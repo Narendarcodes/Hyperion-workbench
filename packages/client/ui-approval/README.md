@@ -4,7 +4,7 @@ kind: "package-reference"
 ---
 # @deepseek-ai/dsh-client-ui-approval
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

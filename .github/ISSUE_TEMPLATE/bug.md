@@ -1,25 +1,25 @@
 ---
 name: Bug
-about: 记录现有预期行为的失效
+about: Report a failure of existing expected behavior
 type: Bug
 ---
 
 ## Summary
 
-<!-- 简要说明发生了什么错误，以及受影响的用户或场景。 -->
+<!-- Briefly describe what went wrong and the affected users or scenarios. -->
 
 ## Reproduction
 
-<!-- 列出能稳定触发问题的最小步骤、输入或代码。 -->
+<!-- List the minimal steps, inputs, or code that reliably trigger the issue. -->
 
 ## Current behavior
 
-<!-- 说明实际结果，并附上必要的错误信息、日志或截图。 -->
+<!-- Describe the actual result, with error messages, logs, or screenshots as needed. -->
 
 ## Expected behavior
 
-<!-- 说明正确结果。 -->
+<!-- Describe the correct result. -->
 
 ## Environment
 
-<!-- 说明相关版本、平台、配置或运行条件。 -->
+<!-- Describe the relevant versions, platforms, configuration, or runtime conditions. -->

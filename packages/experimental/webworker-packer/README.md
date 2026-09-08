@@ -5,7 +5,7 @@ kind: "package-library"
 
 # `@deepseek-ai/dsh-experimental-webworker-packer`
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 

@@ -4,7 +4,7 @@ kind: "package-reference"
 ---
 # Workspace Controller
 
-English | [中文](README.zh.md)
+English
 
 ## Summary
 
