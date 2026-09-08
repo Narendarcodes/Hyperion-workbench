@@ -77,7 +77,7 @@ describe('Chat apply wiring', () => {
     const b = await bench()
     const views = b.runtime.slots.entries('conversation.view')
     expect(views.map(row => row.options.id)).toEqual(['chat'])
-    expect(resolveSlotLabel(views[0]?.options.label)).toBe('对话')
+    expect(resolveSlotLabel(views[0]?.options.label)).toBe('Chat')
     expect(b.runtime.slots.spec('conversation.chat.node'))
       .toMatchObject({ kind: 'keyed', scope: 'session' })
     expect(b.runtime.slots.entries('conversation.composer.dock').map(row => row.options.id))

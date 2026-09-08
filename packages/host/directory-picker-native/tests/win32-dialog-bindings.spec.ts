@@ -183,9 +183,9 @@ describe('loadWin32DialogBindings over the fake COM world', () => {
     const bindings = await loadWin32DialogBindings()
     const showing = vi.fn()
 
-    expect(runFolderDialog(bindings, '选择工作区目录', showing)).toBe('C:\\选中\\directory')
+    expect(runFolderDialog(bindings, 'Choose workspace目录', showing)).toBe('C:\\选中\\directory')
     expect(world.dpiContexts).toEqual([-4])
-    expect(world.titles).toEqual(['选择工作区目录'])
+    expect(world.titles).toEqual(['Choose workspace目录'])
     expect(world.options).toHaveLength(1)
     expect(showing).toHaveBeenCalledWith(31337)
     expect(world.freed).toHaveLength(1)

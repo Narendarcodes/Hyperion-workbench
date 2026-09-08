@@ -20,16 +20,16 @@ import { DetailsPanel } from '@deepseek-ai/dsh-client-ui-chat/src/client/details
 import { WebRow, webToolview } from '../src/client/tool/toolviews/web-row.tsx'
 import { renderToolDetails, toolChatSnapshot, useEmptyTrajectory } from './tool-details-render.client.tsx'
 import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
-import { zh } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
-import { zh as chatZh } from '@deepseek-ai/dsh-client-ui-chat/src/client/locale.ts'
+import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
+import { en } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
+import { en as chatEn } from '@deepseek-ai/dsh-client-ui-chat/src/client/locale.ts'
 
 afterEach(cleanup)
 
 const SID = 's1' as SessionId
 
-const t = makeTranslate(zh, commonZh)
-const chatT = makeTranslate(chatZh, commonZh)
+const t = makeTranslate(en, commonEn)
+const chatT = makeTranslate(chatEn, commonEn)
 
 const SEARCH_ARGS = '{"queries":["deepseek harness"]}'
 const FETCH_ARGS = '{"url":"https://example.com/page"}'
@@ -155,7 +155,7 @@ describe('chat row web body', () => {
     const globe = render(<IconGlobeOutline14 />).container.querySelector('svg')!.outerHTML
     const view = render(<WebRow {...rowProps(settledSearch(), 'web_search')} />)
     // Collapsed: the summary row alone, no card in the DOM.
-    expect(view.getByText('网页搜索')).toBeTruthy()
+    expect(view.getByText('Search')).toBeTruthy()
     expect(view.container.querySelector('svg')?.outerHTML).toBe(globe)
     expect(view.queryByText('Titled')).toBeNull()
     expect(view.container.querySelector('[data-web]')).toBeNull()
@@ -169,7 +169,7 @@ describe('chat row web body', () => {
 
   it('the WebRow expands to the fetch card, titled Fetch', () => {
     const view = render(<WebRow {...rowProps(settledFetch(), 'web_fetch')} />)
-    expect(view.getByText('网页获取')).toBeTruthy()
+    expect(view.getByText('Fetch')).toBeTruthy()
     expect(view.container.querySelector('[data-web]')).toBeNull()
     toggleRow(view)
     // The url shows as the card's link; scope to the card.
@@ -180,7 +180,7 @@ describe('chat row web body', () => {
 
   it('a running web call is the summary row alone, with nothing to expand', () => {
     const view = render(<WebRow {...rowProps(runningSearch(), 'web_search')} />)
-    expect(view.getByText('网页搜索')).toBeTruthy()
+    expect(view.getByText('Search')).toBeTruthy()
     expect(view.queryByText('Titled')).toBeNull()
     // No card material and no expandable body: clicking the row reveals nothing.
     expect(view.container.querySelector('[data-expandable]')).toBeNull()
@@ -191,7 +191,7 @@ describe('chat row web body', () => {
     const view = render(<WebRow {...rowProps(settledSearch({
       isError: true,
     }), 'web_search')} />)
-    expect(view.getByText('网页搜索')).toBeTruthy()
+    expect(view.getByText('Search')).toBeTruthy()
     expect(view.container.querySelector('[data-web]')).toBeNull()
     // The row reflects the error state so the summary line still reads as failed.
     expect(view.container.querySelector('[data-state="error"]')).not.toBeNull()
@@ -281,7 +281,7 @@ describe('DetailsPanel web Output section', () => {
     expect(view.getByText('HTTP 200')).toBeTruthy()
     // The card is a summary (URL + status only); the panel is the single-call
     // reading surface, so the fetched body still renders below the card.
-    const output = view.getByText('输出').closest('section')
+    const output = view.getByText('Output').closest('section')
     expect(output?.querySelector('pre')?.textContent).toContain('fetch body')
   })
 
@@ -290,7 +290,7 @@ describe('DetailsPanel web Output section', () => {
       nodes: [settledSearch({ meta: undefined })],
     }), { turnSeq: 10, callId: 'c1', toolName: 'web_search' })
     expect(view.container.querySelector('[data-web]')).toBeNull()
-    const output = view.getByText('输出').closest('section')
+    const output = view.getByText('Output').closest('section')
     expect(output?.querySelector('pre')?.textContent).toContain('search text')
   })
 })

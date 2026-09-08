@@ -12,10 +12,10 @@ import type {
 import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
+import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
 import { CHAT_SEARCH_MAX_LINES, searchCardModel } from '../src/client/tool/models/search-card-model.ts'
-import { zh } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
-import { zh as chatZh } from '@deepseek-ai/dsh-client-ui-chat/src/client/locale.ts'
+import { en } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
+import { en as chatEn } from '@deepseek-ai/dsh-client-ui-chat/src/client/locale.ts'
 import { createChatStore } from '@deepseek-ai/dsh-client-ui-chat/src/client/stores.ts'
 import { GenericToolCard, type GenericToolCardProps } from '../src/client/tool/toolviews/GenericToolCard.tsx'
 import { DetailsPanel } from '@deepseek-ai/dsh-client-ui-chat/src/client/details/DetailsPanel.tsx'
@@ -26,8 +26,8 @@ type SearchRowProps = Parameters<typeof SearchRow>[0]
 
 afterEach(cleanup)
 
-const t: GenericToolCardProps['t'] = makeTranslate(zh, commonZh)
-const chatT = makeTranslate(chatZh, commonZh)
+const t: GenericToolCardProps['t'] = makeTranslate(en, commonEn)
+const chatT = makeTranslate(chatEn, commonEn)
 
 /** The rendered search card's kind attribute, so a render site cannot silently drop it. */
 function searchKindOf(container: HTMLElement): string | null {
@@ -257,7 +257,7 @@ describe('SearchRow keyed card', () => {
     expect(searchRows(view.container)).toContain('12: const foo = 1')
     expect(searchKindOf(view.container)).toBe('matches')
     // The card's copy control lives inside the expanded body.
-    expect(view.getByText('复制')).toBeTruthy()
+    expect(view.getByText('Copy')).toBeTruthy()
   })
 
   it('expands to the glob path card', () => {
@@ -449,7 +449,7 @@ describe('DetailsPanel Output section (search)', () => {
       nodes: [settledGrep({ meta: undefined })],
     }), grepTarget)
     expect(searchKindOf(view.container)).toBeNull()
-    const output = view.getByText('输出').closest('section')
+    const output = view.getByText('Output').closest('section')
     expect(output?.querySelector('pre')?.textContent).toContain('const foo = 1')
   })
 })

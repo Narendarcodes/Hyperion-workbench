@@ -29,12 +29,12 @@ describe('projectUserText', () => {
   })
 
   it('folds the wire session form to its label with the session glyph', () => {
-    const host = project('看看 @[查看并分析图片](dsh-session:InNlc3Npb24tNDM0) 的结论')
+    const host = project('看看 @[Inspect并分析Image](dsh-session:InNlc3Npb24tNDM0) 的结论')
     const chip = host.querySelector('[data-ref-chip="session"]')!
-    expect(chip.textContent).toBe('查看并分析图片')
-    expect(chip.getAttribute('title')).toBe('@[查看并分析图片](dsh-session:InNlc3Npb24tNDM0)')
+    expect(chip.textContent).toBe('Inspect并分析Image')
+    expect(chip.getAttribute('title')).toBe('@[Inspect并分析Image](dsh-session:InNlc3Npb24tNDM0)')
     expect(chip.querySelector('svg')).not.toBeNull()
-    expect(host.textContent).toBe('看看 查看并分析图片 的结论')
+    expect(host.textContent).toBe('看看 Inspect并分析Image 的结论')
   })
 
   it('prefers the wire fold over the bare-token scan on the same range', () => {
@@ -44,11 +44,11 @@ describe('projectUserText', () => {
   })
 
   it('decorates recall-associated labels, files, folders, and quoted paths', () => {
-    const host = project('@会话一 说 @src/deep/file.txt 与 @dir/ 与 @"a b.md"', ['会话一'])
+    const host = project('@Sessions一 说 @src/deep/file.txt 与 @dir/ 与 @"a b.md"', ['Sessions一'])
     const kinds = [...host.querySelectorAll('[data-ref-chip]')].map(c =>
       [c.getAttribute('data-ref-chip'), c.textContent])
     expect(kinds).toEqual([
-      ['session', '会话一'],
+      ['session', 'Sessions一'],
       ['file', 'file.txt'],
       ['folder', 'dir'],
       ['file', 'a b.md'],
@@ -94,10 +94,10 @@ describe('projectUserText', () => {
   })
 
   it('prefers the longer recall label when one nests inside another', () => {
-    const host = project('@会话一 收尾', ['会话', '会话一'])
+    const host = project('@Sessions一 收尾', ['Sessions', 'Sessions一'])
     const chips = [...host.querySelectorAll('[data-ref-chip="session"]')]
-    expect(chips.map(c => c.textContent)).toEqual(['会话一'])
-    expect(host.textContent).toBe('会话一 收尾')
+    expect(chips.map(c => c.textContent)).toEqual(['Sessions一'])
+    expect(host.textContent).toBe('Sessions一 收尾')
   })
 
   it('falls back to the raw quoted label when the path has no basename', () => {

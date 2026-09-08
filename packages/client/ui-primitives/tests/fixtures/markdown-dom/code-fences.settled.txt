@@ -6,7 +6,7 @@
           #text "ts"
         <div class="_action_9aea57">
           <button class="_copyButton_9aea57" type="button">
-            #text "复制"
+            #text "Copy"
     <div>
       <pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0">
         <code>
@@ -29,7 +29,7 @@
         <div class="_infostring_9aea57">
         <div class="_action_9aea57">
           <button class="_copyButton_9aea57" type="button">
-            #text "复制"
+            #text "Copy"
     <pre class="_plain_9aea57">
       <code>
         #text "no language"
@@ -40,7 +40,7 @@
           #text "unknown-lang"
         <div class="_action_9aea57">
           <button class="_copyButton_9aea57" type="button">
-            #text "复制"
+            #text "Copy"
     <pre class="_plain_9aea57">
       <code>
         #text "plain fallback"
@@ -51,7 +51,7 @@
           #text "ts"
         <div class="_action_9aea57">
           <button class="_copyButton_9aea57" type="button">
-            #text "复制"
+            #text "Copy"
     <div>
       <pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0">
         <code>
@@ -72,7 +72,7 @@
         <div class="_infostring_9aea57">
         <div class="_action_9aea57">
           <button class="_copyButton_9aea57" type="button">
-            #text "复制"
+            #text "Copy"
     <pre class="_plain_9aea57">
       <code>
         #text "indented code block\nsecond line"

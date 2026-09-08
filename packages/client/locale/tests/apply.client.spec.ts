@@ -79,13 +79,11 @@ describe('locale apply', () => {
     declareItems(before.slots)
     await before.ctx.plugin({ inject: [...inject], apply }).await()
     const locale = before.ctx.get('locale') as LocaleRuntime
-    // Base dictionaries are registered: the (ns, locale) seats are occupied.
-    expect(() => locale.register('common', 'zh', {})).toThrow('already has locale')
+    // Base dictionaries are registered: the (ns, locale) seat is occupied.
     expect(() => locale.register('common', 'en', {})).toThrow('already has locale')
     // The lane has no jsdom `window`, so detection never runs and a fresh
-    // service opens on FALLBACK_LOCALE (en); read the zh side explicitly.
-    locale.setLocale('zh')
-    expect(locale.bind(SETTINGS_NS)('language.title')).toBe('语言')
+    // service opens on FALLBACK_LOCALE (en); read the shipped copy directly.
+    expect(locale.bind(SETTINGS_NS)('language.title')).toBe('Language')
     const entry = before.slots.entries(SLOT).find(e => e.component === LanguageRow)!
     expect(entry.options).toMatchObject({ id: 'language', order: 0 })
 
@@ -109,15 +107,17 @@ describe('locale apply', () => {
     const { entry, instance, face } = faceOf(b.slots)
     // The inject-time re-sync sealed the init window: the mirror is current.
     expect(instance.getSnapshot().active).toBe('en')
-    expect(instance.getSnapshot().options.map(o => o.id)).toEqual(['zh', 'en'])
+    expect(instance.getSnapshot().options.map(o => o.id)).toEqual(['en'])
     // Copy rides the standard locale seat: the entry declares the namespace.
     expect(entry.locale).toBe(SETTINGS_NS)
     expect(locale.bind(SETTINGS_NS)('language.title')).toBe('Language')
 
-    face.setLocale('zh')
-    expect(locale.getLocale().active).toBe('zh')
-    expect(instance.getSnapshot().active).toBe('zh')
-    expect(locale.bind(SETTINGS_NS)('language.title')).toBe('语言')
+    locale.addLanguage({ id: 'ja', label: '日本語', fallback: 'en' })
+    face.setLocale('ja')
+    expect(locale.getLocale().active).toBe('ja')
+    expect(instance.getSnapshot().active).toBe('ja')
+    // The settings namespace ships English only; ja falls back to it.
+    expect(locale.bind(SETTINGS_NS)('language.title')).toBe('Language')
     await vi.waitFor(() => { expect(b.mutate).toHaveBeenCalledTimes(2) })
   })
 
@@ -136,13 +136,12 @@ describe('locale apply', () => {
     })
     await languagePack.await()
     expect(instance.getSnapshot().options).toEqual([
-      { id: 'zh', label: '中文' },
       { id: 'en', label: 'English' },
       { id: 'ja', label: '日本語' },
     ])
 
     await languagePack.dispose()
-    expect(instance.getSnapshot().options.map(option => option.id)).toEqual(['zh', 'en'])
+    expect(instance.getSnapshot().options.map(option => option.id)).toEqual(['en'])
   })
 
   it('loads and refreshes the explicit Host preference after nonblocking activation', async () => {
@@ -151,21 +150,25 @@ describe('locale apply', () => {
     // through the document invalidation, exactly as production announces one.
     // Preference must differ from the provisional locale (FALLBACK_LOCALE = en
     // with no window), or clearing it below would be unobservable.
-    b.setHostPreference('zh')
+    b.setHostPreference('ja')
     b.events.emit('settings/document-updated', [LOCALE_SETTINGS_NAMESPACE, 0])
     declareItems(b.slots)
     await b.ctx.plugin({ inject: [...inject], apply }).await()
     const locale = b.ctx.get('locale') as LocaleRuntime
-    await vi.waitFor(() => { expect(locale.getLocale().active).toBe('zh') })
+    // The stored preference names a language pack that registers below; until
+    // then the provisional locale stands.
+    expect(locale.getLocale().active).toBe('en')
+    locale.addLanguage({ id: 'ja', label: '日本語', fallback: 'en' })
+    await vi.waitFor(() => { expect(locale.getLocale().active).toBe('ja') })
     // Cleared preference falls back to the provisional locale.
     b.setHostPreference(undefined)
     b.events.emit('settings/document-updated', [LOCALE_SETTINGS_NAMESPACE, 0])
     await vi.waitFor(() => { expect(locale.getLocale().active).toBe('en') })
-    // Re-selecting zh after the clear is an explicit pick of the provisional
+    // Re-selecting ja after the clear is an explicit pick of a non-provisional
     // value and must persist as a written preference.
-    b.setHostPreference('zh')
+    b.setHostPreference('ja')
     b.events.emit('settings/document-updated', [LOCALE_SETTINGS_NAMESPACE, 0])
-    await vi.waitFor(() => { expect(locale.getLocale().active).toBe('zh') })
+    await vi.waitFor(() => { expect(locale.getLocale().active).toBe('ja') })
     expect(b.describe).toHaveBeenCalledTimes(4)
   })
 

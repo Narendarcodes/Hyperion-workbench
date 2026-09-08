@@ -14,12 +14,11 @@ import type { SessionPendingInteractionSnapshot } from '@deepseek-ai/dsh-client-
 import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types'
 import type { ConversationRootProps } from '../src/client/skeleton/ConversationRoot.tsx'
 import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
 import { EMPTY_CONVERSATION_SNAPSHOT } from '../src/client/contract/snapshot.ts'
 import type { ConversationSnapshot } from '../src/client/contract/snapshot.ts'
 import { createConversationStore } from '../src/client/stores.ts'
 import { SessionInputShell } from '../src/client/input/facade.ts'
-import { en, zh } from '../src/client/locales.ts'
+import { en } from '../src/client/locales.ts'
 import { ConversationRoot } from '../src/client/skeleton/ConversationRoot.tsx'
 import { ConversationSession, ConversationSessionHeader } from '../src/client/skeleton/ConversationSession.tsx'
 import { conversationPhase } from '../src/client/contract/snapshot.ts'
@@ -76,7 +75,7 @@ beforeEach(() => {
   vi.stubGlobal('ResizeObserver', ResizeObserverStub)
 })
 
-const t: ConversationRootProps['t'] = makeTranslate(zh, commonZh)
+const t: ConversationRootProps['t'] = makeTranslate(en, commonEn)
 
 const sid = (id: string) => id as SessionId
 const wid = (id: string) => id as WorkspaceId
@@ -463,7 +462,7 @@ describe('ConversationRoot resident composer', () => {
     expect(host).not.toBeNull()
     expect(header?.getAttribute('aria-hidden')).toBe('true')
     expect(b.view.getByText('HYPERION')).toBeTruthy()
-    expect(b.view.getByText('预览版')).toBeTruthy()
+    expect(b.view.getByText('Preview')).toBeTruthy()
     expect(b.view.queryByTestId('view-chat')).toBeNull()
     // The same machine-backed textarea is live in the hero, and the
     // persistence mirror stays bound (ConversationSession mounts chrome-hidden
@@ -474,7 +473,7 @@ describe('ConversationRoot resident composer', () => {
     expect(b.store.store.getSnapshot().draft).toBe('draft in hero')
     // Picker: open through the chip; a pick switches to the other
     // workspace's blank session (draft carry is apply-layer wiring).
-    fireEvent.click(b.view.getByRole('button', { name: '选择工作区' }))
+    fireEvent.click(b.view.getByRole('button', { name: 'Choose workspace' }))
     const owner = b.pickerOwner() as { open: boolean; onPick(id: WorkspaceId): void }
     expect(owner.open).toBe(true)
     act(() => { owner.onPick(wid('second')) })
@@ -579,7 +578,7 @@ describe('ConversationRoot resident composer', () => {
       ],
       selectWorkspace,
     )
-    fireEvent.click(b.view.getByRole('button', { name: '选择工作区' }))
+    fireEvent.click(b.view.getByRole('button', { name: 'Choose workspace' }))
     const owner = b.pickerOwner() as { onPick(id: WorkspaceId): void }
     await act(async () => { owner.onPick(wid('second')); await Promise.resolve() })
     expect(selectWorkspace).toHaveBeenCalledWith(wid('second'))
@@ -589,7 +588,7 @@ describe('ConversationRoot resident composer', () => {
 
   it('blank session keeps the interactive picker chip (workspace switchable until the first message)', () => {
     const b = mount(sessionSnapshotOf({ blank: true }))
-    const chip = b.view.getByRole('button', { name: '选择工作区' })
+    const chip = b.view.getByRole('button', { name: 'Choose workspace' })
     expect((chip as HTMLButtonElement).disabled).toBe(false)
     expect(b.slotCalls).toContain('conversation.hero.workspace')
     // The agent-preset chip sits in the same row, for the same reason: both

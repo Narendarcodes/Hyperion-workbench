@@ -8,7 +8,7 @@ import {
   WELCOME_NOTICE_COPY,
   type WebScaffold,
 } from './scaffold.ts'
-import { ZH_BROWSER_LOCALE } from './support.ts'
+import { EN_BROWSER_LOCALE } from './support.ts'
 
 const MODE = webSnapshotMode()
 
@@ -26,7 +26,7 @@ describe.skipIf(MODE === 'record')('web e2e: remote welcome notice', () => {
     browser = await chromium.launch()
     page = await browser.newPage({
       viewport: { width: 1440, height: 960 },
-      locale: ZH_BROWSER_LOCALE,
+      locale: EN_BROWSER_LOCALE,
     })
     tripwire = watchConsole(page)
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
@@ -39,11 +39,11 @@ describe.skipIf(MODE === 'record')('web e2e: remote welcome notice', () => {
   })
 
   it('advances process-locally and presents the notice again after reload', async () => {
-    const welcome = page.getByRole('dialog', { name: WELCOME_NOTICE_COPY.zh.title })
+    const welcome = page.getByRole('dialog', { name: WELCOME_NOTICE_COPY.en.title })
     await welcome.waitFor({ timeout: 15_000 })
     expect(await page.locator('#root').evaluate(root => (root as HTMLElement).inert)).toBe(true)
 
-    await welcome.getByRole('button', { name: WELCOME_NOTICE_COPY.zh.continueLabel }).click()
+    await welcome.getByRole('button', { name: WELCOME_NOTICE_COPY.en.continueLabel }).click()
     await welcome.waitFor({ state: 'detached', timeout: 15_000 })
     await expect.poll(
       () => page.locator('#root').evaluate(root => (root as HTMLElement).inert),

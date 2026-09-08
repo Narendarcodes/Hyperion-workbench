@@ -5,14 +5,14 @@ import { cleanup, render } from '@testing-library/react'
 import type { SessionSnapshot } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { ToolResultNode } from '@deepseek-ai/dsh-client-ui-chat/client'
 import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
+import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
 import type { ToolCallOwnerProps, ToolTreeProps } from '../src/client/contract/slots.ts'
 import { ToolCallTree } from '../src/client/tool/ToolCallTree.tsx'
-import { zh } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
+import { en } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
 
 afterEach(cleanup)
 
-const t: ToolTreeProps['t'] = makeTranslate(zh, commonZh)
+const t: ToolTreeProps['t'] = makeTranslate(en, commonEn)
 
 const root = (callId: string, call: ToolResultNode['call']): ToolResultNode => ({
   kind: 'tool-result', seq: 3, time: 3_000, callId, call, callTime: 2_000,

@@ -13,7 +13,7 @@ import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import { ComposerBlockRegistry } from '../src/client/input/blocks.ts'
 import { InputHub } from '../src/client/input/hub.ts'
 import { ConversationController } from '../src/client/service.ts'
-import { zh } from '../src/client/locales.ts'
+import { en } from '../src/client/locales.ts'
 
 async function bench(maxConcurrentFileUploads = 2) {
   const runtime = await SlotTestRuntime.create()
@@ -37,7 +37,7 @@ async function bench(maxConcurrentFileUploads = 2) {
   })
   // config.input is required (the apply shares its hub with the inject
   // factories); the bench passes its own instance explicitly.
-  const hub = new InputHub(runtime.ctx, makeTranslate(zh, {}))
+  const hub = new InputHub(runtime.ctx, makeTranslate(en, {}))
   const fiber = runtime.ctx.plugin(ConversationController, {
     input: hub,
     blocks: new ComposerBlockRegistry(),
@@ -452,7 +452,7 @@ describe('ConversationController', () => {
     // No Client Sessions service at all: a bare context lacks the assembled controller.
     const bare = new Context()
     await bare.plugin(ConversationController, {
-      input: new InputHub(bare, makeTranslate(zh, {})),
+      input: new InputHub(bare, makeTranslate(en, {})),
       blocks: new ComposerBlockRegistry(),
       maxConcurrentFileUploads: 2,
     }).await()
@@ -661,7 +661,7 @@ describe('sendSession submission echo', () => {
       await vi.waitFor(() => {
         expect(b.root.fileUploads.getSnapshot()[attachments[1]!.id]?.status).toBe('ready')
       })
-      await expect(b.root.sendSession(session, '失败', attachments.map(attachment => attachment.id), 'queue'))
+      await expect(b.root.sendSession(session, 'Failed', attachments.map(attachment => attachment.id), 'queue'))
         .resolves.toEqual({ kind: 'error' })
       b.retire.onRetire?.({ reason: 'failed' })
       expect(b.root.resolveDraftAttachments(attachments.map(attachment => attachment.id))).toHaveLength(2)
@@ -846,7 +846,7 @@ describe('InputHub queue steering (empty-draft accelerated Enter)', () => {
     b.shell.steerQueue()
     await vi.waitFor(() => {
       expect(b.shell.notices.getSnapshot()).toEqual(
-        expect.objectContaining({ level: 'error', text: '插话发送失败，请重试。' }),
+        expect.objectContaining({ level: 'error', text: 'Steering failed. Try again.' }),
       )
     })
     expect(b.updateQueue).toHaveBeenCalledTimes(1)

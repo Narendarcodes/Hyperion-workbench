@@ -2,15 +2,15 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render } from '@testing-library/react'
 import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
-import { zh } from '../src/client/locale.ts'
+import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
+import { en } from '../src/client/locale.ts'
 import { AssistantMarkdown, type AssistantMarkdownProps } from '../src/client/chat/AssistantMarkdown.tsx'
 
 afterEach(() => {
   cleanup()
 })
 
-const t = makeTranslate(zh, commonZh)
+const t = makeTranslate(en, commonEn)
 const renderMessageImages: AssistantMarkdownProps['renderMessageImages'] = () => null
 
 describe('ReasoningRow', () => {
@@ -23,7 +23,7 @@ describe('ReasoningRow', () => {
         renderMessageImages={renderMessageImages}
       />,
     )
-    expect(view.getByText('运行中')).toBeTruthy()
+    expect(view.getByText('Running')).toBeTruthy()
     expect(view.getByText('Newest reasoning tokens').parentElement?.getAttribute('data-follow-end'))
       .toBe('true')
 
@@ -47,7 +47,7 @@ describe('ReasoningRow', () => {
       />,
     )
     const settledSummary = view.getByText('Inspect the session')
-    expect(view.queryByText('运行中')).toBeNull()
+    expect(view.queryByText('Running')).toBeNull()
     expect(settledSummary.parentElement?.hasAttribute('data-follow-end')).toBe(false)
   })
 
@@ -66,7 +66,7 @@ describe('ReasoningRow', () => {
     expect(row.getAttribute('aria-expanded')).toBe('true')
     expect(view.getByText(/Check persistence/)).toBeTruthy()
 
-    fireEvent.click(view.getByText('思考'))
+    fireEvent.click(view.getByText('Think'))
     expect(row.getAttribute('aria-expanded')).toBe('false')
   })
 
@@ -79,7 +79,7 @@ describe('ReasoningRow', () => {
         renderMessageImages={renderMessageImages}
       />,
     )
-    fireEvent.click(view.getByText('思考'))
+    fireEvent.click(view.getByText('Think'))
     expect(view.getAllByText(/Inspect the session/)).toHaveLength(1)
     expect(view.queryByText('IN')).toBeNull()
     expect(view.container.querySelector('[class*="ioCard"]')).toBeNull()

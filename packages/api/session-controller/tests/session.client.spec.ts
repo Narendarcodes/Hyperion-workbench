@@ -198,7 +198,7 @@ describe('paging', () => {
     api.onHistory = () => histResponse([
       ev.compactSummary(SessionSeq(80), '窗外范围的摘要', SessionSeq(3), SessionSeq(40)),
       ev.compactCheckpoint(SessionSeq(81), SessionSeq(80), SessionSeq(3), SessionSeq(40)),
-      ev.user(SessionSeq(82), '压缩后的新问题'),
+      ev.user(SessionSeq(82), 'Compaction后的新问题'),
     ], true)
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
     try {
@@ -593,7 +593,7 @@ describe('prompt and cancel errors', () => {
     const { api, session } = makeSession()
     session.handleBlank(true)
     api.onPrompt = () => Promise.resolve(err(new RemoteError('session/agent-busy', 'busy', { reason: 'x' })))
-    const result = await session.prompt([{ type: 'text', text: '失败的' }], 'queue')
+    const result = await session.prompt([{ type: 'text', text: 'Failed的' }], 'queue')
     expect(result.ok).toBe(false)
     expect(session.getSnapshot().promptError).toMatchObject({ op: 'send', error: { code: 'session/agent-busy' } })
     expect(session.getSnapshot()).toMatchObject({

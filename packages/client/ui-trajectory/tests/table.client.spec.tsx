@@ -8,7 +8,7 @@ import type { RenderMessageImages } from '@deepseek-ai/dsh-client-ui-conversatio
 import { TrajectoryTable as LocalizedTrajectoryTable } from '../src/client/TrajectoryTable.tsx'
 import type { TrajectoryTurnModel } from '../src/client/layout.ts'
 import { trajectoryRecordId } from '../src/client/trajectory-record.ts'
-import { t, tZh } from './locale.client.ts'
+import { t } from './locale.client.ts'
 
 const renderImagesStub: RenderMessageImages = ({ images }) => (
   <div data-testid="record-images" data-count={images.length}>
@@ -150,7 +150,7 @@ describe('TrajectoryTable', () => {
     const assistant = TURNS[0]!.groups[0]!.cells[0]!
     render(
       <LocalizedTrajectoryTable
-        t={tZh}
+        t={t}
         renderImages={renderImagesStub}
         turns={TURNS}
         collapsedTurns={new Set<number>()}
@@ -160,7 +160,7 @@ describe('TrajectoryTable', () => {
       />,
     )
 
-    expect(screen.getByText('2 个工具调用 · bash')).toBeTruthy()
+    expect(screen.getByText('2 tool calls · bash')).toBeTruthy()
   })
 
   it('shows assistant timing facts after keyboard selection', () => {

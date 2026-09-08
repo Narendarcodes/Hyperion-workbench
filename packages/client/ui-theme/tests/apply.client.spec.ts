@@ -14,9 +14,9 @@ import { AppearanceRow } from '../src/client/AppearanceRow.tsx'
 import { FontSizeRow } from '../src/client/FontSizeRow.tsx'
 import type { createAppearanceRowStore, createFontSizeRowStore } from '../src/client/settings-store.ts'
 
-// These specs assert the shipped Chinese copy. The lane has no jsdom `window`,
+// These specs assert the shipped English copy. The lane has no jsdom `window`,
 // so browser-language detection never runs and a fresh LocaleRuntime opens on
-// FALLBACK_LOCALE (en); bench stages zh explicitly on the locale instead.
+// FALLBACK_LOCALE (en); bench stages en explicitly on the locale instead.
 
 const SLOT = 'settings.general.item'
 
@@ -30,7 +30,7 @@ async function bench(isLoopback = true) {
   const ctx = new Context()
   await ctx.plugin(SlotRegistry).await()
   const locale = new LocaleRuntime(ctx)
-  locale.setLocale('zh')
+  locale.setLocale('en')
   ctx.provide('locale', locale)
   const section: Record<string, unknown> = { preference: 'system', fontSize: 14 }
   const namespace = () => ({
@@ -95,8 +95,8 @@ describe('ui-theme apply', () => {
     const before = await bench()
     declareItems(before.slots)
     await before.ctx.plugin({ inject: [...inject], apply }).await()
-    expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('外观')
-    expect(before.locale.bind(SETTINGS_NS)('fontSize.title')).toBe('字号大小')
+    expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('Appearance')
+    expect(before.locale.bind(SETTINGS_NS)('fontSize.title')).toBe('Font size')
     before.locale.setLocale('en')
     expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('Appearance')
     const entry = before.slots.entries(SLOT).find(e => e.component === AppearanceRow)!

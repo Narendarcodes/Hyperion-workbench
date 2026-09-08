@@ -889,11 +889,12 @@ describe('Git hooks', () => {
       if (!isRecord(hook) || !Array.isArray(hook.jobs)) {
         throw new TypeError(`lefthook must define ${hookName} jobs`)
       }
-      const pairing: unknown = hook.jobs.find(
-        (job: unknown) => isRecord(job) && job.name === 'translation pairing (staged records)',
-      )
-
-      expect(pairing).toMatchObject({ exclude: ['.agents/notes/archived/**'] })
+      const names: string[] = []
+      for (const job of hook.jobs) {
+        if (isRecord(job) && typeof job.name === 'string') names.push(job.name)
+      }
+      expect(names).toContain('archived agent notes')
+      expect(names.some(name => name.includes('pairing'))).toBe(false)
     }
   })
 })

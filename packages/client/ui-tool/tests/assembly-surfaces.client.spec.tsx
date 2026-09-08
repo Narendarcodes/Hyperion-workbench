@@ -110,13 +110,13 @@ describe('todo_write assembly (product registrations, no outlet twins)', () => {
     // Keyed toolview registration took the row (summary derived from args).
     const row = view.container.querySelector('[data-tool="todo_write"]')
     expect(row).not.toBeNull()
-    expect(row!.textContent).toContain('1/3 已完成 · 实现 fixture 样本')
+    expect(row!.textContent).toContain('1/3 completed · 实现 fixture 样本')
 
     // The plan strip sits in the input dock, fed by the projection
     // (default-collapsed: the header summary shows; rows appear on expand).
     const panel = view.container.querySelector('[data-testid="todo-panel"]')
     expect(panel).not.toBeNull()
-    expect(panel!.textContent).toContain('1 已完成\u2002·\u20021 进行中\u2002·\u20021 待处理')
+    expect(panel!.textContent).toContain('1 completed\u2002·\u20021 in progress\u2002·\u20021 pending')
     fireEvent.click(panel!.querySelector('button')!)
     expect([...panel!.querySelectorAll('li')].map(li => li.getAttribute('data-status')))
       .toEqual(['completed', 'in_progress', 'pending'])

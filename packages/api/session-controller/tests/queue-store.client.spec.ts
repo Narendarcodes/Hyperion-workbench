@@ -60,15 +60,15 @@ describe('Session queue snapshot intake', () => {
   it('projects stable ids, flat previews, and complete text', () => {
     const session = makeSession()
     session.handleControlFrame(queueFrame([
-      { id: 'q-1', body: '第一条  排队\n消息' },
+      { id: 'q-1', body: '第一条  排队\nMessage' },
     ]))
     const queue = session.getSnapshot().queue
     expect(typeof queue[0]?.messageId).toBe('string')
     expect(queue).toMatchObject([
       {
         id: 'q-1', placement: 'queued',
-        content: [{ type: 'text', text: '第一条  排队\n消息' }],
-        preview: '第一条 排队 消息', text: '第一条  排队\n消息',
+        content: [{ type: 'text', text: '第一条  排队\nMessage' }],
+        preview: '第一条 排队 Message', text: '第一条  排队\nMessage',
       },
     ])
   })

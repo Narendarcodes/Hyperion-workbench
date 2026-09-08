@@ -11,9 +11,9 @@ describe('Toast', () => {
     vi.useFakeTimers()
     try {
       const onDone = vi.fn()
-      const view = render(<Toast text="最多添加 50 张图片" icon={<svg data-testid="icon" />} onDone={onDone} />)
+      const view = render(<Toast text="最多添加 50 张Image" icon={<svg data-testid="icon" />} onDone={onDone} />)
       const banner = view.getByRole('alert')
-      expect(banner.textContent).toContain('最多添加 50 张图片')
+      expect(banner.textContent).toContain('最多添加 50 张Image')
       expect(view.getByTestId('icon')).toBeTruthy()
       vi.advanceTimersByTime(3999)
       expect(onDone).not.toHaveBeenCalled()
@@ -28,7 +28,7 @@ describe('Toast', () => {
     vi.useFakeTimers()
     try {
       const onDone = vi.fn()
-      const view = render(<Toast text="切换失败" holdMs={6000} onDone={onDone} />)
+      const view = render(<Toast text="切换Failed" holdMs={6000} onDone={onDone} />)
       // One value drives both, so a banner can never unmount mid-fade: the
       // timer waits the hold plus the fade, and the stylesheet delays the
       // fade by the same hold.

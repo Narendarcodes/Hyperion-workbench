@@ -27,7 +27,7 @@ import {
   type DeliverablesTurnData,
 } from '../src/client/turn-deliverables.ts'
 import { apply, inject } from '../src/client/index.ts'
-import { en, zh } from '../src/client/locales.ts'
+import { en } from '../src/client/locales.ts'
 import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
 
 afterEach(() => {
@@ -404,7 +404,7 @@ describe('produced-file Turn data', () => {
 })
 
 describe('ProducedFiles row', () => {
-  const t = makeTranslate(zh)
+  const t = makeTranslate(en)
   const capability = (
     canOpenPath: boolean | undefined,
     isLoopback = true,
@@ -423,19 +423,19 @@ describe('ProducedFiles row', () => {
     const view = render(
       <ProducedFiles matched={paths} openFile={openFile} {...capability(true)} t={t} />,
     )
-    expect(view.getByText('产物')).toBeTruthy()
+    expect(view.getByText('Produced')).toBeTruthy()
     const row = view.container.querySelector('[data-produced-files-row]')
     if (!(row instanceof HTMLElement)) throw new Error('produced row missing')
     expect(within(row).getAllByRole('button')).toHaveLength(6)
-    expect(within(row).getByText('+ 2 个文件')).toBeTruthy()
-    const chip = view.getByRole('button', { name: '打开 deep/a.html' })
+    expect(within(row).getByText('+ 2 files')).toBeTruthy()
+    const chip = view.getByRole('button', { name: 'Open deep/a.html' })
     expect(chip.textContent).toBe('a.html')
     expect(chip.getAttribute('title')).toBe('deep/a.html')
-    expect(view.queryByRole('button', { name: '打开 g.ts' })).toBeNull()
+    expect(view.queryByRole('button', { name: 'Open g.ts' })).toBeNull()
     fireEvent.click(chip)
     expect(openFile).toHaveBeenCalledWith('deep/a.html')
 
-    const showFolder = view.getByRole('button', { name: '在文件夹中显示' })
+    const showFolder = view.getByRole('button', { name: 'Show in folder' })
     fireEvent.click(showFolder)
     expect(openFile).toHaveBeenLastCalledWith('.')
   })
@@ -446,10 +446,10 @@ describe('ProducedFiles row', () => {
       <ProducedFiles matched={['a.md']} openFile={openFile} {...capability(true)} t={t} />,
     )
     const overflowing = ['a.md', 'b.md', 'c.md', 'd.md', 'e.md', 'f.md', 'g.md']
-    expect(view.queryByRole('button', { name: '在文件夹中显示' })).toBeNull()
+    expect(view.queryByRole('button', { name: 'Show in folder' })).toBeNull()
     for (const unavailable of [capability(false), capability(true, false), capability(undefined)]) {
       view.rerender(<ProducedFiles matched={overflowing} openFile={openFile} {...unavailable} t={t} />)
-      expect(view.queryByRole('button', { name: '在文件夹中显示' })).toBeNull()
+      expect(view.queryByRole('button', { name: 'Show in folder' })).toBeNull()
     }
   })
 

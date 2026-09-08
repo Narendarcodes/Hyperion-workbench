@@ -10,7 +10,7 @@ import type {
   ChatConversationViewNode, ChatSnapshot,
 } from '@deepseek-ai/dsh-client-ui-chat/client'
 import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
+import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
 import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
 import { commandDefinition } from '@deepseek-ai/dsh-client-ui-chat/src/client/conversation-nodes/command.ts'
 import { chatViewDefinition } from '@deepseek-ai/dsh-client-ui-chat/src/client/conversation-nodes/chat-snapshot-builder.ts'
@@ -18,7 +18,7 @@ import { GoalCommandInputView } from '../src/client/GoalCommandInputView.tsx'
 import {
   goalCommandInputDefinition, goalCommandText,
 } from '../src/client/goal-command-input.ts'
-import { zh } from '../src/client/locales.ts'
+import { en } from '../src/client/locales.ts'
 
 afterEach(cleanup)
 
@@ -120,7 +120,7 @@ describe('goal command input projection', () => {
   })
 
   it('renders the user-style command bubble without ordinary message actions', () => {
-    const t = makeTranslate(zh, commonZh)
+    const t = makeTranslate(en, commonEn)
     const props = {
       node: {
         key: 'goal-command-input:one',
@@ -129,7 +129,7 @@ describe('goal command input projection', () => {
       t,
     } as unknown as Parameters<typeof GoalCommandInputView>[0]
     const view = render(<GoalCommandInputView {...props} />)
-    const bubble = view.getByRole('group', { name: '指令输入' })
+    const bubble = view.getByRole('group', { name: 'Command input' })
 
     expect(bubble.textContent).toBe('/goal ship it')
     expect(within(bubble).queryByRole('button')).toBeNull()
@@ -139,7 +139,7 @@ describe('goal command input projection', () => {
   })
 
   it('renders a bare /goal as one command chip and nothing else', () => {
-    const t = makeTranslate(zh, commonZh)
+    const t = makeTranslate(en, commonEn)
     const props = {
       node: {
         key: 'goal-command-input:bare',
@@ -148,13 +148,13 @@ describe('goal command input projection', () => {
       t,
     } as unknown as Parameters<typeof GoalCommandInputView>[0]
     const view = render(<GoalCommandInputView {...props} />)
-    const bubble = view.getByRole('group', { name: '指令输入' })
+    const bubble = view.getByRole('group', { name: 'Command input' })
     expect(bubble.textContent).toBe('/goal')
     expect([...bubble.querySelectorAll('[data-ref-chip]')].map(chip => chip.textContent)).toEqual(['/goal'])
   })
 
   it('decorates only the leading command token: a /goal inside the objective stays plain', () => {
-    const t = makeTranslate(zh, commonZh)
+    const t = makeTranslate(en, commonEn)
     const props = {
       node: {
         key: 'goal-command-input:two',
@@ -163,7 +163,7 @@ describe('goal command input projection', () => {
       t,
     } as unknown as Parameters<typeof GoalCommandInputView>[0]
     const view = render(<GoalCommandInputView {...props} />)
-    const bubble = view.getByRole('group', { name: '指令输入' })
+    const bubble = view.getByRole('group', { name: 'Command input' })
     expect(bubble.textContent).toBe('/goal 检查 /goal 的语法')
     const chips = [...bubble.querySelectorAll('[data-ref-chip]')]
     expect(chips.map(chip => chip.textContent)).toEqual(['/goal'])

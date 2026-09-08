@@ -7,13 +7,12 @@ import type {
 } from '@deepseek-ai/dsh-client-ui-chat/client'
 import { bindSnapshotSelector, makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
 import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
 import { StatsLine, deriveStats, formatDuration, type StatsLineProps } from '../src/client/chat/StatsLine.tsx'
 import { formatTokens } from '../src/client/chat/token-format.ts'
-import { en, zh } from '../src/client/locale.ts'
+import { en } from '../src/client/locale.ts'
 import { chatSnapshotFixture } from './chat-snapshot-fixture.client.ts'
 
-const t: StatsLineProps['t'] = makeTranslate(zh, commonZh)
+const t: StatsLineProps['t'] = makeTranslate(en, commonEn)
 const tEn: StatsLineProps['t'] = makeTranslate(en, commonEn)
 
 /** jsdom has no ResizeObserver; StatsLine watches its row for ellipsis truncation through one. */
@@ -261,7 +260,7 @@ describe('StatsLine', () => {
     const { source } = makeSource({ nodes: [timed] })
     const view = render(<StatsLine {...props(source, { tokenUsage: tokenUsage(9_995, 5) })} t={t} />)
     expect(view.container.textContent)
-      .toBe('1 轮 · 1 步| LLM 3.8秒| 首 token 平均 0.8秒 · 20 tok/s| 缓存命中 99.95%| 输入 10K tok · 输出 1 tok')
+      .toBe('1 turns · 1 steps| LLM 3.8s| TTFT avg 0.8s · 20 tok/s| Cache hit 99.95%| Input 10K tok · Output 1 tok')
   })
 
   it('renders without ResizeObserver support', () => {
@@ -334,7 +333,7 @@ describe('StatsLine', () => {
   })
 
   it('renders whole-log wall times and speeds from the projection, not the loaded window', () => {
-    // The 加载更早 hazard beyond counts: LLM/tool durations and the TTFT and
+    // The Load earlier hazard beyond counts: LLM/tool durations and the TTFT and
     // throughput figures must not grow per loaded page either. An untimed
     // 1-node window renders the projection's whole-log figures verbatim.
     const { source } = makeSource({ nodes: [assistant(1, 1)] })

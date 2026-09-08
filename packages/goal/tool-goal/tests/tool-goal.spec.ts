@@ -293,7 +293,7 @@ describe('goal tool execution authority', () => {
     ctx.agents.register(fork.agent)
     expect(ctx.goals.get(fork.agent)).toMatchObject({ id: created.id, activation: 'disarmed' })
 
-    openTurn(fork, { kind: 'user' }, '继续这个目标')
+    openTurn(fork, { kind: 'user' }, '继续这个Goal')
     const resumed = await execute(ctx, 'update_goal', {
       goal_id: created.id, revision: created.revision, action: 'resume',
     }, fork.agent)

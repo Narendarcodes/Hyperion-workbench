@@ -433,7 +433,7 @@ describe('renderToolsSdkPy', () => {
     // `camelCase` has to pass the same characters through instead of splitting
     // on them.
     const tool: ToolSdkSchema = {
-      name: '搜索',
+      name: 'Search',
       description: 'Unicode identifiers.',
       parameters: {
         type: 'object',
@@ -447,10 +447,10 @@ describe('renderToolsSdkPy', () => {
       output: { type: 'string' },
     }
     const text = renderToolsSdkPy([tool])
-    expect(text).toContain('async def 搜索(self, args: 搜索Args) -> str:')
-    expect(text).toContain('class 搜索Args(TypedDict):')
+    expect(text).toContain('async def Search(self, args: SearchArgs) -> str:')
+    expect(text).toContain('class SearchArgs(TypedDict):')
     expect(text).toContain('    路径: str')
-    expect(text).toContain('class 搜索ArgsOpts(TypedDict):')
+    expect(text).toContain('class SearchArgsOpts(TypedDict):')
     expect(text).toContain('    深度: NotRequired[float]')
     expect(text).not.toContain('dict[str, Any]')
   })

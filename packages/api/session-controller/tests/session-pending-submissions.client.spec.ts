@@ -101,13 +101,13 @@ describe('beginSubmission', () => {
 
   it('derives and captures the echo placement from running state and delivery mode', () => {
     const { session } = makeSession()
-    session.beginSubmission({ mode: 'queue', text: '空闲', attachments: [] })
+    session.beginSubmission({ mode: 'queue', text: 'Idle', attachments: [] })
     session.handleRunning(true)
     session.beginSubmission({ mode: 'queue', text: '排队', attachments: [] })
     session.beginSubmission({ mode: 'steer', text: '纠偏', attachments: [] })
     session.handleRunning(false)
     expect(session.getSnapshot().pendingSubmissions.map(({ text, placement }) => ({ text, placement }))).toEqual([
-      { text: '空闲', placement: 'transcript' },
+      { text: 'Idle', placement: 'transcript' },
       { text: '排队', placement: 'queued' },
       { text: '纠偏', placement: 'steering' },
     ])
@@ -136,11 +136,11 @@ describe('prompt-coupled retirement', () => {
     const retirements: PendingSubmissionRetirement[] = []
     const handle = session.beginSubmission({
       mode: 'queue',
-      text: '失败的',
+      text: 'Failed的',
       attachments: [],
       onRetire: retirement => retirements.push(retirement),
     })
-    const result = await session.prompt([{ type: 'text', text: '失败的' }], 'queue', undefined, handle.requestId)
+    const result = await session.prompt([{ type: 'text', text: 'Failed的' }], 'queue', undefined, handle.requestId)
     expect(result.ok).toBe(false)
     expect(session.getSnapshot().pendingSubmissions).toEqual([])
     expect(session.getSnapshot().promptError).toMatchObject({ op: 'send' })

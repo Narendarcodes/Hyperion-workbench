@@ -1,11 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { en, formatDesktopMessage, resolveDesktopLocale, zh } from '../src/locale.ts'
+import { en, formatDesktopMessage, resolveDesktopLocale } from '../src/locale.ts'
 
 describe('desktop locale dictionaries', () => {
-  it('ships the same key set in English and Chinese', () => {
-    expect(Object.keys(zh)).toEqual(Object.keys(en))
-    expect(resolveDesktopLocale('zh-Hans-CN')).toEqual({ id: 'zh-CN', messages: zh })
+  it('ships the English dictionary for every requested locale', () => {
+    expect(resolveDesktopLocale('zh-Hans-CN')).toEqual({ id: 'en', messages: en })
     expect(resolveDesktopLocale('en-US')).toEqual({ id: 'en', messages: en })
     expect(resolveDesktopLocale('fr-FR')).toEqual({ id: 'en', messages: en })
   })

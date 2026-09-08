@@ -475,7 +475,7 @@ describe('a long card description', () => {
     disconnect(): void {}
   }
 
-  const LONG = '始终用简体中文交流的友好通用助手，提供持久 bash 与文件编辑能力。'.repeat(8)
+  const LONG = '始终用简体中文交流的友好通用ASSISTANT，提供持久 bash 与FileEdit能力。'.repeat(8)
 
   /** Force the clamp to report an overflow: jsdom lays nothing out, so both heights are 0. */
   function clamp(overflowing: boolean): void {
@@ -493,7 +493,7 @@ describe('a long card description', () => {
     clamp(true)
     vi.useFakeTimers()
     try {
-      renderSection({ rows: [{ id: 'zh', trust: 'user', isDefault: false, name: '中文助手', description: LONG }] })
+      renderSection({ rows: [{ id: 'zh', trust: 'user', isDefault: false, name: '中文ASSISTANT', description: LONG }] })
 
       fireEvent.mouseEnter(within(rowFor('zh')).getByText(LONG))
       act(() => { vi.advanceTimersByTime(400) })
@@ -508,7 +508,7 @@ describe('a long card description', () => {
     clamp(false)
     vi.useFakeTimers()
     try {
-      renderSection({ rows: [{ id: 'zh', trust: 'user', isDefault: false, name: '中文助手', description: '短描述。' }] })
+      renderSection({ rows: [{ id: 'zh', trust: 'user', isDefault: false, name: '中文ASSISTANT', description: '短描述。' }] })
 
       fireEvent.mouseEnter(within(rowFor('zh')).getByText('短描述。'))
       act(() => { vi.advanceTimersByTime(400) })

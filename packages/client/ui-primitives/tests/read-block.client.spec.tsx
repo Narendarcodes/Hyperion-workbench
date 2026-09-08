@@ -126,12 +126,12 @@ describe('ReadBlock banner', () => {
     const view = render(<ReadBlock label="src/a.ts" lang="ts" lines={lines(3, 41)} totalLines={180} />)
     expect(view.getByText('src/a.ts')).toBeTruthy()
     expect(view.getByText('ts')).toBeTruthy()
-    expect(view.getByText('显示 3 / 180 行')).toBeTruthy()
+    expect(view.getByText('Showing 3 of 180 lines')).toBeTruthy()
   })
 
   it('omits the count note when the window is the whole file', () => {
     const view = render(<ReadBlock label="a.ts" lines={lines(3)} totalLines={3} />)
-    expect(view.queryByText(/显示/u)).toBeNull()
+    expect(view.queryByText(/Showing/u)).toBeNull()
   })
 
   it('draws an empty label and empty language when neither is given', () => {
@@ -152,15 +152,15 @@ describe('ReadBlock height cap', () => {
     const view = render(<ReadBlock label="a" lines={lines(10)} totalLines={10} maxLines={4} />)
     // maxLines 4: head = ceil(4/2) = 2, tail = 4 - 2 = 2, 6 hidden.
     expect(gutters(view.container)).toEqual(['1', '2', '9', '10'])
-    const toggle = view.getByRole('button', { name: '展开其余 6 行' })
+    const toggle = view.getByRole('button', { name: 'Expand 6 more lines' })
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
-    expect(toggle.textContent).toBe('… 其余 6 行')
+    expect(toggle.textContent).toBe('… 6 more lines')
 
     fireEvent.click(toggle)
     expect(rowTexts(view.container)).toHaveLength(10)
-    const collapse = view.getByRole('button', { name: '收起内容' })
+    const collapse = view.getByRole('button', { name: 'Collapse content' })
     expect(collapse.getAttribute('aria-expanded')).toBe('true')
-    expect(collapse.textContent).toBe('收起')
+    expect(collapse.textContent).toBe('Collapse')
 
     fireEvent.click(collapse)
     expect(gutters(view.container)).toEqual(['1', '2', '9', '10'])
@@ -169,7 +169,7 @@ describe('ReadBlock height cap', () => {
   it('renders the head slice alone when the cap leaves no tail', () => {
     const view = render(<ReadBlock label="a" lines={lines(5)} totalLines={5} maxLines={1} />)
     expect(gutters(view.container)).toEqual(['1'])
-    expect(view.getByRole('button', { name: '展开其余 4 行' })).toBeTruthy()
+    expect(view.getByRole('button', { name: 'Expand 4 more lines' })).toBeTruthy()
   })
 
   it('caps at the documented default when maxLines is absent', () => {
@@ -177,7 +177,7 @@ describe('ReadBlock height cap', () => {
       <ReadBlock label="a" lines={lines(DEFAULT_READ_MAX_LINES + 1)} totalLines={DEFAULT_READ_MAX_LINES + 1} />,
     )
     expect(rowTexts(view.container)).toHaveLength(DEFAULT_READ_MAX_LINES)
-    expect(view.getByRole('button', { name: '展开其余 1 行' })).toBeTruthy()
+    expect(view.getByRole('button', { name: 'Expand 1 more lines' })).toBeTruthy()
   })
 })
 
@@ -187,26 +187,26 @@ describe('ReadBlock copy', () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
     render(<ReadBlock label="a" lines={lines(3, 41)} totalLines={180} />)
-    fireEvent.click(screen.getByRole('button', { name: '复制' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Copy' }))
     expect(writeText).toHaveBeenCalledWith('line 41\nline 42\nline 43')
     await act(async () => {
       await Promise.resolve()
     })
-    expect(screen.getByRole('button', { name: '复制成功' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Copied' })).toBeTruthy()
     // While the ok label is showing, further clicks are no-ops.
-    fireEvent.click(screen.getByRole('button', { name: '复制成功' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Copied' }))
     expect(writeText).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(1000)
-    expect(screen.getByRole('button', { name: '复制' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeTruthy()
   })
 
   it('copies the whole window while the height cap hides its middle', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
     render(<ReadBlock label="a" lines={lines(10)} totalLines={10} maxLines={4} />)
-    fireEvent.click(screen.getByRole('button', { name: '复制' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Copy' }))
     expect(writeText).toHaveBeenCalledWith(lines(10).map(line => line.text).join('\n'))
-    expect(await screen.findByRole('button', { name: '复制成功' })).toBeTruthy()
+    expect(await screen.findByRole('button', { name: 'Copied' })).toBeTruthy()
   })
 
   it('does not claim success when the host refuses the write', async () => {
@@ -215,12 +215,12 @@ describe('ReadBlock copy', () => {
       value: { writeText: vi.fn().mockRejectedValue(new Error('denied')) },
     })
     render(<ReadBlock label="a" lines={lines(1)} totalLines={1} />)
-    fireEvent.click(screen.getByRole('button', { name: '复制' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Copy' }))
     await act(async () => {
       await Promise.resolve()
     })
-    expect(screen.getByRole('button', { name: '复制' })).toBeTruthy()
-    expect(screen.queryByRole('button', { name: '复制成功' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Copied' })).toBeNull()
   })
 
   it('merges className onto the wrapper', () => {
@@ -232,6 +232,6 @@ describe('ReadBlock copy', () => {
     // A successful read of an empty file settles to lines: [] with card:'read',
     // so this branch is reachable; copying then would clear the clipboard.
     const view = render(<ReadBlock label="empty.ts" lines={[]} totalLines={0} />)
-    expect(view.queryByRole('button', { name: '复制' })).toBeNull()
+    expect(view.queryByRole('button', { name: 'Copy' })).toBeNull()
   })
 })

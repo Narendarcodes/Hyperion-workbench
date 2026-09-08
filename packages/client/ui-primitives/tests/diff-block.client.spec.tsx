@@ -118,20 +118,20 @@ describe('DiffBlock height cap', () => {
     // The path header counts as a row, so a body of maxLines added lines plus
     // the header is one over the cap.
     const { container } = render(<DiffBlock diffs={diffs} />)
-    const toggle = screen.getByRole('button', { name: /展开其余/ })
+    const toggle = screen.getByRole('button', { name: 'Expand 1 more diff lines' })
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
     // Collapsed shows fewer rows than the full body.
     const collapsedCount = bodyRows(container).length
     expect(collapsedCount).toBeLessThan(DEFAULT_DIFF_MAX_LINES + 1)
     fireEvent.click(toggle)
-    expect(screen.getByRole('button', { name: '收起差异' }).getAttribute('aria-expanded')).toBe('true')
+    expect(screen.getByRole('button', { name: 'Collapse diff' }).getAttribute('aria-expanded')).toBe('true')
     expect(bodyRows(container).length).toBeGreaterThan(collapsedCount)
   })
 
   it('shows no expand control at or under the cap', () => {
     const diffs: DiffHunk[] = [{ path: 'a.ts', oldText: null, newText: added(4) }]
     render(<DiffBlock diffs={diffs} maxLines={16} />)
-    expect(screen.queryByRole('button', { name: /展开其余|收起差异/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: /Expand .* more diff lines|Collapse diff/ })).toBeNull()
   })
 })
 
@@ -145,13 +145,13 @@ describe('DiffBlock copy', () => {
       { path: 'a.ts', oldText: 'p', newText: 'q' },
     ]
     render(<DiffBlock diffs={diffs} />)
-    const copy = screen.getByRole('button', { name: '复制' })
+    const copy = screen.getByRole('button', { name: 'Copy' })
     await act(async () => { fireEvent.click(copy) })
     // Path header, del/add prefixes, and the same-file gap all reach the clipboard.
     expect(writeText).toHaveBeenCalledWith('a.ts\n- old\n+ new\n⋯\n- p\n+ q')
-    expect(screen.getByRole('button', { name: '复制成功' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Copied' })).toBeTruthy()
     await act(async () => { await vi.advanceTimersByTimeAsync(1000) })
-    expect(screen.getByRole('button', { name: '复制' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeTruthy()
   })
 
   it('keeps the label on a refused clipboard write', async () => {
@@ -160,9 +160,9 @@ describe('DiffBlock copy', () => {
       value: { writeText: vi.fn().mockRejectedValue(new Error('denied')) },
     })
     render(<DiffBlock diffs={[{ path: 'a.ts', oldText: null, newText: 'x' }]} />)
-    const copy = screen.getByRole('button', { name: '复制' })
+    const copy = screen.getByRole('button', { name: 'Copy' })
     await act(async () => { fireEvent.click(copy) })
-    expect(screen.getByRole('button', { name: '复制' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeTruthy()
   })
 
   it('ignores a second click while the copied label is showing', async () => {
@@ -170,9 +170,9 @@ describe('DiffBlock copy', () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
     render(<DiffBlock diffs={[{ path: 'a.ts', oldText: null, newText: 'x' }]} />)
-    const copy = screen.getByRole('button', { name: '复制' })
+    const copy = screen.getByRole('button', { name: 'Copy' })
     await act(async () => { fireEvent.click(copy) })
-    await act(async () => { fireEvent.click(screen.getByRole('button', { name: '复制成功' })) })
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Copied' })) })
     expect(writeText).toHaveBeenCalledTimes(1)
   })
 })

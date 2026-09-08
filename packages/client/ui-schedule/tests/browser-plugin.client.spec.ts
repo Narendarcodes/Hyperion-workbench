@@ -5,7 +5,7 @@ import { stubSettingsScope } from '@deepseek-ai/dsh-client-test-runtime'
 import { apply as applyLocale, inject as localeInject } from '@deepseek-ai/dsh-client-locale/client'
 import { apply, inject } from '../src/client/index.ts'
 import { apply as applyNode } from '../src/index.ts'
-import { en, NS, zh } from '../src/client/locales.ts'
+import { en, NS } from '../src/client/locales.ts'
 
 const Empty = () => null
 
@@ -63,14 +63,13 @@ describe('ui-schedule browser half', () => {
   it('registers both dictionaries and releases them with its fiber', async () => {
     const ctx = await baseContext()
     declareHeader(ctx)
-    ctx.locale.setLocale('zh')
+    ctx.locale.setLocale('en')
     const fiber = ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
     const translate = ctx.locale.bind(NS)
-    expect(translate('list.aria')).toBe(zh['list.aria'])
+    expect(translate('list.aria')).toBe(en['list.aria'])
     ctx.locale.setLocale('en')
     expect(translate('list.aria')).toBe(en['list.aria'])
-    expect(Object.keys(en).sort()).toEqual(Object.keys(zh).sort())
 
     await fiber.dispose()
     expect(translate('list.aria')).not.toBe(en['list.aria'])

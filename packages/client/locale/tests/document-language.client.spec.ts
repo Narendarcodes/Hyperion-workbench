@@ -67,25 +67,25 @@ describe('document language', () => {
   })
 
   it('states the resolved locale at activation, not the value the markup shipped', async () => {
-    // A Chinese browser resolves zh even though the markup said en.
+    // A Chinese browser opens the only shipped locale even though the markup said en.
     const { locale } = await bench()
-    expect(locale.getLocale().active).toBe('zh')
-    expect(langOf()).toBe('zh-CN')
+    expect(locale.getLocale().active).toBe('en')
+    expect(langOf()).toBe('en')
   })
 
   it('follows a locale switch in both directions with BCP 47 tags', async () => {
     const { locale } = await bench()
-    expect(langOf()).toBe('zh-CN')
-    locale.setLocale('en')
-    // `en` needs no region; `zh` names its script variant, which bare `zh`
-    // leaves ambiguous for pronunciation and font selection.
     expect(langOf()).toBe('en')
-    locale.setLocale('zh')
-    expect(langOf()).toBe('zh-CN')
+    locale.addLanguage({ id: 'ja', label: '日本語', fallback: 'en' })
+    locale.setLocale('ja')
+    // The document carries the active locale id verbatim.
+    expect(langOf()).toBe('ja')
+    locale.setLocale('en')
+    expect(langOf()).toBe('en')
   })
 
   it('follows an explicit Host preference that overrides browser detection', async () => {
-    // Stored preference wins over the zh browser pinned above.
+    // Stored preference wins over the browser pin above.
     const { locale } = await bench('en')
     await vi.waitFor(() => { expect(locale.getLocale().active).toBe('en') })
     await vi.waitFor(() => { expect(langOf()).toBe('en') })

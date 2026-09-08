@@ -12,9 +12,9 @@ import { GeneralSection } from '../src/client/GeneralSection.tsx'
 import { SettingsDocumentAction } from '../src/client/SettingsDocumentAction.tsx'
 import type { SettingsDocumentActionInjected } from '../src/client/SettingsDocumentAction.tsx'
 
-// These specs assert the shipped Chinese copy. The lane has no jsdom `window`,
+// These specs assert the shipped English copy. The lane has no jsdom `window`,
 // so browser-language detection never runs and a fresh LocaleRuntime opens on
-// FALLBACK_LOCALE (en); bench stages zh explicitly on the locale instead.
+// FALLBACK_LOCALE (en); bench stages en explicitly on the locale instead.
 
 /** The seats this plugin fills for a loopback browser (slot name → expected component). */
 const SEATS = [
@@ -29,7 +29,7 @@ async function bench(isLoopback = true) {
   const ctx = new Context()
   await ctx.plugin(SlotRegistry).await()
   const locale = new LocaleRuntime(ctx)
-  locale.setLocale('zh')
+  locale.setLocale('en')
   ctx.provide('locale', locale)
   const settingsDescribe = vi.fn(() => Promise.resolve({
     ok: true as const,
@@ -92,7 +92,7 @@ describe('ui-settings-general apply', () => {
     const entry = generalEntry(before.slots)!
     expect(entry.options).toMatchObject({ id: 'general', order: 0 })
     // The nav label is a locale-following thunk; owners resolve at read time.
-    expect(resolveSlotLabel(entry.options.label)).toBe('通用设置')
+    expect(resolveSlotLabel(entry.options.label)).toBe('General')
     expect(before.slots.spec('settings.general.item')).toEqual({ kind: 'list', scope: 'root' })
     expect(before.slots.entries('settings.general.item')).toEqual([])
     // The onboarding hole stays declared for feature-owned steps; this plugin
@@ -121,20 +121,20 @@ describe('ui-settings-general apply', () => {
     })
   })
 
-  it('registers the zh/en settings dictionaries and frees the seats on teardown', async () => {
+  it('registers the en settings dictionaries and frees the seats on teardown', async () => {
     const b = await bench()
     declare(b.slots)
     const fiber = b.ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
-    expect(b.locale.bind('settings')('title')).toBe('设置')
-    expect(b.locale.bind('settings')('connection.error')).toBe('连接异常')
-    expect(b.locale.bind('settings')('connection.connecting')).toBe('自动重连中')
-    expect(b.locale.bind('settings')('connection.connected')).toBe('连接成功')
+    expect(b.locale.bind('settings')('title')).toBe('Settings')
+    expect(b.locale.bind('settings')('connection.error')).toBe('Disconnected')
+    expect(b.locale.bind('settings')('connection.connecting')).toBe('Reconnecting')
+    expect(b.locale.bind('settings')('connection.connected')).toBe('Connected')
     b.locale.setLocale('en')
     expect(b.locale.bind('settings')('close')).toBe('Close')
     expect(b.locale.bind('settings')('connection.reconnect')).toBe('Disconnected, reconnect now')
     expect(b.locale.bind('settings')('connection.connecting')).toBe('Reconnecting')
-    b.locale.setLocale('zh')
+    b.locale.setLocale('en')
     await fiber.dispose()
     // The (ns, locale) seats are free again — the dictionary disposer ran.
     expect(() => b.locale.register('settings', 'zh', {})).not.toThrow()
@@ -145,17 +145,17 @@ describe('ui-settings-general apply', () => {
     const b = await bench()
     declare(b.slots)
     await b.ctx.plugin({ inject: [...inject], apply }).await()
-    const zhVersions = SEATS.map(([name]) => b.slots.getVersion(name))
+    const enVersions = SEATS.map(([name]) => b.slots.getVersion(name))
     b.locale.setLocale('en')
     // No ledger churn: freshness rides the thunk (and the renderer's locale
     // subscription), not re-registration.
     SEATS.forEach(([name], i) => {
-      expect(b.slots.getVersion(name)).toBe(zhVersions[i]!)
+      expect(b.slots.getVersion(name)).toBe(enVersions[i]!)
       expect(b.slots.entries(name)).toHaveLength(1)
     })
     expect(resolveSlotLabel(generalEntry(b.slots)!.options.label)).toBe('General')
-    b.locale.setLocale('zh')
-    expect(resolveSlotLabel(generalEntry(b.slots)!.options.label)).toBe('通用设置')
+    b.locale.setLocale('en')
+    expect(resolveSlotLabel(generalEntry(b.slots)!.options.label)).toBe('General')
   })
 
   it('reads availability from the shared mirror and follows its reconnect refresh', async () => {
@@ -203,7 +203,7 @@ describe('ui-settings-general apply', () => {
     // The recovered registrations still ride the locale path.
     b.locale.setLocale('en')
     expect(resolveSlotLabel(generalEntry(b.slots)!.options.label)).toBe('General')
-    b.locale.setLocale('zh')
+    b.locale.setLocale('en')
   })
 
   it('removes every seat and the item declaration on teardown', async () => {

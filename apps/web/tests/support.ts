@@ -11,25 +11,25 @@ export const DIST_INDEX = fileURLToPath(new URL('../dist/index.html', import.met
 export const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url))
 
 /**
- * Browser language a page must advertise to boot into the product's Chinese
+ * Browser language a page advertises to boot into the product's English-only
  * surface: with no stored preference the client derives its initial locale
- * from the browser, and Playwright's default browser asks for English.
+ * from the browser, and Playwright's default browser already asks for
+ * English, so this names that default explicitly.
  */
-export const ZH_BROWSER_LOCALE = 'zh-CN'
+export const EN_BROWSER_LOCALE = 'en-US'
 
 /**
  * Open the standard browser-test page advertising English before client boot.
  * This keeps role locators and goldens deterministic while leaving the Host
- * settings document free to override the provisional browser-derived locale;
- * scenarios asserting the Chinese surface advertise
- * {@link ZH_BROWSER_LOCALE} instead. The context uses Asia/Shanghai to preserve
+ * settings document free to override the provisional browser-derived locale.
+ * The context uses Asia/Shanghai to preserve
  * the recorded Web user-source timezone independently of the host timezone.
  * @param browser - Playwright browser owning the page.
  * @param height - Viewport height; width is fixed to the lane baseline.
  * @returns the initialized page.
  */
 export async function newEnglishPage(browser: Browser, height = 1000): Promise<Page> {
-  return await browser.newPage({ viewport: { width: 1680, height }, locale: 'en-US', timezoneId: 'Asia/Shanghai' })
+  return await browser.newPage({ viewport: { width: 1680, height }, locale: EN_BROWSER_LOCALE, timezoneId: 'Asia/Shanghai' })
 }
 
 /**
@@ -114,29 +114,6 @@ export async function connectFreshWorkspace(page: Page, root: string, name = 'wo
   // The pick connected the workspace: the blank session's live composer
   // replaces the locked placeholder and enables.
   await page.locator('[data-composer-input][contenteditable="true"][data-placeholder="Describe what you want to build... / commands, @ files or sessions"]')
-    .waitFor({ timeout: 15_000 })
-}
-
-/**
- * {@link connectFreshWorkspace} over a page that advertises
- * {@link ZH_BROWSER_LOCALE}: the English helper's anchors assume the locale
- * most other scenarios boot, so a scenario that deliberately keeps zh needs
- * the localized picker copy.
- * @param page - the browser page under test.
- * @param root - workspace parent directory.
- * @param name - directory created under `root` and connected.
- */
-export async function connectFreshWorkspaceZh(page: Page, root: string, name = 'workspace'): Promise<void> {
-  mkdirSync(join(root, name), { recursive: true })
-  await page.getByRole('textbox', { name: '选择工作区' }).click()
-  const dialog = page.getByRole('dialog', { name: '选择工作区目录' })
-  await dialog.waitFor({ timeout: 10_000 })
-  await dialog.getByRole('button', { name: '编辑路径' }).click()
-  const pathInput = dialog.getByRole('textbox', { name: '编辑路径' })
-  await pathInput.fill(join(root, name))
-  await pathInput.press('Enter')
-  await dialog.getByRole('button', { name: '打开', exact: true }).click()
-  await page.locator('[data-composer-input][contenteditable="true"][data-placeholder="描述你想要构建的内容… / 调用指令 @ 文件或对话"]')
     .waitFor({ timeout: 15_000 })
 }
 

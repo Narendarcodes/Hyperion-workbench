@@ -499,12 +499,12 @@ describe('run_code sub-dispatch cells', () => {
     {
       kind: 'assistant', seq: 2, time: 6_000, turn: 1, step: 1,
       blocks: [
-        { kind: 'tool-call', callId: 'p1', name: 'run_code', argsRaw: '{"code":"…","description":"批量读取"}' },
+        { kind: 'tool-call', callId: 'p1', name: 'run_code', argsRaw: '{"code":"…","description":"批量Read"}' },
       ],
     },
     {
       kind: 'tool-result', seq: 3, time: 9_000, callId: 'p1',
-      call: { name: 'run_code', argsRaw: '{"code":"…","description":"批量读取"}' }, callTime: 6_200,
+      call: { name: 'run_code', argsRaw: '{"code":"…","description":"批量Read"}' }, callTime: 6_200,
       content: [{ type: 'text', text: 'done' }], isError: false,
       subCalls: [],
     },

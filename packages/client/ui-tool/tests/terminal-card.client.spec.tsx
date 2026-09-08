@@ -13,7 +13,6 @@ import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/c
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
 import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
 import {
   localizeTerminalCardModel, terminalCardModel, terminalFailed,
 } from '../src/client/tool/models/terminal-card-model.ts'
@@ -22,14 +21,14 @@ import { GenericToolCard, type GenericToolCardProps } from '../src/client/tool/t
 import { DetailsPanel } from '@deepseek-ai/dsh-client-ui-chat/src/client/details/DetailsPanel.tsx'
 import { BashRow } from '../src/client/tool/toolviews/bash-sample.tsx'
 import { renderToolDetails, toolChatSnapshot, useEmptyTrajectory } from './tool-details-render.client.tsx'
-import { en, zh } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
-import { zh as chatZh } from '@deepseek-ai/dsh-client-ui-chat/src/client/locale.ts'
+import { en } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
+import { en as chatEn } from '@deepseek-ai/dsh-client-ui-chat/src/client/locale.ts'
 
 type BashRowProps = Parameters<typeof BashRow>[0]
 
-const t: GenericToolCardProps['t'] = makeTranslate(zh, commonZh)
+const t: GenericToolCardProps['t'] = makeTranslate(en, commonEn)
 const enT: GenericToolCardProps['t'] = makeTranslate(en, commonEn)
-const chatT = makeTranslate(chatZh, commonZh)
+const chatT = makeTranslate(chatEn, commonEn)
 
 afterEach(cleanup)
 
@@ -209,7 +208,7 @@ describe('terminalCardModel', () => {
     }))!
     expect(model.copy).toEqual({ kind: 'terminal-send', text: '', sessionId: 'pty-3' })
     expect(localizeTerminalCardModel(model, t)).toMatchObject({
-      description: '终端 pty-3', card: { command: '（发送输入）' },
+      description: 'Terminal pty-3', card: { command: '(send input)' },
     })
     expect(localizeTerminalCardModel(model, enT)).toMatchObject({
       description: 'Terminal pty-3', card: { command: '(send input)' },
@@ -330,7 +329,7 @@ describe('chat row terminal body', () => {
     toggleRow(view)
     expect(view.getByText('line-5')).toBeTruthy()
     expect(view.getByText('line-19')).toBeTruthy()
-    expect(view.queryByText(/其余/)).toBeNull()
+    expect(view.queryByText(/more lines/)).toBeNull()
   })
 
   it('renders a multi-line command as one prompt row per line', () => {
@@ -366,14 +365,14 @@ describe('chat row terminal body', () => {
     const view = render(<GenericToolCard {...ownerProps(running())} />)
     toggleRow(view)
     expect(view.getByText('ls -la')).toBeTruthy()
-    expect(view.queryByText('复制')).toBeNull()
+    expect(view.queryByText('Copy')).toBeNull()
     // The card states its own run state: a running command reads as running
     // even though it has no output yet to distinguish it from an empty settle.
     expect(runStateOf(view.container)).toBe('ongoing')
   })
 
   it.each([
-    { locale: 'zh', translate: t, description: '终端 pty-3', command: '（发送输入）' },
+    { locale: 'zh', translate: t, description: 'Terminal pty-3', command: '(send input)' },
     { locale: 'en', translate: enT, description: 'Terminal pty-3', command: '(send input)' },
   ])('renders terminal_send copy through the $locale locale', ({ translate, description, command }) => {
     const block = running({
@@ -433,7 +432,7 @@ describe('BashRow terminal card', () => {
     expect(view.queryByText(/a\.ts/)).toBeNull()
     fireEvent.click(view.container.querySelector('[data-expandable]')!)
     expect(view.getByText('a.ts  b.ts', RAW)).toBeTruthy()
-    expect(view.getByText('复制')).toBeTruthy()
+    expect(view.getByText('Copy')).toBeTruthy()
     // Collapse back in place: the summary row returns, the card unmounts.
     fireEvent.click(view.container.querySelector('[data-expandable]')!)
     expect(view.queryByText(/a\.ts/)).toBeNull()
@@ -482,8 +481,8 @@ describe('BashRow terminal card', () => {
     fireEvent.click(row)
 
     expect(row.getAttribute('aria-expanded')).toBe('true')
-    expect(view.getByText('输入')).toBeTruthy()
-    expect(view.getByText('输出')).toBeTruthy()
+    expect(view.getByText('IN')).toBeTruthy()
+    expect(view.getByText('OUT')).toBeTruthy()
     expect(view.getByText(/"command": "ls -la"/)).toBeTruthy()
     expect(view.container.querySelector('[class*="_ioText_"][data-error]')).toBeNull()
     expect(view.container.querySelectorAll('[class*="_ioText_"]')[1]?.textContent)
@@ -525,8 +524,8 @@ describe('BashRow terminal card', () => {
     fireEvent.click(row)
 
     expect(row.getAttribute('aria-expanded')).toBe('true')
-    expect(view.getByText('输入')).toBeTruthy()
-    expect(view.getByText('输出')).toBeTruthy()
+    expect(view.getByText('IN')).toBeTruthy()
+    expect(view.getByText('OUT')).toBeTruthy()
     expect(view.getByText(/"command": "ls -la"/)).toBeTruthy()
     expect(view.container.querySelector('[data-error]')?.textContent).toBe('Error: command aborted')
   })
@@ -595,8 +594,8 @@ describe('DetailsPanel Output section', () => {
     const view = mount(snapshot({
       nodes: [settled({ content: [{ type: 'text', text: `${long.join('\n')}\n` }] })],
     }), target)
-    fireEvent.click(view.getByRole('button', { name: '展开其余 4 行输出' }))
-    expect(view.getByRole('button', { name: '收起输出' })).toBeTruthy()
+    fireEvent.click(view.getByRole('button', { name: 'Expand the remaining 4 output lines' }))
+    expect(view.getByRole('button', { name: 'Collapse output' })).toBeTruthy()
     // A second call, selected without unmounting the panel, starts collapsed.
     cleanup()
     const second = mount(snapshot({
@@ -604,7 +603,7 @@ describe('DetailsPanel Output section', () => {
         callId: 'c2', content: [{ type: 'text', text: `${long.join('\n')}\n` }],
       })],
     }), { turnSeq: 10, callId: 'c2', toolName: 'bash' })
-    expect(second.getByRole('button', { name: '展开其余 4 行输出' })).toBeTruthy()
+    expect(second.getByRole('button', { name: 'Expand the remaining 4 output lines' })).toBeTruthy()
   })
 
   it('renders the raw call description above the card', () => {
@@ -626,8 +625,8 @@ describe('DetailsPanel Output section', () => {
         content: [{ type: 'text', text: 'ok' }],
       })],
     }), { ...target, toolName: 'terminal_send' })
-    expect(view.getByText('终端 pty-3')).toBeTruthy()
-    expect(view.getByText('（发送输入）')).toBeTruthy()
+    expect(view.getByText('Terminal pty-3')).toBeTruthy()
+    expect(view.getByText('(send input)')).toBeTruthy()
   })
 
   it('resolves the prompt cwd against the session workspace', () => {
@@ -644,20 +643,20 @@ describe('DetailsPanel Output section', () => {
     expect(view.getByText(/"command"/)).toBeTruthy()
     expect(view.getByText('ls -la')).toBeTruthy()
     // The panel takes the primitive's own default cap (16), not the row's.
-    expect(view.getByText(`… 其余 ${20 - 16} 行`)).toBeTruthy()
+    expect(view.getByText(`… ${20 - 16} more lines`)).toBeTruthy()
     expect(view.getByText('row-0')).toBeTruthy()
   })
 
-  it('a running terminal call shows the prompt line, not the 运行中… placeholder', () => {
+  it('a running terminal call shows the prompt line, not the Running… placeholder', () => {
     const view = mount(snapshot({ runningCalls: [running()] }), target)
     expect(view.getByText('ls -la')).toBeTruthy()
-    expect(view.queryByText('运行中…')).toBeNull()
+    expect(view.queryByText('Running…')).toBeNull()
     expect(runStateOf(view.container)).toBe('ongoing')
   })
 
-  it('a running non-terminal call keeps the 运行中… placeholder', () => {
+  it('a running non-terminal call keeps the Running… placeholder', () => {
     const view = mount(snapshot({ runningCalls: [running({ argsRaw: shellArgs({ run_in_background: true }) })] }), target)
-    expect(view.getByText('运行中…')).toBeTruthy()
+    expect(view.getByText('Running…')).toBeTruthy()
   })
 
   it('a non-terminal result keeps the flattened pre with its error styling', () => {
@@ -692,7 +691,7 @@ describe('DetailsPanel Output section', () => {
         ],
       })],
     }), target)
-    expect(view.queryByText('运行中…')).toBeNull()
+    expect(view.queryByText('Running…')).toBeNull()
     expect(view.getByText('ls -la')).toBeTruthy()
     expect(runStateOf(view.container)).toBe('ongoing')
   })
@@ -702,8 +701,8 @@ describe('DetailsPanel Output section', () => {
       nodes: [settled({ call: null })],
     }), target)
     expect(view.getByText('c1')).toBeTruthy()
-    expect(view.queryByText('输入')).toBeNull()
-    expect(view.getByText('输出')).toBeTruthy()
+    expect(view.queryByText('Input')).toBeNull()
+    expect(view.getByText('Output')).toBeTruthy()
   })
 
   it('scans past other nodes and other calls before reporting the call out of window', () => {
@@ -714,18 +713,18 @@ describe('DetailsPanel Output section', () => {
       ],
       runningCalls: [running({ callId: 'also-elsewhere' })],
     }), target)
-    expect(view.getByText('该调用不在当前窗口内')).toBeTruthy()
+    expect(view.getByText('This call is outside the current window')).toBeTruthy()
   })
 
   it('no selection at all renders the guidance line and the default title', () => {
     const view = mount(snapshot(), null)
-    expect(view.getByText('详情')).toBeTruthy()
-    expect(view.getByText('点击消息流中的工具行查看详情')).toBeTruthy()
+    expect(view.getByText('Details')).toBeTruthy()
+    expect(view.getByText('Click a tool row in the message flow to view its details')).toBeTruthy()
   })
 
   it('a step selection without a callId renders the guidance line too', () => {
     const view = mount(snapshot(), { turnSeq: 3, stepSeq: 1 })
-    expect(view.getByText('点击消息流中的工具行查看详情')).toBeTruthy()
+    expect(view.getByText('Click a tool row in the message flow to view its details')).toBeTruthy()
   })
 
   it('the close button reaches closeDetails', () => {
@@ -765,7 +764,7 @@ describe('DetailsPanel Output section', () => {
         t={chatT}
       />,
     )
-    fireEvent.click(view.getByRole('button', { name: '关闭详情' }))
+    fireEvent.click(view.getByRole('button', { name: 'Close details' }))
     expect(closeDetails).toHaveBeenCalledTimes(1)
   })
 
@@ -777,7 +776,7 @@ describe('DetailsPanel Output section', () => {
     }), target)
     // Scope to the Output section: the Input section's CodeBlock renders a
     // <pre> of its own, and it comes first in document order.
-    expect(nonText.getByText('输出').closest('section')?.querySelector('pre')?.textContent)
+    expect(nonText.getByText('Output').closest('section')?.querySelector('pre')?.textContent)
       .toBe('{\n  "type": "reasoning",\n  "text": "why"\n}')
     cleanup()
     const empty = mount(snapshot({

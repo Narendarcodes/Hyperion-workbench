@@ -92,13 +92,13 @@ describe('target-neutral Conversation apply wiring', () => {
       label: () => b.runtime.ctx.locale.getSnapshot().active,
     }, (() => null) as never)
     await vi.waitFor(() => {
-      expect(source?.getSnapshot()).toEqual([{ id: 'probe', label: 'zh' }])
+      expect(source?.getSnapshot()).toEqual([{ id: 'probe', label: 'en' }])
     })
-    const chinese = source?.getSnapshot()
+    const english = source?.getSnapshot()
 
     b.runtime.ctx.locale.setLocale('en')
     expect(source?.getSnapshot()).toEqual([{ id: 'probe', label: 'en' }])
-    expect(source?.getSnapshot()).not.toBe(chinese)
+    expect(source?.getSnapshot()).toBe(english)
 
     disposeView()
     await vi.waitFor(() => { expect(source?.getSnapshot()).toEqual([]) })

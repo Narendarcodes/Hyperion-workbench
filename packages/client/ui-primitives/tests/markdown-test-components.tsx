@@ -31,7 +31,7 @@ export function JsonBlock({ truncatedLabel, ...props }: JsonBlockProps) {
   return (
     <LocalizedJsonBlock
       {...props}
-      truncatedLabel={truncatedLabel ?? (total => `… 已截断，共 ${total} 字符`)}
+      truncatedLabel={truncatedLabel ?? (total => `… truncated at ${total} characters`)}
     />
   )
 }

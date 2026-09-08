@@ -52,7 +52,7 @@ describe('WebBlock search card', () => {
 
   it('shows the empty-state note when a search returns no answer and no sources', () => {
     const view = render(<WebBlock kind="search" sources={[]} truncated={false} />)
-    expect(view.getByText('未找到结果')).toBeTruthy()
+    expect(view.getByText('No results found')).toBeTruthy()
     // The empty note replaces the source list, not an empty <ol>.
     expect(view.container.querySelector('ol')).toBeNull()
   })
@@ -60,13 +60,13 @@ describe('WebBlock search card', () => {
   it('shows the source list, not the empty note, when a source is present', () => {
     const view = render(<WebBlock kind="search" sources={sources(1)} truncated={false} />)
     expect(view.container.querySelector('ol')).toBeTruthy()
-    expect(view.queryByText('未找到结果')).toBeNull()
+    expect(view.queryByText('No results found')).toBeNull()
   })
 
   it('shows the source list when an empty source list still carries an answer', () => {
     const view = render(<WebBlock kind="search" answer="Just an answer" sources={[]} truncated={false} />)
     expect(view.getByText('Just an answer')).toBeTruthy()
-    expect(view.queryByText('未找到结果')).toBeNull()
+    expect(view.queryByText('No results found')).toBeNull()
   })
 
   it('labels a source by its title, and by hostname when the title is absent', () => {
@@ -131,10 +131,10 @@ describe('WebBlock search card', () => {
 
   it('shows the truncated indicator only when the list was capped by the tool', () => {
     const on = render(<WebBlock kind="search" sources={sources(1)} truncated />)
-    expect(on.getByText('来源列表已截断')).toBeTruthy()
+    expect(on.getByText('Source list truncated')).toBeTruthy()
     cleanup()
     const off = render(<WebBlock kind="search" sources={sources(1)} truncated={false} />)
-    expect(off.queryByText('来源列表已截断')).toBeNull()
+    expect(off.queryByText('Source list truncated')).toBeNull()
   })
 
   it('renders every source in one <ol> with no expand control', () => {
@@ -179,10 +179,10 @@ describe('WebBlock fetch card', () => {
 
   it('shows the truncated indicator only when the content was cut', () => {
     const on = render(<WebBlock kind="fetch" url="https://example.com" statusCode={200} truncated />)
-    expect(on.getByText('内容已截断')).toBeTruthy()
+    expect(on.getByText('Content truncated')).toBeTruthy()
     cleanup()
     const off = render(<WebBlock kind="fetch" url="https://example.com" statusCode={200} truncated={false} />)
-    expect(off.queryByText('内容已截断')).toBeNull()
+    expect(off.queryByText('Content truncated')).toBeNull()
   })
 
   it('carries a non-200 status verbatim', () => {
