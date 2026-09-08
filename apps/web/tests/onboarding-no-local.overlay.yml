@@ -1,0 +1,7 @@
+# First-run lane: drop the sovereign local route so no provider is usable
+# and the credential-missing step renders. The dormant pi-ai catalog (the
+# add-provider directory) is code, not config, so it stays browsable.
+# A patch replaces the row's whole config, so providers restates it complete.
+- id: llm-pi-ai
+  config:
+    providers: {}
