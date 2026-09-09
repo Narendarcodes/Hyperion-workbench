@@ -268,13 +268,13 @@ describe('connection client apply', () => {
     }
   })
 
-  it('feeds browser offline and online events into the owned retry loop', async () => {
+  it('feeds browser offline and online events into the owned retry loop for remote hosts', async () => {
     vi.useFakeTimers()
     const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0)
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     const browser = new BrowserNetworkProbe()
     vi.stubGlobal('window', browser)
-    ;(globalThis as Win).location = { hostname: 'localhost', search: '?fixture' }
+    ;(globalThis as Win).location = { hostname: 'app.deepseek.test', search: '?fixture' }
     const handle = await mount()
     let calls = 0
     const source: ConnectionGenerationSource = (signal, ready) => new Promise<void>((resolve) => {
@@ -309,6 +309,48 @@ describe('connection client apply', () => {
       expect(calls).toBe(2)
       expect(handle.state.getSnapshot()).toBe('connected')
       expect(states).toEqual(['connected', 'disconnected', 'connecting', 'connected'])
+    } finally {
+      unsubscribe()
+      loop.stop()
+      randomSpy.mockRestore()
+      warnSpy.mockRestore()
+    }
+  })
+
+  it('keeps loopback connections active regardless of browser WAN offline state', async () => {
+    vi.useFakeTimers()
+    const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0)
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const browser = new BrowserNetworkProbe()
+    vi.stubGlobal('window', browser)
+    ;(globalThis as Win).location = { hostname: 'localhost', search: '?fixture' }
+    const handle = await mount()
+    let calls = 0
+    const source: ConnectionGenerationSource = (signal, ready) => new Promise<void>((resolve) => {
+      calls++
+      ready({ home: '/h' })
+      signal.addEventListener('abort', () => { resolve() }, { once: true })
+    })
+    handle.registerGenerationSource(source)
+    const states: Array<ConnectionState | undefined> = []
+    const unsubscribe = handle.state.subscribe(() => { states.push(handle.state.getSnapshot()) })
+    const loop = handle.start({}, {
+      backoffBaseMs: 100,
+      backoffFactor: 2,
+      backoffMaxMs: 1_000,
+      generationReadyTimeoutMs: 500,
+    })
+    try {
+      await vi.advanceTimersByTimeAsync(0)
+      expect(handle.state.getSnapshot()).toBe('connected')
+      expect(calls).toBe(1)
+
+      // Turning browser network offline on loopback does not suspend local connection
+      browser.setOnline(false)
+      expect(handle.state.getSnapshot()).toBe('connected')
+      await vi.advanceTimersByTimeAsync(10_000)
+      expect(calls).toBe(1)
+      expect(states).toEqual(['connected'])
     } finally {
       unsubscribe()
       loop.stop()

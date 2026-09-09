@@ -160,7 +160,10 @@ interface BrowserNetworkTarget {
   removeEventListener(type: 'online' | 'offline', listener: () => void): void
 }
 
-function watchBrowserNetwork(controller: ConnectionController): () => void {
+function watchBrowserNetwork(controller: ConnectionController, isLoopback: boolean): () => void {
+  // Loopback (local server / localhost / desktop) does not require WAN connectivity.
+  // navigator.onLine represents public internet reachability, not local loopback IPC/HTTP.
+  if (isLoopback) return () => {}
   const browser = (globalThis as { readonly window?: BrowserNetworkTarget }).window
   const initiallyAvailable = browser?.navigator?.onLine
   if (browser === undefined || initiallyAvailable === undefined) return () => {}
@@ -278,7 +281,8 @@ export function apply(ctx: Context): void {
           sinks.onStateChange?.(state)
         },
       }, { ...recovery, ...config })
-      const current = { token, source, controller, stopNetworkWatch: watchBrowserNetwork(controller) }
+      const isLoopback = handle.isLoopback
+      const current = { token, source, controller, stopNetworkWatch: watchBrowserNetwork(controller, isLoopback) }
       owner = current
       controller.start()
       return {
