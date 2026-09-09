@@ -1,0 +1,8 @@
+{
+  "source": "~/.agents/skills/requesting-code-review",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "requesting-code-review",
+  "hasDescription": true,
+  "license": null
+}

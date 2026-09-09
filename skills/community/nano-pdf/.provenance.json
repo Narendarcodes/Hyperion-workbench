@@ -1,0 +1,8 @@
+{
+  "source": "~/.agents/skills/nano-pdf",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "nano-pdf",
+  "hasDescription": true,
+  "license": null
+}

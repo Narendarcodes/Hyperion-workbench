@@ -1,0 +1,8 @@
+{
+  "source": "~/.agents/skills/to-issues",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "to-issues",
+  "hasDescription": true,
+  "license": null
+}

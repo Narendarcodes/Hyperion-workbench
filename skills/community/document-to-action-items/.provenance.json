@@ -1,0 +1,8 @@
+{
+  "source": "~/.agents/skills/document-to-action-items",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "document-to-action-items",
+  "hasDescription": true,
+  "license": null
+}

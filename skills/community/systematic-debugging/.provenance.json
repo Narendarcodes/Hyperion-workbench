@@ -1,0 +1,8 @@
+{
+  "source": "~/.agents/skills/systematic-debugging",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "systematic-debugging",
+  "hasDescription": true,
+  "license": null
+}

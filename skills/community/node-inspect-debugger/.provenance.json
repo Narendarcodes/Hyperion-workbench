@@ -1,0 +1,8 @@
+{
+  "source": "~/.agents/skills/node-inspect-debugger",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "node-inspect-debugger",
+  "hasDescription": true,
+  "license": null
+}

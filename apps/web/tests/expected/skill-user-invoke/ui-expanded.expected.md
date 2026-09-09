@@ -19,10 +19,10 @@
 - button "Thought for a while" [expanded]:
   - text: Thought for a while
   - img
-- button "Context injection @deepseek-ai/dsh-system-prompt":
+- button "Context injection hyperion-system-prompt":
   - img
   - img
-  - text: Context injection @deepseek-ai/dsh-system-prompt
+  - text: Context injection hyperion-system-prompt
 - button "Context injection user-invoke-demo":
   - img
   - img

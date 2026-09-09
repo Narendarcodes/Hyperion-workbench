@@ -291,6 +291,8 @@
 
     - id: skill-filesystem
       name: '@deepseek-ai/dsh-skill-filesystem'
+      config:
+        bundledSkillDir: !!js process.env.DSH_BUNDLED_SKILL_DIR ?? 'skills/community'
 
     - id: skill-badge
       name: '@deepseek-ai/dsh-skill-badge'
@@ -298,6 +300,8 @@
 
     - id: tool-skill
       name: '@deepseek-ai/dsh-tool-skill'
+      config:
+        catalogDescriptionMaxLength: 200
 
     - id: commands
       name: '@deepseek-ai/dsh-commands'

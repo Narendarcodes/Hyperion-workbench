@@ -1,0 +1,8 @@
+{
+  "source": "~/.agents/skills/session-librarian",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "session-librarian",
+  "hasDescription": true,
+  "license": null
+}

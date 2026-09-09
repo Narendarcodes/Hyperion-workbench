@@ -30,6 +30,8 @@ function collect(source: Record<string, unknown>, member: string, field: string)
   return seen
 }
 
+/** First-party harness scope, rendered under the Hyperion product name. Durable sources keep exact ids. */
+const HARNESS_SCOPE = '@deepseek-ai/dsh-'
 function joined(names: string[]): string | null {
   return names.length > 0 ? names.join(', ') : null
 }
@@ -66,8 +68,11 @@ export function contextProvenance(source: unknown): ContextProvenanceView {
       return { role: 'recall', label: joined(collect(record, 'references', 'label')) ?? kind }
     case 'agent-instructions':
       return { role: 'inject', label: joined(collect(record, 'changes', 'path')) ?? kind }
-    case 'plugin':
-      return { role: 'inject', label: readString(record, 'plugin') ?? kind }
+    case 'plugin': {
+      const plugin = readString(record, 'plugin') ?? kind
+      const label = plugin.startsWith(HARNESS_SCOPE) ? `hyperion-${plugin.slice(HARNESS_SCOPE.length)}` : plugin
+      return { role: 'inject', label }
+    }
     case 'skill-invocation':
       return { role: 'inject', label: readString(record, 'name') ?? kind }
     default:
