@@ -3033,6 +3033,42 @@ export function TrajectoryTable({
                   className={`${css.overview} ${css.summaryScrollRegion}`}
                   data-summary-scroll-region=""
                 >
+                  {selected.cell.kind === 'message' && (
+                    <>
+                      {(selectedAssistantRequestInfo?.provider
+                        ?? selectedAssistantRequestInfo?.requestConfig?.provider) !== undefined && (
+                        <div>
+                          <dt>{t('details.provider')}</dt>
+                          <dd>
+                            {selectedAssistantRequestInfo?.provider
+                              ?? selectedAssistantRequestInfo?.requestConfig?.provider}
+                          </dd>
+                        </div>
+                      )}
+                      {(selectedAssistantRequestInfo?.model
+                        ?? selectedAssistantRequestInfo?.requestConfig?.model) !== undefined && (
+                        <div>
+                          <dt>{t('details.model')}</dt>
+                          <dd>
+                            {selectedAssistantRequestInfo?.model
+                              ?? selectedAssistantRequestInfo?.requestConfig?.model}
+                          </dd>
+                        </div>
+                      )}
+                      {(selectedAssistantRequestInfo?.baseURL
+                        ?? selectedAssistantRequestInfo?.requestConfig?.baseURL) !== undefined && (
+                        <div>
+                          <dt>{t('details.endpoint')}</dt>
+                          <dd>
+                            <code>
+                              {selectedAssistantRequestInfo?.baseURL
+                                ?? selectedAssistantRequestInfo?.requestConfig?.baseURL}
+                            </code>
+                          </dd>
+                        </div>
+                      )}
+                    </>
+                  )}
                   {selected.cell.messageSource !== undefined && (
                     <div>
                       <dt>{t('details.source')}</dt>
