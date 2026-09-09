@@ -225,6 +225,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 5vw
 .bench__row > b { font: 500 15px var(--mono); color: var(--ink); text-align: right; }
 .bench__head { background: var(--canvas); font: 600 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--umber); }
 .bench__head > span { color: var(--umber); }
+.bench__head > span:nth-child(2), .bench__head > span:nth-child(3) { text-align: right; }
 .bench__note { margin-top: 26px; max-width: 44rem; font-size: 13.5px; color: var(--umber); line-height: 1.7; border-top: 1px solid var(--line); padding-top: 18px; }
 .bench__sources {
   margin: 0; padding: 14px 24px; border-top: 1px solid var(--line);
