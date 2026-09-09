@@ -56,6 +56,10 @@ export type WebBlockProps = WebSearchBlockProps | WebFetchBlockProps
 export interface WebBlockLabels {
   noResults: string
   sourcesTruncated: string
+  /** Factual heading over the citation list; the count is the listed sources. */
+  sourcesChecked: (count: number) => string
+  /** Verification nudge drawn at the bottom of every search card. */
+  verifyNotice: string
   http: string
   contentTruncated: string
   markdown: MarkdownLabels
@@ -151,9 +155,15 @@ function WebSearchBlock({ answer, sources, truncated, labels, className }: WebSe
   // A provider may legitimately return no answer and no sources; the chat WebRow
   // does not show the raw result content, so without this the user would see an
   // empty card. Mirror the backend's `No results found.` render text.
+  // Inline claim-adjacent citation chips stay out of scope: claim-to-source
+  // mapping does not exist in the session event log, so sources render here as
+  // one honestly-labeled list with a verify nudge instead of beside claims.
   const empty = (answer === undefined || answer === '') && sources.length === 0
   return (
     <div className={clsx(css.block, className)} data-web="search">
+      {sources.length > 0 && (
+        <div className={css.sourcesHeading}>{labels.sourcesChecked(sources.length)}</div>
+      )}
       {answer !== undefined && answer !== '' && (
         <div className={css.answer}><MarkdownText text={answer} labels={labels.markdown} /></div>
       )}
@@ -164,6 +174,7 @@ function WebSearchBlock({ answer, sources, truncated, labels, className }: WebSe
           {sources.map((source, index) => <SourceItem key={index} source={source} ordinal={index + 1} />)}
         </ol>
       )}
+      {!empty && <div className={css.verify}>{labels.verifyNotice}</div>}
       {truncated && <div className={css.truncated}>{labels.sourcesTruncated}</div>}
     </div>
   )

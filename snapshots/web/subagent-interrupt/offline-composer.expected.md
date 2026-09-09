@@ -41,3 +41,4 @@
 - 'button "Access mode, current: Custom" [disabled]': Custom
 - button "Stop generating"
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.

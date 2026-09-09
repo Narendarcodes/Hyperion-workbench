@@ -18,10 +18,10 @@
 - button "Copy":
   - img
 - tooltip "Copy"
-- button "Think The user wants me to read a.txt and b.txt, then reply with \"DONE\". Let me do both reads in parallel.":
+- button "Process details The user wants me to read a.txt and b.txt, then reply with \"DONE\". Let me do both reads in parallel.":
   - img
   - img
-  - text: Think The user wants me to read a.txt and b.txt, then reply with "DONE". Let me do both reads in parallel.
+  - text: Process details The user wants me to read a.txt and b.txt, then reply with "DONE". Let me do both reads in parallel.
 - paragraph: I will read both files before answering.
 - button "Copy":
   - img
@@ -72,4 +72,5 @@
   - text: DeepSeek-V4-Flash
   - img
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 2 turns · 3 steps LLM {{duration}} · Tool call {{duration}} TTFT avg {{duration}} · {{throughput}} tok/s Cache hit 98% Input 7.8K tok · Output 103 tok

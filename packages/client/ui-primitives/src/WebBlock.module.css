@@ -8,6 +8,15 @@
   border-radius: var(--dsl-web-radius);
 }
 
+/* Factual heading over the citation list: secondary tier, tight to the card. */
+.sourcesHeading {
+  margin-bottom: 8px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 19px;
+}
+
 /* The provider answer reads as body prose above the citation list; its own
    MarkdownText margins are trimmed so the list sits tight under it. */
 .answer {
@@ -90,6 +99,13 @@
 }
 
 .truncated {
+  margin-top: 8px;
+  color: var(--dsw-alias-label-tertiary);
+  font: var(--dsw-font-xs-13);
+}
+
+/* Verification nudge at the bottom of every search card: caption tier. */
+.verify {
   margin-top: 8px;
   color: var(--dsw-alias-label-tertiary);
   font: var(--dsw-font-xs-13);

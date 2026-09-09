@@ -1,4 +1,4 @@
-/** Assistant reasoning disclosure, independent of Tool-call presentation. */
+/** Assistant process-details disclosure, independent of Tool-call presentation. */
 import { useState } from 'react'
 import { DisclosureRow, IconThinkOutline14 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { ChatViewSlotProps } from '../contract/slots.ts'
@@ -17,7 +17,7 @@ function latestLine(text: string): string {
 }
 
 /**
- * Render one assistant reasoning block as the Think disclosure row.
+ * Render one assistant reasoning block as the process-details disclosure row.
  * @param props.text - complete or streaming reasoning text.
  * @param props.running - whether this block is the streaming tail.
  * @param props.t - conversation locale seat for the running status.
@@ -56,6 +56,7 @@ export function ReasoningRow({ text, running, t }: { text: string; running: bool
         )}
       >
         <div className={css.thinkBody}>{text}</div>
+        <p className={css.notice}>{t('message.processNotice')}</p>
       </DisclosureRow>
     </div>
   )

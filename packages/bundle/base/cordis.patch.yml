@@ -114,6 +114,9 @@
             displayName: Local models
             api: openai-completions
             baseURL: http://127.0.0.1:11434/v1
+            defaultInput:
+              - text
+              - image
             models:
               - id: qwen3.5:4b
                 name: Qwen 3.5 4B

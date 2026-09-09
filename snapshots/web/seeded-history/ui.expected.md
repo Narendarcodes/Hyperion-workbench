@@ -48,4 +48,5 @@
   - text: DeepSeek-V4-Flash
   - img
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 1 turns · 2 steps LLM {{duration}} · Tool call {{duration}} TTFT avg {{duration}} · {{throughput}} tok/s Cache hit 98% Input 15.8K tok · Output 135 tok

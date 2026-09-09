@@ -23,18 +23,18 @@
   - img
   - img
   - text: Context injection @deepseek-ai/dsh-system-prompt
-- button "Think The user wants me to run a simple bash command and reply with \"DONE\".":
+- button "Process details The user wants me to run a simple bash command and reply with \"DONE\".":
   - img
   - img
-  - text: Think The user wants me to run a simple bash command and reply with "DONE".
+  - text: Process details The user wants me to run a simple bash command and reply with "DONE".
 - button "Bash Echo the test string":
   - img
   - img
   - text: Bash Echo the test string
-- button "Think The command executed successfully and output \"WEB_E2E_OK\". I just need to reply with \"DONE\".":
+- button "Process details The command executed successfully and output \"WEB_E2E_OK\". I just need to reply with \"DONE\".":
   - img
   - img
-  - text: Think The command executed successfully and output "WEB_E2E_OK". I just need to reply with "DONE".
+  - text: Process details The command executed successfully and output "WEB_E2E_OK". I just need to reply with "DONE".
 - paragraph: DONE
 - button "Copy":
   - img
@@ -59,4 +59,5 @@
   - img
 - button "6% of context used"
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 1 turns · 2 steps LLM {{duration}} · Tool call {{duration}} TTFT avg {{duration}} · {{throughput}} tok/s Cache hit 99% Input 15.7K tok · Output 111 tok

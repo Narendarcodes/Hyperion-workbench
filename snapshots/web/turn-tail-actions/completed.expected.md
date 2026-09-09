@@ -46,4 +46,5 @@
   - img
 - button "6% of context used"
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 1 turns · 2 steps LLM {{duration}} · Tool call {{duration}} TTFT avg {{duration}} · {{throughput}} tok/s Cache hit 50% Input 15.7K tok · Output 112 tok

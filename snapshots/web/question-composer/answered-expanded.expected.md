@@ -23,20 +23,20 @@
   - img
   - img
   - text: Context injection @deepseek-ai/dsh-system-prompt
-- button "Think The user wants me to use the ask_user_question tool with specific parameters. Let me do exactly that.":
+- button "Process details The user wants me to use the ask_user_question tool with specific parameters. Let me do exactly that.":
   - img
   - img
-  - text: Think The user wants me to use the ask_user_question tool with specific parameters. Let me do exactly that.
+  - text: Process details The user wants me to use the ask_user_question tool with specific parameters. Let me do exactly that.
 - button "Ask question 1/1 answered" [expanded]:
   - img
   - text: Ask question 1/1 answered
 - term: Which color do you prefer?
 - definition: Blue Include accessibility notes
 - button "Inspect"
-- button "Think The user answered \"Blue\". I should now reply with the single word DONE and stop.":
+- button "Process details The user answered \"Blue\". I should now reply with the single word DONE and stop.":
   - img
   - img
-  - text: Think The user answered "Blue". I should now reply with the single word DONE and stop.
+  - text: Process details The user answered "Blue". I should now reply with the single word DONE and stop.
 - paragraph: DONE
 - button "Copy":
   - img
@@ -61,4 +61,5 @@
   - img
 - button "3% of context used"
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 1 turns · 2 steps LLM {{duration}} · Tool call {{duration}} TTFT avg {{duration}} · {{throughput}} tok/s Cache hit 95% Input 8.6K tok · Output 180 tok

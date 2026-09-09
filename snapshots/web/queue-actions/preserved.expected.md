@@ -16,8 +16,8 @@
 - text: Reply with a one-sentence description of event sourcing, then stop. {{clock}}
 - button "Copy":
   - img
-- button "Thought for a while":
-  - text: Thought for a while
+- button "Process details":
+  - text: Process details
   - img
 - paragraph: partial
 - text: Stopped
@@ -62,4 +62,5 @@
   - text: DeepSeek-V4-Flash
   - img
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 1 turns · 1 steps LLM {{duration}} TTFT avg {{duration}}

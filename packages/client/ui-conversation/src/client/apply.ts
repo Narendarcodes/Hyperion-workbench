@@ -29,6 +29,7 @@ import { EnterBehaviorRow } from './settings/EnterBehaviorRow.tsx'
 import type { EnterBehaviorRowInjected } from './settings/EnterBehaviorRow.tsx'
 import { ConversationRoot } from './skeleton/ConversationRoot.tsx'
 import { ConversationSession, ConversationSessionHeader } from './skeleton/ConversationSession.tsx'
+import { disclaimerDockEntry } from './skeleton/DisclaimerDock.tsx'
 import { InputBar } from './skeleton/InputBar.tsx'
 import { todoDockEntry } from './skeleton/TodoPanel.tsx'
 import { resolveActiveView } from './view-selection.ts'
@@ -399,4 +400,5 @@ export function apply(ctx: Context, config: Config = Config({})): void {
   })
   ctx.plugin(todoDockEntry)
   ctx.plugin(queueDockEntry)
+  ctx.plugin(disclaimerDockEntry)
 }

@@ -51,7 +51,7 @@ describe('ReasoningRow', () => {
     expect(settledSummary.parentElement?.hasAttribute('data-follow-end')).toBe(false)
   })
 
-  it('expands from either Think or the reasoning summary', () => {
+  it('expands from either Process details or the reasoning summary', () => {
     const view = render(
       <AssistantMarkdown
         t={t}
@@ -66,11 +66,11 @@ describe('ReasoningRow', () => {
     expect(row.getAttribute('aria-expanded')).toBe('true')
     expect(view.getByText(/Check persistence/)).toBeTruthy()
 
-    fireEvent.click(view.getByText('Think'))
+    fireEvent.click(view.getByText('Process details'))
     expect(row.getAttribute('aria-expanded')).toBe('false')
   })
 
-  it('expanded Think drops the inline summary and renders plain prose, no IN card', () => {
+  it('expanded Process details drops the inline summary and renders plain prose, no IN card', () => {
     const view = render(
       <AssistantMarkdown
         t={t}
@@ -79,10 +79,23 @@ describe('ReasoningRow', () => {
         renderMessageImages={renderMessageImages}
       />,
     )
-    fireEvent.click(view.getByText('Think'))
+    fireEvent.click(view.getByText('Process details'))
     expect(view.getAllByText(/Inspect the session/)).toHaveLength(1)
     expect(view.queryByText('IN')).toBeNull()
     expect(view.container.querySelector('[class*="ioCard"]')).toBeNull()
     expect(view.container.querySelector('[class*="thinkBody"]')).not.toBeNull()
+  })
+
+  it('expanded disclosure carries the post-hoc summary caveat', () => {
+    const view = render(
+      <AssistantMarkdown
+        t={t}
+        blocks={[{ kind: 'reasoning', text: 'Inspect the session\nCheck persistence' }]}
+        streaming={false}
+        renderMessageImages={renderMessageImages}
+      />,
+    )
+    fireEvent.click(view.getByText('Process details'))
+    expect(view.getByText('Summarized after the answer; it may leave out factors that shaped it.')).toBeTruthy()
   })
 })

@@ -55,7 +55,7 @@
   background: var(--dsw-alias-label-caption);
 }
 
-/* Think text reads the secondary tier — one step under the body size
+/* Process-details text reads the secondary tier — one step under the body size
    (setting −1 at ≤14, setting −2 above), shared with every flow-row title
    and summary. */
 .summary {
@@ -96,6 +96,15 @@
   line-height: calc(20px + var(--dsh-content-font-delta-secondary, 0px));
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* Caveat footer inside the expanded disclosure: caption tier under the
+   reasoning text, same indent as the body it qualifies. */
+.notice {
+  margin: 4px 0 0;
+  padding-left: calc(22px + var(--dsh-content-font-delta, 0px));
+  color: var(--dsw-alias-label-caption);
+  font: var(--dsw-font-xs-13);
 }
 
 @media (prefers-reduced-motion: reduce) {

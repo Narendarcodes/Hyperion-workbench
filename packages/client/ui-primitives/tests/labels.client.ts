@@ -59,6 +59,8 @@ export const jsonTreeLabels: JsonTreeLabels = {
 }
 
 export const webBlockLabels: WebBlockLabels = {
-  noResults: 'No results found', sourcesTruncated: 'Source list truncated',
+  noResults: 'No results found', sourcesTruncated: 'Showing part of the source list; open tool details for the rest.',
+  sourcesChecked: count => `Sources checked (${count})`,
+  verifyNotice: 'Links may be wrong or unrelated. Open each source before relying on it.',
   http: 'HTTP', contentTruncated: 'Content truncated', markdown: markdownLabels,
 }

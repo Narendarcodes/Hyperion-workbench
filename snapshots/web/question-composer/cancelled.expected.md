@@ -18,10 +18,10 @@
   - img
   - img
   - text: Context injection @deepseek-ai/dsh-system-prompt
-- button "Think The user wants me to use the ask_user_question tool with specific parameters. Let me do exactly that.":
+- button "Process details The user wants me to use the ask_user_question tool with specific parameters. Let me do exactly that.":
   - img
   - img
-  - text: Think The user wants me to use the ask_user_question tool with specific parameters. Let me do exactly that.
+  - text: Process details The user wants me to use the ask_user_question tool with specific parameters. Let me do exactly that.
 - button "Ask question cancelled" [expanded]:
   - img
   - text: Ask question cancelled
@@ -40,4 +40,5 @@
   - img
 - button "3% of context used"
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 1 turns · 1 steps LLM {{duration}} · Tool call {{duration}} TTFT avg {{duration}} · {{throughput}} tok/s Cache hit 97% Input 4.2K tok · Output 158 tok

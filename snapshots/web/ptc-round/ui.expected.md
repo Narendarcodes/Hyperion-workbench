@@ -42,10 +42,10 @@
 - 'button "Read Error: cannot read \"{{cwd}}/workspace/missing.txt\": not found"':
   - img
   - text: "Read Error: cannot read \"{{cwd}}/workspace/missing.txt\": not found"
-- button "Think The program ran successfully. Let me now reply DONE as instructed.":
+- button "Process details The program ran successfully. Let me now reply DONE as instructed.":
   - img
   - img
-  - text: Think The program ran successfully. Let me now reply DONE as instructed.
+  - text: Process details The program ran successfully. Let me now reply DONE as instructed.
 - paragraph: DONE
 - button "Copy":
   - img
@@ -70,4 +70,5 @@
   - img
 - button "7% of context used"
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 1 turns · 2 steps LLM {{duration}} · Tool call {{duration}} TTFT avg {{duration}} · {{throughput}} tok/s Cache hit 52% Input 17.2K tok · Output 252 tok

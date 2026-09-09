@@ -26,7 +26,7 @@ export interface AssistantMarkdownProps {
   t: ChatViewSlotProps['t']
 }
 
-/** Reasoning block as the Think variant summary row (figma 39:28304). */
+/** Reasoning block as the process-details variant summary row (figma 39:28304). */
 export const AssistantMarkdown = memo(function AssistantMarkdown({
   blocks, streaming, interrupted, renderMessageImages,
   reasoningHidden = false, revealProcess, mentions, t,

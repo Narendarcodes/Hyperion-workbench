@@ -91,6 +91,8 @@ export function webBlockLabels(t: T): WebBlockLabels {
   return {
     noResults: t('web.noResults'),
     sourcesTruncated: t('web.sourcesTruncated'),
+    sourcesChecked: count => t('web.sourcesChecked', { count }),
+    verifyNotice: t('web.verifyNotice'),
     http: t('web.http'),
     contentTruncated: t('web.contentTruncated'),
     markdown: markdownLabels(t),

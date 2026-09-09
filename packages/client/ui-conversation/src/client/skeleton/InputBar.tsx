@@ -549,7 +549,10 @@ export const InputBar = memo(function InputBar({
           </div>
         </div>
       </div>
-      {variant === 'composer' && input !== undefined && sessionId !== undefined
+      {/* The under-composer dock (stats, disclaimer) renders in both hero and
+          composer variants: the blank-session hero shows the disclaimer while
+          stats stay null until the first turn records steps. */}
+      {input !== undefined && sessionId !== undefined
         ? renderSlot('conversation.composer.dock', {})
         : null}
     </div>

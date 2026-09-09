@@ -10,3 +10,4 @@
   - text: DeepSeek-V4-Flash
   - img
 - button "Send message"
+- text: Responses can be wrong. Double-check important answers.

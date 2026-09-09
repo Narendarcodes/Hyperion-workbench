@@ -1,0 +1,15 @@
+/* Accuracy disclaimer under the composer card: the same ambient caption tier
+   as the StatsLine dock row above it (13/20 tertiary, centered on the shared
+   message column axis), so the two dock rows align. */
+.root {
+  display: block;
+  text-align: center;
+  max-width: var(--dsh-chat-content-width);
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 4px calc(var(--dsh-composer-side-clearance) + 16px) 0;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: var(--dsh-content-font-size-secondary, 13px);
+  line-height: calc(20px + var(--dsh-content-font-delta-secondary, 0px));
+}

@@ -12,7 +12,7 @@
   - img
   - img
   - text: Context injection @deepseek-ai/dsh-system-prompt
-- button "Think The user wants me to use the workflow tool exactly once with specific parameters. Let me carefully follow the instructions:":
+- button "Process details The user wants me to use the workflow tool exactly once with specific parameters. Let me carefully follow the instructions:":
   - img
   - img
   - text: "Think The user wants me to use the workflow tool exactly once with specific parameters. Let me carefully follow the instructions:"
@@ -23,10 +23,10 @@
 - button "snapshot-flow 1 member Completed":
   - img
   - text: snapshot-flow 1 member Completed
-- button "Think The workflow returned successfully with the reply \"WF_CHILD_OK\". Now I need to reply with exactly \"WORKFLOW_DONE\" and stop.":
+- button "Process details The workflow returned successfully with the reply \"WF_CHILD_OK\". Now I need to reply with exactly \"WORKFLOW_DONE\" and stop.":
   - img
   - img
-  - text: Think The workflow returned successfully with the reply "WF_CHILD_OK". Now I need to reply with exactly "WORKFLOW_DONE" and stop.
+  - text: Process details The workflow returned successfully with the reply "WF_CHILD_OK". Now I need to reply with exactly "WORKFLOW_DONE" and stop.
 - paragraph: WORKFLOW_DONE
 - button "Copy":
   - img

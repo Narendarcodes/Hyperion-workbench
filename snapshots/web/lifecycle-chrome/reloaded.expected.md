@@ -16,8 +16,8 @@
 - text: Reply with the single word LIGHTHOUSE and stop. {{clock}}
 - button "Copy":
   - img
-- button "Thought for a while":
-  - text: Thought for a while
+- button "Process details":
+  - text: Process details
   - img
 - paragraph: LIGHTHOUSE
 - button "Copy":
@@ -43,4 +43,5 @@
   - img
 - button "8% of context used"
 - button "Send message" [disabled]
+- text: Responses can be wrong. Double-check important answers.
 - text: 1 turns · 1 steps LLM {{duration}} TTFT avg {{duration}} · {{throughput}} tok/s Cache hit 99.5% Input 10K tok · Output 21 tok

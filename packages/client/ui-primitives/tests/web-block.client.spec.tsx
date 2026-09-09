@@ -131,10 +131,10 @@ describe('WebBlock search card', () => {
 
   it('shows the truncated indicator only when the list was capped by the tool', () => {
     const on = render(<WebBlock kind="search" sources={sources(1)} truncated />)
-    expect(on.getByText('Source list truncated')).toBeTruthy()
+    expect(on.getByText('Showing part of the source list; open tool details for the rest.')).toBeTruthy()
     cleanup()
     const off = render(<WebBlock kind="search" sources={sources(1)} truncated={false} />)
-    expect(off.queryByText('Source list truncated')).toBeNull()
+    expect(off.queryByText('Showing part of the source list; open tool details for the rest.')).toBeNull()
   })
 
   it('renders every source in one <ol> with no expand control', () => {
@@ -156,6 +156,34 @@ describe('WebBlock search card', () => {
     const view = render(<WebBlock kind="search" sources={sources(4)} truncated={false} />)
     const items = [...view.container.querySelectorAll('li[class^="_source_"]')]
     expect(items.map(li => li.getAttribute('value'))).toEqual(['1', '2', '3', '4'])
+  })
+
+  it('heads the citation list with a sources-checked count and a verify nudge', () => {
+    const view = render(<WebBlock kind="search" truncated={false} sources={[
+      { url: 'https://example.com/a', title: 'Titled' },
+      { url: 'https://plain.example.org/b' },
+    ]} />)
+    expect(view.getByText('Sources checked (2)')).toBeTruthy()
+    expect(view.getByText('Titled')).toBeTruthy()
+    expect(view.getByText('plain.example.org')).toBeTruthy()
+    expect(view.queryByText('Source')).toBeNull()
+    expect(view.getByText('Links may be wrong or unrelated. Open each source before relying on it.')).toBeTruthy()
+  })
+
+  it('labels a titleless unparseable source by its raw url and still counts it', () => {
+    const view = render(<WebBlock kind="search" truncated={false} sources={[
+      { url: 'not a url' },
+    ]} />)
+    expect(view.getByText('Sources checked (1)')).toBeTruthy()
+    expect(view.getByText('not a url')).toBeTruthy()
+    expect(view.getByText('Links may be wrong or unrelated. Open each source before relying on it.')).toBeTruthy()
+  })
+
+  it('omits the heading and the verify nudge when a search returns no answer and no sources', () => {
+    const view = render(<WebBlock kind="search" sources={[]} truncated={false} />)
+    expect(view.getByText('No results found')).toBeTruthy()
+    expect(view.queryByText(/Sources checked/)).toBeNull()
+    expect(view.queryByText(/Links may be wrong/)).toBeNull()
   })
 })
 

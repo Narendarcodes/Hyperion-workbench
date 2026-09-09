@@ -13,7 +13,7 @@ const renderMessageImages: AssistantMarkdownProps['renderMessageImages'] = () =>
 afterEach(cleanup)
 
 describe('tails', () => {
-  it('AssistantMarkdown renders reasoning as a Think row and unknown blocks as JSON fallback', () => {
+  it('AssistantMarkdown renders reasoning as a Process details row and unknown blocks as JSON fallback', () => {
     const view = render(
       <AssistantMarkdown
         t={t}
@@ -26,7 +26,7 @@ describe('tails', () => {
         renderMessageImages={renderMessageImages}
       />,
     )
-    expect(view.getByText('Think')).toBeTruthy()
+    expect(view.getByText('Process details')).toBeTruthy()
     expect(view.getByText('thinking hard')).toBeTruthy()
     expect(view.getByText(/Unknown content block/)).toBeTruthy()
     const stopped = render(

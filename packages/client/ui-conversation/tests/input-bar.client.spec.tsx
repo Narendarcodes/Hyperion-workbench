@@ -1305,6 +1305,11 @@ describe('strips and variants', () => {
     expect(view.container.querySelector('[class*="hero"]')).not.toBeNull()
   })
 
+  it('hero variant still renders the composer dock below the card', () => {
+    const { view } = bench({ variant: 'hero', footer: <i data-testid="foot" /> })
+    expect(view.getByTestId('foot')).toBeTruthy()
+  })
+
   it('renders overlay, left/right, and footer slots at their layout positions', () => {
     const { view } = bench({
       overlay: <i data-testid="ov" />,

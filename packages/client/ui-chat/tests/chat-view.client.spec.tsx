@@ -1324,7 +1324,7 @@ describe('ChatView', () => {
     expect(branchButtons.map(button => button.getAttribute('aria-disabled'))).toEqual([null, null])
   })
 
-  it('folds Think and Tool rows before the final answer without unmounting them', () => {
+  it('folds Process details and Tool rows before the final answer without unmounting them', () => {
     const first = {
       ...assistant(2, 'earlier reply', 1, 1),
       blocks: [
@@ -1371,7 +1371,7 @@ describe('ChatView', () => {
     expect(members.map(member => member.getAttribute('hidden'))).toEqual([null, null, null])
 
     act(() => { h.set({ nodes: [user(1, 'question'), first] }) })
-    expect(view.getByRole('button', { name: 'Thought for a while' }).getAttribute('aria-expanded')).toBe('false')
+    expect(view.getByRole('button', { name: 'Process details' }).getAttribute('aria-expanded')).toBe('false')
     expect(members[0]?.getAttribute('hidden')).toBeNull()
     act(() => { h.set({
       nodes: [user(1, 'question'), first, toolResult(3, 'a'), toolResult(4, 'b', 'subagent'), second],
@@ -1474,7 +1474,7 @@ describe('ChatView', () => {
       turnEnds: new Map([[1, 4]]),
     })
     const view = render(<h.ChatView {...h.props} />)
-    const toggle = view.getByRole('button', { name: 'Thought for a while' })
+    const toggle = view.getByRole('button', { name: 'Process details' })
     const contextRow = view.container.querySelector<HTMLElement>('[data-chat-flow-kind="context"]')
 
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
@@ -1575,7 +1575,7 @@ describe('ChatView', () => {
     }
     const h = makeHarness({ nodes: [user(1, 'question'), final], turnEnds: new Map([[1, 4]]) })
     const view = render(<h.ChatView {...h.props} />)
-    const toggle = view.getByRole('button', { name: 'Thought for a while' })
+    const toggle = view.getByRole('button', { name: 'Process details' })
     const reasoning = view.container.querySelector<HTMLElement>('[data-turn-process-inline]')
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
     expect(reasoning?.getAttribute('hidden')).toBe('until-found')
@@ -1984,13 +1984,13 @@ describe('ChatView', () => {
     expect(h.forkAt).not.toHaveBeenCalled()
   })
 
-  it('keeps final content actions but disables branch when Tool and interrupted Think follow it', () => {
-    const interruptedThink: AssistantMessageNode = {
+  it('keeps final content actions but disables branch when Tool and interrupted reasoning follow it', () => {
+    const interruptedReasoning: AssistantMessageNode = {
       kind: 'assistant', seq: 4.1, time: 4_100, turn: 1, step: 2,
       blocks: [{ kind: 'reasoning', text: 'bad path' }], interrupted: true,
     }
     const h = makeHarness({
-      nodes: [user(1, 'question'), assistant(2, 'answer'), toolResult(3, 'a'), interruptedThink],
+      nodes: [user(1, 'question'), assistant(2, 'answer'), toolResult(3, 'a'), interruptedReasoning],
       turnEnds: new Map([[1, 5]]),
     })
     const view = render(<h.ChatView {...h.props} />)
