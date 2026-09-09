@@ -65,6 +65,8 @@ describe('dsh-sdk-minimal bundle', () => {
       inject: ['sdkAppStartup', 'loader'],
       config: { maxTokensAsSuccess: false },
     })
+    expect(rows.find(row => row.id === 'session-log-deepseek')?.disabled).toBe(true)
+    expect(rows.find(row => row.id === 'llm-deepseek')?.disabled).toBe(true)
     expect(rows.find(row => row.id === 'llm-deepseek')?.config).toEqual({
       apiKeyEnv: 'DEEPSEEK_API_KEY',
       defaultContextWindow: { __jsExpr: 'Number(process.env.DSH_CONTEXT_WINDOW ?? 1000000)' },

@@ -129,9 +129,6 @@ function directoryEntries(
       displayName,
       settingsNs: NS,
       settingsPath: ['providers', provider],
-      // Membership of the installed catalog, not of the settings document:
-      // narrowing a shipped provider's models stores a profile too, and that
-      // route is still one pi-ai knows.
       declared: !catalog.has(provider),
     })
   }

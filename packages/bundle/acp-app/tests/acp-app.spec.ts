@@ -30,7 +30,7 @@ describe('dsh-acp-app bundle', () => {
     expect(rows.find(row => row.id === 'acp-app-startup')?.name).toBe('@deepseek-ai/dsh-acp-app')
     expect(rows.find(row => row.id === 'acp')).toMatchObject({
       inject: ['acpAppStartup'],
-      config: { provider: 'local', model: 'hyperion-default' },
+      config: { provider: 'local', model: 'qwen3.5:4b' },
     })
   })
 })

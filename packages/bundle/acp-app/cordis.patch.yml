@@ -18,4 +18,4 @@
       inject: [acpAppStartup]
       config:
         provider: local
-        model: hyperion-default
+        model: qwen3.5:4b

@@ -35,6 +35,7 @@
 
     - id: session-log-deepseek
       name: '@deepseek-ai/dsh-session-log-deepseek'
+      disabled: true
 
     - id: typert
       name: '@deepseek-ai/dsh-typert-registry'
@@ -78,7 +79,7 @@
       name: '@deepseek-ai/dsh-agent-default-model'
       config:
         provider: local
-        model: hyperion-default
+        model: qwen3.5:4b
 
     - id: jobs
       name: '@deepseek-ai/dsh-jobs-local'
@@ -112,11 +113,10 @@
           local:
             displayName: Local models
             api: openai-completions
-            baseURL: http://127.0.0.1:8080/v1
+            baseURL: http://127.0.0.1:11434/v1
             models:
-              - id: hyperion-default
-                name: Hyperion default
-
+              - id: qwen3.5:4b
+                name: Qwen 3.5 4B
     - id: session-persistence-jsonl
       name: '@deepseek-ai/dsh-session-persistence-jsonl'
       config:
@@ -193,6 +193,7 @@
     # on SIGINT/SIGTERM.
     - id: session-telemetry-otel
       name: '@deepseek-ai/dsh-session-telemetry-otel'
+      disabled: true
       config:
         mode: !!js process.env.DSH_TELEMETRY_MODE || 'FEEDBACK_ONLY'
         shutdownTimeoutMillis: 3000
@@ -451,6 +452,7 @@
 
     - id: web-search-deepseek
       name: '@deepseek-ai/dsh-web-search-deepseek'
+      disabled: true
       config:
         apiKeyEnv: DEEPSEEK_API_KEY
 
@@ -460,6 +462,7 @@
     - id: tool-web
       name: '@deepseek-ai/dsh-tool-web'
       config:
+        search: false
         fetch: true
         searchTimeoutMs: 60000
 
@@ -495,3 +498,4 @@
     # choice.
     - id: llm-deepseek
       name: '@deepseek-ai/dsh-llm-deepseek'
+      disabled: true
