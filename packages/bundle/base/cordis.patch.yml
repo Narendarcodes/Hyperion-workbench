@@ -120,6 +120,7 @@
             models:
               - id: qwen3.5:4b
                 name: Qwen 3.5 4B
+                contextWindow: 32768
     - id: session-persistence-jsonl
       name: '@deepseek-ai/dsh-session-persistence-jsonl'
       config:
