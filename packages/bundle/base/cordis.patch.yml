@@ -482,7 +482,11 @@
     - id: system-prompt
       name: '@deepseek-ai/dsh-system-prompt'
       config:
-        personaPrefix: ''
+        personaPrefix: |
+          Execution Rules:
+          - Only use tools explicitly declared in the tools list. Never invent tool names (such as execute_code).
+          - When executing Python or multi-line commands, always write the code to a file first with `write`, then execute it cleanly using `pwsh` or `bash` (e.g. `python script.py`). Never use inline `python -c` with nested quotes.
+          - For binary files, do not use `read` directly: use the `read_image` tool for images, and write a Python script (pymupdf/pypdf, python-docx, pandas/openpyxl) with `pwsh`/`bash` to extract text from documents and spreadsheets.
 
     # Agents created at startup. The base stays empty; raw overlays may create
     # agents, while Web creates sessions on client request.
