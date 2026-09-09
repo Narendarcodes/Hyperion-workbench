@@ -164,6 +164,7 @@ export const en = {
   'details.purpose': 'Purpose',
   'details.provider': 'Provider',
   'details.model': 'Model',
+  'details.endpoint': 'Endpoint',
   'details.toolCalls': 'Tool calls',
   'details.subtoolCalls': 'Subtool calls',
   'details.error': 'Error',

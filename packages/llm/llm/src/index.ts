@@ -784,6 +784,7 @@ export class LlmRuntime extends TypertRemoteService {
       id: model,
       name: resolved.name,
       ...resolved.description === undefined ? {} : { description: resolved.description },
+      ...resolved.baseURL === undefined ? {} : { baseURL: resolved.baseURL },
       ...inputModalities === undefined ? {} : { inputModalities },
       ...context === undefined ? {} : { context: { contextWindow: context.contextWindow } },
       ...defaultMaxTokens === undefined ? {} : { defaultMaxTokens },

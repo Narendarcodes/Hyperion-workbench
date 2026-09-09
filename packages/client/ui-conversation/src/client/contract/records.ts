@@ -15,6 +15,7 @@ export type { TodoItem }
 export interface AssistantRequestConfig {
   provider: string
   model: string
+  baseURL?: string
   purpose?: string
   thinking?: string
   reasoningEffort?: string
@@ -27,6 +28,7 @@ export interface AssistantRequestConfig {
 export interface AssistantProvenanceView {
   provider: string
   model: string
+  baseURL?: string
 }
 
 /** Assistant content blocks sorted by what a UI target presents. */

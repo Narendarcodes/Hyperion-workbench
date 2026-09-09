@@ -403,8 +403,8 @@ export class DeepSeekAdapter extends LlmAdapter {
       // unverified image capability would let the host persist input that the
       // endpoint may reject on every later turn.
       ...configured === undefined
-        ? { provider, id: model, name: model, inputModalities: ['text' as const] }
-        : modelInfo(provider, configured),
+        ? { provider, id: model, name: model, baseURL: connection.baseURL, inputModalities: ['text' as const] }
+        : { ...modelInfo(provider, configured), baseURL: connection.baseURL },
       context: { contextWindow },
       defaultMaxTokens: configured?.maxTokens ?? connection.maxTokens,
       ...connection.defaults.thinking === 'disabled'

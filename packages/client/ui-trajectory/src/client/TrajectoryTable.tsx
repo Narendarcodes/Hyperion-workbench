@@ -439,6 +439,7 @@ interface TrajectoryRequestNumberBase {
   resultSeq?: number
   provider?: string
   model?: string
+  baseURL?: string
   requestConfig?: AssistantRequestConfig
   usage?: TrajectoryUsage
   cumulativeUsage?: TrajectoryUsage
@@ -2846,6 +2847,18 @@ export function TrajectoryTable({
                       <dd>
                         {selectedRequestInfo.model
                           ?? selectedRequestInfo.requestConfig?.model}
+                      </dd>
+                    </div>
+                  )}
+                  {(selectedRequestInfo.baseURL
+                    ?? selectedRequestInfo.requestConfig?.baseURL) !== undefined && (
+                    <div>
+                      <dt>{t('details.endpoint')}</dt>
+                      <dd>
+                        <code>
+                          {selectedRequestInfo.baseURL
+                            ?? selectedRequestInfo.requestConfig?.baseURL}
+                        </code>
                       </dd>
                     </div>
                   )}
