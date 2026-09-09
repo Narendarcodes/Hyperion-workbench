@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>hyperion-workbench — an agent harness hackathon build on DeepSeek Harness</title>
-<meta name="description" content="hyperion-workbench: a hackathon build on DeepSeek Harness, the all-plugin agent harness. Every capability is a plugin: models, tools, skills, sessions, sandboxes, storage, loops, scheduling, and the UI.">
+<title>hyperion-workbench — SIH26117 · Sovereign On-Premise Agentic AI Workbench</title>
+<meta name="description" content="hyperion-workbench solves SIH26117: a sovereign on-premise agentic AI workbench using open-weight multimodal LLMs for confidential industrial work. Built for MRPL, Smart Automation, SIH 2026.">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="css/style.css?v=t2">
+<link rel="stylesheet" href="css/style.css?v=h1">
 <script type="importmap">
 { "imports": {
   "gsap": "https://esm.sh/gsap@3.12.5",
@@ -27,12 +27,13 @@
       <span>hyperion-workbench</span>
     </a>
     <div class="lnav__links">
-      <a href="#plugins">Plugins</a>
-      <a href="#bench">Benchmarks</a>
-      <a href="#modes">Modes</a>
-      <a href="#trace">Trace</a>
+      <a href="#problem">Problem</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#sovereignty">Sovereignty</a>
+      <a href="#bench">Engine</a>
     </div>
-    <a href="#start" class="lnav__cta">Run the demo</a>
+    <a href="#run" class="lnav__cta">Run the demo</a>
   </nav>
 </header>
 
@@ -43,12 +44,12 @@
   <div id="tunnel" class="hero__tunnel" aria-hidden="true"></div>
   <div class="hero__scrim" aria-hidden="true"></div>
   <div class="hero__copy">
-    <p class="hero__badge"><span class="dot"></span>Hackathon build · DeepSeek Harness inside</p>
-    <h1>Every capability,<br>every decision,<br><span class="hero__em">remembered.<svg viewBox="0 0 400 24" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M6 16 C 80 4, 150 22, 210 12 S 340 8, 394 14" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/></svg></span></h1>
-    <p class="hero__sub">hyperion-workbench is our hackathon build on DeepSeek Harness — the all-plugin agent harness. We recompose models, tools, skills, sessions, sandboxes, scheduling, even the UI as swappable plugins, and every run lands in one traceable log.</p>
+    <p class="hero__badge"><span class="dot"></span>SIH 2026 · PS SIH26117 · MRPL · Smart Automation</p>
+    <h1>Every source, every decision,<br><span class="hero__em">defensible.</span></h1>
+    <p class="hero__sub">hyperion-workbench is a sovereign, on-premise agentic AI workbench for confidential industrial work. Open-weight multimodal models, a local knowledge base, and bounded tools turn scanned documents into evidence-backed deliverables — with human decision authority intact.</p>
     <div class="hero__actions">
-      <a href="#start" class="btn btn--accent">Run the demo <span>→</span></a>
-      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--ghost">Read the source</a>
+      <a href="#run" class="btn btn--accent">Run the demo <span>→</span></a>
+      <a href="#problem" class="btn btn--ghost">The problem <span>↓</span></a>
     </div>
   </div>
 </section>
@@ -57,31 +58,50 @@
 <section class="proof">
   <div class="wrap">
     <div class="proof__row">
-      <div class="proof__item"><p class="proof__num" data-count="8">0</p><p class="proof__label">runtime modes</p></div>
-      <div class="proof__item"><p class="proof__num" data-count="100" data-suffix="%">0</p><p class="proof__label">capabilities as plugins</p></div>
-      <div class="proof__item"><p class="proof__num" data-count="1" data-suffix=" log">0</p><p class="proof__label">append-only session record</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="9">0</p><p class="proof__label">workflow stages, capture to archive</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="100" data-suffix="%">0</p><p class="proof__label">execution on-premise</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="1" data-suffix=" log">0</p><p class="proof__label">append-only audit trail</p></div>
     </div>
     <div class="marquee" aria-hidden="true"><div class="marquee__track">
-      <span>models</span><span>tools</span><span>skills</span><span>sessions</span><span>sandboxes</span><span>storage</span><span>loops</span><span>scheduling</span><span>UI</span>
-      <span>models</span><span>tools</span><span>skills</span><span>sessions</span><span>sandboxes</span><span>storage</span><span>loops</span><span>scheduling</span><span>UI</span>
+      <span>OCR + vision</span><span>local RAG</span><span>model router</span><span>sandboxed execution</span><span>risk-based verification</span><span>DOCX deliverables</span><span>sovereignty monitor</span><span>audit trail</span>
+      <span>OCR + vision</span><span>local RAG</span><span>model router</span><span>sandboxed execution</span><span>risk-based verification</span><span>DOCX deliverables</span><span>sovereignty monitor</span><span>audit trail</span>
     </div></div>
   </div>
 </section>
 
-<!-- ===================== AGENT FORMULA ===================== -->
-<section class="formula">
-  <div class="wrap">
-    <h2 class="formula__title">Agent <span class="op">=</span> Model <span class="op">+</span> <span class="accent">Harness</span></h2>
-    <p class="formula__sub">The model is the soul of an agent — the harness is everything else.<br>DeepSeek Harness lets a model understand its environment, use tools, and keep working in real-world settings. We compose ours for the hackathon floor.</p>
+<!-- ===================== PROBLEM ===================== -->
+<section class="ps" id="problem">
+  <div class="wrap ps__grid">
+    <div>
+      <p class="kicker">SIH26117 · Mangalore Refinery and Petrochemicals Limited</p>
+      <h2>Confidential work is stuck between two barriers</h2>
+      <div class="ps__bars">
+        <div class="ps__bar">
+          <h3>The confidentiality barrier</h3>
+          <p>Inspection reports, engineering calculations, drawings, SOPs and internal correspondence can't leave the organization — so conventional cloud AI is off the table.</p>
+        </div>
+        <div class="ps__bar">
+          <h3>The productivity barrier</h3>
+          <p>Purely manual knowledge work — structuring reports, cross-referencing manuals, verifying claims — consumes engineer hours and loses decisions in the process.</p>
+        </div>
+      </div>
+    </div>
+    <div class="ps__side">
+      <div class="ps__model">
+        <p class="ps__model__label">Our operating model</p>
+        <p class="ps__chain"><span>source evidence</span><i>→</i><span>AI analysis</span><i>→</i><span>explicit inference</span><i>→</i><span>human decision</span></p>
+        <p class="ps__model__note">Not a chatbot. The system reduces repetitive knowledge-work effort without transferring accountability for consequential industrial decisions to the AI.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ===================== BENCHMARKS ===================== -->
+<!-- ===================== ENGINE (fork story + benchmarks) ===================== -->
 <section class="bench" id="bench">
   <div class="wrap">
-    <p class="kicker">Why we built on it</p>
-    <h2>The harness moves the score</h2>
-    <p class="bench__sub">DeepSeek runs its published agent benchmarks through Harness <em>minimal mode</em> — fixed sampling, maximal reasoning effort, two tools — so scores are reproducible instead of tuned per benchmark. The numbers below are DeepSeek's own, run on the same engine our hackathon build extends.</p>
+    <p class="kicker">The engine we forked</p>
+    <h2>We didn't build the harness from zero — we forked the best one</h2>
+    <p class="bench__sub">hyperion-workbench runs on our fork of <em>DeepSeek Harness</em>, the open-source all-plugin agent runtime. We chose it because the harness — not the model — decides how much of a model's capability becomes completed, reliable work. DeepSeek's own published benchmarks, all run through Harness minimal mode with fixed sampling and maximal reasoning effort:</p>
     <div class="bench__table">
       <div class="bench__head bench__row"><span>Benchmark</span><span>V4-Pro GA</span><span>V4-Flash</span></div>
       <div class="bench__row"><span>Terminal-Bench 2.1</span><b>87.9</b><b>82.7</b></div>
@@ -92,154 +112,159 @@
       <div class="bench__row"><span>DeepSWE</span><b>62.7</b><b>54.4</b></div>
       <div class="bench__row"><span>NL2Repo</span><b>61.5</b><b>54.2</b></div>
     </div>
-    <p class="bench__note">Same weights, different harness: an independent rerun of V4-Flash on a third-party harness swung Terminal-Bench by twenty tasks. That swing is the whole reason a hackathon on harness architecture is worth running.</p>
+    <p class="bench__note">Same model weights, different harness: an independent rerun of V4-Flash on a third-party harness swung Terminal-Bench by twenty tasks. That swing is exactly why our workbench fork is the investment: every capability — models, tools, skills, sessions, sandboxes, scheduling, even the UI — is a plugin we recompose for MRPL's workflow.</p>
   </div>
 </section>
 
-<!-- ===================== OPENSHELL ===================== -->
-<section class="openshell" id="openshell">
-  <div class="wrap openshell__grid">
-    <div>
-      <p class="kicker">Interop</p>
-      <h2>Plays with NVIDIA OpenShell</h2>
-      <p class="openshell__sub">Our sandbox plugins follow the same bet NVIDIA made with OpenShell — out-of-process policy enforcement. OpenShell (Apache 2.0) wraps any coding agent in isolated sandboxes with deny-by-default permissions, live policy updates, and a full audit trail. A single command moves an agent inside: <code>openshell sandbox create --from openclaw</code>.</p>
-      <p class="openshell__note">Sandboxed sessions, metered resources, every allow/deny decision logged — the direction we point our own sandbox plugins in.</p>
-    </div>
-    <div class="window">
-      <div class="window__bar"><span class="wdot wd--r"></span><span class="wdot wd--y"></span><span class="wdot wd--g"></span><span class="window__title">openshell — gateway policy</span></div>
-      <div class="window__body">
-        <div class="trow"><span class="trow__src">sandbox</span><span class="trow__txt">create --from openclaw → isolated</span></div>
-        <div class="trow"><span class="trow__src">policy</span><span class="trow__txt">deny-by-default · live updates</span></div>
-        <div class="trow"><span class="trow__src">resources</span><span class="trow__txt">metered: cpu · mem · net</span></div>
-        <div class="trow trow--ok"><span class="trow__src">audit</span><span class="trow__txt">every allow/deny logged</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== FEATURES — capability grid ===================== -->
-<section class="features" id="plugins">
+<!-- ===================== WORKFLOW — trajectory view ===================== -->
+<section class="showcase" id="workflow">
   <div class="wrap">
-    <p class="kicker">Capabilities as plugins</p>
-    <h2>Swap any capability<br>without touching the source</h2>
-    <p class="features__sub">Plugins provide every agent capability and work together through Cordis services and events. Select, swap, or extend anything in configuration.</p>
-    <div class="features__grid">
-      <article class="fcard">
-        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 2v4m0 12v4M4.9 4.9l2.8 2.8m8.6 8.6 2.8 2.8M2 12h4m12 0h4M4.9 19.1l2.8-2.8m8.6-8.6 2.8-2.8"/><circle cx="12" cy="12" r="3.2"/></svg></div>
-        <h3>Models</h3>
-        <p>Every model interface is a plugin — pick providers per task, swap without code changes.</p>
-      </article>
-      <article class="fcard">
-        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 17l4-4 4 2 4-6 6 4"/><path d="M3 21h18"/></svg></div>
-        <h3>Tools &amp; skills</h3>
-        <p>Shell, filesystem, web, and skill catalog — each registered through the same service boundary.</p>
-      </article>
-      <article class="fcard fcard--hi">
-        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15l3-3 2 2 5-5"/><circle cx="14" cy="9" r="1.4"/></svg></div>
-        <h3>Sessions &amp; trace</h3>
-        <p>Every run lands in an append-only log — system prompts, reasoning, tool calls, subagent scheduling, context injections.</p>
-      </article>
-      <article class="fcard">
-        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15v-3m3 3v-6m3 6v-4m3 4v-7"/></svg></div>
-        <h3>Sandboxes &amp; storage</h3>
-        <p>E2B sandboxes and durable session data — isolated execution, persistent results.</p>
-      </article>
-      <article class="fcard">
-        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 3"/><path d="M21 3l-4 4"/></svg></div>
-        <h3>Loops &amp; scheduling</h3>
-        <p>Loop hygiene, tool timeouts, and scheduled jobs keep long-running agents on rails.</p>
-      </article>
-      <article class="fcard">
-        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/></svg></div>
-        <h3>The UI</h3>
-        <p>Even the interface is a plugin — recompose the web app, TUI, or headless modes in config.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== SHOWCASE — trajectory view ===================== -->
-<section class="showcase" id="trace">
-  <div class="wrap">
-    <p class="kicker kicker--center">Every run is traceable</p>
-    <h2 class="showcase__title">The Trajectory view</h2>
+    <p class="kicker kicker--center">The nine-stage evidence path</p>
+    <h2 class="showcase__title">Every run lands in one traceable log</h2>
     <div class="showcase__frame" data-frame>
       <div class="window">
         <div class="window__bar">
           <span class="wdot wd--r"></span><span class="wdot wd--y"></span><span class="wdot wd--g"></span>
-          <span class="window__title">dsh — trajectory / session 7291</span>
+          <span class="window__title">hyperion-workbench — task trace / inspection-7291</span>
         </div>
         <div class="window__body">
-          <div class="trow"><span class="trow__src">system</span><span class="trow__txt">assembled system prompt · 8 plugins · 12 tools</span></div>
-          <div class="trow"><span class="trow__src">model</span><span class="trow__txt">reasoning · plan tool calls for harness docs</span></div>
-          <div class="trow"><span class="trow__src">tool</span><span class="trow__txt">fs.read → docs/architecture.md (14.2 KB)</span></div>
-          <div class="trow"><span class="trow__src">subagent</span><span class="trow__txt">scheduled · doc-quick gate · returned pass</span></div>
-          <div class="trow"><span class="trow__src">context</span><span class="trow__txt">injected · AGENTS.md + project profile</span></div>
-          <div class="trow trow--ok"><span class="trow__src">model</span><span class="trow__txt">final answer · citations attached</span></div>
+          <div class="trow"><span class="trow__src">capture</span><span class="trow__txt">inspection-report-scan.pdf · 14 pages · local store</span></div>
+          <div class="trow"><span class="trow__src">understand</span><span class="trow__txt">OCR + vision · 6 tables, 2 drawings identified</span></div>
+          <div class="trow"><span class="trow__src">ground</span><span class="trow__txt">SOP-4.2 r7 eff.2026-03 · pp.31–34 evidence linked</span></div>
+          <div class="trow"><span class="trow__src">analyze</span><span class="trow__txt">3 findings · 1 conflict flagged · 2 high-risk claims</span></div>
+          <div class="trow"><span class="trow__src">verify</span><span class="trow__txt">engineer confirmed 2/2 · 1 correction applied</span></div>
+          <div class="trow"><span class="trow__src">deliver</span><span class="trow__txt">approval-note.docx generated · trace attached</span></div>
+          <div class="trow trow--ok"><span class="trow__src">review</span><span class="trow__txt">manager approved · claim-level decision recorded</span></div>
         </div>
       </div>
-      <div class="callout callout--1">Resume, fork, search, replay</div>
-      <div class="callout callout--2">Append-only — nothing is overwritten</div>
-      <div class="callout callout--3">Inspect by source: prompt, tool, subagent</div>
+      <div class="callout callout--1">Source facts, AI inference and human decisions stay labeled and separate</div>
+      <div class="callout callout--2">Version and authority metadata surfaced on every source</div>
+      <div class="callout callout--3">Manager approves claims, not raw noise</div>
     </div>
   </div>
 </section>
 
-<!-- ===================== MODES — pinned horizontal ===================== -->
-<section class="modes" id="modes">
+<!-- ===================== CAPABILITIES ===================== -->
+<section class="features" id="capabilities">
+  <div class="wrap">
+    <p class="kicker">P0 capabilities</p>
+    <h2>Confidential in, evidence-backed out</h2>
+    <p class="features__sub">Scanned PDFs, photographs, handwritten notes and drawings enter through a controlled local location. Open-weight models and bounded tools do the heavy work. Nothing leaves the boundary.</p>
+    <div class="features__grid">
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></div>
+        <h3>Multimodal capture</h3>
+        <p>Local OCR and vision turn scans, photos and handwritten notes into inspectable text, tables and regions.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M9 11h4M11 9v4"/></svg></div>
+        <h3>Grounded retrieval</h3>
+        <p>A local knowledge base with version, authority and effective-date metadata. Every claim links to document, page and section.</p>
+      </article>
+      <article class="fcard fcard--hi">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3v4m0 12v4M4.9 4.9l2.8 2.8m8.6 8.6 2.8 2.8M2 12h4m12 0h4"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+        <h3>Model router</h3>
+        <p>Open-weight models registered with capability, modality and compute profile. Tasks route to the smallest model that can do the job — locally.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15l3-3 2 2 5-5"/></svg></div>
+        <h3>Sandboxed execution</h3>
+        <p>Calculations and code run in resource-limited sandboxes with no unrestricted network — every invocation recorded.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M9 12l2 2 4-4"/><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/></svg></div>
+        <h3>Risk-based verification</h3>
+        <p>Safety, equipment and numeric claims require human confirmation regardless of model confidence — grouped, not one dialog per claim.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg></div>
+        <h3>Real deliverables</h3>
+        <p>DOCX approval notes, XLSX outputs and working code — generated with their full evidence trail attached.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SOVEREIGNTY + OPENSHELL ===================== -->
+<section class="sov" id="sovereignty">
+  <div class="wrap sov__grid">
+    <div>
+      <p class="kicker">Sovereignty monitor</p>
+      <h2>Visible proof, not promises</h2>
+      <p class="sov__sub">The PS asks for demonstrable isolation. The workbench exposes live execution state, controlled tool calls, and an event trail that shows sensitive tasks have no uncontrolled external path. Our sandbox plugins follow the same bet NVIDIA made with <em>OpenShell</em> — out-of-process policy enforcement, deny-by-default permissions, metered resources, and a full audit trail of every allow/deny decision.</p>
+      <p class="sov__note">Status labels describe deployment policy. The environment is validated before any air-gap claim is made.</p>
+    </div>
+    <div class="monitor">
+      <div class="monitor__header"><span>SOV-01 / RUNTIME POLICY</span><span class="monitor__status"><span class="dot"></span> Enforced</span></div>
+      <dl class="monitor__rows">
+        <div><dt>External network</dt><dd class="ok">No unauthorized path</dd></div>
+        <div><dt>Model inference</dt><dd>On-premise · open-weight</dd></div>
+        <div><dt>Knowledge</dt><dd>Local controlled corpus</dd></div>
+        <div><dt>Sandbox</dt><dd>Active · resource-limited</dd></div>
+        <div><dt>Tool gateway</dt><dd>Allowlisted</dd></div>
+        <div><dt>Audit trace</dt><dd>Recording task events</dd></div>
+      </dl>
+      <div class="monitor__footer"><span>0 uncontrolled egress routes</span><span>policy enforced</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ROLES — pinned horizontal ===================== -->
+<section class="modes" id="roles">
   <div class="wrap modes__head">
-    <p class="kicker">Runtime modes</p>
-    <h2>One harness, four ways to run</h2>
+    <p class="kicker">Who the workbench serves</p>
+    <h2>Control is distributed deliberately</h2>
   </div>
   <div class="modes__viewport" data-viewport>
     <div class="modes__track" data-track>
       <article class="mcard">
-        <p class="mcard__n">Standard</p>
-        <h3>Full coding agent</h3>
-        <p>File editing, shell, file and web search, skills, planning, goals, subagents, and workflows — the complete toolset.</p>
-        <p class="mcard__tag">dsh --profile standard</p>
+        <p class="mcard__n">Primary user</p>
+        <h3>Industrial Engineer</h3>
+        <p>Full workspace: create tasks, run analysis, verify grouped exceptions, generate deliverables. Evidence-first findings, never opaque conclusions.</p>
+        <p class="mcard__tag">workspace · sources · artifacts</p>
       </article>
       <article class="mcard">
-        <p class="mcard__n">Code</p>
-        <h3>Tools as code</h3>
-        <p>All Standard capabilities, with tools exposed through the Code Mode SDK so the model combines multi-step operations in one TypeScript program.</p>
-        <p class="mcard__tag">dsh --profile code</p>
+        <p class="mcard__n">Secondary user</p>
+        <h3>Department Manager</h3>
+        <p>Decision-focused review: summary, key findings, high-risk claims, evidence and engineer verification status — Approve, Reject or Request Changes per claim.</p>
+        <p class="mcard__tag">evidence · flags · decisions</p>
       </article>
       <article class="mcard">
-        <p class="mcard__n">Minimal</p>
-        <h3>Two-tool benchmark</h3>
-        <p>Persistent bash and str_replace_editor only — for benchmarking models in a minimal environment.</p>
-        <p class="mcard__tag">dsh --profile minimal</p>
+        <p class="mcard__n">Governance</p>
+        <h3>Cybersecurity Officer</h3>
+        <p>Live sovereignty proof: network isolation, least privilege, policy enforcement and the complete audit trail — without needing the workflow UI.</p>
+        <p class="mcard__tag">isolation · policy · audit</p>
       </article>
       <article class="mcard">
-        <p class="mcard__n">Creator</p>
-        <h3>Preset authoring</h3>
-        <p>Inspect the live runtime, test Cordis plugins in memory, and combine them into new modes — with preset-authoring guidance built in.</p>
-        <p class="mcard__tag">dsh --profile creator</p>
+        <p class="mcard__n">Governance</p>
+        <h3>IT / Knowledge Manager</h3>
+        <p>Read-only status: model registry state, corpus freshness and version/authority metadata, GPU resource profile — the platform stays governable.</p>
+        <p class="mcard__tag">registry · corpus · metadata</p>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ===================== CTA ===================== -->
-<section class="cta" id="start">
+<!-- ===================== RUN ===================== -->
+<section class="cta" id="run">
   <div class="wrap">
-    <h2>Clone it. Break it.<br>Recompose it.</h2>
-    <p class="cta__sub">Hackathon rule zero: the harness ships with source. Fork ours or start from upstream.</p>
+    <h2>Clone the fork.<br>Run it on the floor.</h2>
+    <p class="cta__sub">The whole workbench is source-available — engine fork, plugins and all.</p>
     <div class="cta__cards">
       <div class="cli-card">
         <p class="cli-card__label">Run the demo</p>
-        <p class="cli-card__hint">Install Node.js, then launch the Web UI.</p>
+        <p class="cli-card__hint">Install Node.js 24, then launch the workbench UI.</p>
         <pre><code>$ npx @deepseek-ai/dsh web</code></pre>
       </div>
       <div class="cli-card">
-        <p class="cli-card__label">Fork the source</p>
-        <p class="cli-card__hint">Clone upstream DeepSeek Harness and follow setup in the repo.</p>
-        <pre><code>$ git clone https://github.com/deepseek-ai/deepseek-harness</code></pre>
+        <p class="cli-card__label">Clone the fork</p>
+        <p class="cli-card__hint">Our hyperion-workbench branch on the DeepSeek Harness source.</p>
+        <pre><code>$ git clone https://github.com/deepseek-ai/deepseek-harness
+$ git checkout hyperion-workbench</code></pre>
       </div>
     </div>
     <div class="cta__foot">
-      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--accent">Fork the build <span>→</span></a>
+      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--accent">See the source <span>→</span></a>
     </div>
   </div>
 </section>
@@ -251,25 +276,27 @@
   <div class="wrap lfooter__grid">
     <div>
       <p class="lfooter__brand">hyperion-workbench</p>
-      <p class="lfooter__desc">A hackathon build on DeepSeek Harness — the all-plugin agent harness. Same engine, our composition of plugins.</p>
+      <p class="lfooter__desc">Sovereign On-Premise Agentic AI Workbench using Open-Weight Multimodal LLMs for Confidential Industrial Work — our solution to SIH26117 for Mangalore Refinery and Petrochemicals Limited, Smart Automation, SIH 2026.</p>
     </div>
-    <nav aria-label="Product">
-      <p class="lfooter__h">Explore</p>
-      <a href="#plugins">Plugins</a>
-      <a href="#modes">Modes</a>
-      <a href="#trace">Trajectory</a>
+    <nav aria-label="Solution">
+      <p class="lfooter__h">Solution</p>
+      <a href="#problem">Problem</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#sovereignty">Sovereignty</a>
     </nav>
-    <nav aria-label="Start">
-      <p class="lfooter__h">Get started</p>
-      <a href="#start">Quick start</a>
-      <a href="https://github.com/deepseek-ai/deepseek-harness">Source</a>
+    <nav aria-label="Build">
+      <p class="lfooter__h">Build</p>
+      <a href="#run">Run the demo</a>
+      <a href="#bench">Engine benchmarks</a>
+      <a href="https://github.com/deepseek-ai/deepseek-harness">Upstream source</a>
     </nav>
   </div>
   <div class="wrap lfooter__note">
-    <p>Built for the hackathon on DeepSeek Harness (developer preview). Core plugins and APIs continue to evolve — reusable, composable, open-source infrastructure for exploring the limits of intelligence. Interop notes: NVIDIA OpenShell (Apache 2.0).</p>
+    <p>Engine: our fork of DeepSeek Harness (open-source, all-plugin Cordis runtime). Sandbox policy direction informed by NVIDIA OpenShell (Apache 2.0). Workflow, roles and sovereignty requirements per the SIH26117 product requirements document.</p>
   </div>
 </footer>
 
-<script type="module" src="js/main.js?v=t1"></script>
+<script type="module" src="js/main.js?v=h1"></script>
 </body>
 </html>
