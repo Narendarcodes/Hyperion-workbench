@@ -375,3 +375,5 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 5vw
 /* proof note */
 .proof__note { text-align: center; margin-top: 18px; font-size: 11.5px; color: var(--umber); opacity: .75; }
 .proof__num--zero { color: var(--accent); }
+.cli-link { color: #F3E3D8; text-decoration: underline; text-underline-offset: 3px; }
+.cli-link:hover { color: #fff; }

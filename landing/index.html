@@ -6,7 +6,7 @@
 <title>hyperion-workbench — SIH26117 · Sovereign On-Premise Agentic AI Workbench</title>
 <meta name="description" content="hyperion-workbench solves SIH26117: a sovereign on-premise agentic AI workbench using open-weight multimodal LLMs for confidential industrial work. Built for MRPL, Smart Automation, SIH 2026.">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="css/style.css?v=h4">
+<link rel="stylesheet" href="css/style.css?v=h5">
 <script type="importmap">
 { "imports": {
   "gsap": "https://esm.sh/gsap@3.12.5",
@@ -33,7 +33,7 @@
       <a href="#sovereignty">Sovereignty</a>
       <a href="#bench">Engine</a>
     </div>
-    <a href="#run" class="lnav__cta">Run the demo</a>
+    <a href="http://127.0.0.1:3080" class="lnav__cta">Run the demo</a>
   </nav>
 </header>
 
@@ -48,7 +48,7 @@
     <h1>Every source, every decision,<br><span class="hero__em">defensible.</span></h1>
     <p class="hero__sub">hyperion-workbench is a sovereign, on-premise agentic AI workbench for confidential industrial work. Open-weight multimodal models, a local knowledge base, and bounded tools turn scanned documents into evidence-backed deliverables — with human decision authority intact.</p>
     <div class="hero__actions">
-      <a href="#run" class="btn btn--accent">Run the demo <span>→</span></a>
+      <a href="http://127.0.0.1:3080" class="btn btn--accent">Run the demo <span>→</span></a>
       <a href="#problem" class="btn btn--ghost">The problem <span>↓</span></a>
     </div>
   </div>
@@ -271,19 +271,19 @@
     <p class="cta__sub">The whole workbench is source-available — engine fork, plugins and all.</p>
     <div class="cta__cards">
       <div class="cli-card">
-        <p class="cli-card__label">Run the demo</p>
-        <p class="cli-card__hint">Install Node.js 24, then launch the workbench UI.</p>
-        <pre><code>$ npx @deepseek-ai/dsh web</code></pre>
+        <p class="cli-card__label">Live on this machine</p>
+        <p class="cli-card__hint">The workbench is running — open the product directly.</p>
+        <pre><code><a class="cli-link" href="http://127.0.0.1:3080" target="_blank" rel="noopener">http://127.0.0.1:3080</a></code></pre>
       </div>
       <div class="cli-card">
         <p class="cli-card__label">Clone the fork</p>
-        <p class="cli-card__hint">Our hyperion-workbench branch on the DeepSeek Harness source.</p>
-        <pre><code>$ git clone https://github.com/deepseek-ai/deepseek-harness
-$ git checkout hyperion-workbench</code></pre>
+        <p class="cli-card__hint">The workbench fork — HYPERION brand baked in via profile.</p>
+        <pre><code>$ git clone https://github.com/Narendarcodes/hyperion-workbench.git
+$ cd hyperion-workbench && pnpm i && pnpm dsh --profile web</code></pre>
       </div>
     </div>
     <div class="cta__foot">
-      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--accent">See the source <span>→</span></a>
+      <a href="http://127.0.0.1:3080" class="btn btn--accent">Open the workbench <span>→</span></a>
     </div>
   </div>
 </section>
