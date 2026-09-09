@@ -55,11 +55,9 @@ if (!reduce) {
   gsap.fromTo('.hero__copy > *',
     { opacity: 0, y: 30 },
     { opacity: 1, y: 0, duration: 1, stagger: .09, ease: 'power3.out', delay: .1 });
-  gsap.fromTo('.hero__instrument',
-    { opacity: 0, scale: .97 },
-    { opacity: 1, scale: 1, duration: 1.1, ease: 'power3.out', delay: .25 });
+  
 
-  gsap.utils.toArray('.platform .wrap > *, .apis .wrap > *, .sov__grid > div, .monitor, .deploy__grid > *, .cta .wrap > *, .wstage').forEach((el) => {
+  gsap.utils.toArray('.section-head, .tabs, .panel__visual, .api-card, .code-card, .wstage > div, .sov__grid > div, .monitor, .deploy__item').forEach((el) => {
     gsap.fromTo(el,
       { opacity: 0, y: 26 },
       { opacity: 1, y: 0, duration: .75, ease: 'power2.out',
@@ -159,7 +157,7 @@ void main() {
 
   // palette: navy-tinted creams on deep
   const hex = (h) => [parseInt(h.slice(1,3),16)/255, parseInt(h.slice(3,5),16)/255, parseInt(h.slice(5,7),16)/255];
-  const cols = [hex('#263247'), hex('#3C5270'), hex('#FDDA98'), hex('#5C6B80')];
+  const cols = [hex('#B9BEB4'), hex('#8E948B'), hex('#C2410C'), hex('#6E7078')];
 
   // lattice grid
   const DENSITY = 145, DEPTH = 5200, WIDTH = 6400;
@@ -269,27 +267,3 @@ void main() {
   })();
 })();
 
-// ---------------- Grain ----------------
-(() => {
-  const g = document.getElementById('grain');
-  if (!g || reduce) return;
-  const ctx = g.getContext('2d');
-  const resize = () => { g.width = innerWidth; g.height = innerHeight; };
-  addEventListener('resize', resize);
-  resize();
-  let last = 0;
-  (function draw(ts) {
-    if (ts - last > 90) {
-      const data = ctx.createImageData(g.width, g.height);
-      const d = data.data;
-      for (let i = 0; i < d.length; i += 4) {
-        const v = Math.random() * 255;
-        d[i] = d[i+1] = d[i+2] = v;
-        d[i+3] = 7;
-      }
-      ctx.putImageData(data, 0, 0);
-      last = ts;
-    }
-    requestAnimationFrame(draw);
-  })(0);
-})();
