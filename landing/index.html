@@ -5,16 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HYPERION — Sovereign Intelligence for Industrial Work</title>
 <meta name="description" content="HYPERION is a sovereign intelligence platform for industrial work. Local execution, controlled tools, verifiable evidence.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300..800;1,300..800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=sv1">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="css/style.css?v=sv2">
 <script type="importmap">
-{ "imports": { "three": "https://esm.sh/three@0.169.0" } }
+{ "imports": {
+  "gsap": "https://esm.sh/gsap@3.12.5",
+  "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+  "lenis": "https://esm.sh/lenis@1.1.14",
+  "three": "https://esm.sh/three@0.169.0"
+}}
 </script>
 </head>
 <body>
 <a href="#main" class="skip">Skip to content</a>
+<canvas id="grain" aria-hidden="true"></canvas>
 
 <!-- ===================== NAV ===================== -->
 <header class="nav" id="nav">
@@ -49,6 +53,7 @@
 
 <!-- ===================== HERO ===================== -->
 <section class="hero">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
   <div class="hero__inner">
     <p class="hero__eyebrow">India's Sovereign AI Platform</p>
     <h1>Intelligence for<br>industrial&nbsp;work</h1>
@@ -325,6 +330,6 @@ const task = await client.tasks.create({
   </div>
 </footer>
 
-<script type="module" src="js/main.js?v=sv1"></script>
+<script type="module" src="js/main.js?v=sv3"></script>
 </body>
 </html>
