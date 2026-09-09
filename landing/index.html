@@ -6,7 +6,7 @@
 <title>HYPERION — Sovereign Intelligence for Industrial Work</title>
 <meta name="description" content="HYPERION is a sovereign intelligence platform for industrial work. Local execution, controlled tools, verifiable evidence.">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="css/style.css?v=sv2">
+<link rel="stylesheet" href="css/style.css?v=ok1">
 <script type="importmap">
 { "imports": {
   "gsap": "https://esm.sh/gsap@3.12.5",
@@ -28,48 +28,49 @@
       <span>HYPERION</span>
     </a>
     <nav class="nav__links" aria-label="Main">
-      <div class="nav__group">
-        <button class="nav__dd">Products <span>▾</span></button>
-      </div>
-      <div class="nav__group">
-        <button class="nav__dd">Developers <span>▾</span></button>
-      </div>
-      <div class="nav__group">
-        <button class="nav__dd">Resources <span>▾</span></button>
-      </div>
-      <div class="nav__group">
-        <button class="nav__dd">Company <span>▾</span></button>
-      </div>
+      <a href="#platform">Platform</a>
+      <a href="#apis">Developers</a>
+      <a href="#sovereignty">Sovereignty</a>
+      <a href="#deploy">Deployment</a>
     </nav>
     <div class="nav__actions">
-      <a href="#" class="nav__link">Log In</a>
-      <a href="#cta" class="nav__btn">Sign up</a>
-      <a href="#cta" class="nav__btn nav__btn--ghost">Contact Us</a>
+      <a href="#cta" class="nav__btn">Start a Task <span>↗</span></a>
     </div>
   </div>
 </header>
 
 <main id="main">
 
-<!-- ===================== HERO ===================== -->
-<section class="hero">
-  <canvas id="hero-canvas" aria-hidden="true"></canvas>
-  <div class="hero__inner">
-    <p class="hero__eyebrow">India's Sovereign AI Platform</p>
-    <h1>Intelligence for<br>industrial&nbsp;work</h1>
-    <p class="hero__sub">Built on sovereign compute. Powered by frontier-class&nbsp;models.<br>Delivering verifiable evidence.</p>
-    <div class="hero__actions">
-      <a href="#cta" class="btn btn--dark">Sign up</a>
-      <a href="#cta" class="btn btn--ghost">Contact Us</a>
+<!-- ===================== HERO — Originkit Hex Comb ===================== -->
+<section class="hero" id="hero">
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">Sovereign Intelligence Platform</p>
+      <h1>Industrial work needs <em>controlled</em> intelligence.</h1>
+      <p class="lead">HYPERION runs inside your environment. Source material stays local. Every claim traces to evidence. No uncontrolled external paths.</p>
+      <div class="hero__actions">
+        <a href="#cta" class="btn">Start a Task <span>↗</span></a>
+        <a href="#platform" class="btn btn--ghost">See the Platform <span>→</span></a>
+      </div>
+      <div class="hero__proof">
+        <span>Local execution</span>
+        <span>Controlled tools</span>
+        <span>Audit trail</span>
+      </div>
     </div>
-    <p class="hero__strip">INDIA BUILDS WITH HYPERION</p>
+    <div class="hero__instrument">
+      <canvas id="hex-comb" aria-label="Interactive HYPERION hexagonal field. Move your pointer to lift cells."></canvas>
+      <div class="instrument__caption">
+        <span class="status-dot"></span> Controlled execution field <b>ACTIVE</b>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ===================== PLATFORM (tabbed) ===================== -->
+<!-- ===================== PLATFORM TABS ===================== -->
 <section class="platform" id="platform">
   <div class="wrap">
-    <h2>The AI Platform<br>Industrial Work Builds On</h2>
+    <h2>The platform industrial<br>work builds <em>on.</em></h2>
     <div class="tabs" role="tablist" aria-label="Platform surfaces">
       <button class="tab is-active" role="tab" aria-selected="true" data-panel="p-tasks" id="tab-tasks">Task Engine</button>
       <button class="tab" role="tab" aria-selected="false" data-panel="p-evidence" id="tab-evidence">Evidence Layer</button>
@@ -78,220 +79,118 @@
     </div>
     <div class="panels">
       <div class="panel is-active" id="p-tasks" role="tabpanel" aria-labelledby="tab-tasks">
-        <div class="panel__visual">
-          <div class="mock mock--tasks">
-            <div class="mock__bar"><span></span><span></span><span></span><b>TASK-7291</b></div>
-            <div class="mock__body">
-              <p class="mock__row"><span class="k">task</span> thermal-analysis</p>
-              <p class="mock__row"><span class="k">sources</span> spec-v4.2.pdf, audit-log.xlsx</p>
-              <p class="mock__row"><span class="k">policy</span> SO-01 (strict)</p>
-              <p class="mock__row ok">✓ trace recording</p>
-            </div>
-          </div>
-        </div>
-        <div class="panel__copy">
-          <h3>Tasks are traceable units of work.</h3>
-          <p>Every task declares its sources, constraints, and expected outputs. Nothing runs without a recorded purpose.</p>
-        </div>
+        <div class="panel__visual"><div class="mock"><div class="mock__bar"><span></span><span></span><span></span><b>TASK-7291</b></div><div class="mock__body"><p class="mock__row"><span class="k">task</span> thermal-analysis</p><p class="mock__row"><span class="k">sources</span> spec-v4.2.pdf, audit-log.xlsx</p><p class="mock__row"><span class="k">policy</span> SO-01 (strict)</p><p class="mock__row ok">✓ trace recording</p></div></div></div>
+        <div class="panel__copy"><h3>Tasks are traceable units of work.</h3><p>Every task declares its sources, constraints, and expected outputs. Nothing runs without a recorded purpose.</p></div>
       </div>
       <div class="panel" id="p-evidence" role="tabpanel" aria-labelledby="tab-evidence" hidden>
-        <div class="panel__visual">
-          <div class="mock mock--evidence">
-            <div class="mock__bar"><span></span><span></span><span></span><b>EVIDENCE</b></div>
-            <div class="mock__body">
-              <p class="mock__row"><span class="k">claim</span> turbine tolerance 0.42mm</p>
-              <p class="mock__row ok">✓ spec-v4.2.pdf · p.31</p>
-              <p class="mock__row ok">✓ audit-log.xlsx · r.108</p>
-              <p class="mock__row warn">! 1 conflict flagged</p>
-            </div>
-          </div>
-        </div>
-        <div class="panel__copy">
-          <h3>Every claim carries its citation.</h3>
-          <p>Findings link back to source document, page, and row. Orphan assertions never reach the output.</p>
-        </div>
+        <div class="panel__visual"><div class="mock"><div class="mock__bar"><span></span><span></span><span></span><b>EVIDENCE</b></div><div class="mock__body"><p class="mock__row"><span class="k">claim</span> turbine tolerance 0.42mm</p><p class="mock__row ok">✓ spec-v4.2.pdf · p.31</p><p class="mock__row ok">✓ audit-log.xlsx · r.108</p><p class="mock__row warn">! 1 conflict flagged</p></div></div></div>
+        <div class="panel__copy"><h3>Every claim carries its citation.</h3><p>Findings link back to source document, page, and row. Orphan assertions never reach the output.</p></div>
       </div>
       <div class="panel" id="p-sandbox" role="tabpanel" aria-labelledby="tab-sandbox" hidden>
-        <div class="panel__visual">
-          <div class="mock mock--sandbox">
-            <div class="mock__bar"><span></span><span></span><span></span><b>SANDBOX</b></div>
-            <div class="mock__body">
-              <p class="mock__row"><span class="k">net</span> blocked by policy</p>
-              <p class="mock__row"><span class="k">mem</span> 512MB limit</p>
-              <p class="mock__row"><span class="k">fs</span> scoped to task</p>
-              <p class="mock__row ok">✓ no egress routes</p>
-            </div>
-          </div>
-        </div>
-        <div class="panel__copy">
-          <h3>Execution runs inside a boundary.</h3>
-          <p>Code and analysis run in resource-limited containers. Network, memory, and filesystem are policy-controlled.</p>
-        </div>
+        <div class="panel__visual"><div class="mock"><div class="mock__bar"><span></span><span></span><span></span><b>SANDBOX</b></div><div class="mock__body"><p class="mock__row"><span class="k">net</span> blocked by policy</p><p class="mock__row"><span class="k">mem</span> 512MB limit</p><p class="mock__row"><span class="k">fs</span> scoped to task</p><p class="mock__row ok">✓ no egress routes</p></div></div></div>
+        <div class="panel__copy"><h3>Execution runs inside a boundary.</h3><p>Code and analysis run in resource-limited containers. Network, memory, and filesystem are policy-controlled.</p></div>
       </div>
       <div class="panel" id="p-deliver" role="tabpanel" aria-labelledby="tab-deliver" hidden>
-        <div class="panel__visual">
-          <div class="mock mock--deliver">
-            <div class="mock__bar"><span></span><span></span><span></span><b>DELIVERABLE</b></div>
-            <div class="mock__body">
-              <p class="mock__row"><span class="k">out</span> thermal-report-final.pdf</p>
-              <p class="mock__row ok">✓ 312 evidence links</p>
-              <p class="mock__row ok">✓ verified 3/3 claims</p>
-              <p class="mock__row ok">✓ reviewer approved</p>
-            </div>
-          </div>
-        </div>
-        <div class="panel__copy">
-          <h3>Artifacts arrive defended.</h3>
-          <p>Reports and decisions ship with their full evidence trail. Reviewers approve what they can verify.</p>
-        </div>
+        <div class="panel__visual"><div class="mock"><div class="mock__bar"><span></span><span></span><span></span><b>DELIVERABLE</b></div><div class="mock__body"><p class="mock__row"><span class="k">out</span> thermal-report-final.pdf</p><p class="mock__row ok">✓ 312 evidence links</p><p class="mock__row ok">✓ verified 3/3 claims</p><p class="mock__row ok">✓ reviewer approved</p></div></div></div>
+        <div class="panel__copy"><h3>Artifacts arrive defended.</h3><p>Reports and decisions ship with their full evidence trail. Reviewers approve what they can verify.</p></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== APIs / CAPABILITIES ===================== -->
+<!-- ===================== APIS ===================== -->
 <section class="apis" id="apis">
   <div class="wrap">
-    <h2>Build anything with<br>HYPERION APIs</h2>
-    <p class="apis__sub">Clean, versioned interfaces for every capability. One line to install.</p>
+    <h2>Build anything with<br>HYPERION <em>APIs.</em></h2>
     <div class="apis__grid">
-      <article class="api-card">
-        <h3>Parse API</h3>
-        <p>OCR, tables, and figures from PDFs and scans — into structured knowledge.</p>
-        <div class="api-card__foot"><span class="chip">Python</span><span class="chip">JavaScript</span></div>
-      </article>
-      <article class="api-card">
-        <h3>Ground API</h3>
-        <p>Local retrieval over your controlled corpus with citation chains.</p>
-        <div class="api-card__foot"><span class="chip">Python</span><span class="chip">REST</span></div>
-      </article>
-      <article class="api-card">
-        <h3>Verify API</h3>
-        <p>Confidence scoring and conflict detection on high-risk claims.</p>
-        <div class="api-card__foot"><span class="chip">Python</span><span class="chip">REST</span></div>
-      </article>
-      <article class="api-card">
-        <h3>Artifact API</h3>
-        <p>Generate reports and deliverables that carry their evidence trail.</p>
-        <div class="api-card__foot"><span class="chip">Python</span><span class="chip">CLI</span></div>
-      </article>
+      <article class="api-card"><h3>Parse API</h3><p>OCR, tables, and figures from PDFs and scans — into structured knowledge.</p><div class="api-card__foot"><span class="chip">Python</span><span class="chip">JavaScript</span></div></article>
+      <article class="api-card"><h3>Ground API</h3><p>Local retrieval over your controlled corpus with citation chains.</p><div class="api-card__foot"><span class="chip">Python</span><span class="chip">REST</span></div></article>
+      <article class="api-card"><h3>Verify API</h3><p>Confidence scoring and conflict detection on high-risk claims.</p><div class="api-card__foot"><span class="chip">Python</span><span class="chip">REST</span></div></article>
+      <article class="api-card"><h3>Artifact API</h3><p>Generate reports that carry their evidence trail.</p><div class="api-card__foot"><span class="chip">Python</span><span class="chip">CLI</span></div></article>
     </div>
     <div class="apis__code">
-      <div class="code-card">
-        <div class="code-card__bar"><span></span><span></span><span></span><span class="code-card__lang">Python</span></div>
-        <pre><code>import hyperion
+      <div class="code-card"><div class="code-card__bar"><span></span><span></span><span></span><span class="code-card__lang">Python</span></div><pre><code>import hyperion
 
 client = hyperion.Client(policy="SO-01")
-
 task = client.tasks.create(
     name="thermal-analysis",
     sources=["spec-v4.2.pdf"],
 )
-report = task.run()  # evidence attached</code></pre>
-      </div>
-      <div class="code-card">
-        <div class="code-card__bar"><span></span><span></span><span></span><span class="code-card__lang">JavaScript</span></div>
-        <pre><code>import Hyperion from "@hyperion/sdk";
+report = task.run()  # evidence attached</code></pre></div>
+      <div class="code-card"><div class="code-card__bar"><span></span><span></span><span></span><span class="code-card__lang">JavaScript</span></div><pre><code>import Hyperion from "@hyperion/sdk";
 
 const client = new Hyperion({ policy: "SO-01" });
-
 const task = await client.tasks.create({
   name: "thermal-analysis",
   sources: ["spec-v4.2.pdf"],
-});</code></pre>
-      </div>
-      <div class="apis__quick">
-        <h3>REST API</h3>
-        <p>Clean, well-documented endpoints.</p>
-        <h3>Python SDK</h3>
-        <p>One line: <code>pip install hyperion</code></p>
-        <h3>Playground</h3>
-        <p>Test in browser, no setup.</p>
-      </div>
+});</code></pre></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== PRINCIPLES ===================== -->
-<section class="principles" id="principles">
-  <div class="wrap">
-    <h2>Industrial work can</h2>
-    <div class="principles__grid">
-      <article>
-        <h3>Population-scale Applications</h3>
-        <p>Deploy across plants, labs, and review desks without re-architecting the workflow.</p>
-      </article>
-      <article>
-        <h3>State-of-the-Art Models</h3>
-        <p>Frontier-class parsing, retrieval, and verification — running on compute you control.</p>
-      </article>
-      <article>
-        <h3>Infrastructure for Verified Claims</h3>
-        <p>Evidence-first architecture. Every output is defensible because every input is traced.</p>
-      </article>
+<!-- ===================== WAVE FIELD SECTION — Originkit Scroll Wave Field ===================== -->
+<section class="wave" id="wave">
+  <canvas id="wave-canvas" aria-hidden="true"></canvas>
+  <div class="wrap wave__content">
+    <p class="eyebrow">Operating model</p>
+    <h2>The work follows<br>the <em>evidence path.</em></h2>
+    <p class="wave__sub">Nine controlled stages. Every step visible. Every claim grounded.</p>
+    <div class="wave__stages">
+      <div class="wstage"><span>01</span><div><h3>Capture</h3><p>Material enters a controlled location.</p></div></div>
+      <div class="wstage"><span>02</span><div><h3>Start</h3><p>Engineer creates a task, links sources.</p></div></div>
+      <div class="wstage"><span>03</span><div><h3>Understand</h3><p>OCR, vision, and parsing identify content.</p></div></div>
+      <div class="wstage"><span>04</span><div><h3>Ground</h3><p>Local retrieval attaches evidence.</p></div></div>
+      <div class="wstage"><span>05</span><div><h3>Analyze</h3><p>Findings and uncertainty become visible.</p></div></div>
+      <div class="wstage"><span>06</span><div><h3>Verify</h3><p>High-risk claims confirmed or corrected.</p></div></div>
+      <div class="wstage"><span>07</span><div><h3>Deliver</h3><p>A verified artifact is generated.</p></div></div>
+      <div class="wstage"><span>08</span><div><h3>Review</h3><p>Manager reviews evidence and flags.</p></div></div>
+      <div class="wstage"><span>09</span><div><h3>Close</h3><p>Decision and trace are archived.</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== POSITIONING ===================== -->
-<section class="positioning" id="positioning">
-  <div class="wrap">
-    <h2>A Full-Stack Sovereign<br>Intelligence Platform</h2>
-    <p class="positioning__sub">Sovereign by design — every layer runs where your data lives.</p>
-    <div class="positioning__layers">
-      <div class="layer"><span>01</span><h3>Model Router</h3><p>Selects the smallest model that can do the job. Runs local by default.</p></div>
-      <div class="layer"><span>02</span><h3>Knowledge</h3><p>Local corpus retrieval with citation chains, scoped per task.</p></div>
-      <div class="layer"><span>03</span><h3>Sandbox</h3><p>Resource-limited execution boundary. No uncontrolled egress.</p></div>
-      <div class="layer"><span>04</span><h3>Deliverable Engine</h3><p>Reports and artifacts generated with their full evidence trail.</p></div>
+<!-- ===================== SOVEREIGNTY ===================== -->
+<section class="sov" id="sovereignty">
+  <div class="wrap sov__grid">
+    <div>
+      <p class="eyebrow">Sovereignty monitor</p>
+      <h2>Security is a visible part<br>of the <em>work.</em></h2>
+      <p class="sov__desc">HYPERION exposes local execution state, controlled tools, and the event trail needed to demonstrate that sensitive tasks have no uncontrolled external path.</p>
+      <p class="sov__note">Status labels describe deployment policy. Validate configuration before calling an environment air-gapped.</p>
+    </div>
+    <div class="monitor">
+      <div class="monitor__header"><span>SO-01 / RUNTIME POLICY</span><span class="monitor__status"><span class="dot"></span> Active</span></div>
+      <dl class="monitor__rows">
+        <div><dt>External network</dt><dd class="ok">Blocked by policy</dd></div>
+        <div><dt>Knowledge</dt><dd>Local / controlled corpus</dd></div>
+        <div><dt>Sandbox</dt><dd>Active / resource-limited</dd></div>
+        <div><dt>Tool gateway</dt><dd>Allowlisted</dd></div>
+        <div><dt>Audit trace</dt><dd>Recording task events</dd></div>
+      </dl>
+      <div class="monitor__footer"><span>0 uncontrolled egress routes</span><span>policy enforced</span></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== ENTERPRISE ===================== -->
-<section class="enterprise" id="enterprise">
-  <div class="wrap">
-    <h2>Enterprise-grade.<br>Out of the box.</h2>
-    <div class="enterprise__grid">
-      <article>
-        <h3>Forward deployed</h3>
-        <p>Our engineers work alongside your teams to wire HYPERION into real workflows.</p>
-      </article>
-      <article>
-        <h3>Deployment flexibility</h3>
-        <p>HYPERION runs wherever your data lives — on-prem, VPC, or sovereign cloud.</p>
-      </article>
-      <article>
-        <h3>Security controls</h3>
-        <p>Allowlisted tool gateway, sandboxed execution, and a complete audit trail.</p>
-      </article>
-      <article>
-        <h3>Compliance ready</h3>
-        <p>Every decision is recorded, retrievable, and reviewable — from day one.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== DEPLOYMENT ===================== -->
+<!-- ===================== DEPLOY ===================== -->
 <section class="deploy" id="deploy">
   <div class="wrap">
-    <h2>Built to run anywhere<br>your work runs</h2>
+    <h2>Built to run anywhere<br>your work <em>runs.</em></h2>
     <div class="deploy__grid">
       <div class="deploy__item"><h3>On-premises</h3><p>Inside your network. Data never leaves the boundary.</p></div>
-      <div class="deploy__item"><h3>Private cloud</h3><p>VPC-isolated deployment with your IAM and key management.</p></div>
+      <div class="deploy__item"><h3>Private cloud</h3><p>VPC-isolated with your IAM and key management.</p></div>
       <div class="deploy__item"><h3>Sovereign cloud</h3><p>Region-locked compute for jurisdiction-bound workloads.</p></div>
-      <div class="deploy__item deploy__item--wide"><h3>Air-gapped (policy)</h3><p>Status depends on configuration. Validate before deployment. <!-- footnote stays honest --></p></div>
+      <div class="deploy__item deploy__item--wide"><h3>Air-gapped (policy)</h3><p>Status depends on configuration. Validate before deployment.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== FINAL CTA ===================== -->
+<!-- ===================== CTA ===================== -->
 <section class="cta" id="cta">
   <div class="wrap">
-    <h2>Start with a source.<br>Finish with a decision<br>you can defend.</h2>
+    <h2>Start with a source.<br>Finish with a decision<br>you can <em>defend.</em></h2>
     <div class="cta__actions">
-      <a href="#" class="btn btn--dark btn--large">Sign up</a>
-      <a href="#" class="btn btn--ghost btn--large">Contact Us</a>
+      <a href="#" class="btn btn--large">Start a Task <span>↗</span></a>
     </div>
   </div>
 </section>
@@ -301,35 +200,32 @@ const task = await client.tasks.create({
 <!-- ===================== FOOTER ===================== -->
 <footer class="footer">
   <div class="wrap footer__grid">
-    <div class="footer__brand">
-      <p class="footer__tag">Intelligence for industrial work</p>
-      <p class="footer__find">Find us at</p>
-      <p class="footer__legal">© 2026 HYPERION. All rights reserved.</p>
+    <div>
+      <p class="footer__brand">HYPERION</p>
+      <p>Sovereign Intelligence for Industrial Work</p>
     </div>
     <div class="footer__col">
-      <h4>PRODUCTS</h4>
+      <h4>PLATFORM</h4>
       <a href="#platform">Task Engine</a>
       <a href="#platform">Evidence Layer</a>
       <a href="#platform">Sandbox</a>
-      <a href="#platform">Deliverables</a>
     </div>
     <div class="footer__col">
       <h4>DEVELOPERS</h4>
       <a href="#apis">APIs</a>
       <a href="#apis">Python SDK</a>
-      <a href="#apis">Playground</a>
     </div>
     <div class="footer__col">
-      <h4>COMPANY</h4>
-      <a href="#positioning">About</a>
-      <a href="#cta">Contact</a>
+      <h4>MORE</h4>
+      <a href="#sovereignty">Sovereignty</a>
+      <a href="#deploy">Deployment</a>
     </div>
   </div>
   <div class="wrap footer__note">
-    <p>Built on DeepSeek Harness. Upstream attribution and license notices are retained.</p>
+    <p>Built on DeepSeek Harness. Upstream attribution and license notices are retained. Hero field adapted from Originkit Hex Comb; wave field from Originkit Scroll Wave Field (MIT).</p>
   </div>
 </footer>
 
-<script type="module" src="js/main.js?v=sv3"></script>
+<script type="module" src="js/main.js?v=ok1"></script>
 </body>
 </html>
