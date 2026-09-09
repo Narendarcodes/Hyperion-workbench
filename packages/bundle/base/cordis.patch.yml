@@ -121,6 +121,7 @@
               - id: qwen3.5:4b
                 name: Qwen 3.5 4B
                 contextWindow: 32768
+                maxTokens: 2048
     - id: session-persistence-jsonl
       name: '@deepseek-ai/dsh-session-persistence-jsonl'
       config:
@@ -283,13 +284,10 @@
     - id: agent-instructions
       name: '@deepseek-ai/dsh-agent-instructions'
       config:
-        maxBytes: 65536
+        maxBytes: 16384
 
     - id: skill
       name: '@deepseek-ai/dsh-skill'
-
-    - id: skill-filesystem
-      name: '@deepseek-ai/dsh-skill-filesystem'
 
     - id: skill-badge
       name: '@deepseek-ai/dsh-skill-badge'
@@ -331,9 +329,17 @@
 
     - id: token-meter
       name: '@deepseek-ai/dsh-token-meter'
-
     - id: compaction-basic
       name: '@deepseek-ai/dsh-compaction-basic'
+      config:
+        thresholdRatio: 0.6
+        retainTokens: 2048
+        maxTokens: 2048
+        modelPolicies:
+          - provider: local
+            model: qwen3.5:4b
+            thresholdRatio: 0.6
+            retainTokens: 2048
 
     # Human `/compact`: one useful reduction below the automatic threshold. Backend
     # independent, so it follows whichever compaction service this leaf mounts.
@@ -409,8 +415,8 @@
     - id: tool-result-pruner
       name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
       config:
-        thresholdChars: 8192
-        headChars: 4096
+        thresholdChars: 4096
+        headChars: 2048
         tailChars: 1024
 
     - id: tool-todo
@@ -486,7 +492,7 @@
           Execution Rules:
           - Only use tools explicitly declared in the tools list. Never invent tool names (such as execute_code).
           - When executing Python or multi-line commands, always write the code to a file first with `write`, then execute it cleanly using `pwsh` or `bash` (e.g. `python script.py`). Never use inline `python -c` with nested quotes.
-          - For binary files, do not use `read` directly: use the `read_image` tool for images, and write a Python script (pymupdf/pypdf, python-docx, pandas/openpyxl) with `pwsh`/`bash` to extract text from documents and spreadsheets.
+          - For binary files, do not use `read` directly: use the `read_pdf` tool for PDF files, the `read_image` tool for images, and write a Python script (python-docx, pandas/openpyxl) with `pwsh`/`bash` to extract text from other documents and spreadsheets. Never write custom PDF extraction code.
 
     # Agents created at startup. The base stays empty; raw overlays may create
     # agents, while Web creates sessions on client request.

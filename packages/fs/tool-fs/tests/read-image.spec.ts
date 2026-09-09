@@ -763,16 +763,16 @@ describe('registration surface', () => {
     const attachmentsFiber = await ctx.plugin(LocalAttachmentStore, { dshHome: home })
     const toolFsFiber = await ctx.plugin(ToolFs)
     const names = () => ctx.tools.schemas().map(schema => schema.name).sort()
-    expect(names()).toEqual(['edit', 'read', 'read_image', 'write'])
+    expect(names()).toEqual(['edit', 'read', 'read_image', 'read_pdf', 'write'])
 
     // Disposing only the attachment store tears down the scoped inject fiber:
     // read_image withdraws while the unconditional tools stay registered.
     await attachmentsFiber.dispose()
-    expect(names()).toEqual(['edit', 'read', 'write'])
+    expect(names()).toEqual(['edit', 'read', 'read_pdf', 'write'])
 
     // Remounting the store restores the conditional registration.
     const remounted = await ctx.plugin(LocalAttachmentStore, { dshHome: home })
-    expect(names()).toEqual(['edit', 'read', 'read_image', 'write'])
+    expect(names()).toEqual(['edit', 'read', 'read_image', 'read_pdf', 'write'])
 
     // Disposing the whole plugin withdraws every tool, read_image included.
     await toolFsFiber.dispose()
