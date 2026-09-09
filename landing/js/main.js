@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------------- Lenis smooth scroll ----------------
-const lenis = new Lenis({ smoothWheel: true, syncTouch: true });
+const lenis = new Lenis({ smoothWheel: true });
 gsap.ticker.add((t) => lenis.raf(t * 1000));
 gsap.ticker.lagSmoothing(0);
 lenis.on('scroll', ScrollTrigger.update);
@@ -160,7 +160,7 @@ void main() {
   const cols = [hex('#B9BEB4'), hex('#8E948B'), hex('#C2410C'), hex('#6E7078')];
 
   // lattice grid
-  const DENSITY = 145, DEPTH = 5200, WIDTH = 6400;
+  const DENSITY = 260, DEPTH = 5200, WIDTH = 5200;
   const pts = [];
   for (let z = 0; z < DEPTH; z += DENSITY) {
     for (let x = -WIDTH / 2; x < WIDTH / 2; x += DENSITY) {
@@ -195,10 +195,12 @@ void main() {
   };
 
   const resize = () => {
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
     const r = canvas.getBoundingClientRect();
-    state.w = Math.max(1, Math.floor(r.width * dpr));
-    state.h = Math.max(1, Math.floor(r.height * dpr));
+    const area = r.width * r.height;
+    const dpr = Math.min(devicePixelRatio || 1, area > 500000 ? 1 : 1.5);
+    const scale = area > 500000 ? 0.7 : 1;
+    state.w = Math.max(1, Math.floor(r.width * dpr * scale));
+    state.h = Math.max(1, Math.floor(r.height * dpr * scale));
     canvas.width = state.w; canvas.height = state.h;
     gl.viewport(0, 0, state.w, state.h);
   };
@@ -225,9 +227,10 @@ void main() {
   document.addEventListener('visibilitychange', () => { state.visible = !document.hidden; });
 
   let t0 = performance.now();
-  let lastFlow = 0;
+  let lastFrame = 0;
   (function frame(now = performance.now()) {
-    if (state.visible) {
+    if (state.visible && now - lastFrame >= 33) {
+      lastFrame = now;
       const t = (now - t0) / 1000;
       // ease scroll into flow
       state.scrollAmt += (state.targetScroll - state.scrollAmt) * 0.07;
