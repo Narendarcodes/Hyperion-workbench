@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DeepSeek Harness — Everything is a plugin</title>
-<meta name="description" content="DeepSeek Harness is in developer preview for agent harness developers worldwide — source code included. Every capability is a plugin: models, tools, skills, sessions, sandboxes, storage, loops, scheduling, and the UI.">
+<title>hyperion-workbench — an agent harness hackathon build on DeepSeek Harness</title>
+<meta name="description" content="hyperion-workbench: a hackathon build on DeepSeek Harness, the all-plugin agent harness. Every capability is a plugin: models, tools, skills, sessions, sandboxes, storage, loops, scheduling, and the UI.">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="css/style.css?v=t1">
+<link rel="stylesheet" href="css/style.css?v=t2">
 <script type="importmap">
 { "imports": {
   "gsap": "https://esm.sh/gsap@3.12.5",
@@ -24,14 +24,15 @@
   <nav class="lnav__pill">
     <a href="#" class="lnav__brand">
       <img src="assets/hyperion-clean.svg" alt="" width="30" height="30">
-      <span>DeepSeek Harness</span>
+      <span>hyperion-workbench</span>
     </a>
     <div class="lnav__links">
       <a href="#plugins">Plugins</a>
+      <a href="#bench">Benchmarks</a>
       <a href="#modes">Modes</a>
-      <a href="#trace">Traceable</a>
+      <a href="#trace">Trace</a>
     </div>
-    <a href="#start" class="lnav__cta">Get started</a>
+    <a href="#start" class="lnav__cta">Run the demo</a>
   </nav>
 </header>
 
@@ -42,12 +43,12 @@
   <div id="tunnel" class="hero__tunnel" aria-hidden="true"></div>
   <div class="hero__scrim" aria-hidden="true"></div>
   <div class="hero__copy">
-    <p class="hero__badge"><span class="dot"></span>Developer preview · source code included</p>
+    <p class="hero__badge"><span class="dot"></span>Hackathon build · DeepSeek Harness inside</p>
     <h1>Every capability,<br>every decision,<br><span class="hero__em">remembered.<svg viewBox="0 0 400 24" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M6 16 C 80 4, 150 22, 210 12 S 340 8, 394 14" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/></svg></span></h1>
-    <p class="hero__sub">DeepSeek Harness is a plugin-first agent harness for developers worldwide. Models, tools, skills, sessions, sandboxes, storage, loops, scheduling, and the UI — all swappable, all traceable.</p>
+    <p class="hero__sub">hyperion-workbench is our hackathon build on DeepSeek Harness — the all-plugin agent harness. We recompose models, tools, skills, sessions, sandboxes, scheduling, even the UI as swappable plugins, and every run lands in one traceable log.</p>
     <div class="hero__actions">
-      <a href="#start" class="btn btn--accent">Get started <span>→</span></a>
-      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--ghost">View source</a>
+      <a href="#start" class="btn btn--accent">Run the demo <span>→</span></a>
+      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--ghost">Read the source</a>
     </div>
   </div>
 </section>
@@ -71,7 +72,48 @@
 <section class="formula">
   <div class="wrap">
     <h2 class="formula__title">Agent <span class="op">=</span> Model <span class="op">+</span> <span class="accent">Harness</span></h2>
-    <p class="formula__sub">The model is the soul of an agent.<br>A harness lets it understand its environment, use tools, and keep working in real-world settings.</p>
+    <p class="formula__sub">The model is the soul of an agent — the harness is everything else.<br>DeepSeek Harness lets a model understand its environment, use tools, and keep working in real-world settings. We compose ours for the hackathon floor.</p>
+  </div>
+</section>
+
+<!-- ===================== BENCHMARKS ===================== -->
+<section class="bench" id="bench">
+  <div class="wrap">
+    <p class="kicker">Why we built on it</p>
+    <h2>The harness moves the score</h2>
+    <p class="bench__sub">DeepSeek runs its published agent benchmarks through Harness <em>minimal mode</em> — fixed sampling, maximal reasoning effort, two tools — so scores are reproducible instead of tuned per benchmark. The numbers below are DeepSeek's own, run on the same engine our hackathon build extends.</p>
+    <div class="bench__table">
+      <div class="bench__head bench__row"><span>Benchmark</span><span>V4-Pro GA</span><span>V4-Flash</span></div>
+      <div class="bench__row"><span>Terminal-Bench 2.1</span><b>87.9</b><b>82.7</b></div>
+      <div class="bench__row"><span>Cybergym</span><b>83.3</b><b>76.7</b></div>
+      <div class="bench__row"><span>Toolathlon (verified)</span><b>74.1</b><b>70.3</b></div>
+      <div class="bench__row"><span>DSBench-FullStack</span><b>71.1</b><b>68.7</b></div>
+      <div class="bench__row"><span>DSBench-Hard</span><b>67.2</b><b>59.6</b></div>
+      <div class="bench__row"><span>DeepSWE</span><b>62.7</b><b>54.4</b></div>
+      <div class="bench__row"><span>NL2Repo</span><b>61.5</b><b>54.2</b></div>
+    </div>
+    <p class="bench__note">Same weights, different harness: an independent rerun of V4-Flash on a third-party harness swung Terminal-Bench by twenty tasks. That swing is the whole reason a hackathon on harness architecture is worth running.</p>
+  </div>
+</section>
+
+<!-- ===================== OPENSHELL ===================== -->
+<section class="openshell" id="openshell">
+  <div class="wrap openshell__grid">
+    <div>
+      <p class="kicker">Interop</p>
+      <h2>Plays with NVIDIA OpenShell</h2>
+      <p class="openshell__sub">Our sandbox plugins follow the same bet NVIDIA made with OpenShell — out-of-process policy enforcement. OpenShell (Apache 2.0) wraps any coding agent in isolated sandboxes with deny-by-default permissions, live policy updates, and a full audit trail. A single command moves an agent inside: <code>openshell sandbox create --from openclaw</code>.</p>
+      <p class="openshell__note">Sandboxed sessions, metered resources, every allow/deny decision logged — the direction we point our own sandbox plugins in.</p>
+    </div>
+    <div class="window">
+      <div class="window__bar"><span class="wdot wd--r"></span><span class="wdot wd--y"></span><span class="wdot wd--g"></span><span class="window__title">openshell — gateway policy</span></div>
+      <div class="window__body">
+        <div class="trow"><span class="trow__src">sandbox</span><span class="trow__txt">create --from openclaw → isolated</span></div>
+        <div class="trow"><span class="trow__src">policy</span><span class="trow__txt">deny-by-default · live updates</span></div>
+        <div class="trow"><span class="trow__src">resources</span><span class="trow__txt">metered: cpu · mem · net</span></div>
+        <div class="trow trow--ok"><span class="trow__src">audit</span><span class="trow__txt">every allow/deny logged</span></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -182,22 +224,22 @@
 <!-- ===================== CTA ===================== -->
 <section class="cta" id="start">
   <div class="wrap">
-    <h2>Everything is a plugin.<br>Start from either end.</h2>
-    <p class="cta__sub">Try it now with npx, or install from source.</p>
+    <h2>Clone it. Break it.<br>Recompose it.</h2>
+    <p class="cta__sub">Hackathon rule zero: the harness ships with source. Fork ours or start from upstream.</p>
     <div class="cta__cards">
       <div class="cli-card">
-        <p class="cli-card__label">Quick start</p>
+        <p class="cli-card__label">Run the demo</p>
         <p class="cli-card__hint">Install Node.js, then launch the Web UI.</p>
         <pre><code>$ npx @deepseek-ai/dsh web</code></pre>
       </div>
       <div class="cli-card">
-        <p class="cli-card__label">Install from source</p>
-        <p class="cli-card__hint">Clone the full source and follow setup in the repo.</p>
+        <p class="cli-card__label">Fork the source</p>
+        <p class="cli-card__hint">Clone upstream DeepSeek Harness and follow setup in the repo.</p>
         <pre><code>$ git clone https://github.com/deepseek-ai/deepseek-harness</code></pre>
       </div>
     </div>
     <div class="cta__foot">
-      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--accent">Join the plugin ecosystem <span>→</span></a>
+      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--accent">Fork the build <span>→</span></a>
     </div>
   </div>
 </section>
@@ -208,8 +250,8 @@
 <footer class="lfooter">
   <div class="wrap lfooter__grid">
     <div>
-      <p class="lfooter__brand">DeepSeek Harness</p>
-      <p class="lfooter__desc">A plugin-first agent harness for developers worldwide — still in developer preview, evolving with the community.</p>
+      <p class="lfooter__brand">hyperion-workbench</p>
+      <p class="lfooter__desc">A hackathon build on DeepSeek Harness — the all-plugin agent harness. Same engine, our composition of plugins.</p>
     </div>
     <nav aria-label="Product">
       <p class="lfooter__h">Explore</p>
@@ -224,7 +266,7 @@
     </nav>
   </div>
   <div class="wrap lfooter__note">
-    <p>DeepSeek Harness is in developer preview. Core plugins and APIs continue to evolve — reusable, composable, open-source infrastructure for exploring the limits of intelligence.</p>
+    <p>Built for the hackathon on DeepSeek Harness (developer preview). Core plugins and APIs continue to evolve — reusable, composable, open-source infrastructure for exploring the limits of intelligence. Interop notes: NVIDIA OpenShell (Apache 2.0).</p>
   </div>
 </footer>
 

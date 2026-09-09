@@ -60,8 +60,8 @@ document.querySelectorAll('[data-count]').forEach((el) => {
 
 // ---------------- Reveals ----------------
 if (!reduce) {
-  document.querySelectorAll('.proof, .formula, .features .wrap, .showcase .wrap, .modes__head, .cta .wrap, .lfooter__grid').forEach((scope) => {
-    const targets = scope.querySelectorAll('[data-reveal], .proof__item, .fcard, .kicker, h2, .features__sub, .callout, .cli-card, .cta__foot, .lfooter__brand, .lfooter__desc');
+  document.querySelectorAll('.proof, .formula, .bench .wrap, .openshell__grid, .features .wrap, .showcase .wrap, .modes__head, .cta .wrap, .lfooter__grid').forEach((scope) => {
+    const targets = scope.querySelectorAll('[data-reveal], .proof__item, .fcard, .kicker, h2, .features__sub, .callout, .cli-card, .cta__foot, .bench__table, .bench__note, .openshell__sub, .openshell__note, .lfooter__brand, .lfooter__desc');
     if (!targets.length) return;
     gsap.fromTo(targets,
       { y: 28, opacity: 0 },

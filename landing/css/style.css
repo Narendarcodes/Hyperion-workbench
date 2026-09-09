@@ -198,6 +198,33 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 5vw
   padding: 9px 12px; width: fit-content;
 }
 
+/* ---------------- benchmarks ---------------- */
+.bench { position: relative; padding: clamp(4.5rem, 9vw, 7rem) 0; background: rgba(239,236,229,.7); border-block: 1px solid var(--line); }
+.bench h2 { margin-bottom: 22px; }
+.bench__sub { max-width: 46rem; color: var(--umber); font-size: 1.02rem; line-height: 1.68; margin-bottom: 48px; }
+.bench__sub em { font-style: normal; color: var(--ink); font-weight: 500; }
+.bench__table {
+  max-width: 44rem; border: 1px solid var(--line); border-radius: 18px;
+  background: var(--surface); overflow: hidden;
+  box-shadow: 0 1px 2px rgba(28,25,23,.05), 0 24px 48px -32px rgba(28,25,23,.3);
+}
+.bench__row { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 12px; padding: 15px 24px; border-bottom: 1px solid var(--line); font-size: 15px; align-items: baseline; }
+.bench__row:last-child { border-bottom: 0; }
+.bench__row > span { color: var(--ink); }
+.bench__row > b { font: 500 15px var(--mono); color: var(--ink); text-align: right; }
+.bench__head { background: var(--canvas); font: 600 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--umber); }
+.bench__head > span { color: var(--umber); }
+.bench__note { margin-top: 26px; max-width: 44rem; font-size: 13.5px; color: var(--umber); line-height: 1.7; border-top: 1px solid var(--line); padding-top: 18px; }
+@media (max-width: 560px) { .bench__row { grid-template-columns: 1.4fr 1fr 1fr; padding: 13px 16px; font-size: 13.5px; } .bench__row > b { font-size: 13.5px; } }
+
+/* ---------------- openshell ---------------- */
+.openshell { padding: clamp(4.5rem, 9vw, 7rem) 0; }
+.openshell__grid { display: grid; gap: 48px; grid-template-columns: 1fr; align-items: center; }
+@media (min-width: 900px) { .openshell__grid { grid-template-columns: 1.1fr 1fr; gap: 72px; } }
+.openshell__sub { color: var(--umber); font-size: 1.02rem; line-height: 1.7; max-width: 48ch; margin-bottom: 22px; }
+.openshell__sub code { font: 400 13px var(--mono); background: var(--tint); color: var(--accent-press); padding: 2px 7px; border-radius: 6px; }
+.openshell__note { font-size: 13.5px; color: var(--umber); line-height: 1.65; border-top: 1px solid var(--line); padding-top: 16px; max-width: 48ch; }
+
 /* ---------------- cta ---------------- */
 .cta { position: relative; background: var(--ink); color: var(--canvas); padding: clamp(6rem, 11vw, 8.5rem) 0; overflow: hidden; }
 .cta h2 { color: var(--canvas); text-align: center; margin: 0 auto; }
