@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="HYPERION — Sovereign Intelligence for Industrial Work." />
+  <meta name="theme-color" content="#070C16" />
+  <title>HYPERION — Sovereign Intelligence for Industrial Work</title>
+  <link rel="preload" href="assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">{"imports":{"gsap":"https://esm.sh/gsap@3.12.5","gsap/ScrollTrigger":"https://esm.sh/gsap@3.12.5/ScrollTrigger","lenis":"https://esm.sh/lenis@1.1.14"}}</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="HYPERION home"><img src="assets/hyperion-clean.svg" alt="" /><span>HYPERION</span></a>
+    <nav aria-label="Primary"><a href="#capabilities">Capabilities</a><a href="#operating-model">Operating model</a><a href="#sovereignty">Sovereignty</a><a href="#workflow">Workflow</a></nav>
+    <a class="button button--small" href="#start">Start a Task <span>↗</span></a>
+  </header>
+  <main id="main">
+    <section class="hero section" id="top">
+      <div class="hero__grid frame">
+        <div class="hero__copy">
+          <p class="eyebrow">On-premise agentic AI workbench</p>
+          <h1>Sovereign intelligence <em>for industrial work.</em></h1>
+          <p class="hero__lead">Analyze confidential industrial information locally with controlled models, evidence-backed knowledge, bounded tools, and human verification.</p>
+          <div class="actions"><a class="button" href="#start">Start a Task <span>↗</span></a><a class="text-link" href="#operating-model">View the operating model <span>↓</span></a></div>
+          <div class="proof-labels" aria-label="Core product properties"><span>Local execution</span><span>Evidence available</span><span>Human decision</span></div>
+        </div>
+        <div class="hero__instrument" aria-label="Interactive HYPERION hexagonal field"><canvas id="hex-comb"></canvas><div class="instrument__caption"><span class="status-dot"></span> Controlled execution field <b>ACTIVE</b></div></div>
+      </div>
+    </section>
+
+    <section class="barrier section"><div class="frame barrier__grid"><p class="eyebrow">The constraint</p><h2>Sensitive work should not force a choice between control and progress.</h2><div class="barrier__claims"><p>Cloud AI creates a <strong>confidentiality barrier.</strong></p><p>Manual workflows create a <strong>productivity barrier.</strong></p></div></div></section>
+
+    <section class="operating section" id="operating-model"><div class="frame operating__head"><p class="eyebrow">The operating model</p><h2>Evidence stays <em>in the loop.</em></h2><p>A visible path from source material to human decision — each stage is traceable, bounded, and reviewable.</p></div>
+      <div class="operating__pin"><div class="frame operating__body"><div class="operating__rail" aria-hidden="true"><span></span></div><div class="operating__stages">
+        <article class="stage is-active" data-stage="0"><span>01</span><div><p class="stage__label">Task</p><h3>Create a controlled task.</h3><p>Attach local source material and establish the execution boundary.</p><code>task.created · source.linked</code></div></article>
+        <article class="stage" data-stage="1"><span>02</span><div><p class="stage__label">Evidence</p><h3>Ground every claim.</h3><p>Parse inputs and retrieve authorized, version-aware local knowledge.</p><code>ocr.complete · evidence.located</code></div></article>
+        <article class="stage" data-stage="2"><span>03</span><div><p class="stage__label">Analysis</p><h3>Run bounded work.</h3><p>Plan and perform multi-step work with approved models and tools.</p><code>model.routed · tool.allowlisted</code></div></article>
+        <article class="stage" data-stage="3"><span>04</span><div><p class="stage__label">Verify</p><h3>Surface uncertainty.</h3><p>Group high-risk claims with their source evidence for review.</p><code>risk.flagged · review.pending</code></div></article>
+        <article class="stage" data-stage="4"><span>05</span><div><p class="stage__label">Decide</p><h3>Keep people accountable.</h3><p>Confirmation, correction, rejection, and change requests stay human-controlled.</p><code>decision.required · actor.recorded</code></div></article>
+        <article class="stage" data-stage="5"><span>06</span><div><p class="stage__label">Deliver</p><h3>Produce a traceable result.</h3><p>Generate a reviewable artifact from verified task state.</p><code>artifact.generated · trace.archived</code></div></article>
+      </div><aside class="operating__terminal"><p>Execution trace</p><div id="trace-output"><span>Awaiting task context</span></div><footer><span>LOCAL</span><span>POLICY-BOUND</span></footer></aside></div></div>
+    </section>
+
+    <section class="capabilities section" id="capabilities"><div class="frame"><div class="section-head"><p class="eyebrow">Capabilities</p><h2>Built for difficult industrial knowledge work.</h2></div><div class="capability-grid">
+      <article><span>01</span><h3>Multimodal intake</h3><p>Inspect scanned PDFs, photographs, handwriting, tables, and native documents locally.</p></article><article><span>02</span><h3>Evidence-grounded knowledge</h3><p>Retrieve controlled sources with revision, authority, and page or section context.</p></article><article><span>03</span><h3>Local model routing</h3><p>Choose an approved local model by task type, modality, and available compute.</p></article><article><span>04</span><h3>Bounded tool gateway</h3><p>Use permitted OCR, calculation, document, spreadsheet, and file tools with audit records.</p></article><article><span>05</span><h3>Sandboxed execution</h3><p>Run code and calculations with resource limits and no unrestricted network access.</p></article><article><span>06</span><h3>Verified deliverables</h3><p>Produce DOCX, XLSX, and working code from verified task state.</p></article>
+    </div></div></section>
+
+    <section class="sovereignty section" id="sovereignty"><div class="frame sovereignty__grid"><div><p class="eyebrow">Sovereignty monitor</p><h2>Security is a visible part <em>of the work.</em></h2><p>HYPERION exposes local execution state, controlled tools, and the event trail needed to demonstrate that sensitive tasks have no uncontrolled external path.</p><p class="note">Status labels describe deployment policy. Validate configuration before calling an environment air-gapped.</p></div><div class="monitor" aria-label="Sovereignty monitor example"><header><span>SO-01 / RUNTIME POLICY</span><b><i></i> Active</b></header><dl><div><dt>External network</dt><dd class="success">Blocked by policy</dd></div><div><dt>Knowledge</dt><dd>Local / controlled corpus</dd></div><div><dt>Sandbox</dt><dd>Active / resource-limited</dd></div><div><dt>Tool gateway</dt><dd>Allowlisted</dd></div><div><dt>Audit trace</dt><dd>Recording task events</dd></div></dl><footer><span>0 uncontrolled egress routes</span><span>policy enforced</span></footer></div></div></section>
+
+    <section class="workflow section" id="workflow"><div class="frame"><div class="section-head"><p class="eyebrow">Workflow</p><h2>One task. A complete evidence trail.</h2></div><ol class="timeline"><li><b>01</b><div><h3>Capture</h3><p>Source material enters a controlled location.</p></div></li><li><b>02</b><div><h3>Start</h3><p>An engineer creates a task and links sources.</p></div></li><li><b>03</b><div><h3>Understand</h3><p>OCR, vision, and parsing identify content.</p></div></li><li><b>04</b><div><h3>Ground</h3><p>Local knowledge retrieval attaches evidence.</p></div></li><li><b>05</b><div><h3>Analyze</h3><p>Findings and uncertainty become visible.</p></div></li><li><b>06</b><div><h3>Verify</h3><p>High-risk claims are confirmed or corrected.</p></div></li><li><b>07</b><div><h3>Deliver</h3><p>A verified artifact is generated.</p></div></li><li><b>08</b><div><h3>Review</h3><p>A manager reviews evidence and flags.</p></div></li><li><b>09</b><div><h3>Close</h3><p>The decision and trace are archived.</p></div></li></ol></div></section>
+
+    <section class="roles section"><div class="frame"><div class="section-head"><p class="eyebrow">Roles</p><h2>Control is distributed deliberately.</h2></div><div class="roles__grid"><article><p>Industrial engineer</p><h3>Work from source to verification.</h3><span>Full workspace · sources · artifacts</span></article><article><p>Department manager</p><h3>Review the decision, not raw noise.</h3><span>Evidence · exceptions · changes</span></article><article><p>Security & infrastructure</p><h3>See the policy and platform state.</h3><span>Models · corpus · sovereignty</span></article></div></div></section>
+
+    <section class="final section" id="start"><div class="frame"><p class="eyebrow">Start a task</p><h2>Start with a source.<br /><em>Finish with a decision you can defend.</em></h2><p>Create a task, add controlled material, and keep every important claim connected to its evidence.</p><a class="button" href="#top">Start a Task <span>↗</span></a></div></section>
+  </main>
+  <footer class="footer"><div class="frame"><div class="brand"><img src="assets/hyperion-clean.svg" alt="" /><span>HYPERION</span></div><p>Sovereign Intelligence for Industrial Work</p><p>Built on <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a>. Upstream attribution and license notices are retained.</p></div></footer>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
