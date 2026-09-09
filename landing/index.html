@@ -3,222 +3,231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HYPERION — Sovereign Intelligence for Industrial Work</title>
-<meta name="description" content="HYPERION is a sovereign intelligence platform for industrial work. Local execution, controlled tools, verifiable evidence.">
+<title>DeepSeek Harness — Everything is a plugin</title>
+<meta name="description" content="DeepSeek Harness is in developer preview for agent harness developers worldwide — source code included. Every capability is a plugin: models, tools, skills, sessions, sandboxes, storage, loops, scheduling, and the UI.">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="css/style.css?v=w2">
+<link rel="stylesheet" href="css/style.css?v=t1">
 <script type="importmap">
 { "imports": {
   "gsap": "https://esm.sh/gsap@3.12.5",
   "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
   "lenis": "https://esm.sh/lenis@1.1.14",
-  "three": "https://esm.sh/three@0.169.0",
-  "./hex-comb.js": "./js/hex-comb.js?v=p1"
+  "three": "https://esm.sh/three@0.169.0"
 }}
 </script>
 </head>
 <body>
 <a href="#main" class="skip">Skip to content</a>
 
-<!-- ===================== NAV ===================== -->
-<header class="nav" id="nav">
-  <div class="nav__inner">
-    <a href="#" class="nav__brand">
-      <img src="assets/hyperion-clean.svg" alt="HYPERION" width="24" height="24">
-      <span>HYPERION</span>
+<!-- ===================== PILL NAV ===================== -->
+<header class="lnav" id="lnav">
+  <nav class="lnav__pill">
+    <a href="#" class="lnav__brand">
+      <img src="assets/hyperion-clean.svg" alt="" width="30" height="30">
+      <span>DeepSeek Harness</span>
     </a>
-    <nav class="nav__links" aria-label="Main">
-      <a href="#platform">Platform</a>
-      <a href="#apis">Developers</a>
-      <a href="#sovereignty">Sovereignty</a>
-      <a href="#deploy">Deployment</a>
-    </nav>
-    <a href="#cta" class="nav__cta">Start a Task <span>↗</span></a>
-  </div>
+    <div class="lnav__links">
+      <a href="#plugins">Plugins</a>
+      <a href="#modes">Modes</a>
+      <a href="#trace">Traceable</a>
+    </div>
+    <a href="#start" class="lnav__cta">Get started</a>
+  </nav>
 </header>
 
 <main id="main">
 
-<!-- ===================== HERO — full-bleed shader ===================== -->
+<!-- ===================== HERO — gallery tunnel ===================== -->
 <section class="hero" id="hero">
-  <canvas id="hex-comb" aria-hidden="true"></canvas>
-  <div class="hero__grid">
-    <div class="hero__copy">
-      <h1>Industrial work needs<br><em>controlled</em> intelligence.</h1>
-      <p class="hero__lead">HYPERION runs inside your environment. Source material stays local. Every claim traces to evidence — no uncontrolled external paths.</p>
-      <a href="#cta" class="hero__cta">Start a Task <span>↗</span></a>
-      <p class="hero__meta">Local execution · Controlled tools · Audit trail</p>
+  <div id="tunnel" class="hero__tunnel" aria-hidden="true"></div>
+  <div class="hero__scrim" aria-hidden="true"></div>
+  <div class="hero__copy">
+    <p class="hero__badge"><span class="dot"></span>Developer preview · source code included</p>
+    <h1>Every capability,<br>every decision,<br><span class="hero__em">remembered.<svg viewBox="0 0 400 24" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M6 16 C 80 4, 150 22, 210 12 S 340 8, 394 14" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/></svg></span></h1>
+    <p class="hero__sub">DeepSeek Harness is a plugin-first agent harness for developers worldwide. Models, tools, skills, sessions, sandboxes, storage, loops, scheduling, and the UI — all swappable, all traceable.</p>
+    <div class="hero__actions">
+      <a href="#start" class="btn btn--accent">Get started <span>→</span></a>
+      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--ghost">View source</a>
     </div>
   </div>
 </section>
 
-<!-- ===================== PLATFORM ===================== -->
-<section class="platform" id="platform">
+<!-- ===================== PROOF STRIP ===================== -->
+<section class="proof">
   <div class="wrap">
-    <div class="section-head">
-      <h2>The platform industrial<br>work builds <em>on.</em></h2>
-      <p>Four surfaces, one controlled environment. Switch between them to see how a task moves from source to decision.</p>
+    <div class="proof__row">
+      <div class="proof__item"><p class="proof__num" data-count="8">0</p><p class="proof__label">runtime modes</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="100" data-suffix="%">0</p><p class="proof__label">capabilities as plugins</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="1" data-suffix=" log">0</p><p class="proof__label">append-only session record</p></div>
     </div>
-    <div class="tabs" role="tablist" aria-label="Platform surfaces">
-      <button class="tab is-active" role="tab" aria-selected="true" data-panel="p-tasks" id="tab-tasks">Task Engine</button>
-      <button class="tab" role="tab" aria-selected="false" data-panel="p-evidence" id="tab-evidence">Evidence Layer</button>
-      <button class="tab" role="tab" aria-selected="false" data-panel="p-sandbox" id="tab-sandbox">Sandbox</button>
-      <button class="tab" role="tab" aria-selected="false" data-panel="p-deliver" id="tab-deliver">Deliverables</button>
-    </div>
-    <div class="panels">
-      <div class="panel is-active" id="p-tasks" role="tabpanel" aria-labelledby="tab-tasks">
-        <div class="panel__visual"><div class="mock"><div class="mock__bar"><span></span><span></span><span></span><b>TASK-7291</b></div><div class="mock__body"><p class="mock__row"><span class="k">task</span> thermal-analysis</p><p class="mock__row"><span class="k">sources</span> spec-v4.2.pdf, audit-log.xlsx</p><p class="mock__row"><span class="k">policy</span> SO-01 (strict)</p><p class="mock__row ok">✓ trace recording</p></div></div></div>
-        <div class="panel__copy"><h3>Tasks are traceable units of work.</h3><p>Every task declares its sources, constraints, and expected outputs. Nothing runs without a recorded purpose.</p></div>
-      </div>
-      <div class="panel" id="p-evidence" role="tabpanel" aria-labelledby="tab-evidence" hidden>
-        <div class="panel__visual"><div class="mock"><div class="mock__bar"><span></span><span></span><span></span><b>EVIDENCE</b></div><div class="mock__body"><p class="mock__row"><span class="k">claim</span> turbine tolerance 0.42mm</p><p class="mock__row ok">✓ spec-v4.2.pdf · p.31</p><p class="mock__row ok">✓ audit-log.xlsx · r.108</p><p class="mock__row warn">! 1 conflict flagged</p></div></div></div>
-        <div class="panel__copy"><h3>Every claim carries its citation.</h3><p>Findings link back to source document, page, and row. Orphan assertions never reach the output.</p></div>
-      </div>
-      <div class="panel" id="p-sandbox" role="tabpanel" aria-labelledby="tab-sandbox" hidden>
-        <div class="panel__visual"><div class="mock"><div class="mock__bar"><span></span><span></span><span></span><b>SANDBOX</b></div><div class="mock__body"><p class="mock__row"><span class="k">net</span> blocked by policy</p><p class="mock__row"><span class="k">mem</span> 512MB limit</p><p class="mock__row"><span class="k">fs</span> scoped to task</p><p class="mock__row ok">✓ no egress routes</p></div></div></div>
-        <div class="panel__copy"><h3>Execution runs inside a boundary.</h3><p>Code and analysis run in resource-limited containers. Network, memory, and filesystem are policy-controlled.</p></div>
-      </div>
-      <div class="panel" id="p-deliver" role="tabpanel" aria-labelledby="tab-deliver" hidden>
-        <div class="panel__visual"><div class="mock"><div class="mock__bar"><span></span><span></span><span></span><b>DELIVERABLE</b></div><div class="mock__body"><p class="mock__row"><span class="k">out</span> thermal-report-final.pdf</p><p class="mock__row ok">✓ 312 evidence links</p><p class="mock__row ok">✓ verified 3/3 claims</p><p class="mock__row ok">✓ reviewer approved</p></div></div></div>
-        <div class="panel__copy"><h3>Artifacts arrive defended.</h3><p>Reports and decisions ship with their full evidence trail. Reviewers approve what they can verify.</p></div>
-      </div>
-    </div>
+    <div class="marquee" aria-hidden="true"><div class="marquee__track">
+      <span>models</span><span>tools</span><span>skills</span><span>sessions</span><span>sandboxes</span><span>storage</span><span>loops</span><span>scheduling</span><span>UI</span>
+      <span>models</span><span>tools</span><span>skills</span><span>sessions</span><span>sandboxes</span><span>storage</span><span>loops</span><span>scheduling</span><span>UI</span>
+    </div></div>
   </div>
 </section>
 
-<!-- ===================== APIS ===================== -->
-<section class="apis" id="apis">
+<!-- ===================== AGENT FORMULA ===================== -->
+<section class="formula">
   <div class="wrap">
-    <div class="section-head">
-      <h2>Build anything with<br>HYPERION <em>APIs.</em></h2>
-      <p>Clean, versioned interfaces for every capability.</p>
-    </div>
-    <div class="apis__grid">
-      <article class="api-card"><h3>Parse API</h3><p>OCR, tables, and figures from PDFs and scans — into structured knowledge.</p><div class="api-card__foot"><span class="chip">Python</span><span class="chip">JavaScript</span></div></article>
-      <article class="api-card"><h3>Ground API</h3><p>Local retrieval over your controlled corpus with citation chains.</p><div class="api-card__foot"><span class="chip">Python</span><span class="chip">REST</span></div></article>
-      <article class="api-card"><h3>Verify API</h3><p>Confidence scoring and conflict detection on high-risk claims.</p><div class="api-card__foot"><span class="chip">Python</span><span class="chip">REST</span></div></article>
-      <article class="api-card"><h3>Artifact API</h3><p>Generate reports that carry their evidence trail.</p><div class="api-card__foot"><span class="chip">Python</span><span class="chip">CLI</span></div></article>
-    </div>
-    <div class="apis__code">
-      <div class="code-card"><div class="code-card__bar"><span></span><span></span><span></span><span class="code-card__lang">Python</span></div><pre><code>import hyperion
-
-client = hyperion.Client(policy="SO-01")
-task = client.tasks.create(
-    name="thermal-analysis",
-    sources=["spec-v4.2.pdf"],
-)
-report = task.run()  # evidence attached</code></pre></div>
-      <div class="code-card"><div class="code-card__bar"><span></span><span></span><span></span><span class="code-card__lang">JavaScript</span></div><pre><code>import Hyperion from "@hyperion/sdk";
-
-const client = new Hyperion({ policy: "SO-01" });
-const task = await client.tasks.create({
-  name: "thermal-analysis",
-  sources: ["spec-v4.2.pdf"],
-});</code></pre></div>
-    </div>
+    <h2 class="formula__title">Agent <span class="op">=</span> Model <span class="op">+</span> <span class="accent">Harness</span></h2>
+    <p class="formula__sub">The model is the soul of an agent.<br>A harness lets it understand its environment, use tools, and keep working in real-world settings.</p>
   </div>
 </section>
 
-<!-- ===================== WAVE — operating model ===================== -->
-<section class="wave" id="wave">
-  <canvas id="wave-canvas" aria-hidden="true"></canvas>
-  <div class="wrap wave__content">
-    <div class="section-head">
-      <h2>The work follows<br>the <em>evidence path.</em></h2>
-      <p>Nine controlled stages. Every step visible. Every claim grounded.</p>
-    </div>
-    <div class="wave__stages">
-      <div class="wstage"><div><h3>Capture</h3><p>Material enters a controlled location.</p></div></div>
-      <div class="wstage"><div><h3>Start</h3><p>Engineer creates a task, links sources.</p></div></div>
-      <div class="wstage"><div><h3>Understand</h3><p>OCR, vision, and parsing identify content.</p></div></div>
-      <div class="wstage"><div><h3>Ground</h3><p>Local retrieval attaches evidence.</p></div></div>
-      <div class="wstage"><div><h3>Analyze</h3><p>Findings and uncertainty become visible.</p></div></div>
-      <div class="wstage"><div><h3>Verify</h3><p>High-risk claims confirmed or corrected.</p></div></div>
-      <div class="wstage"><div><h3>Deliver</h3><p>A verified artifact is generated.</p></div></div>
-      <div class="wstage"><div><h3>Review</h3><p>Manager reviews evidence and flags.</p></div></div>
-      <div class="wstage"><div><h3>Close</h3><p>Decision and trace are archived.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== SOVEREIGNTY ===================== -->
-<section class="sov" id="sovereignty">
-  <div class="wrap sov__grid">
-    <div>
-      <h2>Security is a visible part<br>of the <em>work.</em></h2>
-      <p class="sov__desc">HYPERION exposes local execution state, controlled tools, and the event trail needed to demonstrate that sensitive tasks have no uncontrolled external path.</p>
-      <p class="sov__note">Status labels describe deployment policy. Validate configuration before calling an environment air-gapped.</p>
-    </div>
-    <div class="monitor">
-      <div class="monitor__header"><span>SO-01 / RUNTIME POLICY</span><span class="monitor__status"><span class="dot"></span> Active</span></div>
-      <dl class="monitor__rows">
-        <div><dt>External network</dt><dd class="ok">Blocked by policy</dd></div>
-        <div><dt>Knowledge</dt><dd>Local / controlled corpus</dd></div>
-        <div><dt>Sandbox</dt><dd>Active / resource-limited</dd></div>
-        <div><dt>Tool gateway</dt><dd>Allowlisted</dd></div>
-        <div><dt>Audit trace</dt><dd>Recording task events</dd></div>
-      </dl>
-      <div class="monitor__footer"><span>0 uncontrolled egress routes</span><span>policy enforced</span></div>
-    </div>
-    <p class="sr-note" hidden></p>
-  </div>
-</section>
-
-<!-- ===================== DEPLOY ===================== -->
-<section class="deploy" id="deploy">
+<!-- ===================== FEATURES — capability grid ===================== -->
+<section class="features" id="plugins">
   <div class="wrap">
-    <div class="section-head">
-      <h2>Built to run anywhere<br>your work <em>runs.</em></h2>
-      <p>The same platform, deployed where your data lives.</p>
+    <p class="kicker">Capabilities as plugins</p>
+    <h2>Swap any capability<br>without touching the source</h2>
+    <p class="features__sub">Plugins provide every agent capability and work together through Cordis services and events. Select, swap, or extend anything in configuration.</p>
+    <div class="features__grid">
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 2v4m0 12v4M4.9 4.9l2.8 2.8m8.6 8.6 2.8 2.8M2 12h4m12 0h4M4.9 19.1l2.8-2.8m8.6-8.6 2.8-2.8"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+        <h3>Models</h3>
+        <p>Every model interface is a plugin — pick providers per task, swap without code changes.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 17l4-4 4 2 4-6 6 4"/><path d="M3 21h18"/></svg></div>
+        <h3>Tools &amp; skills</h3>
+        <p>Shell, filesystem, web, and skill catalog — each registered through the same service boundary.</p>
+      </article>
+      <article class="fcard fcard--hi">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15l3-3 2 2 5-5"/><circle cx="14" cy="9" r="1.4"/></svg></div>
+        <h3>Sessions &amp; trace</h3>
+        <p>Every run lands in an append-only log — system prompts, reasoning, tool calls, subagent scheduling, context injections.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15v-3m3 3v-6m3 6v-4m3 4v-7"/></svg></div>
+        <h3>Sandboxes &amp; storage</h3>
+        <p>E2B sandboxes and durable session data — isolated execution, persistent results.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 3"/><path d="M21 3l-4 4"/></svg></div>
+        <h3>Loops &amp; scheduling</h3>
+        <p>Loop hygiene, tool timeouts, and scheduled jobs keep long-running agents on rails.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/></svg></div>
+        <h3>The UI</h3>
+        <p>Even the interface is a plugin — recompose the web app, TUI, or headless modes in config.</p>
+      </article>
     </div>
-    <div class="deploy__grid">
-      <div class="deploy__item"><h3>On-premises</h3><p>Inside your network. Data never leaves the boundary.</p></div>
-      <div class="deploy__item"><h3>Private cloud</h3><p>VPC-isolated with your IAM and key management.</p></div>
-      <div class="deploy__item"><h3>Sovereign cloud</h3><p>Region-locked compute for jurisdiction-bound workloads.</p></div>
-      <div class="deploy__item deploy__item--wide"><h3>Air-gapped (policy)</h3><p>Status depends on configuration. Validate before deployment.</p></div>
+  </div>
+</section>
+
+<!-- ===================== SHOWCASE — trajectory view ===================== -->
+<section class="showcase" id="trace">
+  <div class="wrap">
+    <p class="kicker kicker--center">Every run is traceable</p>
+    <h2 class="showcase__title">The Trajectory view</h2>
+    <div class="showcase__frame" data-frame>
+      <div class="window">
+        <div class="window__bar">
+          <span class="wdot wd--r"></span><span class="wdot wd--y"></span><span class="wdot wd--g"></span>
+          <span class="window__title">dsh — trajectory / session 7291</span>
+        </div>
+        <div class="window__body">
+          <div class="trow"><span class="trow__src">system</span><span class="trow__txt">assembled system prompt · 8 plugins · 12 tools</span></div>
+          <div class="trow"><span class="trow__src">model</span><span class="trow__txt">reasoning · plan tool calls for harness docs</span></div>
+          <div class="trow"><span class="trow__src">tool</span><span class="trow__txt">fs.read → docs/architecture.md (14.2 KB)</span></div>
+          <div class="trow"><span class="trow__src">subagent</span><span class="trow__txt">scheduled · doc-quick gate · returned pass</span></div>
+          <div class="trow"><span class="trow__src">context</span><span class="trow__txt">injected · AGENTS.md + project profile</span></div>
+          <div class="trow trow--ok"><span class="trow__src">model</span><span class="trow__txt">final answer · citations attached</span></div>
+        </div>
+      </div>
+      <div class="callout callout--1">Resume, fork, search, replay</div>
+      <div class="callout callout--2">Append-only — nothing is overwritten</div>
+      <div class="callout callout--3">Inspect by source: prompt, tool, subagent</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MODES — pinned horizontal ===================== -->
+<section class="modes" id="modes">
+  <div class="wrap modes__head">
+    <p class="kicker">Runtime modes</p>
+    <h2>One harness, four ways to run</h2>
+  </div>
+  <div class="modes__viewport" data-viewport>
+    <div class="modes__track" data-track>
+      <article class="mcard">
+        <p class="mcard__n">Standard</p>
+        <h3>Full coding agent</h3>
+        <p>File editing, shell, file and web search, skills, planning, goals, subagents, and workflows — the complete toolset.</p>
+        <p class="mcard__tag">dsh --profile standard</p>
+      </article>
+      <article class="mcard">
+        <p class="mcard__n">Code</p>
+        <h3>Tools as code</h3>
+        <p>All Standard capabilities, with tools exposed through the Code Mode SDK so the model combines multi-step operations in one TypeScript program.</p>
+        <p class="mcard__tag">dsh --profile code</p>
+      </article>
+      <article class="mcard">
+        <p class="mcard__n">Minimal</p>
+        <h3>Two-tool benchmark</h3>
+        <p>Persistent bash and str_replace_editor only — for benchmarking models in a minimal environment.</p>
+        <p class="mcard__tag">dsh --profile minimal</p>
+      </article>
+      <article class="mcard">
+        <p class="mcard__n">Creator</p>
+        <h3>Preset authoring</h3>
+        <p>Inspect the live runtime, test Cordis plugins in memory, and combine them into new modes — with preset-authoring guidance built in.</p>
+        <p class="mcard__tag">dsh --profile creator</p>
+      </article>
     </div>
   </div>
 </section>
 
 <!-- ===================== CTA ===================== -->
-<section class="cta" id="cta">
+<section class="cta" id="start">
   <div class="wrap">
-    <h2>Start with a source.<br>Finish with a decision<br>you can <em>defend.</em></h2>
-    <a href="#" class="cta__btn">Start a Task <span>↗</span></a>
+    <h2>Everything is a plugin.<br>Start from either end.</h2>
+    <p class="cta__sub">Try it now with npx, or install from source.</p>
+    <div class="cta__cards">
+      <div class="cli-card">
+        <p class="cli-card__label">Quick start</p>
+        <p class="cli-card__hint">Install Node.js, then launch the Web UI.</p>
+        <pre><code>$ npx @deepseek-ai/dsh web</code></pre>
+      </div>
+      <div class="cli-card">
+        <p class="cli-card__label">Install from source</p>
+        <p class="cli-card__hint">Clone the full source and follow setup in the repo.</p>
+        <pre><code>$ git clone https://github.com/deepseek-ai/deepseek-harness</code></pre>
+      </div>
+    </div>
+    <div class="cta__foot">
+      <a href="https://github.com/deepseek-ai/deepseek-harness" class="btn btn--accent">Join the plugin ecosystem <span>→</span></a>
+    </div>
   </div>
 </section>
 
 </main>
 
 <!-- ===================== FOOTER ===================== -->
-<footer class="footer">
-  <div class="wrap footer__grid">
+<footer class="lfooter">
+  <div class="wrap lfooter__grid">
     <div>
-      <p class="footer__brand">HYPERION</p>
-      <p>Sovereign Intelligence for Industrial Work</p>
+      <p class="lfooter__brand">DeepSeek Harness</p>
+      <p class="lfooter__desc">A plugin-first agent harness for developers worldwide — still in developer preview, evolving with the community.</p>
     </div>
-    <div class="footer__col">
-      <h4>PLATFORM</h4>
-      <a href="#platform">Task Engine</a>
-      <a href="#platform">Evidence Layer</a>
-      <a href="#platform">Sandbox</a>
-    </div>
-    <div class="footer__col">
-      <h4>DEVELOPERS</h4>
-      <a href="#apis">APIs</a>
-      <a href="#apis">Python SDK</a>
-    </div>
-    <div class="footer__col">
-      <h4>MORE</h4>
-      <a href="#sovereignty">Sovereignty</a>
-      <a href="#deploy">Deployment</a>
-    </div>
+    <nav aria-label="Product">
+      <p class="lfooter__h">Explore</p>
+      <a href="#plugins">Plugins</a>
+      <a href="#modes">Modes</a>
+      <a href="#trace">Trajectory</a>
+    </nav>
+    <nav aria-label="Start">
+      <p class="lfooter__h">Get started</p>
+      <a href="#start">Quick start</a>
+      <a href="https://github.com/deepseek-ai/deepseek-harness">Source</a>
+    </nav>
   </div>
-  <div class="wrap footer__note">
-    <p>Built on DeepSeek Harness. Upstream attribution and license notices are retained. Hero field adapted from Originkit Hex Comb; wave field from Originkit Scroll Wave Field (MIT).</p>
+  <div class="wrap lfooter__note">
+    <p>DeepSeek Harness is in developer preview. Core plugins and APIs continue to evolve — reusable, composable, open-source infrastructure for exploring the limits of intelligence.</p>
   </div>
 </footer>
 
-<script type="module" src="js/main.js?v=w2"></script>
+<script type="module" src="js/main.js?v=t1"></script>
 </body>
 </html>
