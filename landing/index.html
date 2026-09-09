@@ -6,7 +6,7 @@
 <title>hyperion-workbench — SIH26117 · Sovereign On-Premise Agentic AI Workbench</title>
 <meta name="description" content="hyperion-workbench solves SIH26117: a sovereign on-premise agentic AI workbench using open-weight multimodal LLMs for confidential industrial work. Built for MRPL, Smart Automation, SIH 2026.">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="css/style.css?v=h1">
+<link rel="stylesheet" href="css/style.css?v=h2">
 <script type="importmap">
 { "imports": {
   "gsap": "https://esm.sh/gsap@3.12.5",
@@ -58,10 +58,11 @@
 <section class="proof">
   <div class="wrap">
     <div class="proof__row">
-      <div class="proof__item"><p class="proof__num" data-count="9">0</p><p class="proof__label">workflow stages, capture to archive</p></div>
-      <div class="proof__item"><p class="proof__num" data-count="100" data-suffix="%">0</p><p class="proof__label">execution on-premise</p></div>
-      <div class="proof__item"><p class="proof__num" data-count="1" data-suffix=" log">0</p><p class="proof__label">append-only audit trail</p></div>
+      <div class="proof__item"><p class="proof__num proof__num--zero">0</p><p class="proof__label">bytes of source data leave the boundary</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="9">0</p><p class="proof__label">recorded stages, capture → archive</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="100" data-suffix="%">0</p><p class="proof__label">consequential decisions confirmed by a human</p></div>
     </div>
+    <p class="proof__note">Design invariants from the SIH26117 requirements — not measured benchmark claims.</p>
     <div class="marquee" aria-hidden="true"><div class="marquee__track">
       <span>OCR + vision</span><span>local RAG</span><span>model router</span><span>sandboxed execution</span><span>risk-based verification</span><span>DOCX deliverables</span><span>sovereignty monitor</span><span>audit trail</span>
       <span>OCR + vision</span><span>local RAG</span><span>model router</span><span>sandboxed execution</span><span>risk-based verification</span><span>DOCX deliverables</span><span>sovereignty monitor</span><span>audit trail</span>
@@ -194,17 +195,34 @@
       <p class="sov__sub">The PS asks for demonstrable isolation. The workbench exposes live execution state, controlled tool calls, and an event trail that shows sensitive tasks have no uncontrolled external path. Our sandbox plugins follow the same bet NVIDIA made with <em>OpenShell</em> — out-of-process policy enforcement, deny-by-default permissions, metered resources, and a full audit trail of every allow/deny decision.</p>
       <p class="sov__note">Status labels describe deployment policy. The environment is validated before any air-gap claim is made.</p>
     </div>
-    <div class="monitor">
-      <div class="monitor__header"><span>SOV-01 / RUNTIME POLICY</span><span class="monitor__status"><span class="dot"></span> Enforced</span></div>
-      <dl class="monitor__rows">
-        <div><dt>External network</dt><dd class="ok">No unauthorized path</dd></div>
-        <div><dt>Model inference</dt><dd>On-premise · open-weight</dd></div>
-        <div><dt>Knowledge</dt><dd>Local controlled corpus</dd></div>
-        <div><dt>Sandbox</dt><dd>Active · resource-limited</dd></div>
-        <div><dt>Tool gateway</dt><dd>Allowlisted</dd></div>
-        <div><dt>Audit trace</dt><dd>Recording task events</dd></div>
-      </dl>
-      <div class="monitor__footer"><span>0 uncontrolled egress routes</span><span>policy enforced</span></div>
+    <div class="monitor" aria-label="Sovereignty monitor">
+      <div class="monitor__header">
+        <span class="monitor__id">SOV-01 <i>/</i> RUNTIME POLICY</span>
+        <span class="monitor__live"><span class="dot"></span><span class="monitor__live__txt" data-live>ENFORCED</span></span>
+      </div>
+      <div class="monitor__body">
+        <div class="monitor__meta">
+          <span>SESSION <b data-session>—</b></span>
+          <span>UPTIME <b data-uptime>00:00</b></span>
+          <span>POLICY REV <b>r7</b></span>
+        </div>
+        <dl class="monitor__rows">
+          <div class="monitor__row"><dt>External network</dt><dd><span class="s-dot s-ok"></span>No unauthorized path</dd></div>
+          <div class="monitor__row"><dt>Model inference</dt><dd><span class="s-dot s-ok"></span>On-premise · open-weight</dd></div>
+          <div class="monitor__row"><dt>Knowledge</dt><dd><span class="s-dot s-ok"></span>Local controlled corpus</dd></div>
+          <div class="monitor__row"><dt>Sandbox</dt><dd><span class="s-dot s-ok"></span>Active · resource-limited</dd></div>
+          <div class="monitor__row"><dt>Tool gateway</dt><dd><span class="s-dot s-ok"></span>Allowlist · 12 tools</dd></div>
+          <div class="monitor__row"><dt>Audit trace</dt><dd><span class="s-dot s-live"></span>Recording task events</dd></div>
+        </dl>
+        <div class="monitor__feed">
+          <p class="monitor__feed__label">GATEWAY DECISIONS</p>
+          <ul data-feed></ul>
+        </div>
+      </div>
+      <div class="monitor__footer">
+        <span class="monitor__egress"><span class="s-dot s-ok"></span>0 uncontrolled egress routes</span>
+        <span class="monitor__stamp" data-stamp>—</span>
+      </div>
     </div>
   </div>
 </section>
@@ -297,6 +315,6 @@ $ git checkout hyperion-workbench</code></pre>
   </div>
 </footer>
 
-<script type="module" src="js/main.js?v=h1"></script>
+<script type="module" src="js/main.js?v=h2"></script>
 </body>
 </html>

@@ -113,5 +113,75 @@ if (modesEl && track && viewport) {
   }
 }
 
+
+// ---------------- Sovereignty monitor (live instrument) ----------------
+(() => {
+  const monitor = document.querySelector('.monitor');
+  if (!monitor) return;
+  const reduceM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // session id + uptime clock
+  const sessionEl = monitor.querySelector('[data-session]');
+  const uptimeEl = monitor.querySelector('[data-uptime]');
+  const stampEl = monitor.querySelector('[data-stamp]');
+  if (sessionEl) sessionEl.textContent = '7291';
+  const t0 = Date.now();
+  const pad = (n) => String(n).padStart(2, '0');
+  const tick = () => {
+    if (uptimeEl) {
+      const s = Math.floor((Date.now() - t0) / 1000);
+      uptimeEl.textContent = `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
+    }
+  };
+  tick();
+  setInterval(tick, 1000);
+
+  // timestamped footer stamp
+  const stamp = () => {
+    if (!stampEl) return;
+    const d = new Date();
+    stampEl.textContent = `last check ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  };
+  stamp();
+  setInterval(stamp, 1000);
+
+  // gateway decision feed — allow/deny events the PS trace would emit
+  const feed = monitor.querySelector('[data-feed]');
+  if (feed && !reduceM) {
+    const EVENTS = [
+      ['fs.read', 'inspection-report-scan.pdf', 'allow'],
+      ['ocr.parse', 'page 07 · handwritten table', 'allow'],
+      ['kb.query', 'SOP-4.2 r7 · metadata filter', 'allow'],
+      ['sandbox.exec', 'calc · 512MB · no-net', 'allow'],
+      ['net.fetch', 'external endpoint', 'deny'],
+      ['docx.write', 'approval-note.docx', 'allow'],
+      ['tool.call', 'unregistered provider', 'deny'],
+    ];
+    let i = 0;
+    const push = () => {
+      const [tool, detail, verdict] = EVENTS[i % EVENTS.length];
+      i++;
+      const li = document.createElement('li');
+      li.className = verdict === 'deny' ? 'm-deny' : 'm-allow';
+      const t = new Date();
+      const ts = `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;
+      li.innerHTML = `<span class="m-ts">${ts}</span><span class="m-tool">${tool}</span><span class="m-detail">${detail}</span><b>${verdict.toUpperCase()}</b>`;
+      feed.prepend(li);
+      while (feed.children.length > 4) feed.lastChild.remove();
+    };
+    push();
+    setInterval(push, 2600);
+  } else if (feed) {
+    // static three-row feed for reduced motion
+    feed.innerHTML = [
+      ['net.fetch', 'external endpoint', 'deny'],
+      ['sandbox.exec', 'calc · 512MB · no-net', 'allow'],
+      ['kb.query', 'SOP-4.2 r7', 'allow'],
+    ].map(([tool, detail, verdict]) =>
+      `<li class="${verdict === 'deny' ? 'm-deny' : 'm-allow'}"><span class="m-ts">--:--:--</span><span class="m-tool">${tool}</span><span class="m-detail">${detail}</span><b>${verdict.toUpperCase()}</b></li>`
+    ).join('');
+  }
+})();
+
 // recalc after fonts/layout settle
 setTimeout(() => ScrollTrigger.refresh(), 600);
