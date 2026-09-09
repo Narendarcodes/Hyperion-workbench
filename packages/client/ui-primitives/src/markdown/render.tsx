@@ -574,9 +574,12 @@ function renderFootnoteReference(
   const seen = context.footnoteCounts.get(id)
   if (seen === undefined) context.footnoteOrder.push(id)
   context.footnoteCounts.set(id, (seen ?? 0) + 1)
-  // The in-page anchor fails the protocol allowlist, so only the numbered
-  // superscript renders (matching the replaced pipeline's unwrapped link).
-  return <sup key={key}>{String(context.footnoteOrder.indexOf(id) + 1)}</sup>
+  const index = context.footnoteOrder.indexOf(id) + 1
+  return (
+    <sup key={key} className={css.citationBadge} title={`Source reference [${String(index)}]`}>
+      <span className={css.citationIndex}>{String(index)}</span>
+    </sup>
+  )
 }
 
 /**
