@@ -171,20 +171,20 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 5vw
 .callout {
   position: absolute; z-index: 2; background: var(--ink); color: var(--canvas);
   font: 500 12px/1.35 var(--sans); padding: 10px 16px; border-radius: 12px;
-  box-shadow: 0 12px 28px -12px rgba(28,25,23,.5); max-width: 230px;
+  box-shadow: 0 12px 28px -12px rgba(28,25,23,.5); width: 200px;
 }
 .callout::after { content: ''; position: absolute; border: 7px solid transparent; }
 /* each pin anchored beside the trace row it describes:
    rows: capture(1) understand(2) ground(3) analyze(4) verify(5) deliver(6) review(7) */
-.callout--1 { top: 43%; left: auto; right: calc(100% - 8px); transform: translateY(-50%); text-align: left; }
-.callout--1::after { top: 68%; right: -7px; border-left-color: var(--ink); border-right: 0; }
-.callout--2 { top: 32%; right: auto; left: calc(100% - 8px); transform: translateY(-50%); }
-.callout--2::after { top: 42%; left: -7px; border-right-color: var(--ink); border-left: 0; }
-.callout--3 { bottom: 2%; right: calc(100% - 8px); transform: none; }
-.callout--3::after { top: 32%; right: -7px; border-left-color: var(--ink); border-right: 0; }
+.callout--1 { top: 46%; right: calc(100% + 10px); transform: translateY(-50%); text-align: left; }
+.callout--1::after { top: 50%; right: -7px; border-left-color: var(--ink); border-right: 0; }
+.callout--2 { top: 32%; left: calc(100% + 10px); transform: translateY(-50%); }
+.callout--2::after { top: 50%; left: -7px; border-right-color: var(--ink); border-left: 0; }
+.callout--3 { bottom: 1%; right: calc(100% + 10px); transform: none; }
+.callout--3::after { top: 24%; right: -7px; border-left-color: var(--ink); border-right: 0; }
 /* on narrow screens the pins would collide with the window — stack below instead */
-@media (max-width: 860px) {
-  .callout--1, .callout--2, .callout--3 { position: static; transform: none; max-width: none; margin-top: 12px; }
+@media (max-width: 1080px) {
+  .callout--1, .callout--2, .callout--3 { position: static; transform: none; width: auto; margin-top: 12px; }
   .callout--1::after, .callout--2::after, .callout--3::after { display: none; }
   .showcase__frame { display: grid; gap: 0; }
 }
@@ -226,6 +226,13 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 5vw
 .bench__head { background: var(--canvas); font: 600 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--umber); }
 .bench__head > span { color: var(--umber); }
 .bench__note { margin-top: 26px; max-width: 44rem; font-size: 13.5px; color: var(--umber); line-height: 1.7; border-top: 1px solid var(--line); padding-top: 18px; }
+.bench__sources {
+  margin: 0; padding: 14px 24px; border-top: 1px solid var(--line);
+  background: var(--canvas);
+  font: 400 11.5px/1.7 var(--sans); color: var(--umber);
+}
+.bench__sources a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.bench__sources a:hover { color: var(--accent-press); }
 @media (max-width: 560px) { .bench__row { grid-template-columns: 1.4fr 1fr 1fr; padding: 13px 16px; font-size: 13.5px; } .bench__row > b { font-size: 13.5px; } }
 
 /* ---------------- openshell ---------------- */
