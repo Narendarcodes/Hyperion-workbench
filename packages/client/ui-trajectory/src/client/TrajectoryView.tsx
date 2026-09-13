@@ -252,6 +252,8 @@ export function TrajectoryView({
         if (turn === undefined || step === undefined) continue
         const provider = request?.provenance?.provider ?? node?.provenance?.provider
         const model = request?.provenance?.model ?? node?.provenance?.model
+        const baseURL = request?.provenance?.baseURL ?? node?.provenance?.baseURL
+          ?? request?.requestConfig?.baseURL ?? node?.requestConfig?.baseURL
         const requestConfig = request?.requestConfig ?? node?.requestConfig
         numbered.push({
           seq: entry.seq,
@@ -272,8 +274,8 @@ export function TrajectoryView({
             : { retryDelayMs: request.retryDelayMs }),
           ...(provider === undefined ? {} : { provider }),
           ...(model === undefined ? {} : { model }),
+          ...(baseURL === undefined ? {} : { baseURL }),
           ...(requestConfig === undefined ? {} : { requestConfig }),
-          ...(usage === undefined ? {} : { usage }),
           ...(cumulativeUsage === undefined ? {} : { cumulativeUsage }),
         })
         continue
@@ -298,6 +300,7 @@ export function TrajectoryView({
         ...(request.provenance?.model === undefined
           ? {}
           : { model: request.provenance.model }),
+        ...(request.provenance?.baseURL === undefined ? {} : { baseURL: request.provenance.baseURL }),
         ...(request.requestConfig === undefined ? {} : { requestConfig: request.requestConfig }),
         ...(usage === undefined ? {} : { usage }),
         ...(cumulativeUsage === undefined ? {} : { cumulativeUsage }),

@@ -16,6 +16,8 @@ describe('Trajectory event projection', () => {
     expect(contextProvenance({ kind: 'agent-instructions', changes: 'bad' }).label)
       .toBe('agent-instructions')
     expect(contextProvenance({ kind: 'plugin', plugin: 'p' }).label).toBe('p')
+    expect(contextProvenance({ kind: 'plugin', plugin: '@deepseek-ai/dsh-system-prompt' }).label)
+      .toBe('hyperion-system-prompt')
     expect(contextProvenance({ kind: 'plugin', plugin: 1 }).label).toBe('plugin')
     expect(contextProvenance({ kind: 'skill-invocation', name: 's' }).label).toBe('s')
     expect(contextProvenance({ kind: 'future' }).label).toBe('future')

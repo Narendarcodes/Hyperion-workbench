@@ -322,8 +322,30 @@ export async function listDirectory(target: LocalTarget, signal?: AbortSignal): 
 
 // --- Reading ---
 
+function binaryHint(displayPath: string): string {
+  const name = basename(displayPath).toLowerCase()
+  const ext = name.includes('.') ? name.slice(name.lastIndexOf('.') + 1) : ''
+  if (ext === 'pdf') {
+    return ' (.pdf is a binary document: write a Python script using pymupdf/pypdf and run it via shell to extract text)'
+  }
+  if (ext === 'docx' || ext === 'doc') {
+    return ' (.docx is a binary document: write a Python script using python-docx and run it via shell to extract text)'
+  }
+  if (ext === 'xlsx' || ext === 'xls') {
+    return ' (.xlsx is a binary spreadsheet: write a Python script using pandas/openpyxl and run it via shell to extract text)'
+  }
+  if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'webp' || ext === 'gif') {
+    return ' (image files are binary: use the read_image tool instead of read)'
+  }
+  return ''
+}
+
 function notTextError(verb: 'read' | 'edit', displayPath: string): FsError {
-  return new FsError(`cannot ${verb} "${displayPath}": invalid UTF-8 text`, 'FS_NOT_TEXT')
+  return new FsError(`cannot ${verb} "${displayPath}": invalid UTF-8 text${binaryHint(displayPath)}`, 'FS_NOT_TEXT')
+}
+
+function binaryFileError(verb: 'read' | 'edit', displayPath: string): FsError {
+  return new FsError(`cannot ${verb} "${displayPath}": binary file${binaryHint(displayPath)}`, 'FS_NOT_TEXT')
 }
 
 function decodeUtf8(buffer: Uint8Array, verb: 'read' | 'edit', displayPath: string): string {
@@ -377,7 +399,7 @@ export async function readWholeText(target: LocalTarget, signal?: AbortSignal): 
   const raw = await readFileAbortable(target.targetKey, 'read', signal)
   throwIfAborted(signal, 'read')
   if (raw.subarray(0, BINARY_SAMPLE_BYTES).includes(0)) {
-    throw new FsError(`cannot read "${target.displayPath}": binary file`, 'FS_NOT_TEXT')
+    throw binaryFileError('read', target.displayPath)
   }
   return decodeUtf8(raw, 'read', target.displayPath)
 }
@@ -444,7 +466,7 @@ export async function* streamWholeText(target: LocalTarget, signal?: AbortSignal
     if (sampledBytes >= BINARY_SAMPLE_BYTES) return
     const sample = chunk.subarray(0, Math.min(chunk.length, BINARY_SAMPLE_BYTES - sampledBytes))
     if (sample.includes(0)) {
-      throw new FsError(`cannot read "${target.displayPath}": binary file`, 'FS_NOT_TEXT')
+      throw binaryFileError('read', target.displayPath)
     }
     sampledBytes += sample.length
   }
@@ -675,7 +697,7 @@ export async function readForEdit(
   throwIfAborted(signal, 'edit')
   const buffer = await readFileAbortable(absolutePath, 'edit', signal)
   throwIfAborted(signal, 'edit')
-  if (buffer.includes(0)) throw new FsError(`cannot edit "${displayPath}": binary file`, 'FS_NOT_TEXT')
+  if (buffer.includes(0)) throw binaryFileError('edit', displayPath)
   const raw = decodeUtf8(buffer, 'edit', displayPath)
   return { content: normalizeLineEndings(raw), lineEndings: detectLineEndings(raw) }
 }

@@ -293,6 +293,54 @@ describe('readWholeText', () => {
     await expect(readWholeText(localTarget(join(dir, 'bad')))).rejects.toMatchObject({ code: 'FS_NOT_TEXT' })
   })
 
+  it('names the binary-file remedy per extension on invalid UTF-8 reads', async () => {
+    const bad = Buffer.from([0x68, 0xff, 0x69])
+    const cases: Array<[string, RegExp]> = [
+      ['doc.pdf', /pymupdf\/pypdf/],
+      ['doc.docx', /python-docx/],
+      ['legacy.doc', /python-docx/],
+      ['sheet.xlsx', /pandas\/openpyxl/],
+      ['legacy.xls', /pandas\/openpyxl/],
+      ['photo.png', /read_image/],
+      ['photo.jpg', /read_image/],
+      ['photo.gif', /read_image/],
+    ]
+    for (const [name, hint] of cases) {
+      const file = join(dir, name)
+      await writeFile(file, bad)
+      await expect(readWholeText(localTarget(file))).rejects.toThrow(hint)
+    }
+    const upper = join(dir, 'DOC.PDF')
+    await writeFile(upper, bad)
+    await expect(readWholeText(localTarget(upper))).rejects.toThrow(/pymupdf\/pypdf/)
+    const plain = join(dir, 'bad')
+    await writeFile(plain, bad)
+    await expect(readWholeText(localTarget(plain))).rejects.toThrow(/invalid UTF-8 text$/)
+  })
+
+  it('takes the extension from the basename, not a dotted parent directory', async () => {
+    await mkdir(join(dir, 'x.pdf'), { recursive: true })
+    const file = join(dir, 'x.pdf', 'report')
+    await writeFile(file, Buffer.from([0x68, 0xff, 0x69]))
+    await expect(readWholeText(localTarget(file))).rejects.toThrow(/invalid UTF-8 text$/)
+  })
+
+  it('hints NUL-byte binaries the same way across read, stream, and edit', async () => {
+    const nul = Buffer.from([0x68, 0x00, 0x69])
+    const pdf = join(dir, 'scan.pdf')
+    await writeFile(pdf, nul)
+    await expect(readWholeText(localTarget(pdf))).rejects.toThrow(/pymupdf\/pypdf/)
+    const sheet = join(dir, 'sheet.xlsx')
+    await writeFile(sheet, nul)
+    await expect(collect(streamWholeText(localTarget(sheet)))).rejects.toThrow(/pandas\/openpyxl/)
+    const image = join(dir, 'photo.png')
+    await writeFile(image, nul)
+    await expect(readForEdit(image, image)).rejects.toThrow(/read_image/)
+    const plain = join(dir, 'bin')
+    await writeFile(plain, nul)
+    await expect(readWholeText(localTarget(plain))).rejects.toThrow(/binary file$/)
+  })
+
   it('honors a pre-aborted signal', async () => {
     const file = join(dir, 'a.txt')
     await writeFile(file, 'one')

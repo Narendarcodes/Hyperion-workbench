@@ -319,3 +319,32 @@
   text-decoration: underline dotted var(--dsw-alias-link);
   text-underline-offset: 3px;
 }
+/* Inline citation badge (NN/g Explainable AI: distinct inline citation tags) */
+.citationBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: super;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 1px 5px;
+  margin: 0 2px;
+  border-radius: 9999px;
+  background: var(--dsw-alias-interactive-bg-solid, rgba(57, 100, 254, 0.12));
+  color: var(--dsw-alias-link, #3964fe);
+  border: 1px solid var(--dsw-alias-border-subtle, rgba(57, 100, 254, 0.25));
+  cursor: default;
+  user-select: none;
+  transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.citationBadge:hover {
+  background: var(--dsw-alias-button-info-hover, rgba(57, 100, 254, 0.22));
+  border-color: var(--dsw-alias-link, #3964fe);
+  transform: translateY(-1px);
+}
+
+.citationIndex {
+  font-feature-settings: 'tnum';
+}

@@ -1,14 +1,17 @@
 <div class="_markdown_404681">
   <p>
     #text "First use"
-    <sup>
-      #text "1"
+    <sup class="_citationBadge_404681" title="Source reference [1]">
+      <span class="_citationIndex_404681">
+        #text "1"
     #text " and reuse"
-    <sup>
-      #text "1"
+    <sup class="_citationBadge_404681" title="Source reference [1]">
+      <span class="_citationIndex_404681">
+        #text "1"
     #text " and another"
-    <sup>
-      #text "2"
+    <sup class="_citationBadge_404681" title="Source reference [2]">
+      <span class="_citationIndex_404681">
+        #text "2"
     #text "."
   <section class="footnotes" data-footnotes="true">
     <h2 class="sr-only" id="footnote-label">

@@ -1,0 +1,8 @@
+{
+  "source": "~/.agents/skills/fastapi-multi-tenant-auth",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "fastapi-multi-tenant-auth",
+  "hasDescription": true,
+  "license": null
+}

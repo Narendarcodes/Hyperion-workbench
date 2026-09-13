@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { AttachmentId } from '@deepseek-ai/dsh-attachment'
 import type { ContentBlock } from '@deepseek-ai/dsh-api-remotes/client'
 import {
-  displayFailure, emptyAssistantBlock, toAssistantBlock, toAssistantBlocks,
+  contextProvenance, displayFailure, emptyAssistantBlock, toAssistantBlock, toAssistantBlocks,
   isTokenDelta,
 } from '../src/client/conversation-nodes/event-projection.ts'
 
@@ -55,5 +55,14 @@ describe('toAssistantBlock', () => {
     expect(isTokenDelta({ type: 'tool-call-delta', index: 0, id: 'c', argumentsDelta: '', name: 'tool' } as never)).toBe(true)
     expect(isTokenDelta({ type: 'tool-call-delta', index: 0, id: 'c', argumentsDelta: '' } as never)).toBe(false)
     expect(isTokenDelta({ type: 'finish', reason: 'stop' } as never)).toBe(false)
+  })
+})
+
+describe('contextProvenance', () => {
+  it('renders first-party plugin scopes under the Hyperion product name', () => {
+    expect(contextProvenance({ kind: 'plugin', plugin: '@deepseek-ai/dsh-system-prompt' }))
+      .toEqual({ role: 'inject', label: 'hyperion-system-prompt' })
+    expect(contextProvenance({ kind: 'plugin', plugin: 'tool-jobs' }))
+      .toEqual({ role: 'inject', label: 'tool-jobs' })
   })
 })

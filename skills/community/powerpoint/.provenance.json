@@ -1,0 +1,10 @@
+{
+  "source": "~/.agents/skills/powerpoint",
+  "vendored": "2026-09-10",
+  "commit": "ff4c58b0c3",
+  "frontmatterName": "powerpoint",
+  "hasDescription": true,
+  "license": [
+    "LICENSE"
+  ]
+}
