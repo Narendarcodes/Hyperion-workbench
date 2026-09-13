@@ -365,5 +365,6 @@ if (errors.length === 0) {
 }
 
 console.error('verify-type-equiv: type-equiv verification failed:')
+for (const err of errors) console.error(`  ${err}`)
 console.error(`\n(checked ${blocks.length} primary block(s) across ${new Set(blocks.map(b => b.doc)).size} doc(s); manifest at scripts/type-equiv.manifest.json)`)
 process.exit(1)

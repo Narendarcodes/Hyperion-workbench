@@ -188,6 +188,8 @@ const SENTENCE_MODEL_EXPERIENCE: Readonly<Record<string, SentenceContract>> = {
   'packages/web/web-fetch-http': { kind: 'indirect', reason: 'The provider backend delegates model rendering to dsh-tool-web.' },
   'packages/web/web-search-exa': { kind: 'indirect', reason: 'The provider backend delegates model rendering to dsh-tool-web.' },
   'packages/workflow/workflow': { kind: 'indirect', reason: 'The service delegates parent and child model rendering to its consumer and engine.' },
+  'packages/asr/asr': { kind: 'indirect', reason: 'The service interface delegates all model rendering to dsh-tool-transcribe.' },
+  'packages/asr/asr-nemo': { kind: 'indirect', reason: 'The provider backend delegates model rendering to dsh-tool-transcribe.' },
 }
 
 interface Failure {

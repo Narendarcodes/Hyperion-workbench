@@ -157,6 +157,8 @@ const packageFileExtras: Readonly<Record<string, readonly string[]>> = {
   '@deepseek-ai/dsh-client-ui-theme': ['lib/styles'],
   // The CPython side ships as source .py files, published as-is rather than built.
   '@deepseek-ai/dsh-experimental-code-runtime-python': ['py/**/*.py'],
+  // The NeMo sidecar ships as source .py files, published as-is rather than built.
+  '@deepseek-ai/dsh-asr-nemo': ['py/**/*.py'],
   // The shipped preset compositions travel inside the roster package.
   '@deepseek-ai/dsh-agent-presets': ['presets'],
   // The Web Host mounts the default-off settings owner independently of each

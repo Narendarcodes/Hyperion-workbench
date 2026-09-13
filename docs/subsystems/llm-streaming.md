@@ -506,6 +506,8 @@ interface LlmModelInfo {
   name: string
   /** Optional user-facing distinction from otherwise similar models. */
   description?: string
+  /** Resolved network endpoint base URL for this route. */
+  baseURL?: string
   /** Accepted request modalities; absent means unknown, while an explicit omission is negative capability. */
   inputModalities?: readonly ModelModality[]
 }

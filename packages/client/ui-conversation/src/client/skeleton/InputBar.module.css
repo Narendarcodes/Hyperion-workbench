@@ -283,6 +283,24 @@
   cursor: default;
 }
 
+.micRecording {
+  background: var(--dsw-alias-state-danger-primary, #ea3939) !important;
+  color: #ffffff !important;
+  animation: micPulse 1.5s infinite;
+}
+
+.micTranscribing {
+  background: var(--dsw-alias-state-business-primary, #3964fe) !important;
+  color: #ffffff !important;
+  opacity: 0.85;
+}
+
+@keyframes micPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 /* Plan / Read-only / model — native <select>, chip-like closed chrome
    (figma ToggleButton: 13/20 medium secondary, 12px chevron). */
 .select {

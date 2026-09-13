@@ -294,6 +294,7 @@ const subsystemGroups = [
     ['terminal.md', 'PTY sessions'],
     ['jobs.md', 'Background jobs'],
     ['filesystem.md', 'Filesystem'],
+    ['asr.md', 'Speech-to-text'],
     ['lsp.md', 'LSP navigation'],
     ['code-runtime.md', 'Code runtime'],
     ['web.md', 'Web access'],
@@ -492,7 +493,6 @@ export const docsPages: DocsPage[] = [
  */
 export function orderedPages(locale: DocsLocale, collection: DocsSidebar): DocsPage[] {
   return docsPages
-    // oxlint-disable-next-line typescript/no-unnecessary-condition -- single shipped locale; the filter keeps multi-locale call shape.
     .filter(page => page.locale === locale && page.sidebar === collection)
     .sort((left, right) => (
       sectionSpec(locale, left.section).index - sectionSpec(locale, right.section).index

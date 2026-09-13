@@ -88,6 +88,61 @@ export const InputBar = memo(function InputBar({
   }, [])
   const dismissToast = useCallback(() => { setToast(null) }, [])
   // The deployment's image-intake limits (absent while no attachment service
+  const [recording, setRecording] = useState(false)
+  const [transcribing, setTranscribing] = useState(false)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
+
+  const onToggleMic = useCallback(async () => {
+    if (recording) {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop()
+      }
+      setRecording(false)
+      return
+    }
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      showToast('Microphone access is not supported by your browser.')
+      return
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      audioChunksRef.current = []
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunksRef.current.push(event.data)
+      }
+      mediaRecorder.onstop = async () => {
+        for (const track of stream.getTracks()) track.stop()
+        if (audioChunksRef.current.length === 0) return
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        setTranscribing(true)
+        try {
+          const formData = new FormData()
+          formData.append('file', audioBlob, 'voice-prompt.webm')
+          formData.append('language', 'hi')
+          const res = await fetch('http://127.0.0.1:8008/transcribe', {
+            method: 'POST',
+            body: formData,
+          })
+          if (!res.ok) throw new Error(`ASR Server error ${res.status}`)
+          const data = (await res.json()) as { text?: string }
+          if (data.text && data.text.trim().length > 0) {
+            keyboard?.paste(data.text.trim() + ' ')
+          }
+        } catch {
+          showToast('Failed to transcribe audio from ASR server.')
+        } finally {
+          setTranscribing(false)
+        }
+      }
+      mediaRecorder.start(250)
+      setRecording(true)
+    } catch {
+      showToast('Could not access microphone.')
+    }
+  }, [recording, keyboard, showToast])
   // is composed — the pre-check below then defers entirely to the host).
   const imageLimits = useProjection('imageLimits')
   // Prompt failures are ordinary failures (no create/attach transaction exists
@@ -486,6 +541,33 @@ export const InputBar = memo(function InputBar({
                 onClick={() => { fileInputRef.current?.click() }}
               >
                 <IconPaperclipOutline16 size={14} />
+              </button>
+            </Tooltip>
+            <Tooltip
+              label={recording ? 'Recording audio... Click to stop and transcribe' : transcribing ? 'Transcribing with IndicConformer...' : 'Voice prompt (IndicConformer ASR)'}
+              side="top"
+              delayMs={500}
+            >
+              <button
+                type="button"
+                className={clsx(css.add, recording && css.micRecording, transcribing && css.micTranscribing)}
+                aria-label={recording ? 'Stop recording' : 'Record voice prompt'}
+                disabled={subagent !== null || locked || machineBusy}
+                onMouseDown={keepFocus}
+                onClick={() => { void onToggleMic() }}
+              >
+                {recording ? (
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden>
+                    <circle cx="8" cy="8" r="5" fill="currentColor" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v5a2.5 2.5 0 0 0 5 0v-5A2.5 2.5 0 0 0 8 1z" />
+                    <path d="M12.5 6.5v2a4.5 4.5 0 0 1-9 0v-2" />
+                    <line x1="8" y1="13" x2="8" y2="15" />
+                    <line x1="5.5" y1="15" x2="10.5" y2="15" />
+                  </svg>
+                )}
               </button>
             </Tooltip>
             <input
