@@ -1,23 +1,62 @@
-# Contributing
+# Contributing to Hyperion Workbench
 
-English
+Thank you for your interest in contributing to **Hyperion Workbench** — the sovereign industrial AI workbench for confidential knowledge work.
 
-Thank you for your interest in contributing to DeepSeek Harness!
+We welcome contributions across all areas: core plugin architecture, local model integrations, Indic language ASR models, explainable AI trajectory visualizers, and tool runtime safety.
 
-We deeply believe in the power of open source communities, and that belief has shaped this project from the very beginning.
+---
 
-DeepSeek Harness is still at an early stage and under active development. We are sorry that we cannot accept external pull requests at the moment. However, contributing code to this repository is far from the only way to help. There are many other ways to get involved:
+## Code of Conduct
 
-- Identify and report issues or bugs in GitHub Discussions:
-  - Upvote discussions that you would like to bring to the team's attention. We are a very small team and may not be able to reply to every post, but we monitor them and consider them when allocating resources.
-- Contribute to the ecosystem:
-  - Create a plugin that excites you and share it with others:
-    - Associate your GitHub project with the `dsh-plugin` topic to help others discover your plugin.
-  - Write blog posts and how-to guides about DeepSeek Harness.
-  - Answer questions and help other members of the community.
+We are committed to providing a welcoming, inclusive, and harassment-free experience for everyone. Please be respectful, constructive, and collaborative in all discussions and pull requests.
 
-DeepSeek Harness is designed to be deeply customizable. We do not believe that packages in the official repository are inherently more important than packages created by the community. You may consider this repository an idea, an official showcase, and a source of inspiration, but not a mandate from us.
+---
 
-We have already seen exciting projects emerge from the community, and we hope to see the ecosystem continue to grow in its own directions.
+## Getting Started
 
-Into the unknown.
+1. **Fork and clone the repository**:
+   ```sh
+   git clone https://github.com/Narendarcodes/Hyperion-workbench.git
+   cd Hyperion-workbench
+   ```
+
+2. **Install dependencies**:
+   ```sh
+   pnpm install
+   ```
+
+3. **Run local builds and typecheck**:
+   ```sh
+   pnpm run build
+   pnpm run typecheck
+   ```
+
+4. **Run the Workbench locally**:
+   ```sh
+   pnpm dsh web
+   ```
+
+---
+
+## Development Workflow
+
+- **Branching**: Create a focused feature branch for your changes:
+  ```sh
+  git checkout -b feat/your-feature-name
+  ```
+- **Testing**: Ensure all tests pass before submitting a PR:
+  ```sh
+  pnpm run test
+  ```
+- **Code Quality**: Follow strict TypeScript typing and the Cordis plugin lifecycle conventions.
+- **Pre-push hooks**: Ensure `lefthook` validation checks pass cleanly.
+
+---
+
+## Submitting Pull Requests
+
+1. Push your branch to GitHub.
+2. Open a Pull Request with a clear description of the problem solved, architectural decisions, and verification evidence.
+3. Provide screenshots or recordings for any user-facing UI changes.
+
+Thank you for helping build sovereign, private, and powerful industrial AI!
