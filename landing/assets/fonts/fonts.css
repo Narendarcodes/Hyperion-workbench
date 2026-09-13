@@ -1,0 +1,12 @@
+@font-face{font-family:'Archivo';font-style:normal;font-weight:500 700;font-display:swap;src:url('archivo.woff2') format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:300 600;font-display:swap;src:url('plex-sans.woff2') format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400 500;font-display:swap;src:url('plex-mono.woff2') format('woff2')}
+@font-face{font-family:'Satoshi';font-style:normal;font-weight:400;font-display:swap;src:url('satoshi-400.woff2') format('woff2')}
+@font-face{font-family:'Satoshi';font-style:normal;font-weight:500;font-display:swap;src:url('satoshi-500.woff2') format('woff2')}
+@font-face{font-family:'Satoshi';font-style:normal;font-weight:700;font-display:swap;src:url('satoshi-700.woff2') format('woff2')}
+@font-face{font-family:'Satoshi';font-style:normal;font-weight:900;font-display:swap;src:url('satoshi-900.woff2') format('woff2')}
+@font-face{font-family:'Switzer';font-style:normal;font-weight:400;font-display:swap;src:url('switzer-400.woff2') format('woff2')}
+@font-face{font-family:'Switzer';font-style:normal;font-weight:500;font-display:swap;src:url('switzer-500.woff2') format('woff2')}
+@font-face{font-family:'Switzer';font-style:normal;font-weight:600;font-display:swap;src:url('switzer-600.woff2') format('woff2')}
+
+@font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;font-display:swap;src:url("instrument-serif.woff2") format("woff2")}

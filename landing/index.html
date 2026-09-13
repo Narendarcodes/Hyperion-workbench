@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hyperion-workbench — SIH26117 · Sovereign On-Premise Agentic AI Workbench</title>
+<meta name="description" content="hyperion-workbench solves SIH26117: a sovereign on-premise agentic AI workbench using open-weight multimodal LLMs for confidential industrial work. Built for MRPL, Smart Automation, SIH 2026.">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="css/style.css?v=h5">
+<script type="importmap">
+{ "imports": {
+  "gsap": "https://esm.sh/gsap@3.12.5",
+  "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+  "lenis": "https://esm.sh/lenis@1.1.14",
+  "three": "https://esm.sh/three@0.169.0"
+}}
+</script>
+</head>
+<body>
+<a href="#main" class="skip">Skip to content</a>
+
+<!-- ===================== PILL NAV ===================== -->
+<header class="lnav" id="lnav">
+  <nav class="lnav__pill">
+    <a href="#" class="lnav__brand">
+      <img src="assets/hyperion-clean.svg" alt="" width="30" height="30">
+      <span>hyperion-workbench</span>
+    </a>
+    <div class="lnav__links">
+      <a href="#problem">Problem</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#sovereignty">Sovereignty</a>
+      <a href="#bench">Engine</a>
+    </div>
+    <a href="http://127.0.0.1:3080" class="lnav__cta">Run the demo</a>
+  </nav>
+</header>
+
+<main id="main">
+
+<!-- ===================== HERO — gallery tunnel ===================== -->
+<section class="hero" id="hero">
+  <div id="tunnel" class="hero__tunnel" aria-hidden="true"></div>
+  <div class="hero__scrim" aria-hidden="true"></div>
+  <div class="hero__copy">
+    <p class="hero__badge"><span class="dot"></span>SIH 2026 · PS SIH26117 · MRPL · Smart Automation</p>
+    <h1>Every source, every decision,<br><span class="hero__em">defensible.</span></h1>
+    <p class="hero__sub">hyperion-workbench is a sovereign, on-premise agentic AI workbench for confidential industrial work. Open-weight multimodal models, a local knowledge base, and bounded tools turn scanned documents into evidence-backed deliverables — with human decision authority intact.</p>
+    <div class="hero__actions">
+      <a href="http://127.0.0.1:3080" class="btn btn--accent">Run the demo <span>→</span></a>
+      <a href="#problem" class="btn btn--ghost">The problem <span>↓</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROOF STRIP ===================== -->
+<section class="proof">
+  <div class="wrap">
+    <div class="proof__row">
+      <div class="proof__item"><p class="proof__num proof__num--zero">0</p><p class="proof__label">bytes of source data leave the boundary</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="9">0</p><p class="proof__label">recorded stages, capture → archive</p></div>
+      <div class="proof__item"><p class="proof__num" data-count="100" data-suffix="%">0</p><p class="proof__label">consequential decisions confirmed by a human</p></div>
+    </div>
+    <p class="proof__note">Design invariants from the SIH26117 requirements — not measured benchmark claims.</p>
+    <div class="marquee" aria-hidden="true"><div class="marquee__track">
+      <span>OCR + vision</span><span>local RAG</span><span>model router</span><span>sandboxed execution</span><span>risk-based verification</span><span>DOCX deliverables</span><span>sovereignty monitor</span><span>audit trail</span>
+      <span>OCR + vision</span><span>local RAG</span><span>model router</span><span>sandboxed execution</span><span>risk-based verification</span><span>DOCX deliverables</span><span>sovereignty monitor</span><span>audit trail</span>
+    </div></div>
+  </div>
+</section>
+
+<!-- ===================== PROBLEM ===================== -->
+<section class="ps" id="problem">
+  <div class="wrap ps__grid">
+    <div>
+      <p class="kicker">SIH26117 · Mangalore Refinery and Petrochemicals Limited</p>
+      <h2>Confidential work is stuck between two barriers</h2>
+      <div class="ps__bars">
+        <div class="ps__bar">
+          <h3>The confidentiality barrier</h3>
+          <p>Inspection reports, engineering calculations, drawings, SOPs and internal correspondence can't leave the organization — so conventional cloud AI is off the table.</p>
+        </div>
+        <div class="ps__bar">
+          <h3>The productivity barrier</h3>
+          <p>Purely manual knowledge work — structuring reports, cross-referencing manuals, verifying claims — consumes engineer hours and loses decisions in the process.</p>
+        </div>
+      </div>
+    </div>
+    <div class="ps__side">
+      <div class="ps__model">
+        <p class="ps__model__label">Our operating model</p>
+        <p class="ps__chain"><span>source evidence</span><i>→</i><span>AI analysis</span><i>→</i><span>explicit inference</span><i>→</i><span>human decision</span></p>
+        <p class="ps__model__note">Not a chatbot. The system reduces repetitive knowledge-work effort without transferring accountability for consequential industrial decisions to the AI.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ENGINE (fork story + benchmarks) ===================== -->
+<section class="bench" id="bench">
+  <div class="wrap">
+    <p class="kicker">The engine we forked</p>
+    <h2>We didn't build the harness from zero — we forked the best one</h2>
+    <p class="bench__sub">hyperion-workbench runs on our fork of <em>DeepSeek Harness</em>, the open-source all-plugin agent runtime. We chose it because the harness — not the model — decides how much of a model's capability becomes completed, reliable work. DeepSeek's own published benchmarks, all run through Harness minimal mode with fixed sampling and maximal reasoning effort:</p>
+    <div class="bench__table">
+      <div class="bench__head bench__row"><span>Benchmark</span><span>V4-Pro GA</span><span>V4-Flash</span></div>
+      <div class="bench__row"><span>Terminal-Bench 2.1</span><b>87.9</b><b>82.7</b></div>
+      <div class="bench__row"><span>Cybergym</span><b>83.3</b><b>76.7</b></div>
+      <div class="bench__row"><span>Toolathlon (verified)</span><b>74.1</b><b>70.3</b></div>
+      <div class="bench__row"><span>DSBench-FullStack</span><b>71.1</b><b>68.7</b></div>
+      <div class="bench__row"><span>DSBench-Hard</span><b>67.2</b><b>59.6</b></div>
+      <div class="bench__row"><span>DeepSWE</span><b>62.7</b><b>54.4</b></div>
+      <div class="bench__row"><span>NL2Repo</span><b>61.5</b><b>54.2</b></div>
+      <p class="bench__sources">Sources: V4-Pro GA (13 Aug 2026) and V4-Flash β (31 Jul 2026) — <a href="https://api-docs.deepseek.com/updates" target="_blank" rel="noopener">DeepSeek API Change Log</a>, both run via DeepSeek Harness minimal mode (max effort, temp 1.0); DSBench-FullStack/Hard are DeepSeek's internal evaluation sets. Harness-swing comparison: <a href="https://groundtruth.day/news/the-harness-not-the-model-moved-deepseek-by-twenty-tasks.html" target="_blank" rel="noopener">independent rerun by Harrison Kinsley</a> · Terminal-Bench context: <a href="https://www.tbench.ai/leaderboard/terminal-bench/2.1" target="_blank" rel="noopener">tbench.ai 2.1 leaderboard</a>.</p>
+    </div>
+    <p class="bench__note">Same model weights, different harness: an independent rerun of V4-Flash on a third-party harness swung Terminal-Bench by twenty tasks. That swing is exactly why our workbench fork is the investment: every capability — models, tools, skills, sessions, sandboxes, scheduling, even the UI — is a plugin we recompose for MRPL's workflow.</p>
+  </div>
+</section>
+
+<!-- ===================== WORKFLOW — trajectory view ===================== -->
+<section class="showcase" id="workflow">
+  <div class="wrap">
+    <p class="kicker kicker--center">The nine-stage evidence path</p>
+    <h2 class="showcase__title">Every run lands in one traceable log</h2>
+    <div class="showcase__frame" data-frame>
+      <div class="window">
+        <div class="window__bar">
+          <span class="wdot wd--r"></span><span class="wdot wd--y"></span><span class="wdot wd--g"></span>
+          <span class="window__title">hyperion-workbench — task trace / inspection-7291</span>
+        </div>
+        <div class="window__body">
+          <div class="trow"><span class="trow__src">capture</span><span class="trow__txt">inspection-report-scan.pdf · 14 pages · local store</span></div>
+          <div class="trow"><span class="trow__src">understand</span><span class="trow__txt">OCR + vision · 6 tables, 2 drawings identified</span></div>
+          <div class="trow"><span class="trow__src">ground</span><span class="trow__txt">SOP-4.2 r7 eff.2026-03 · pp.31–34 evidence linked</span></div>
+          <div class="trow"><span class="trow__src">analyze</span><span class="trow__txt">3 findings · 1 conflict flagged · 2 high-risk claims</span></div>
+          <div class="trow"><span class="trow__src">verify</span><span class="trow__txt">engineer confirmed 2/2 · 1 correction applied</span></div>
+          <div class="trow"><span class="trow__src">deliver</span><span class="trow__txt">approval-note.docx generated · trace attached</span></div>
+          <div class="trow trow--ok"><span class="trow__src">review</span><span class="trow__txt">manager approved · claim-level decision recorded</span></div>
+        </div>
+      </div>
+      <div class="callout callout--1">Source facts, AI inference and human decisions stay labeled and separate</div>
+      <div class="callout callout--2">Version and authority metadata surfaced on every source</div>
+      <div class="callout callout--3">Manager approves claims, not raw noise</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CAPABILITIES ===================== -->
+<section class="features" id="capabilities">
+  <div class="wrap">
+    <p class="kicker">P0 capabilities</p>
+    <h2>Confidential in, evidence-backed out</h2>
+    <p class="features__sub">Scanned PDFs, photographs, handwritten notes and drawings enter through a controlled local location. Open-weight models and bounded tools do the heavy work. Nothing leaves the boundary.</p>
+    <div class="features__grid">
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></div>
+        <h3>Multimodal capture</h3>
+        <p>Local OCR and vision turn scans, photos and handwritten notes into inspectable text, tables and regions.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M9 11h4M11 9v4"/></svg></div>
+        <h3>Grounded retrieval</h3>
+        <p>A local knowledge base with version, authority and effective-date metadata. Every claim links to document, page and section.</p>
+      </article>
+      <article class="fcard fcard--hi">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3v4m0 12v4M4.9 4.9l2.8 2.8m8.6 8.6 2.8 2.8M2 12h4m12 0h4"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+        <h3>Model router</h3>
+        <p>Open-weight models registered with capability, modality and compute profile. Tasks route to the smallest model that can do the job — locally.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15l3-3 2 2 5-5"/></svg></div>
+        <h3>Sandboxed execution</h3>
+        <p>Calculations and code run in resource-limited sandboxes with no unrestricted network — every invocation recorded.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M9 12l2 2 4-4"/><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/></svg></div>
+        <h3>Risk-based verification</h3>
+        <p>Safety, equipment and numeric claims require human confirmation regardless of model confidence — grouped, not one dialog per claim.</p>
+      </article>
+      <article class="fcard">
+        <div class="fcard__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg></div>
+        <h3>Real deliverables</h3>
+        <p>DOCX approval notes, XLSX outputs and working code — generated with their full evidence trail attached.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SOVEREIGNTY + OPENSHELL ===================== -->
+<section class="sov" id="sovereignty">
+  <div class="wrap sov__grid">
+    <div>
+      <p class="kicker">Sovereignty monitor</p>
+      <h2>Visible proof, not promises</h2>
+      <p class="sov__sub">The PS asks for demonstrable isolation. The workbench exposes live execution state, controlled tool calls, and an event trail that shows sensitive tasks have no uncontrolled external path. Our sandbox plugins follow the same bet NVIDIA made with <em>OpenShell</em> — out-of-process policy enforcement, deny-by-default permissions, metered resources, and a full audit trail of every allow/deny decision.</p>
+      <p class="sov__note">Status labels describe deployment policy. The environment is validated before any air-gap claim is made.</p>
+    </div>
+    <div class="monitor" aria-label="Sovereignty monitor">
+      <div class="monitor__header">
+        <span class="monitor__id">SOV-01 <i>/</i> RUNTIME POLICY</span>
+        <span class="monitor__live"><span class="dot"></span><span class="monitor__live__txt" data-live>ENFORCED</span></span>
+      </div>
+      <div class="monitor__body">
+        <div class="monitor__meta">
+          <span>SESSION <b data-session>—</b></span>
+          <span>UPTIME <b data-uptime>00:00</b></span>
+          <span>POLICY REV <b>r7</b></span>
+        </div>
+        <dl class="monitor__rows">
+          <div class="monitor__row"><dt>External network</dt><dd><span class="s-dot s-ok"></span>No unauthorized path</dd></div>
+          <div class="monitor__row"><dt>Model inference</dt><dd><span class="s-dot s-ok"></span>On-premise · open-weight</dd></div>
+          <div class="monitor__row"><dt>Knowledge</dt><dd><span class="s-dot s-ok"></span>Local controlled corpus</dd></div>
+          <div class="monitor__row"><dt>Sandbox</dt><dd><span class="s-dot s-ok"></span>Active · resource-limited</dd></div>
+          <div class="monitor__row"><dt>Tool gateway</dt><dd><span class="s-dot s-ok"></span>Allowlist · 12 tools</dd></div>
+          <div class="monitor__row"><dt>Audit trace</dt><dd><span class="s-dot s-live"></span>Recording task events</dd></div>
+        </dl>
+        <div class="monitor__feed">
+          <p class="monitor__feed__label">GATEWAY DECISIONS</p>
+          <ul data-feed></ul>
+        </div>
+      </div>
+      <div class="monitor__footer">
+        <span class="monitor__egress"><span class="s-dot s-ok"></span>0 uncontrolled egress routes</span>
+        <span class="monitor__stamp" data-stamp>—</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ROLES — pinned horizontal ===================== -->
+<section class="modes" id="roles">
+  <div class="wrap modes__head">
+    <p class="kicker">Who the workbench serves</p>
+    <h2>Control is distributed deliberately</h2>
+  </div>
+  <div class="modes__viewport" data-viewport>
+    <div class="modes__track" data-track>
+      <article class="mcard">
+        <p class="mcard__n">Primary user</p>
+        <h3>Industrial Engineer</h3>
+        <p>Full workspace: create tasks, run analysis, verify grouped exceptions, generate deliverables. Evidence-first findings, never opaque conclusions.</p>
+        <p class="mcard__tag">workspace · sources · artifacts</p>
+      </article>
+      <article class="mcard">
+        <p class="mcard__n">Secondary user</p>
+        <h3>Department Manager</h3>
+        <p>Decision-focused review: summary, key findings, high-risk claims, evidence and engineer verification status — Approve, Reject or Request Changes per claim.</p>
+        <p class="mcard__tag">evidence · flags · decisions</p>
+      </article>
+      <article class="mcard">
+        <p class="mcard__n">Governance</p>
+        <h3>Cybersecurity Officer</h3>
+        <p>Live sovereignty proof: network isolation, least privilege, policy enforcement and the complete audit trail — without needing the workflow UI.</p>
+        <p class="mcard__tag">isolation · policy · audit</p>
+      </article>
+      <article class="mcard">
+        <p class="mcard__n">Governance</p>
+        <h3>IT / Knowledge Manager</h3>
+        <p>Read-only status: model registry state, corpus freshness and version/authority metadata, GPU resource profile — the platform stays governable.</p>
+        <p class="mcard__tag">registry · corpus · metadata</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RUN ===================== -->
+<section class="cta" id="run">
+  <div class="wrap">
+    <h2>Clone the fork.<br>Run it on the floor.</h2>
+    <p class="cta__sub">The whole workbench is source-available — engine fork, plugins and all.</p>
+    <div class="cta__cards">
+      <div class="cli-card">
+        <p class="cli-card__label">Live on this machine</p>
+        <p class="cli-card__hint">The workbench is running — open the product directly.</p>
+        <pre><code><a class="cli-link" href="http://127.0.0.1:3080" target="_blank" rel="noopener">http://127.0.0.1:3080</a></code></pre>
+      </div>
+      <div class="cli-card">
+        <p class="cli-card__label">Clone the fork</p>
+        <p class="cli-card__hint">The workbench fork — HYPERION brand baked in via profile.</p>
+        <pre><code>$ git clone https://github.com/Narendarcodes/hyperion-workbench.git
+$ cd hyperion-workbench && pnpm i && pnpm dsh --profile web</code></pre>
+      </div>
+    </div>
+    <div class="cta__foot">
+      <a href="http://127.0.0.1:3080" class="btn btn--accent">Open the workbench <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="lfooter">
+  <div class="wrap lfooter__grid">
+    <div>
+      <p class="lfooter__brand">hyperion-workbench</p>
+      <p class="lfooter__desc">Sovereign On-Premise Agentic AI Workbench using Open-Weight Multimodal LLMs for Confidential Industrial Work — our solution to SIH26117 for Mangalore Refinery and Petrochemicals Limited, Smart Automation, SIH 2026.</p>
+    </div>
+    <nav aria-label="Solution">
+      <p class="lfooter__h">Solution</p>
+      <a href="#problem">Problem</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#sovereignty">Sovereignty</a>
+    </nav>
+    <nav aria-label="Build">
+      <p class="lfooter__h">Build</p>
+      <a href="#run">Run the demo</a>
+      <a href="#bench">Engine benchmarks</a>
+      <a href="https://github.com/deepseek-ai/deepseek-harness">Upstream source</a>
+    </nav>
+  </div>
+  <div class="wrap lfooter__note">
+    <p>Engine: our fork of DeepSeek Harness (open-source, all-plugin Cordis runtime). Sandbox policy direction informed by NVIDIA OpenShell (Apache 2.0). Workflow, roles and sovereignty requirements per the SIH26117 product requirements document.</p>
+  </div>
+</footer>
+
+<script type="module" src="js/main.js?v=h2"></script>
+</body>
+</html>
