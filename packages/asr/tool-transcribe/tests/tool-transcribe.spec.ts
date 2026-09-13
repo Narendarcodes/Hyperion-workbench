@@ -5,6 +5,7 @@ import { ToolCallId } from '@deepseek-ai/dsh-llm'
 import ToolRuntime from '@deepseek-ai/dsh-tools'
 import type { ToolResult } from '@deepseek-ai/dsh-tools'
 import { AsrTranscriber } from '@deepseek-ai/dsh-asr'
+import type { AsrRequest, AsrResult, AsrSpec } from '@deepseek-ai/dsh-asr'
 
 import * as tool from '../src/index.ts'
 

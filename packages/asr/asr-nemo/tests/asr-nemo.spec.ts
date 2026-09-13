@@ -297,7 +297,7 @@ describe('IndicConformerTranscriber settings section', () => {
     await ctx.plugin(FakeSubprocess)
     await ctx.plugin(StubSettings)
     await ctx.plugin(IndicConformerTranscriber, BASE_CONFIG)
-    const settings = ctx.get('settings') as StubSettings
+    const settings = ctx.get('settings') as unknown as StubSettings
     expect(settings.namespace).toBe('asr')
     const hooks = settings.hooks
     if (hooks === undefined) throw new Error('settings section was not installed')

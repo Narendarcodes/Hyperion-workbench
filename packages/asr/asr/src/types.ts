@@ -18,6 +18,8 @@ export interface AsrRequest {
    * configured default language.
    */
   language?: string
+  /** Optional transcription deadline in milliseconds. */
+  timeoutMs?: number
   /** Caller-owned cancellation; aborts the transcription when it fires. */
   signal?: AbortSignal
 }
