@@ -1,6 +1,4 @@
-// DeepSeek Harness landing — yv. structure port.
-// GSAP+Lenis, tunnel hero, count-ups, reveals, pinned horizontal modes,
-// showcase tilt scrub. No React.
+// Hyperion Workbench Sovereign Landing Page
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
