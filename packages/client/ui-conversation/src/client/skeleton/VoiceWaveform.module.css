@@ -2,8 +2,11 @@
   position: relative;
   flex: 1 1 auto;
   min-width: 0;
-  height: 20px;
-  color: var(--dsw-alias-button-info-fill);
+  height: 32px;
+  /* Side inset keeps the first/last bars off the X and stop circles, matching
+     the screenshot's air between chrome and strip. */
+  margin: 0 12px;
+  color: var(--dsw-alias-label-tertiary);
 }
 
 .canvas {

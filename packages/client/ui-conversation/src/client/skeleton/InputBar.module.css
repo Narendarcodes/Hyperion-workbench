@@ -283,53 +283,30 @@
   cursor: default;
 }
 
-.micRecording {
-  background: var(--dsw-alias-state-danger-primary, #ea3939) !important;
-  color: #ffffff !important;
-}
-
-.micTranscribing {
-  background: var(--dsw-alias-state-business-primary, #3964fe) !important;
-  color: #ffffff !important;
-  opacity: 0.85;
-}
-/* Voice recording row (WhatsApp-style): own full-width strip between the
-   draft and the toolbar, so the waveform never shares flex space with the
-   Workspace-write chip. Red dot + mm:ss timer left, slim canvas middle,
-   discard right while recording. */
-.voiceBar {
+/* Voice pill (ChatGPT dictation): full takeover of the composer content area
+   while recording or transcribing — X discard left, neutral history strip
+   middle, stop + blue send right. Draft, toolbar, and Workspace-write chip
+   unmount underneath, so overlap is structurally impossible. */
+.voicePill {
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
-  padding: 6px 12px;
-  border-radius: 14px;
+  /* Same horizontal inset as the toolbar row (8px) so the pill edges align
+     with the buttons it replaces; vertical breathing room keeps the 22px
+     card radius from clipping the 34px send circle. */
+  margin: 2px 8px 6px;
+  padding: 6px 6px 6px 8px;
+  border-radius: 999px;
   background: var(--dsw-specific-selector);
 }
 
-.voiceDot {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--dsw-alias-state-danger-primary, #ea3939);
-}
-
-.voiceTimer {
-  flex: none;
-  min-width: 36px;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 12px;
-  line-height: 16px;
-  font-variant-numeric: tabular-nums;
-}
-
-.voiceDiscard {
+.voicePillGhost {
   display: grid;
   place-items: center;
   flex: none;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border: none;
   border-radius: 999px;
   background: transparent;
@@ -337,9 +314,80 @@
   cursor: pointer;
 }
 
-.voiceDiscard:hover {
+.voicePillGhost:hover:not(:disabled) {
   background: var(--dsw-alias-interactive-bg-hover);
   color: var(--dsw-alias-label-primary);
+}
+
+.voicePillGhost:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.voicePillStop {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+}
+
+.voicePillStop:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.voicePillSend {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 999px;
+  background: var(--dsw-alias-button-info-fill);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Transcribing wait: the frozen strip stands down and a spinning ring plus
+   label carries the state, so a stalled take never reads as paused audio. */
+.voiceWait {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.voiceSpin {
+  flex: none;
+  color: var(--dsw-alias-state-business-primary);
+  animation: voice-spin 1s linear infinite;
+}
+
+@keyframes voice-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.voicePillSend:hover:not(:disabled) {
+  background: var(--dsw-alias-button-info-hover);
+}
+
+.voicePillSend:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 /* Plan / Read-only / model — native <select>, chip-like closed chrome
    (figma ToggleButton: 13/20 medium secondary, 12px chevron). */

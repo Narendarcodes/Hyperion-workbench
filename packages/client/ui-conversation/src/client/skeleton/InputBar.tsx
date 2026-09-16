@@ -17,7 +17,8 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from 'react'
 import clsx from 'clsx'
 import {
-  IconPaperclipOutline16, IconPlusOutline16, IconWarningOutline16, Toast, Tooltip,
+  IconCloseOutline16, IconLoadingOutline16, IconPaperclipOutline16, IconPlusOutline16,
+  IconSendOutline16, IconStopFill16, IconWarningOutline16, Toast, Tooltip,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 // Type-only: the `plan` projection key merge (the TodoDock posture — the
 // composer reads a host-computed value; the domain owns the key).
@@ -91,38 +92,19 @@ export const InputBar = memo(function InputBar({
   // The deployment's image-intake limits (absent while no attachment service
   const [recording, setRecording] = useState(false)
   const [transcribing, setTranscribing] = useState(false)
-  // Live capture stream feeding the voice row waveform; the analyser borrows
+  // Live capture stream feeding the voice pill waveform; the analyser borrows
   // it while recording and the stop path owns the tracks it releases.
   const [captureStream, setCaptureStream] = useState<MediaStream | null>(null)
-  // Elapsed recording seconds for the voice row timer; the interval owns the
-  // tick while recording and clears on stop, discard, or unmount.
-  const [elapsedSecs, setElapsedSecs] = useState(0)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
   // Discard without transcribing: the onstop path skips the fetch when set.
   const discardRef = useRef(false)
-  const timerRef = useRef<number | undefined>(undefined)
-
-  /**
-   * Format elapsed recording seconds as m:ss for the voice row timer.
-   */
-  function formatElapsed(totalSecs: number): string {
-    return `${String(Math.floor(totalSecs / 60))}:${String(totalSecs % 60).padStart(2, '0')}`
-  }
-
-  const stopTimer = useCallback(() => {
-    if (timerRef.current !== undefined) {
-      clearInterval(timerRef.current)
-      timerRef.current = undefined
-    }
-  }, [])
 
   const onToggleMic = useCallback(async () => {
     if (recording) {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         mediaRecorderRef.current.stop()
       }
-      stopTimer()
       setRecording(false)
       setCaptureStream(null)
       return
@@ -173,41 +155,32 @@ export const InputBar = memo(function InputBar({
       }
       mediaRecorder.start(250)
       setCaptureStream(stream)
-      setElapsedSecs(0)
-      stopTimer()
-      timerRef.current = setInterval(() => {
-        setElapsedSecs(secs => secs + 1)
-      }, 1000)
       setRecording(true)
     } catch {
       showToast(t('voice.micDenied'))
     }
-  }, [recording, keyboard, showToast, stopTimer, t])
-
+  }, [recording, keyboard, showToast, t])
   const onDiscardVoice = useCallback(() => {
     discardRef.current = true
     if (mediaRecorderRef.current !== null && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop()
     }
-    stopTimer()
     setRecording(false)
     setCaptureStream(null)
     setTranscribing(false)
-  }, [stopTimer])
-  // A session switch or unmount mid-capture releases the borrowed tracks and
-  // the timer; the recorder's own stop path owns the release in the normal
-  // stop flow.
+  }, [])
+  // A session switch or unmount mid-capture releases the borrowed tracks; the
+  // recorder's own stop path owns the release in the normal stop flow.
   useEffect(() => () => {
     if (mediaRecorderRef.current !== null && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop()
     }
-    stopTimer()
     setCaptureStream((current) => {
       if (current === null) return current
       for (const track of current.getTracks()) track.stop()
       return null
     })
-  }, [stopTimer])
+  }, [])
   const imageLimits = useProjection('imageLimits')
   // Prompt failures are ordinary failures (no create/attach transaction exists
   // anymore): the toast announces promptError, the draft stays in the machine,
@@ -553,178 +526,190 @@ export const InputBar = memo(function InputBar({
             thing that scrolls. Chips are decorator portals inside the same
             surface, so wrapping, caret geometry, and scrolling are the
             browser's own. */}
-        <div ref={scrollRef} className={css.scroll} data-input-scroll>
-          <div className={css.grow}>
-            <ComposerContentEditable
-              editor={workspaceTrigger ? null : editor}
-              editable={editable}
-              className={clsx(css.input, editorDisabled && css.inputDisabled)}
-              data-phase={input?.phase ?? 'inert'}
-              aria-disabled={editorDisabled || undefined}
-              data-placeholder={placeholderText}
-              // The placeholder was the textarea's accessible name; a div's
-              // data attribute is not, so the label restores it.
-              aria-label={workspaceTrigger ? t('hero.chooseWorkspace') : placeholderText}
-              aria-haspopup={workspaceTrigger ? 'menu' : undefined}
-              aria-expanded={workspaceTrigger ? workspacePickerOpen : undefined}
-              tabIndex={workspaceTrigger ? 0 : undefined}
-              onKeyDown={workspaceTrigger ? onWorkspaceKeyDown : undefined}
-              style={hint === null ? undefined : { '--dsh-composer-hint': JSON.stringify(hint) } as CSSProperties}
-            />
-            {empty && !claimActive && (
-              <div aria-hidden className={css.placeholder} data-composer-placeholder>
-                {placeholderText}
+        {!(recording || transcribing) ? (
+          <>
+            <div ref={scrollRef} className={css.scroll} data-input-scroll>
+              <div className={css.grow}>
+                <ComposerContentEditable
+                  editor={workspaceTrigger ? null : editor}
+                  editable={editable}
+                  className={clsx(css.input, editorDisabled && css.inputDisabled)}
+                  data-phase={input?.phase ?? 'inert'}
+                  aria-disabled={editorDisabled || undefined}
+                  data-placeholder={placeholderText}
+                  // The placeholder was the textarea's accessible name; a div's
+                  // data attribute is not, so the label restores it.
+                  aria-label={workspaceTrigger ? t('hero.chooseWorkspace') : placeholderText}
+                  aria-haspopup={workspaceTrigger ? 'menu' : undefined}
+                  aria-expanded={workspaceTrigger ? workspacePickerOpen : undefined}
+                  tabIndex={workspaceTrigger ? 0 : undefined}
+                  onKeyDown={workspaceTrigger ? onWorkspaceKeyDown : undefined}
+                  style={hint === null ? undefined : { '--dsh-composer-hint': JSON.stringify(hint) } as CSSProperties}
+                />
+                {empty && !claimActive && (
+                  <div aria-hidden className={css.placeholder} data-composer-placeholder>
+                    {placeholderText}
+                  </div>
+                )}
+                <DecoratorPortals editor={workspaceTrigger ? null : editor} />
               </div>
-            )}
-            <DecoratorPortals editor={workspaceTrigger ? null : editor} />
-          </div>
-        </div>
-        {(recording || transcribing) && (
-          <div className={css.voiceBar} data-voice-waveform role="status" aria-label={t('voice.recordingNow')}>
-            <span className={css.voiceDot} aria-hidden="true" />
-            <span className={css.voiceTimer} aria-label={t('voice.elapsed', { time: formatElapsed(elapsedSecs) })}>
-              {formatElapsed(elapsedSecs)}
-            </span>
+            </div>
+            <div className={css.row}>
+              <div className={css.tools}>
+                <Tooltip label={t('input.commands')} side="top" delayMs={500}>
+                  <button
+                    type="button"
+                    className={css.add}
+                    aria-label={t('input.commands')}
+                    aria-haspopup="listbox"
+                    aria-expanded={commandMenuOpen}
+                    disabled={locked || toggleCommandMenu === undefined}
+                    onMouseDown={keepFocus}
+                    onClick={onToggleCommandMenu}
+                  >
+                    <IconPlusOutline16 size={14} />
+                  </button>
+                </Tooltip>
+                <Tooltip label={t('file.attach')} side="top" delayMs={500}>
+                  <button
+                    type="button"
+                    className={css.add}
+                    aria-label={t('file.attach')}
+                    disabled={subagent !== null || locked || machineBusy || addFiles === undefined}
+                    onMouseDown={keepFocus}
+                    onClick={() => { fileInputRef.current?.click() }}
+                  >
+                    <IconPaperclipOutline16 size={14} />
+                  </button>
+                </Tooltip>
+                <Tooltip
+                  label={t('voice.idle')}
+                  side="top"
+                  delayMs={500}
+                >
+                  <button
+                    type="button"
+                    className={css.add}
+                    aria-label={t('voice.record')}
+                    disabled={subagent !== null || locked || machineBusy}
+                    onMouseDown={keepFocus}
+                    onClick={() => { void onToggleMic() }}
+                  >
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v5a2.5 2.5 0 0 0 5 0v-5A2.5 2.5 0 0 0 8 1z" />
+                      <path d="M12.5 6.5v2a4.5 4.5 0 0 1-9 0v-2" />
+                      <line x1="8" y1="13" x2="8" y2="15" />
+                      <line x1="5.5" y1="15" x2="10.5" y2="15" />
+                    </svg>
+                  </button>
+                </Tooltip>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  disabled={subagent !== null}
+                  hidden
+                  onChange={onPickFiles}
+                />
+                <div className={css.modes}>
+                  {accessSelect}
+                  {sessionId === undefined ? null : renderSlot('conversation.input.plan', { locked })}
+                </div>
+                {input === undefined || sessionId === undefined
+                  ? null
+                  : renderSlot('conversation.input.left', {})}
+              </div>
+              <div className={css.trailing}>
+                {input === undefined || sessionId === undefined
+                  ? null
+                  : renderSlot('conversation.input.right', {})}
+                {sessionId === undefined ? null : renderSlot('conversation.input.model', { locked: modelSeatLocked })}
+                <ContextMeter useProjection={useProjection} t={t} />
+                {interruptible && (
+                  <Tooltip label={t('input.stop')} side="top" delayMs={500}>
+                    <button
+                      type="button"
+                      className={css.primary}
+                      aria-label={t('input.stop')}
+                      disabled={stop === undefined}
+                      onMouseDown={keepFocus}
+                      onClick={stop}
+                    >
+                      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden>
+                        <rect x="3" y="3" width="10" height="10" rx="3" fill="currentColor" />
+                      </svg>
+                    </button>
+                  </Tooltip>
+                )}
+                <Tooltip label={primaryLabel} side="top" delayMs={500}>
+                  <button
+                    type="button"
+                    className={css.primary}
+                    aria-label={primaryLabel}
+                    disabled={primaryStops ? stop === undefined : empty || disabled || machineBusy || uploadsPending}
+                    onMouseDown={keepFocus}
+                    onClick={onPrimary}
+                  >
+                    {primaryStops ? (
+                      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden>
+                        <rect x="3" y="3" width="10" height="10" rx="3" fill="currentColor" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden>
+                        <path d="M8.3125 0.980183C8.66767 1.0531 8.97902 1.20418 9.2627 1.43233C9.48724 1.61297 9.73029 1.85793 9.97949 2.10714L14.707 6.83468L13.293 8.24874L9 3.95577V15.0417H7V3.95577L2.70703 8.24874L1.29297 6.83468L6.02051 2.10714C6.26971 1.85793 6.51277 1.61297 6.7373 1.43233C6.97662 1.23986 7.28445 1.04402 7.6875 0.980183C7.8973 0.947006 8.1031 0.95516 8.3125 0.980183Z" fill="currentColor" />
+                      </svg>
+                    )}
+                  </button>
+                </Tooltip>
+              </div>
+            </div>
+          </>
+        ) : recording ? (
+          <div className={css.voicePill} data-voice-waveform role="status" aria-label={t('voice.recordingNow')}>
+            <Tooltip label={t('voice.discard')} side="top" delayMs={500}>
+              <button
+                type="button"
+                className={css.voicePillGhost}
+                aria-label={t('voice.discard')}
+                onMouseDown={keepFocus}
+                onClick={onDiscardVoice}
+              >
+                <IconCloseOutline16 size={14} />
+              </button>
+            </Tooltip>
             <VoiceWaveform
-              stream={recording ? captureStream : null}
+              stream={captureStream}
               label={t('voice.waveform')}
             />
-            {recording && (
-              <Tooltip label={t('voice.discard')} side="top" delayMs={500}>
-                <button
-                  type="button"
-                  className={css.voiceDiscard}
-                  aria-label={t('voice.discard')}
-                  onMouseDown={keepFocus}
-                  onClick={onDiscardVoice}
-                >
-                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
-                    <path d="M2.5 4h11" />
-                    <path d="M6.5 4V2.8c0-.44.36-.8.8-.8h1.4c.44 0 .8.36.8.8V4" />
-                    <path d="M4 4l.7 9.2c.04.44.4.8.84.8h3.92c.44 0 .8-.36.84-.8L12 4" />
-                    <line x1="6.6" y1="7" x2="6.6" y2="11.5" />
-                    <line x1="9.4" y1="7" x2="9.4" y2="11.5" />
-                  </svg>
-                </button>
-              </Tooltip>
-            )}
-          </div>
-        )}
-        <div className={css.row}>
-          <div className={css.tools}>
-            <Tooltip label={t('input.commands')} side="top" delayMs={500}>
-              <button
-                type="button"
-                className={css.add}
-                aria-label={t('input.commands')}
-                aria-haspopup="listbox"
-                aria-expanded={commandMenuOpen}
-                disabled={locked || toggleCommandMenu === undefined}
-                onMouseDown={keepFocus}
-                onClick={onToggleCommandMenu}
-              >
-                <IconPlusOutline16 size={14} />
-              </button>
-            </Tooltip>
-            <Tooltip label={t('file.attach')} side="top" delayMs={500}>
-              <button
-                type="button"
-                className={css.add}
-                aria-label={t('file.attach')}
-                disabled={subagent !== null || locked || machineBusy || addFiles === undefined}
-                onMouseDown={keepFocus}
-                onClick={() => { fileInputRef.current?.click() }}
-              >
-                <IconPaperclipOutline16 size={14} />
-              </button>
-            </Tooltip>
-            <Tooltip
-              label={recording ? t('voice.recording') : transcribing ? t('voice.transcribing') : t('voice.idle')}
-              side="top"
-              delayMs={500}
+            <button
+              type="button"
+              className={css.voicePillStop}
+              aria-label={t('voice.stop')}
+              onMouseDown={keepFocus}
+              onClick={() => { void onToggleMic() }}
             >
-              <button
-                type="button"
-                className={clsx(css.add, recording && css.micRecording, transcribing && css.micTranscribing)}
-                aria-label={recording ? t('voice.stop') : t('voice.record')}
-                disabled={subagent !== null || locked || machineBusy}
-                onMouseDown={keepFocus}
-                onClick={() => { void onToggleMic() }}
-              >
-                {recording ? (
-                  <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden>
-                    <circle cx="8" cy="8" r="5" fill="currentColor" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                    <path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v5a2.5 2.5 0 0 0 5 0v-5A2.5 2.5 0 0 0 8 1z" />
-                    <path d="M12.5 6.5v2a4.5 4.5 0 0 1-9 0v-2" />
-                    <line x1="8" y1="13" x2="8" y2="15" />
-                    <line x1="5.5" y1="15" x2="10.5" y2="15" />
-                  </svg>
-                )}
-              </button>
-            </Tooltip>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              disabled={subagent !== null}
-              hidden
-              onChange={onPickFiles}
-            />
-            <div className={css.modes}>
-              {accessSelect}
-              {sessionId === undefined ? null : renderSlot('conversation.input.plan', { locked })}
-            </div>
-            {input === undefined || sessionId === undefined
-              ? null
-              : renderSlot('conversation.input.left', {})}
-          </div>
-          <div className={css.trailing}>
-            {input === undefined || sessionId === undefined
-              ? null
-              : renderSlot('conversation.input.right', {})}
-            {sessionId === undefined ? null : renderSlot('conversation.input.model', { locked: modelSeatLocked })}
-            <ContextMeter useProjection={useProjection} t={t} />
-            {interruptible && (
-              <Tooltip label={t('input.stop')} side="top" delayMs={500}>
-                <button
-                  type="button"
-                  className={css.primary}
-                  aria-label={t('input.stop')}
-                  disabled={stop === undefined}
-                  onMouseDown={keepFocus}
-                  onClick={stop}
-                >
-                  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden>
-                    <rect x="3" y="3" width="10" height="10" rx="3" fill="currentColor" />
-                  </svg>
-                </button>
-              </Tooltip>
-            )}
+              <IconStopFill16 size={12} />
+            </button>
             <Tooltip label={primaryLabel} side="top" delayMs={500}>
               <button
                 type="button"
-                className={css.primary}
+                className={css.voicePillSend}
                 aria-label={primaryLabel}
-                disabled={primaryStops ? stop === undefined : empty || disabled || machineBusy || uploadsPending}
                 onMouseDown={keepFocus}
-                onClick={onPrimary}
+                onClick={() => { void onToggleMic() }}
               >
-                {primaryStops ? (
-                  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden>
-                    <rect x="3" y="3" width="10" height="10" rx="3" fill="currentColor" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden>
-                    <path d="M8.3125 0.980183C8.66767 1.0531 8.97902 1.20418 9.2627 1.43233C9.48724 1.61297 9.73029 1.85793 9.97949 2.10714L14.707 6.83468L13.293 8.24874L9 3.95577V15.0417H7V3.95577L2.70703 8.24874L1.29297 6.83468L6.02051 2.10714C6.26971 1.85793 6.51277 1.61297 6.7373 1.43233C6.97662 1.23986 7.28445 1.04402 7.6875 0.980183C7.8973 0.947006 8.1031 0.95516 8.3125 0.980183Z" fill="currentColor" />
-                  </svg>
-                )}
+                <IconSendOutline16 size={16} />
               </button>
             </Tooltip>
           </div>
-        </div>
+        ) : (
+          <div className={css.voicePill} data-voice-waveform role="status" aria-label={t('voice.transcribing')}>
+            <span className={css.voiceWait}>
+              <IconLoadingOutline16 size={16} className={css.voiceSpin} />
+              {t('voice.transcribing')}
+            </span>
+          </div>
+        )}
       </div>
       {/* The under-composer dock (stats, disclaimer) renders in both hero and
           composer variants: the blank-session hero shows the disclaimer while
