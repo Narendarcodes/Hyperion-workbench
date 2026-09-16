@@ -286,7 +286,6 @@
 .micRecording {
   background: var(--dsw-alias-state-danger-primary, #ea3939) !important;
   color: #ffffff !important;
-  animation: micPulse 1.5s infinite;
 }
 
 .micTranscribing {
@@ -294,13 +293,54 @@
   color: #ffffff !important;
   opacity: 0.85;
 }
-
-@keyframes micPulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.08); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 1; }
+/* Voice recording row (WhatsApp-style): own full-width strip between the
+   draft and the toolbar, so the waveform never shares flex space with the
+   Workspace-write chip. Red dot + mm:ss timer left, slim canvas middle,
+   discard right while recording. */
+.voiceBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 12px;
+  border-radius: 14px;
+  background: var(--dsw-specific-selector);
 }
 
+.voiceDot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--dsw-alias-state-danger-primary, #ea3939);
+}
+
+.voiceTimer {
+  flex: none;
+  min-width: 36px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.voiceDiscard {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+
+.voiceDiscard:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-primary);
+}
 /* Plan / Read-only / model — native <select>, chip-like closed chrome
    (figma ToggleButton: 13/20 medium secondary, 12px chevron). */
 .select {
