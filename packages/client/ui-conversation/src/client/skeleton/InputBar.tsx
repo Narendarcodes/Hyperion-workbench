@@ -35,6 +35,7 @@ import { registerComposerKeymap } from '../input/editor/keymap.ts'
 import { attachmentErrorText, imageSizeText } from '../image-labels.ts'
 import { ContextMeter } from './ContextMeter.tsx'
 import { PermissionSelect } from './PermissionSelect.tsx'
+import { VoiceWaveform } from './VoiceWaveform.tsx'
 import css from './InputBar.module.css'
 
 export type InputBarProps = ComposerBarProps
@@ -90,24 +91,50 @@ export const InputBar = memo(function InputBar({
   // The deployment's image-intake limits (absent while no attachment service
   const [recording, setRecording] = useState(false)
   const [transcribing, setTranscribing] = useState(false)
+  // Live capture stream feeding the voice row waveform; the analyser borrows
+  // it while recording and the stop path owns the tracks it releases.
+  const [captureStream, setCaptureStream] = useState<MediaStream | null>(null)
+  // Elapsed recording seconds for the voice row timer; the interval owns the
+  // tick while recording and clears on stop, discard, or unmount.
+  const [elapsedSecs, setElapsedSecs] = useState(0)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
+  // Discard without transcribing: the onstop path skips the fetch when set.
+  const discardRef = useRef(false)
+  const timerRef = useRef<number | undefined>(undefined)
+
+  /**
+   * Format elapsed recording seconds as m:ss for the voice row timer.
+   */
+  function formatElapsed(totalSecs: number): string {
+    return `${String(Math.floor(totalSecs / 60))}:${String(totalSecs % 60).padStart(2, '0')}`
+  }
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current !== undefined) {
+      clearInterval(timerRef.current)
+      timerRef.current = undefined
+    }
+  }, [])
 
   const onToggleMic = useCallback(async () => {
     if (recording) {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         mediaRecorderRef.current.stop()
       }
+      stopTimer()
       setRecording(false)
+      setCaptureStream(null)
       return
     }
     if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
-      showToast('Microphone access is not supported by your browser.')
+      showToast(t('voice.unsupported'))
       return
     }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       audioChunksRef.current = []
+      discardRef.current = false
       const mediaRecorder = new MediaRecorder(stream)
       mediaRecorderRef.current = mediaRecorder
       mediaRecorder.ondataavailable = (event) => {
@@ -115,8 +142,15 @@ export const InputBar = memo(function InputBar({
       }
       mediaRecorder.onstop = async () => {
         for (const track of stream.getTracks()) track.stop()
+        const discarded = discardRef.current
+        discardRef.current = false
+        if (discarded) {
+          audioChunksRef.current = []
+          return
+        }
         if (audioChunksRef.current.length === 0) return
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        audioChunksRef.current = []
         setTranscribing(true)
         try {
           const formData = new FormData()
@@ -132,18 +166,48 @@ export const InputBar = memo(function InputBar({
             keyboard?.paste(data.text.trim() + ' ')
           }
         } catch {
-          showToast('Failed to transcribe audio from ASR server.')
+          showToast(t('voice.transcribeFailed'))
         } finally {
           setTranscribing(false)
         }
       }
       mediaRecorder.start(250)
+      setCaptureStream(stream)
+      setElapsedSecs(0)
+      stopTimer()
+      timerRef.current = setInterval(() => {
+        setElapsedSecs(secs => secs + 1)
+      }, 1000)
       setRecording(true)
     } catch {
-      showToast('Could not access microphone.')
+      showToast(t('voice.micDenied'))
     }
-  }, [recording, keyboard, showToast])
-  // is composed — the pre-check below then defers entirely to the host).
+  }, [recording, keyboard, showToast, stopTimer, t])
+
+  const onDiscardVoice = useCallback(() => {
+    discardRef.current = true
+    if (mediaRecorderRef.current !== null && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop()
+    }
+    stopTimer()
+    setRecording(false)
+    setCaptureStream(null)
+    setTranscribing(false)
+  }, [stopTimer])
+  // A session switch or unmount mid-capture releases the borrowed tracks and
+  // the timer; the recorder's own stop path owns the release in the normal
+  // stop flow.
+  useEffect(() => () => {
+    if (mediaRecorderRef.current !== null && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop()
+    }
+    stopTimer()
+    setCaptureStream((current) => {
+      if (current === null) return current
+      for (const track of current.getTracks()) track.stop()
+      return null
+    })
+  }, [stopTimer])
   const imageLimits = useProjection('imageLimits')
   // Prompt failures are ordinary failures (no create/attach transaction exists
   // anymore): the toast announces promptError, the draft stays in the machine,
@@ -515,6 +579,37 @@ export const InputBar = memo(function InputBar({
             <DecoratorPortals editor={workspaceTrigger ? null : editor} />
           </div>
         </div>
+        {(recording || transcribing) && (
+          <div className={css.voiceBar} data-voice-waveform role="status" aria-label={t('voice.recordingNow')}>
+            <span className={css.voiceDot} aria-hidden="true" />
+            <span className={css.voiceTimer} aria-label={t('voice.elapsed', { time: formatElapsed(elapsedSecs) })}>
+              {formatElapsed(elapsedSecs)}
+            </span>
+            <VoiceWaveform
+              stream={recording ? captureStream : null}
+              label={t('voice.waveform')}
+            />
+            {recording && (
+              <Tooltip label={t('voice.discard')} side="top" delayMs={500}>
+                <button
+                  type="button"
+                  className={css.voiceDiscard}
+                  aria-label={t('voice.discard')}
+                  onMouseDown={keepFocus}
+                  onClick={onDiscardVoice}
+                >
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
+                    <path d="M2.5 4h11" />
+                    <path d="M6.5 4V2.8c0-.44.36-.8.8-.8h1.4c.44 0 .8.36.8.8V4" />
+                    <path d="M4 4l.7 9.2c.04.44.4.8.84.8h3.92c.44 0 .8-.36.84-.8L12 4" />
+                    <line x1="6.6" y1="7" x2="6.6" y2="11.5" />
+                    <line x1="9.4" y1="7" x2="9.4" y2="11.5" />
+                  </svg>
+                </button>
+              </Tooltip>
+            )}
+          </div>
+        )}
         <div className={css.row}>
           <div className={css.tools}>
             <Tooltip label={t('input.commands')} side="top" delayMs={500}>
@@ -544,14 +639,14 @@ export const InputBar = memo(function InputBar({
               </button>
             </Tooltip>
             <Tooltip
-              label={recording ? 'Recording audio... Click to stop and transcribe' : transcribing ? 'Transcribing with IndicConformer...' : 'Voice prompt (IndicConformer ASR)'}
+              label={recording ? t('voice.recording') : transcribing ? t('voice.transcribing') : t('voice.idle')}
               side="top"
               delayMs={500}
             >
               <button
                 type="button"
                 className={clsx(css.add, recording && css.micRecording, transcribing && css.micTranscribing)}
-                aria-label={recording ? 'Stop recording' : 'Record voice prompt'}
+                aria-label={recording ? t('voice.stop') : t('voice.record')}
                 disabled={subagent !== null || locked || machineBusy}
                 onMouseDown={keepFocus}
                 onClick={() => { void onToggleMic() }}

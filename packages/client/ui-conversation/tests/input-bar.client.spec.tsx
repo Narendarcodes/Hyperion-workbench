@@ -1523,3 +1523,177 @@ describe('command launcher chrome and control seats', () => {
     expect((live.view.getByLabelText(/^Access mode/) as HTMLButtonElement).disabled).toBe(false)
   })
 })
+
+describe('voice row', () => {
+  /** Minimal capture-track double: the bar only needs the stop face. */
+  interface StopTrack {
+    stop: () => void
+  }
+
+  /** jsdom has no MediaStream; the bar only reads getTracks. */
+  function captureStream(stops: readonly StopTrack[]): MediaStream {
+    return { getTracks: () => [...stops] } as unknown as MediaStream
+  }
+
+  /** Deterministic MediaRecorder face the bar drives: start/stop/state plus handlers. */
+  interface RecorderDouble {
+    state: string
+    start: (timeslice?: number) => void
+    stop: () => void
+    ondataavailable: ((event: { data: Blob }) => void) | null
+    onstop: (() => void) | null
+  }
+
+  /** Control the mic permission surface per case, restoring the original. */
+  function stubMicSurface(getUserMedia: (constraints: MediaStreamConstraints) => Promise<MediaStream>): void {
+    const original = navigator.mediaDevices
+    const devices = { getUserMedia } as unknown as MediaDevices
+    Object.defineProperty(navigator, 'mediaDevices', { value: devices, configurable: true })
+    onTestFinished(() => {
+      Object.defineProperty(navigator, 'mediaDevices', { value: original, configurable: true })
+    })
+  }
+
+  /** Install a constructible MediaRecorder double returning the given recorder. */
+  function stubRecorder(recorder: RecorderDouble): void {
+    const stub = vi.fn(function construct(this: unknown) { return recorder }) as unknown as typeof MediaRecorder
+    vi.stubGlobal('MediaRecorder', stub)
+    onTestFinished(() => { vi.unstubAllGlobals() })
+  }
+
+  /** Start a recording behind the mic button and return its doubles. */
+  async function startRecording(chunk: Blob | null): Promise<{ view: ReturnType<typeof bench>['view']; recorder: RecorderDouble }> {
+    const stream = captureStream([{ stop: () => undefined }])
+    const recorder: RecorderDouble = {
+      state: 'recording',
+      // The bar only reads start/stop/state; the double keeps that face.
+      start: (_timeslice?: number) => undefined,
+      stop(): void {
+        recorder.state = 'inactive'
+        queueMicrotask(() => { recorder.onstop?.() })
+      },
+      ondataavailable: null,
+      onstop: null,
+    }
+    stubMicSurface(() => Promise.resolve(stream))
+    stubRecorder(recorder)
+    const { view } = bench()
+    fireEvent.click(view.getByLabelText('Record voice prompt'))
+    expect(await view.findByLabelText('Voice input level')).toBeTruthy()
+    if (chunk !== null) recorder.ondataavailable?.({ data: chunk })
+    return { view, recorder }
+  }
+
+  it('renders no voice row while idle', () => {
+    const { view } = bench()
+    expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
+    expect(view.container.querySelector('[data-voice-waveform]')).toBeNull()
+  })
+
+  it('announces the locale-owned voice label on hover while idle', () => {
+    vi.useFakeTimers()
+    try {
+      const { view } = bench()
+      fireEvent.mouseEnter(view.getByLabelText('Record voice prompt'))
+      act(() => { vi.advanceTimersByTime(500) })
+      expect(view.getByRole('tooltip').textContent).toBe('Voice prompt (IndicConformer ASR)')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('announces a missing microphone as a toast without opening the row', async () => {
+    const { view } = bench()
+    stubMicSurface(() => Promise.reject(new Error('missing')))
+    Object.defineProperty(navigator, 'mediaDevices', { value: undefined, configurable: true })
+    fireEvent.click(view.getByLabelText('Record voice prompt'))
+    expect(await view.findByRole('alert')).toBeTruthy()
+    expect(view.container.querySelector('[data-voice-waveform]')).toBeNull()
+  })
+
+  it('announces a denied microphone as a toast without opening the row', async () => {
+    const { view } = bench()
+    stubMicSurface(() => Promise.reject(new Error('denied')))
+    fireEvent.click(view.getByLabelText('Record voice prompt'))
+    expect(await view.findByRole('alert')).toBeTruthy()
+    expect(view.container.querySelector('[data-voice-waveform]')).toBeNull()
+  })
+
+  it('opens the voice row with timer and discard while recording and closes it on stop', async () => {
+    const { view } = await startRecording(null)
+    // Own row above the toolbar: the timer starts at zero with a discard exit.
+    expect(view.getByText('0:00')).toBeTruthy()
+    expect(view.getByLabelText('Discard recording')).toBeTruthy()
+    expect(view.getByLabelText('Stop recording')).toBeTruthy()
+    fireEvent.click(view.getByLabelText('Stop recording'))
+    await vi.waitFor(() => {
+      expect(view.queryByLabelText('Voice input level')).toBeNull()
+    })
+    expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
+  })
+
+  it('ticks the recording timer while the row stays open', async () => {
+    vi.useFakeTimers()
+    const stream = captureStream([{ stop: () => undefined }])
+    const recorder: RecorderDouble = {
+      state: 'recording',
+      // The bar only reads start/stop/state; the double keeps that face.
+      start: (_timeslice?: number) => undefined,
+      stop(): void {
+        recorder.state = 'inactive'
+      },
+      ondataavailable: null,
+      onstop: null,
+    }
+    stubMicSurface(() => Promise.resolve(stream))
+    stubRecorder(recorder)
+    try {
+      const { view } = bench()
+      fireEvent.click(view.getByLabelText('Record voice prompt'))
+      await act(async () => { await vi.advanceTimersByTimeAsync(0) })
+      expect(view.getByLabelText('Voice input level')).toBeTruthy()
+      expect(view.getByText('0:00')).toBeTruthy()
+      act(() => { vi.advanceTimersByTime(5000) })
+      expect(view.getByText('0:05')).toBeTruthy()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('keeps the waiting row visible while transcription runs', async () => {
+    let release: ((text: string) => void) | null = null
+    const { view } = await startRecording(new Blob(['audio'], { type: 'audio/webm' }))
+    const fetchMock = vi.fn((_input: string | URL | Request, _init?: RequestInit): Promise<Response> =>
+      new Promise<Response>((resolve) => {
+        release = (text: string) => { resolve(new Response(JSON.stringify({ text }))) }
+      }))
+    vi.stubGlobal('fetch', fetchMock)
+    onTestFinished(() => { vi.unstubAllGlobals() })
+    fireEvent.click(view.getByLabelText('Stop recording'))
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalled()
+    })
+    // Waiting keeps the row with its frozen frame; the discard exit leaves
+    // with the recorder, so only the toolbar mic returns.
+    expect(view.getByLabelText('Voice input level')).toBeTruthy()
+    expect(view.queryByLabelText('Discard recording')).toBeNull()
+    expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
+    release?.('नमस्ते')
+    await vi.waitFor(() => {
+      expect(view.queryByLabelText('Voice input level')).toBeNull()
+    })
+  })
+
+  it('discards the recording without transcribing', async () => {
+    const { view } = await startRecording(new Blob(['audio'], { type: 'audio/webm' }))
+    const fetchMock = vi.fn((): Promise<Response> => Promise.resolve(new Response(JSON.stringify({ text: 'नमस्ते' }))))
+    vi.stubGlobal('fetch', fetchMock)
+    onTestFinished(() => { vi.unstubAllGlobals() })
+    fireEvent.click(view.getByLabelText('Discard recording'))
+    await vi.waitFor(() => {
+      expect(view.queryByLabelText('Voice input level')).toBeNull()
+    })
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
+  })
+})
