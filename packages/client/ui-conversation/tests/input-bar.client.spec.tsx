@@ -1524,7 +1524,7 @@ describe('command launcher chrome and control seats', () => {
   })
 })
 
-describe('voice row', () => {
+describe('voice pill', () => {
   /** Minimal capture-track double: the bar only needs the stop face. */
   interface StopTrack {
     stop: () => void
@@ -1578,89 +1578,64 @@ describe('voice row', () => {
     stubMicSurface(() => Promise.resolve(stream))
     stubRecorder(recorder)
     const { view } = bench()
-    fireEvent.click(view.getByLabelText('Record voice prompt'))
+    fireEvent.click(view.getByLabelText('Dictate a message'))
     expect(await view.findByLabelText('Voice input level')).toBeTruthy()
     if (chunk !== null) recorder.ondataavailable?.({ data: chunk })
     return { view, recorder }
   }
 
-  it('renders no voice row while idle', () => {
+  it('renders the composer with no voice pill while idle', () => {
     const { view } = bench()
-    expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
+    expect(view.getByLabelText('Dictate a message')).toBeTruthy()
     expect(view.container.querySelector('[data-voice-waveform]')).toBeNull()
   })
-
-  it('announces the locale-owned voice label on hover while idle', () => {
+  it('announces the dictate label on hover while idle', () => {
     vi.useFakeTimers()
     try {
       const { view } = bench()
-      fireEvent.mouseEnter(view.getByLabelText('Record voice prompt'))
+      fireEvent.mouseEnter(view.getByLabelText('Dictate a message'))
       act(() => { vi.advanceTimersByTime(500) })
-      expect(view.getByRole('tooltip').textContent).toBe('Voice prompt (IndicConformer ASR)')
+      expect(view.getByRole('tooltip').textContent).toBe('Dictate a message')
     } finally {
       vi.useRealTimers()
     }
   })
 
-  it('announces a missing microphone as a toast without opening the row', async () => {
+  it('announces a missing microphone as a toast without opening the pill', async () => {
     const { view } = bench()
     stubMicSurface(() => Promise.reject(new Error('missing')))
     Object.defineProperty(navigator, 'mediaDevices', { value: undefined, configurable: true })
-    fireEvent.click(view.getByLabelText('Record voice prompt'))
+    fireEvent.click(view.getByLabelText('Dictate a message'))
     expect(await view.findByRole('alert')).toBeTruthy()
     expect(view.container.querySelector('[data-voice-waveform]')).toBeNull()
   })
 
-  it('announces a denied microphone as a toast without opening the row', async () => {
+  it('announces a denied microphone as a toast without opening the pill', async () => {
     const { view } = bench()
     stubMicSurface(() => Promise.reject(new Error('denied')))
-    fireEvent.click(view.getByLabelText('Record voice prompt'))
+    fireEvent.click(view.getByLabelText('Dictate a message'))
     expect(await view.findByRole('alert')).toBeTruthy()
     expect(view.container.querySelector('[data-voice-waveform]')).toBeNull()
   })
 
-  it('opens the voice row with timer and discard while recording and closes it on stop', async () => {
+  it('takes over the composer with X, stop, and send while recording', async () => {
     const { view } = await startRecording(null)
-    // Own row above the toolbar: the timer starts at zero with a discard exit.
-    expect(view.getByText('0:00')).toBeTruthy()
+    // ChatGPT takeover: draft and toolbar unmount; the pill owns the card.
+    expect(view.container.querySelector('[data-input-scroll]')).toBeNull()
+    expect(view.queryByLabelText('Dictate a message')).toBeNull()
     expect(view.getByLabelText('Discard recording')).toBeTruthy()
     expect(view.getByLabelText('Stop recording')).toBeTruthy()
+    expect(view.getByLabelText('Send message')).toBeTruthy()
+    // Stop transcribes; the draft and toolbar return with the pasted text.
     fireEvent.click(view.getByLabelText('Stop recording'))
     await vi.waitFor(() => {
       expect(view.queryByLabelText('Voice input level')).toBeNull()
     })
-    expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
+    expect(view.container.querySelector('[data-input-scroll]')).not.toBeNull()
+    expect(view.getByLabelText('Dictate a message')).toBeTruthy()
   })
 
-  it('ticks the recording timer while the row stays open', async () => {
-    vi.useFakeTimers()
-    const stream = captureStream([{ stop: () => undefined }])
-    const recorder: RecorderDouble = {
-      state: 'recording',
-      // The bar only reads start/stop/state; the double keeps that face.
-      start: (_timeslice?: number) => undefined,
-      stop(): void {
-        recorder.state = 'inactive'
-      },
-      ondataavailable: null,
-      onstop: null,
-    }
-    stubMicSurface(() => Promise.resolve(stream))
-    stubRecorder(recorder)
-    try {
-      const { view } = bench()
-      fireEvent.click(view.getByLabelText('Record voice prompt'))
-      await act(async () => { await vi.advanceTimersByTimeAsync(0) })
-      expect(view.getByLabelText('Voice input level')).toBeTruthy()
-      expect(view.getByText('0:00')).toBeTruthy()
-      act(() => { vi.advanceTimersByTime(5000) })
-      expect(view.getByText('0:05')).toBeTruthy()
-    } finally {
-      vi.useRealTimers()
-    }
-  })
-
-  it('keeps the waiting row visible while transcription runs', async () => {
+  it('shows a transcribing wait instead of the frozen pill while transcription runs', async () => {
     let release: ((text: string) => void) | undefined
     const { view } = await startRecording(new Blob(['audio'], { type: 'audio/webm' }))
     const fetchMock = vi.fn((_input: string | URL | Request, _init?: RequestInit): Promise<Response> =>
@@ -1669,19 +1644,21 @@ describe('voice row', () => {
       }))
     vi.stubGlobal('fetch', fetchMock)
     onTestFinished(() => { vi.unstubAllGlobals() })
-    fireEvent.click(view.getByLabelText('Stop recording'))
+    fireEvent.click(view.getByLabelText('Send message'))
     await vi.waitFor(() => {
       expect(fetchMock).toHaveBeenCalled()
     })
-    // Waiting keeps the row with its frozen frame; the discard exit leaves
-    // with the recorder, so only the toolbar mic returns.
-    expect(view.getByLabelText('Voice input level')).toBeTruthy()
+    // The frozen strip stands down; a spinning wait carries the state.
+    expect(view.getByText('Transcribing...')).toBeTruthy()
+    expect(view.queryByLabelText('Voice input level')).toBeNull()
+    expect(view.queryByLabelText('Stop recording')).toBeNull()
+    expect(view.queryByLabelText('Send message')).toBeNull()
     expect(view.queryByLabelText('Discard recording')).toBeNull()
-    expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
     if (release !== undefined) release('नमस्ते')
     await vi.waitFor(() => {
-      expect(view.queryByLabelText('Voice input level')).toBeNull()
+      expect(view.queryByText('Transcribing...')).toBeNull()
     })
+    expect(view.container.querySelector('[data-input-scroll]')).not.toBeNull()
   })
 
   it('discards the recording without transcribing', async () => {
@@ -1694,6 +1671,7 @@ describe('voice row', () => {
       expect(view.queryByLabelText('Voice input level')).toBeNull()
     })
     expect(fetchMock).not.toHaveBeenCalled()
-    expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
+    expect(view.container.querySelector('[data-input-scroll]')).not.toBeNull()
+    expect(view.getByLabelText('Dictate a message')).toBeTruthy()
   })
 })
