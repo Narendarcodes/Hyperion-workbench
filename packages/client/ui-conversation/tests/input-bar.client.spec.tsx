@@ -1661,7 +1661,7 @@ describe('voice row', () => {
   })
 
   it('keeps the waiting row visible while transcription runs', async () => {
-    let release: ((text: string) => void) | null = null
+    let release: ((text: string) => void) | undefined
     const { view } = await startRecording(new Blob(['audio'], { type: 'audio/webm' }))
     const fetchMock = vi.fn((_input: string | URL | Request, _init?: RequestInit): Promise<Response> =>
       new Promise<Response>((resolve) => {
@@ -1678,7 +1678,7 @@ describe('voice row', () => {
     expect(view.getByLabelText('Voice input level')).toBeTruthy()
     expect(view.queryByLabelText('Discard recording')).toBeNull()
     expect(view.getByLabelText('Record voice prompt')).toBeTruthy()
-    release?.('नमस्ते')
+    if (release !== undefined) release('नमस्ते')
     await vi.waitFor(() => {
       expect(view.queryByLabelText('Voice input level')).toBeNull()
     })
