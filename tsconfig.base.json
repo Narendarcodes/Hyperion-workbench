@@ -147,6 +147,8 @@
       "@deepseek-ai/dsh-host-directory-picker-auto/*": ["./packages/host/directory-picker-auto/src/*"],
       "@deepseek-ai/dsh-host-open-in-app": ["./packages/host/open-in-app/src"],
       "@deepseek-ai/dsh-host-open-in-app/shared": ["./packages/host/open-in-app/src/shared.ts"],
+      "@deepseek-ai/dsh-host-hyperion-bridge": ["./packages/host/hyperion-bridge/src"],
+      "@deepseek-ai/dsh-host-hyperion-bridge/shared": ["./packages/host/hyperion-bridge/src/shared.ts"],
       "@deepseek-ai/dsh-host-webserver": ["./packages/host/webserver/src"],
       "@deepseek-ai/dsh-host-frontend-static": ["./packages/host/frontend-static/src"],
       "@deepseek-ai/dsh-host-plugin-inventory": ["./packages/host/plugin-inventory/src"],

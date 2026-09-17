@@ -69,6 +69,14 @@
         iconTimeoutMs: 10000
         launchWatchMs: 1000
 
+    # Hyperion bridge: plain HTTP routes (health, state, registry, skills,
+    # telemetry, chat, turn) projecting live sessions for the external Studio
+    # office. Same trust fence as every browser route (connection rejection).
+    - id: hyperion-bridge
+      name: '@deepseek-ai/dsh-host-hyperion-bridge'
+      config:
+        maxBodyBytes: 65536
+
     - id: ui-open-in-app
       name: '@deepseek-ai/dsh-client-ui-open-in-app'
 

@@ -95,6 +95,7 @@
     "@deepseek-ai/dsh-host-directory-picker-auto": "workspace:^",
     "@deepseek-ai/dsh-host-directory-picker-browse": "workspace:^",
     "@deepseek-ai/dsh-host-directory-picker-native": "workspace:^",
+    "@deepseek-ai/dsh-host-hyperion-bridge": "workspace:^",
     "@deepseek-ai/dsh-host-open-in-app": "workspace:^",
     "@deepseek-ai/dsh-host-plugin-inventory": "workspace:^",
     "@deepseek-ai/dsh-host-webserver": "workspace:^",
