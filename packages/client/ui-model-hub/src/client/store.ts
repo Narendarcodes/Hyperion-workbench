@@ -172,7 +172,7 @@ class ModelHubStore {
         tasks.push(
           defaultOllama.getVersion(),
           defaultOllama.listModels(),
-          defaultOllama.listRunning()
+          defaultOllama.listRunning(),
         )
       }
 
@@ -309,6 +309,15 @@ export async function syncOllamaModelsToSettings(force = false): Promise<void> {
         id: m.name,
         name: m.name,
         input: isVision ? ['text', 'image'] : ['text'],
+        ...(isVision
+          ? {
+            parameters: {
+              temperature: 0.2,
+              repeat_penalty: 1.15,
+              presence_penalty: 0.1,
+            },
+          }
+          : {}),
       }
     })
 
@@ -353,6 +362,15 @@ export async function syncLlamaModelsToSettings(force = false): Promise<void> {
         id: m.id,
         name: m.name,
         input: isVision ? ['text', 'image'] : ['text'],
+        ...(isVision
+          ? {
+            parameters: {
+              temperature: 0.2,
+              repeat_penalty: 1.15,
+              presence_penalty: 0.1,
+            },
+          }
+          : {}),
       }
     })
 
@@ -398,7 +416,7 @@ export async function syncLlamaModelsToSettings(force = false): Promise<void> {
 
 export async function selectModelForActiveSession(
   modelName: string,
-  providerHint = 'llama'
+  providerHint = 'llama',
 ): Promise<boolean> {
   if (!boundContext) {
     console.warn('Cordis context not bound to ui-model-hub')
@@ -439,7 +457,7 @@ export async function selectModelForActiveSession(
 
       // Pass 1: Check requested provider hint group first (e.g. 'llama')
       const hintGroup = state.groups.find(
-        (g: any) => g.id === providerHint || g.name?.toLowerCase().includes('llama')
+        (g: any) => g.id === providerHint || g.name?.toLowerCase().includes('llama'),
       )
       if (hintGroup) {
         const match = hintGroup.models.find(
@@ -447,7 +465,7 @@ export async function selectModelForActiveSession(
             m.id === modelName ||
             m.id.toLowerCase() === modelName.toLowerCase() ||
             m.name === modelName ||
-            m.name.toLowerCase() === modelName.toLowerCase()
+            m.name.toLowerCase() === modelName.toLowerCase(),
         )
         if (match) {
           targetProvider = hintGroup.id
@@ -468,7 +486,7 @@ export async function selectModelForActiveSession(
               m.id === modelName ||
               m.id.toLowerCase() === modelName.toLowerCase() ||
               m.name === modelName ||
-              m.name.toLowerCase() === modelName.toLowerCase()
+              m.name.toLowerCase() === modelName.toLowerCase(),
           )
           if (match) {
             targetProvider = group.id
