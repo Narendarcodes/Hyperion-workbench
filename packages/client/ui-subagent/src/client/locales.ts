@@ -85,5 +85,46 @@ export const hi = {
   'readonly.body': 'मूल सत्र ऑफ़लाइन है; संदेश भेजना जारी हेतु उसे पुनः खोलें।',
 }
 
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'diagnostic.corrupt': 'పాడైన సెషన్ రికార్డు',
+  'diagnostic.unsupported': 'మద్దతు లేని ఉప-ఏజెంట్ రికార్డు వెర్షన్',
+  'diagnostic.unavailable': 'సెషన్ రికార్డు తాత్కాలికంగా అందుబాటులో లేదు',
+  'duration.seconds': '{seconds}సె.',
+  'duration.minutes': '{minutes}ని. {seconds}సె.',
+  'duration.hours': '{hours}గం. {minutes}ని. {seconds}సె.',
+  'duration.days': '{days}రో.',
+  'duration.daysHours': '{days}రో. {hours}గం.',
+  'duration.months': '~{months}నె.',
+  'duration.monthsDays': '~{months}నె. {days}రో.',
+  'duration.years': '~{years}సం.',
+  'duration.yearsMonths': '~{years}సం. {months}నె.',
+  'duration.exactDays': '{days}రో. {hours}గం. {minutes}ని. {seconds}సె.',
+  'duration.exactTitle': 'మొత్తం చురుకైన వ్యవధి: {duration}',
+  'tokens.thousand': '{value}వేలు',
+  'tokens.million': '{value}మిలియన్',
+  'tokens.total': '{value} టోకెన్లు',
+  'loading.label': 'ఉప-ఏజెంట్లు లోడ్ అవుతున్నాయి…',
+  'loading.aria': 'ఉప-ఏజెంట్లు లోడ్ అవుతున్నాయి',
+  'load.error': 'ఉప-ఏజెంట్లను లోడ్ చేయలేకపోయింది',
+  'retry': 'మళ్లీ ప్రయత్నించండి',
+  'mode.oneShot': 'ఒక-సారి',
+  'mode.continuable': 'కొనసాగించదగినది',
+  'activity.running': 'నడుస్తోంది',
+  'activity.inactive': 'నడవడం లేదు',
+  'branch.collapse': '{label} శాఖలను కుదించండి',
+  'branch.expand': '{label} శాఖలను విస్తరించండి',
+  'count.total.one': '{count} ఉప-ఏజెంట్',
+  'count.total.other': '{count} ఉప-ఏజెంట్లు',
+  'count.running.one': '{count} ఉప-ఏజెంట్ నడుస్తోంది',
+  'count.running.other': '{count} ఉప-ఏజెంట్లు నడుస్తున్నాయి',
+  'switcher.aria': 'ఉప-ఏజెంట్‌ను మార్చండి: {title}',
+  'tree.aria': 'ఉప-ఏజెంట్ సెషన్లు',
+  'readonly.oneShot.title': 'ఒక-సారి ఉప-ఏజెంట్ రికార్డు',
+  'readonly.title': 'ఈ ఉప-ఏజెంట్ ప్రస్తుతం చదవడానికి మాత్రమే',
+  'readonly.oneShot.body': 'ఒక-సారి పనులు తదుపరి చర్యలను అంగీకరించవు; పూర్తి అమలు రికార్డును ఇక్కడ సమీక్షించండి.',
+  'readonly.body': 'మాతృ సెషన్ ఆఫ్‌లైన్‌లో ఉంది; సందేశాలు పంపడం కొనసాగించడానికి దాన్ని మళ్లీ తెరవండి.',
+}
+
 /** Key domain of the `subagent` namespace. */
 export type SubagentKey = keyof typeof en

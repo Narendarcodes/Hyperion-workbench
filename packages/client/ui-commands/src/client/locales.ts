@@ -26,3 +26,15 @@ export const hi = {
   'listbox.aria': '/{command} मिलान',
   'notice.attachmentsUnsupported': '/{command} अनुलग्नक स्वीकार नहीं करता; पहले उन्हें हटाएँ',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'search.placeholder': 'వెతకండి…',
+  'search.aria': 'ఎంపికలను వడపోయండి',
+  'status.loading': 'ఎంపికలు లోడ్ అవుతున్నాయి…',
+  'status.applying': 'వర్తింపజేయబడుతోంది…',
+  'status.empty': 'ఎంపికలు లేవు',
+  'overlay.aria': '/{command} ఎంపికలు',
+  'listbox.aria': '/{command} సరిపోలికలు',
+  'notice.attachmentsUnsupported': '/{command} జోడింపులను అంగీకరించదు; ముందు వాటిని తొలగించండి',
+}

@@ -20,3 +20,12 @@ export const hi = {
   reject: 'अस्वीकार करें',
   allowOnce: 'एक बार अनुमति दें',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  waiting: 'ఆమోదం కోసం వేచి ఉంది',
+  'detail.aria': 'ఆమోద వివరాలు',
+  escalation: 'సాధనం {toolName} ప్రత్యేక అమలును అభ్యర్థిస్తోంది',
+  reject: 'తిరస్కరించండి',
+  allowOnce: 'ఒకసారి అనుమతించండి',
+}

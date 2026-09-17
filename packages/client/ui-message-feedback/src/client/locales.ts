@@ -43,3 +43,20 @@ export const hi = {
   'error.load': 'प्रतिपुष्टि लोड नहीं हो सकी',
   'error.generic': 'प्रतिपुष्टि सहेजी नहीं जा सकी',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'action.like': 'మంచి సమాధానం',
+  'action.likeActive': 'రేటింగ్‌ను తొలగించండి',
+  'action.dislike': 'చెడు సమాధానం',
+  'action.dislikeActive': 'రేటింగ్‌ను తొలగించండి',
+  'note.open': 'గమనికను జోడించండి',
+  'note.dialog': 'అభిప్రాయం',
+  'note.placeholder': 'ఏది బాగుంది, లేదా ఏమి తప్పు జరిగింది? (ఐచ్ఛికం)',
+  'note.save': 'సేవ్ చేయండి',
+  'note.cancel': 'రద్దు చేయండి',
+  'note.aria': 'అభిప్రాయ గమనిక',
+  'error.conflict': 'ఈ అభిప్రాయం మరెక్కడో మారింది; తాజా స్థితి చూపబడుతోంది',
+  'error.load': 'అభిప్రాయాన్ని లోడ్ చేయలేకపోయింది',
+  'error.generic': 'అభిప్రాయాన్ని సేవ్ చేయలేకపోయింది',
+}

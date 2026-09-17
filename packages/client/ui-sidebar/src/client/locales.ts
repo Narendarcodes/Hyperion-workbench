@@ -18,3 +18,11 @@ export const hi = {
   'toggle.open': 'साइडबार खोलें',
   'toggle.collapse': 'साइडबार समेटें',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'session.new': 'కొత్త సెషన్',
+  'session.new.label': 'కొత్త సెషన్',
+  'toggle.open': 'సైడ్‌బార్ తెరవండి',
+  'toggle.collapse': 'సైడ్‌బార్ కుదించండి',
+}

@@ -54,3 +54,25 @@ export const hi = {
   'blocked.composer': 'यह मॉडल अनुपलब्ध है — आगे बढ़ने हेतु एक चुनें',
   'empty.efforts': 'यह मॉडल कोई तर्क प्रयास स्तर प्रदान नहीं करता।',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'command.description': 'ఈ సంభాషణ కోసం మోడల్‌ను ఎంచుకోండి',
+  'option.loadError': 'జాబితా లోడ్ విఫలమైంది: {message}',
+  'trigger.fallback': 'మోడల్‌ను ఎంచుకోండి',
+  'trigger.loading': 'మోడళ్లు లోడ్ అవుతున్నాయి…',
+  'trigger.selectAria': 'మోడల్‌ను ఎంచుకోండి',
+  'trigger.aria': 'మోడల్‌ను ఎంచుకోండి, ప్రస్తుతం {model}',
+  'trigger.ariaEffort': 'మోడల్‌ను ఎంచుకోండి, ప్రస్తుతం {model}, తార్కిక శ్రమ {effort}',
+  'menu.aria': 'మోడల్ మరియు తార్కిక శ్రమ',
+  'menu.model': 'మోడల్',
+  'menu.effort': 'శ్రమ',
+  'effort.providerDefault': 'డిఫాల్ట్',
+  'status.loading': 'మోడల్ జాబితా తాజా అవుతోంది…',
+  'error.action': 'మోడల్ చర్య విఫలమైంది: {message}',
+  'action.reload': 'మళ్లీ లోడ్ చేయండి',
+  'warning.groupLoad': '{name} లోడ్ విఫలమైంది: {message}',
+  'empty.models': 'ఏ మోడళ్లు అందుబాటులో లేవు.',
+  'blocked.composer': 'ఈ మోడల్ అందుబాటులో లేదు — కొనసాగడానికి ఒకటి ఎంచుకోండి',
+  'empty.efforts': 'ఈ మోడల్ తార్కిక శ్రమ స్థాయిలను అందించదు.',
+}

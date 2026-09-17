@@ -10,5 +10,10 @@ export const hi = {
   'language.title': 'भाषा',
 }
 
+/** Telugu dictionary. */
+export const te = {
+  'language.title': 'భాష',
+}
+
 /** The settings.locale namespace key union. */
 export type SettingsLocaleKey = keyof typeof en

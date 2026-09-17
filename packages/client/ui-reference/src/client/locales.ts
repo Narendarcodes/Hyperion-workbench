@@ -42,3 +42,17 @@ export const hi = {
   'time.months': '{n}मा.',
   'time.years': '{n}व.',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'section.files': 'ఫైళ్లు & ఫోల్డర్లు',
+  'section.sessions': 'సెషన్లు',
+  'candidate.noCwd': '(పని డైరెక్టరీ లేదు)',
+  'crumb.root': 'వర్క్‌స్పేస్',
+  'time.now': 'ఇప్పుడు',
+  'time.minutes': '{n}ని.',
+  'time.hours': '{n}గం.',
+  'time.days': '{n}రో.',
+  'time.months': '{n}నె.',
+  'time.years': '{n}సం.',
+}
