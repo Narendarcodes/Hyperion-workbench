@@ -32,8 +32,8 @@ export const hi = {
 /** Telugu dictionary (mirrors the en key set). */
 export const te = {
   'appearance.title': 'రూపం',
-  'appearance.light': 'లేత',
-  'appearance.dark': 'ముదురు',
+  'appearance.light': 'వెలుగు',
+  'appearance.dark': 'చీకటి',
   'appearance.system': 'సిస్టమ్',
   'fontSize.title': 'ఫాంట్ పరిమాణం',
   'fontSize.description': 'సంభాషణ విషయాన్ని మాత్రమే ప్రభావితం చేస్తుంది',
