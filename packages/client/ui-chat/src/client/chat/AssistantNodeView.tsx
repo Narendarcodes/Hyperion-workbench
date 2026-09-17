@@ -1,6 +1,7 @@
 import { memo, useCallback, useMemo } from 'react'
 import type { ChatNodeViewProps, TurnTailOwnerProps } from '../contract/slots.ts'
 import { AssistantMarkdown } from './AssistantMarkdown.tsx'
+import { RouterIndicator } from './RouterIndicator.tsx'
 
 /** Streaming, settled, and interrupted Assistant states share one keyed renderer instance. */
 export const AssistantNodeView = memo(function AssistantNodeView({
@@ -27,15 +28,18 @@ export const AssistantNodeView = memo(function AssistantNodeView({
     && !turnProcess.open
   const revealProcess = useCallback(() => { turnProcess?.setOpen(true) }, [turnProcess])
   return (
-    <AssistantMarkdown
-      blocks={data.blocks}
-      streaming={data.status === 'running'}
-      interrupted={data.status === 'interrupted'}
-      renderMessageImages={renderMessageImages}
-      reasoningHidden={reasoningHidden}
-      revealProcess={revealProcess}
-      mentions={mentions}
-      t={t}
-    />
+    <>
+      <AssistantMarkdown
+        blocks={data.blocks}
+        streaming={data.status === 'running'}
+        interrupted={data.status === 'interrupted'}
+        renderMessageImages={renderMessageImages}
+        reasoningHidden={reasoningHidden}
+        revealProcess={revealProcess}
+        mentions={mentions}
+        t={t}
+      />
+      <RouterIndicator modelId="gpt-4o-mini" route="default-chat" />
+    </>
   )
 })

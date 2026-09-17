@@ -13,6 +13,31 @@ import type {
 } from '@deepseek-ai/dsh-llm'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 
+/** Features extracted from a prompt to determine the best model route. */
+export interface PromptFeatures {
+  isMultimodal: boolean
+  hasCode: boolean
+  hasMath: boolean
+  requiresTools: boolean
+  isLongContext: boolean
+  explicitTags: string[]
+  tokenCountEstimate: number
+}
+
+/** Parameters to apply to the selected model invocation. */
+export interface ModelParams {
+  temperature?: number
+  maxTokens?: number
+  topP?: number
+}
+
+/** The dynamic router interface for selecting models. */
+export interface ModelRouter {
+  classifyPrompt(prompt: string, context?: any): PromptFeatures
+  selectModel(features: PromptFeatures): { modelId: string; params: ModelParams; route: string; fallbacks: string[] }
+  invokeModel(modelId: string, params: ModelParams, prompt: string): Promise<any>
+}
+
 /** Identifies one session in the store (and its persistence artifacts). */
 export type SessionId = Branded<'SessionId'>
 
