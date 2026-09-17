@@ -1,0 +1,79 @@
+.triggerRow {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: calc(100% + 4px);
+  margin: 2px -2px;
+}
+
+.triggerRow.railRow {
+  width: 36px;
+  margin: 6px 0;
+}
+
+.trigger {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  height: 38px;
+  margin: 0;
+  padding: 0 10px 0 8px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  color: var(--dsw-alias-label-primary);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 22px;
+  transition: background var(--ds-transition-duration-fast, 120ms);
+}
+
+.trigger:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.trigger.active {
+  background: var(--dsw-alias-interactive-bg-active, rgba(59, 130, 246, 0.12));
+  color: var(--dsw-alias-accent, #3b82f6);
+  font-weight: 500;
+}
+
+/* Rail trigger: 36x36 circular button */
+.trigger.rail {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.triggerLabel {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  margin-left: auto;
+}

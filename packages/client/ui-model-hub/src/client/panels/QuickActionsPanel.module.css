@@ -1,0 +1,222 @@
+.panel {
+  width: 290px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-left: 1px solid #e2e8f0;
+  padding-left: 20px;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.4);
+}
+
+.statusDot.offline {
+  background: #dc2626;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
+}
+
+.statusOnline {
+  color: #16a34a;
+}
+
+.statusOffline {
+  color: #dc2626;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.infoLabel {
+  color: #64748b;
+}
+
+.infoValue {
+  font-family: var(--font-mono, monospace);
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.divider {
+  height: 1px;
+  background: #f1f5f9;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.actionButton:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.primaryAction {
+  background: #334155;
+  border-color: #334155;
+  color: #ffffff;
+}
+
+.primaryAction:hover {
+  background: #1e293b;
+  border-color: #0f172a;
+}
+
+.dangerAction {
+  border-color: #fca5a5;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.dangerAction:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+.meterRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meterLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.meterBg {
+  width: 100%;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.meterFill {
+  height: 100%;
+  background: #475569;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.meterFill.warn {
+  background: #d97706;
+}
+
+.meterFill.danger {
+  background: #dc2626;
+}
+
+.runningList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.runningItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.runningName {
+  font-weight: 500;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.miniUnloadBtn {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.miniUnloadBtn:hover {
+  background: #fee2e2;
+}
+
+.emptyRunning {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 4px 0;
+}

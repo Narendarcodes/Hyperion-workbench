@@ -1,0 +1,163 @@
+.workspaceOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #1e293b;
+}
+
+/* When mounted in shell, leave room for sidebar if visible */
+@media (min-width: 768px) {
+  .workspaceOverlay {
+    left: var(--sidebar-width, 240px);
+  }
+}
+
+.topBar {
+  height: 56px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: #f8fafc;
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brandIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.brandTitles {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.brandTagline {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.tabNavigation {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.tabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tabBtn:hover {
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+.tabBtn.active {
+  color: #ffffff;
+  background: #334155;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tabBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #475569;
+  color: #ffffff;
+}
+
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.closeHubBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.closeHubBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.workspaceContent {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  padding: 24px;
+  gap: 24px;
+  background: #ffffff;
+}
+
+.mainPanel {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Custom scrollbar */
+.mainPanel::-webkit-scrollbar {
+  width: 6px;
+}
+.mainPanel::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}

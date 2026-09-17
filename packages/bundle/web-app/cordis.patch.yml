@@ -301,6 +301,10 @@
     - id: ui-model-selection
       name: '@deepseek-ai/dsh-client-ui-model-selection'
 
+    # Model Hub: Local Ollama model management, real-time hardware telemetry, and custom models
+    - id: ui-model-hub
+      name: '@deepseek-ai/dsh-client-ui-model-hub'
+
     - id: ui-permission
       name: '@deepseek-ai/dsh-client-ui-permission-presets'
 
