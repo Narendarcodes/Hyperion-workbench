@@ -19,3 +19,16 @@ export const en = {
   'crumbs.aria': 'Folder navigation',
   'suggestions.aria': 'Trigger suggestions',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'command': 'आदेश',
+  'skill': 'कौशल',
+  'subagent': 'उप-एजेंट',
+  'loading': 'लोड हो रहा है…',
+  'drill.aria': 'फ़ोल्डर ब्राउज़ करें',
+  'drill.hint': 'फ़ोल्डर ब्राउज़ करें',
+  'drill.key': 'Tab',
+  'crumbs.aria': 'फ़ोल्डर नेविगेशन',
+  'suggestions.aria': 'ट्रिगर सुझाव',
+}

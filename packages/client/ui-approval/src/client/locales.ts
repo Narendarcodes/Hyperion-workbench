@@ -11,3 +11,12 @@ export const en = {
   reject: 'Reject',
   allowOnce: 'Allow once',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  waiting: 'अनुमोदन प्रतीक्षारत',
+  'detail.aria': 'अनुमोदन विवरण',
+  escalation: 'उपकरण {toolName} विशेषाधिकार निष्पादन का अनुरोध करता है',
+  reject: 'अस्वीकार करें',
+  allowOnce: 'एक बार अनुमति दें',
+}

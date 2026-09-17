@@ -14,5 +14,17 @@ export const en = {
   'dialog.commandFailed': 'Could not start the Session export.',
 }
 
+/** Hindi Session export strings. */
+export const hi = {
+  'header.action': 'सत्र लॉग',
+  'dialog.preparingTitle': 'सत्र निर्यात हो रहा है',
+  'dialog.preparingDescription': 'इस सत्र, उसके उप-सत्रों और अनुलग्नकों वाली ज़िप तैयार हो रही है।',
+  'dialog.successTitle': 'सत्र डाउनलोड आरंभ हुआ',
+  'dialog.successDescription': 'ब्राउज़र सत्र ज़िप डाउनलोड कर रहा है।',
+  'dialog.errorTitle': 'सत्र निर्यात विफल रहा',
+  'dialog.close': 'बंद करें',
+  'dialog.commandFailed': 'सत्र निर्यात आरंभ नहीं हो सका।',
+}
+
 /** Stable locale keys consumed by the shared modal. */
 export type SessionLogDownloadKey = keyof typeof en

@@ -47,6 +47,21 @@ export function apply(ctx: ClientContext): void {
         'browser.truncated': 'Too many folders to list; only the beginning is shown.',
         'browser.showHidden': 'Show hidden files',
       }],
+      ['hi', {
+        'browser.title': 'कार्यक्षेत्र निर्देशिका चुनें',
+        'browser.home': 'होम',
+        'browser.newFolder': 'नया फ़ोल्डर',
+        'browser.folderName': 'फ़ोल्डर नाम',
+        'browser.createIn': '"{name}" में नया फ़ोल्डर',
+        'browser.untitledFolder': 'शीर्षकहीन फ़ोल्डर',
+        'browser.create': 'बनाएँ',
+        'browser.cancel': 'रद्द करें',
+        'browser.open': 'खोलें',
+        'browser.editPath': 'पथ संपादित करें',
+        'browser.loading': 'लोड हो रहा है…',
+        'browser.truncated': 'सूचीबद्ध करने हेतु बहुत अधिक फ़ोल्डर; केवल आरंभ दिख रहा है।',
+        'browser.showHidden': 'छिपी फ़ाइलें दिखाएँ',
+      }],
     ]
     try {
       for (const [locale, dict] of dictionaries) disposers.push(ctx.locale.register(LOCALE_NS, locale, dict))

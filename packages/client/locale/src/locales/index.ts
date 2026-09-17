@@ -3,4 +3,5 @@
  * key set (English-only product).
  */
 export { en } from './en.ts'
+export { hi } from './hi.ts'
 export type { CommonKey } from './en.ts'

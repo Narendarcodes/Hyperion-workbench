@@ -16,3 +16,14 @@ export const en = {
   'row.inspect': 'Inspect',
   'menu.userOnly': 'user-only',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'row.title': 'कौशल',
+  'row.running': 'कौशल लोड हो रहा है',
+  'row.failed': 'कौशल लोड विफल रहा',
+  'row.stopped': 'कौशल लोड रुक गया',
+  'row.instructions': 'निर्देश',
+  'row.inspect': 'निरीक्षण करें',
+  'menu.userOnly': 'केवल-उपयोगकर्ता',
+}

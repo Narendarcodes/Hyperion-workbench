@@ -207,7 +207,7 @@ describe('LocaleRuntime', () => {
 
     dispose()
     expect(svc.getLocale().active).toBe('en')
-    expect(svc.getLocale().locales.map(locale => locale.id)).toEqual(['en'])
+    expect(svc.getLocale().locales.map(locale => locale.id)).toEqual(['en', 'hi'])
     expect(svc.bind('ns')('hello')).toBe('Hello')
     const revision = svc.getLocale().revision
     dispose()
@@ -283,7 +283,7 @@ describe('LocaleRuntime', () => {
       .toThrow('locale fallback "fr" is not registered')
     expect(() => svc.addLanguage({ id: 'fr', label: 'Français', fallback: 'fr-CA' }))
       .toThrow('fallback cycle')
-    expect(svc.getLocale().locales.map(locale => locale.id)).toEqual(['en', 'fr-CA'])
+    expect(svc.getLocale().locales.map(locale => locale.id)).toEqual(['en', 'hi', 'fr-CA'])
   })
 
   it('adopts a saved external locale when its definition registers later', () => {
@@ -403,10 +403,11 @@ describe('LocaleRuntime', () => {
     expect(svc.bind('ns2')('onlyJa')).toBe('onlyJa')
   })
 
-  it('starts with exactly the shipped locale', () => {
+  it('starts with exactly the shipped locales', () => {
     const { svc } = make()
     expect(svc.getLocale().locales).toEqual([
       { id: 'en', label: 'English' },
+      { id: 'hi', label: 'हिन्दी' },
     ])
   })
 })

@@ -14,3 +14,15 @@ export const en = {
   'listbox.aria': '/{command} matches',
   'notice.attachmentsUnsupported': '/{command} does not accept attachments; remove them first',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'search.placeholder': 'खोजें…',
+  'search.aria': 'विकल्प छाँटें',
+  'status.loading': 'विकल्प लोड हो रहे हैं…',
+  'status.applying': 'लागू हो रहा है…',
+  'status.empty': 'कोई विकल्प नहीं',
+  'overlay.aria': '/{command} विकल्प',
+  'listbox.aria': '/{command} मिलान',
+  'notice.attachmentsUnsupported': '/{command} अनुलग्नक स्वीकार नहीं करता; पहले उन्हें हटाएँ',
+}

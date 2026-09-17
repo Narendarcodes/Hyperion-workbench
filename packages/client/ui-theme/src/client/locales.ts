@@ -15,3 +15,16 @@ export const en = {
   'fontSize.increase': 'Increase font size',
   'fontSize.decrease': 'Decrease font size',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'appearance.title': 'रूप',
+  'appearance.light': 'हल्का',
+  'appearance.dark': 'गहरा',
+  'appearance.system': 'सिस्टम',
+  'fontSize.title': 'फ़ॉन्ट आकार',
+  'fontSize.description': 'केवल वार्तालाप सामग्री को प्रभावित करता है',
+  'fontSize.unit': 'px',
+  'fontSize.increase': 'फ़ॉन्ट आकार बढ़ाएँ',
+  'fontSize.decrease': 'फ़ॉन्ट आकार घटाएँ',
+}

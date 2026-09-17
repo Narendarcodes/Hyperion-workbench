@@ -28,3 +28,17 @@ export const en = {
   'time.months': '{n}mo',
   'time.years': '{n}y',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'section.files': 'फ़ाइलें व फ़ोल्डर',
+  'section.sessions': 'सत्र',
+  'candidate.noCwd': '(कार्य निर्देशिका नहीं)',
+  'crumb.root': 'कार्यक्षेत्र',
+  'time.now': 'अभी',
+  'time.minutes': '{n}मि.',
+  'time.hours': '{n}घं.',
+  'time.days': '{n}दि.',
+  'time.months': '{n}मा.',
+  'time.years': '{n}व.',
+}

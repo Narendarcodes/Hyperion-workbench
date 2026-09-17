@@ -37,6 +37,40 @@ const PRODUCT_NAMES = {
   'app.konsole': 'Konsole',
 } as const
 
+/** Hindi application labels (transliterated product names). */
+const PRODUCT_NAMES_HI = {
+  'app.cursor': 'कर्सर',
+  'app.vscode': 'वीएस कोड',
+  'app.vscodeinsiders': 'वीएस कोड इनसाइडर्स',
+  'app.windsurf': 'विंडसर्फ',
+  'app.zed': 'ज़ेड',
+  'app.sublimetext': 'सब्लाइम टेक्स्ट',
+  'app.xcode': 'एक्सकोड',
+  'app.androidstudio': 'एंड्रॉयड स्टूडियो',
+  'app.intellij': 'इंटेलिजे आइडिया',
+  'app.pycharm': 'पायचार्म',
+  'app.webstorm': 'वेबस्टॉर्म',
+  'app.phpstorm': 'पीएचपीस्टॉर्म',
+  'app.goland': 'गोलैंड',
+  'app.rider': 'राइडर',
+  'app.rustrover': 'रस्टरोवर',
+  'app.fork': 'फोर्क',
+  'app.sourcetree': 'सोर्सट्री',
+  'app.github': 'गिटहब डेस्कटॉप',
+  'app.tower': 'टावर',
+  'app.gitkraken': 'गिटक्राकेन',
+  'app.smartgit': 'स्मार्टगिट',
+  'app.sublimemerge': 'सब्लाइम मर्ज',
+  'app.ghostty': 'घोस्टी',
+  'app.warp': 'वार्प',
+  'app.iterm': 'आईटर्म2',
+  'app.kitty': 'किटी',
+  'app.windowsterminal': 'विंडोज़ टर्मिनल',
+  'app.gitbash': 'गिट बैश',
+  'app.gnometerminal': 'ग्नोम टर्मिनल',
+  'app.konsole': 'कंसोल',
+} as const
+
 /** English dictionary (the key-set source of truth). */
 export const en = {
   'open.title': 'Open workspace in {app}',
@@ -49,6 +83,20 @@ export const en = {
   'app.explorer': 'File Explorer',
   'app.filemanager': 'Files',
   'app.terminal': 'Terminal',
+}
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'open.title': '{app} में कार्यक्षेत्र खोलें',
+  'open.tooltip': 'स्थानीय खोलें',
+  'open.error': 'खोलना विफल रहा',
+  'menu.toggle': 'खोलने हेतु ऐप चुनें',
+  'menu.aria': 'में खोलें',
+  ...PRODUCT_NAMES_HI,
+  'app.finder': 'फाइंडर',
+  'app.explorer': 'फ़ाइल एक्सप्लोरर',
+  'app.filemanager': 'फ़ाइलें',
+  'app.terminal': 'टरमिनल',
 }
 
 /** Key domain of the `open-in-app` namespace. */

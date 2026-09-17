@@ -26,3 +26,20 @@ export const en = {
   'error.load': 'Could not load feedback',
   'error.generic': 'Could not save feedback',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'action.like': 'अच्छा उत्तर',
+  'action.likeActive': 'रेटिंग हटाएँ',
+  'action.dislike': 'खराब उत्तर',
+  'action.dislikeActive': 'रेटिंग हटाएँ',
+  'note.open': 'टिप्पणी जोड़ें',
+  'note.dialog': 'प्रतिपुष्टि',
+  'note.placeholder': 'क्या अच्छा था, या क्या गलत हुआ? (वैकल्पिक)',
+  'note.save': 'सहेजें',
+  'note.cancel': 'रद्द करें',
+  'note.aria': 'प्रतिपुष्टि टिप्पणी',
+  'error.conflict': 'यह प्रतिपुष्टि अन्यत्र बदली; नवीनतम स्थिति दिख रही है',
+  'error.load': 'प्रतिपुष्टि लोड नहीं हो सकी',
+  'error.generic': 'प्रतिपुष्टि सहेजी नहीं जा सकी',
+}

@@ -44,5 +44,46 @@ export const en = {
   'readonly.body': 'The parent session is offline; reopen it to continue sending messages.',
 }
 
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'diagnostic.corrupt': 'दूषित सत्र रिकॉर्ड',
+  'diagnostic.unsupported': 'असमर्थित उप-एजेंट रिकॉर्ड संस्करण',
+  'diagnostic.unavailable': 'सत्र रिकॉर्ड अस्थायी अनुपलब्ध',
+  'duration.seconds': '{seconds}से.',
+  'duration.minutes': '{minutes}मि. {seconds}से.',
+  'duration.hours': '{hours}घं. {minutes}मि. {seconds}से.',
+  'duration.days': '{days}दि.',
+  'duration.daysHours': '{days}दि. {hours}घं.',
+  'duration.months': '~{months}मा.',
+  'duration.monthsDays': '~{months}मा. {days}दि.',
+  'duration.years': '~{years}व.',
+  'duration.yearsMonths': '~{years}व. {months}मा.',
+  'duration.exactDays': '{days}दि. {hours}घं. {minutes}मि. {seconds}से.',
+  'duration.exactTitle': 'कुल सक्रिय अवधि: {duration}',
+  'tokens.thousand': '{value}हज़ार',
+  'tokens.million': '{value}मिलियन',
+  'tokens.total': '{value} टोकन',
+  'loading.label': 'उप-एजेंट लोड हो रहे हैं…',
+  'loading.aria': 'उप-एजेंट लोड हो रहे हैं',
+  'load.error': 'उप-एजेंट लोड नहीं हो सके',
+  'retry': 'पुनः प्रयास करें',
+  'mode.oneShot': 'एक-बार',
+  'mode.continuable': 'जारी रखने योग्य',
+  'activity.running': 'चल रहा है',
+  'activity.inactive': 'नहीं चल रहा है',
+  'branch.collapse': '{label} वंशज समेटें',
+  'branch.expand': '{label} वंशज फैलाएँ',
+  'count.total.one': '{count} उप-एजेंट',
+  'count.total.other': '{count} उप-एजेंट',
+  'count.running.one': '{count} उप-एजेंट चल रहा है',
+  'count.running.other': '{count} उप-एजेंट चल रहे हैं',
+  'switcher.aria': 'उप-एजेंट बदलें: {title}',
+  'tree.aria': 'उप-एजेंट सत्र',
+  'readonly.oneShot.title': 'एक-बार उप-एजेंट रिकॉर्ड',
+  'readonly.title': 'यह उप-एजेंट फ़िलहाल केवल पठन हेतु है',
+  'readonly.oneShot.body': 'एक-बार कार्य अनुवर्ती स्वीकार नहीं करते; पूर्ण निष्पादन रिकॉर्ड यहाँ देखें।',
+  'readonly.body': 'मूल सत्र ऑफ़लाइन है; संदेश भेजना जारी हेतु उसे पुनः खोलें।',
+}
+
 /** Key domain of the `subagent` namespace. */
 export type SubagentKey = keyof typeof en
