@@ -39,7 +39,8 @@ async function ensureBackgroundServers(): Promise<void> {
           '--port', '8080',
           '--alias', 'glm-ocr',
           '--hf-repo', 'ggml-org/GLM-OCR-GGUF',
-          '-c', '32768',
+          '-c', '65536',
+          '-np', '1',
           '-ngl', '99',
         ],
         {
