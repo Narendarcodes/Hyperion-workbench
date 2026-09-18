@@ -130,11 +130,9 @@ describe('MissionView and Plugin Registration', () => {
 
     expect(container.querySelector('[data-mission-view]')).not.toBeNull()
 
-    // Live Studio office iframe carries the session binding
-    const frame = container.querySelector('iframe')
-    expect(frame).not.toBeNull()
-    expect(frame?.getAttribute('src')).toBe('http://localhost:3000/office/embed?sessionId=session-1')
-    expect(frame?.getAttribute('title')).toBe('Live Hyperion office')
+    // Native 2D pixel office canvas carries the simulation
+    const canvas = container.querySelector('canvas')
+    expect(canvas).not.toBeNull()
     expect(container.textContent).toContain('Start mission')
     expect(container.textContent).toContain('Sandboxworkspace-write')
     expect(container.textContent).toContain('Approvalprompt')

@@ -10,7 +10,7 @@ import type { MissionSnapshot } from './mission-contract.ts'
 import { EMPTY_MISSION_SNAPSHOT } from './mission-contract.ts'
 import type { MissionPhase } from './mission-vocabulary.ts'
 import type { MissionKey } from './locales.ts'
-import { getStudioUrl } from './studio-url.ts'
+import { PixelOfficeCanvas } from './pixel-office/PixelOfficeCanvas.tsx'
 import css from './MissionView.module.css'
 
 /** Hook selector type for MissionSnapshot. */
@@ -52,14 +52,12 @@ export function MissionView({
   useMission = fallbackSelector,
   openView,
   renderSlot,
-  sessionId,
   t,
 }: ConvViewProps
   & PropsRenderSlots<'mission.orb'>
   & InjectFace<MissionViewInjected>
   & PropsLocale<'mission'>) {
   const currentSnapshot = useMission(s => s)
-  const officeUrl = `${getStudioUrl()}/office/embed?sessionId=${encodeURIComponent(String(sessionId))}`
 
   // Calculate status counts
   const counts = {
@@ -159,20 +157,11 @@ export function MissionView({
         </div>
       )}
 
-      {/* 3. LIVE STUDIO OFFICE (embedded; replaces the dropped SVG sim) */}
+      {/* 3. NATIVE 2D GATHER-STYLE PIXEL OFFICE */}
       <div className={css.simulationArea}>
-        <iframe
-          className={css.officeFrame}
-          title={t('simulation.aria')}
-          src={officeUrl}
-          allow="clipboard-read; clipboard-write"
-        />
+        <PixelOfficeCanvas snapshot={currentSnapshot} />
         {renderSlot('mission.orb', {})}
       </div>
-      <a className={css.officeOpenLink} href={officeUrl} target="_blank" rel="noopener">
-        {t('office.openStudio')}
-      </a>
-
       {/* 4. BOTTOM 3-CARD EXECUTION STRIP */}
       <div className={css.bottomGrid}>
         {/* Card 1: Agent Status */}
