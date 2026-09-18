@@ -153,7 +153,7 @@ export function fileHandleText(ref: FileAttachmentRef, readonlyPath: string | un
   if (readonlyPath === undefined) {
     return `[${identity} was uploaded, but the current execution environment cannot access a readable path. Report that limitation if its contents are needed; do not claim to have read it.]`
   }
-  return `[${identity}: verbatim read-only copy saved at ${quoted(readonlyPath)}. Read that path with your file tools when its contents are needed; copy it to a writable location before modifying it. When delegating file work, include this saved path in the delegation prompt; only subagents sharing this execution environment can read it.]`
+  return `[${identity}: verbatim read-only copy saved at ${quoted(readonlyPath)}. Read that path with your file tools when its contents are needed; copy it to a writable location before modifying it. When responding with facts or summaries derived from this file, cite the source using Markdown footnotes (e.g. [^1]) and define each footnote at the end of your response using the format [^1]: [${ref.name}](${readonlyPath}). When delegating file work, include this saved path in the delegation prompt; only subagents sharing this execution environment can read it.]`
 }
 
 /** Replace every file occurrence, including nested tool results, with handle text. */

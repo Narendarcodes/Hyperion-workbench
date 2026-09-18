@@ -22,6 +22,7 @@ function makeContext(): MarkdownRenderContext {
     streaming: false,
     labels: markdownLabels,
     fileMentions: undefined,
+    citation: undefined,
     targets: createReferenceTargets(),
     footnoteOrder: [],
     footnoteCounts: new Map(),
@@ -194,31 +195,18 @@ describe('renderFootnoteSection edge shapes', () => {
     expect(renderFootnoteSection(context)).toBeNull()
   })
 
-  it('renders no back-reference markers for an uncounted footnote', () => {
+  it('renders clean footnote list items for defined footnotes', () => {
     const context = makeContext()
     context.targets.footnotes.set('Q', {
       type: 'footnoteDefinition',
       identifier: 'q',
-      children: [{ type: 'paragraph', children: [text('quiet')] }],
+      children: [{ type: 'paragraph', children: [text('test.pdf p.2')] }],
     })
     context.footnoteOrder.push('Q')
     const { container } = render(<div>{renderFootnoteSection(context)}</div>)
-    expect(container.querySelector('li')?.textContent).toBe('\nquiet \n')
-  })
-
-  it('appends back-references after a non-paragraph body', () => {
-    const context = makeContext()
-    context.targets.footnotes.set('N', {
-      type: 'footnoteDefinition',
-      identifier: 'n',
-      children: [{ type: 'code', value: 'code body', lang: null }],
-    })
-    context.footnoteOrder.push('N')
-    context.footnoteCounts.set('N', 1)
-    const { container } = render(<div>{renderFootnoteSection(context)}</div>)
-    const item = container.querySelector('li')
-    expect(item?.querySelector('.md-code-block')).not.toBeNull()
-    expect(item?.textContent).toContain('↩')
+    expect(container.querySelector('li')?.textContent).toContain('[1]')
+    expect(container.querySelector('li')?.textContent).toContain('test.pdf')
+    expect(container.querySelector('li')?.textContent).toContain('Page 2')
   })
 })
 

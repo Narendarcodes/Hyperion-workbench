@@ -1,9 +1,11 @@
 /** Per-Session Chat selection store shared by the transcript and details panel. */
 import { defineStore, type EngineStoreHandle } from '@deepseek-ai/dsh-client-store'
-import type { ChatStoreState, SelectionTarget, TurnProcessViewEntry } from './contract/store.ts'
+import type { ChatStoreState, SelectedCitation, SelectionTarget, TurnProcessViewEntry } from './contract/store.ts'
 
 type ChatActions = {
   select: (draft: ChatStoreState, target: SelectionTarget | null) => void
+  selectCitation: (draft: ChatStoreState, target: SelectedCitation | null) => void
+  clearCitation: (draft: ChatStoreState) => void
   setTurnProcessOpen: (
     draft: ChatStoreState,
     turn: number,
@@ -31,9 +33,17 @@ export function storedTurnProcessEntry(
  */
 export function createChatStore(): EngineStoreHandle<ChatStoreState, ChatActions> {
   return defineStore({
-    init: (): ChatStoreState => ({ selection: null, turnProcesses: [] }),
+    init: (): ChatStoreState => ({ selection: null, selectedCitation: null, turnProcesses: [] }),
     actions: {
-      select: (draft, target: SelectionTarget | null) => { draft.selection = target },
+      select: (draft, target: SelectionTarget | null) => {
+        draft.selection = target
+        if (target !== null) draft.selectedCitation = null
+      },
+      selectCitation: (draft, target: SelectedCitation | null) => {
+        draft.selectedCitation = target
+        if (target !== null) draft.selection = null
+      },
+      clearCitation: (draft) => { draft.selectedCitation = null },
       setTurnProcessOpen: (draft, turn, answerStep, open) => {
         const index = draft.turnProcesses.findIndex(entry => entry.turn === turn)
         if (!open) {

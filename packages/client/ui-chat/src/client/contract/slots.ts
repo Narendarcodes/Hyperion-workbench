@@ -13,7 +13,7 @@ import type { SnapshotStore } from '@deepseek-ai/dsh-client-store'
 import type { MarkdownFileMentions } from '@deepseek-ai/dsh-client-ui-primitives'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type { createChatStore } from '../stores.ts'
-import type { ToolCallId, SelectionTarget } from './store.ts'
+import type { ToolCallId, SelectedCitation, SelectionTarget } from './store.ts'
 import type { ChatConversationViewNode, ChatNode, ChatNodeKind } from './chat-nodes.ts'
 import type {
   ChatNodeProcessSource, ChatNodeSource, ChatSnapshot, ChatTurnProcessPresentation,
@@ -69,6 +69,23 @@ export interface ChatNodeTurnDataInjected {
   hooks: { turnData: SlotHookFactory<'conversation.chat.node', UseChatNodeTurnData> }
 }
 
+/** Citation interaction owned by one assistant renderer. */
+export interface CitationOwnerProps {
+  /** Currently selected badge number, if any. */
+  selectedIndex: number | null
+  /**
+   * Handle one badge activation.
+   * @param select - Badge number, identifier, and resolved target.
+   */
+  onSelect: (select: SelectedCitation) => void
+  /**
+   * Accessible label for one badge.
+   * @param index - 1-based badge number.
+   * @returns Label for the button.
+   */
+  label: (index: number) => string
+}
+
 /** Stable owner currency delivered to a keyed Chat renderer. */
 export interface ChatNodeOwnerProps {
   selectedCallId?: ToolCallId | undefined
@@ -85,6 +102,8 @@ export interface ChatNodeOwnerProps {
   loadImage: MessageImageLoader
   renderMessageImages: RenderMessageImages
   fileMentions: (owner: TurnTailOwnerProps) => MarkdownFileMentions | undefined
+  /** Citation channel for footnote badges; absent while no selection infra exists. */
+  citation?: CitationOwnerProps | undefined
   /** Turn-process state when this Node belongs to a projected Turn. */
   turnProcess?: TurnProcessOwnerProps | undefined
 }
@@ -139,6 +158,7 @@ export interface ChatViewInjected {
     chatNodeProcess: (key: string) => ChatNodeProcessSource
   }
   openDetails: (target: SelectionTarget) => void
+  openCitation: (target: SelectedCitation) => void
   openFile: (path: string) => Promise<void>
   loadOlder: () => void
   /** Jump loader: page history back through seq; resolves when the window covers it. */
