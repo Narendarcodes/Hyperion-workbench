@@ -2,12 +2,13 @@ import { describe, expect, it } from 'vitest'
 import {
   calculateIoU,
   deduplicateOcrDetections,
+  detectRunawaySequences,
   parseRawOcrOutput,
   processOcrPipeline,
   validateOcrResponse,
 } from '../../src/ocr-pipeline.ts'
 
-describe('OCR Pipeline & Spatial Deduplication', () => {
+describe('OCR Pipeline, Spatial Deduplication & Runaway Sequence Detector', () => {
   it('TEST 1: Parses normal OCR image detections cleanly', () => {
     const rawInput = JSON.stringify({
       detections: [
@@ -21,6 +22,7 @@ describe('OCR Pipeline & Spatial Deduplication', () => {
     expect(validateOcrResponse(result)).toBe(true)
     expect(result.detections.length).toBe(3)
     expect(result.repetitionDetected).toBe(false)
+    expect(result.runawaySequenceDetected).toBe(false)
     expect(result.detections[0].text).toBe('M6-052-00540')
     expect(result.detections[1].text).toBe('FLH 17668')
     expect(result.detections[2].text).toBe('052 PG 0026')
@@ -75,22 +77,26 @@ describe('OCR Pipeline & Spatial Deduplication', () => {
     expect(result.detections[1].text).toBe('FLH 17668')
   })
 
-  it('TEST 5: Non-bbox repeating paragraph sequence deduplication', () => {
-    const rawInput = `M6-052-00540
-052 PG 0026
-FLH 17668
-M6-052-00540
-052 PG 0026
-FLH 17668
-M6-052-00540
-052 PG 0026
-FLH 17668`
+  it('TEST 5: RUNAWAY SEQUENCE DETECTOR catches and truncates artificial c1 -> c100 completion loops', () => {
+    const rawInput = `Section 5
+a1 Error Inspection
+b1 Error Inspection
+c1 Creation
+c2 Creation
+c3 Creation
+c4 Creation
+c5 Creation
+c6 Creation
+c7 Creation
+c8 Creation`
 
-    const parsed = parseRawOcrOutput(rawInput)
-    const { deduplicated, duplicateCount } = deduplicateOcrDetections(parsed)
-    expect(duplicateCount).toBe(6)
-    expect(deduplicated.length).toBe(3)
-    expect(deduplicated.map(d => d.text)).toEqual(['M6-052-00540', '052 PG 0026', 'FLH 17668'])
+    const result = processOcrPipeline(rawInput, { debugLog: false })
+    expect(result.runawaySequenceDetected).toBe(true)
+    // Should preserve 'c1 Creation' and truncate the artificial 'c2', 'c3', 'c4'... loop
+    const textList = result.detections.map(d => d.text)
+    expect(textList).toContain('c1 Creation')
+    expect(textList).not.toContain('c2 Creation')
+    expect(textList).not.toContain('c3 Creation')
   })
 
   it('Calculates Intersection over Union (IoU) correctly', () => {

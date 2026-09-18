@@ -1,7 +1,8 @@
 /**
  * Robust OCR Pipeline & Spatial Deduplication Harness for HYPERION Workbench.
  *
- * Prevents model-generated repetition loops from local llama-server / GGUF OCR models
+ * Prevents model-generated repetition loops and autoregressive sequence completion
+ * hallucinations (e.g. c1 Creation, c2 Creation... c100 Creation) from local llama-server
  * while preserving exact text recognition, spatial bounding box coordinates, and
  * legitimate repeated labels at different locations on engineering drawings.
  *
@@ -16,6 +17,7 @@ export interface OcrDetection {
   bbox?: BoundingBox
   confidence?: number
   uncertaintyMarkerUsed?: boolean
+  suspiciousSequence?: boolean
 }
 
 export interface OcrResult {
@@ -24,6 +26,7 @@ export interface OcrResult {
   parsedOutput?: OcrDetection[]
   deduplicatedOutput?: OcrDetection[]
   repetitionDetected?: boolean
+  runawaySequenceDetected?: boolean
   duplicateCount?: number
 }
 
@@ -133,14 +136,63 @@ function normalizeDetection(item: any): OcrDetection | null {
 }
 
 /**
+ * Detect and truncate artificial autoregressive sequence completion loops
+ * (e.g. c1 Creation, c2 Creation, c3 Creation... c100 Creation) that lack spatial visual grounding.
+ */
+export function detectRunawaySequences(
+  detections: readonly OcrDetection[]
+): { sanitized: OcrDetection[]; runawayDetected: boolean } {
+  if (!detections || detections.length < 2) {
+    return { sanitized: [...detections], runawayDetected: false }
+  }
+
+  const sanitized: OcrDetection[] = []
+  let runawayDetected = false
+
+  // Regex pattern matcher for prefix-number-suffix strings like "c1 Creation", "Section 1", "Item 5"
+  const patternRegex = /^([a-zA-Z\s_-]*?)(\d+)(.*)$/
+
+  for (let i = 0; i < detections.length; i++) {
+    const curr = detections[i]
+    sanitized.push(curr)
+
+    if (i >= 1) {
+      const prev1 = detections[i - 1]
+
+      const matchCurr = curr.text.trim().match(patternRegex)
+      const matchPrev1 = prev1.text.trim().match(patternRegex)
+
+      if (matchCurr && matchPrev1) {
+        const [, prefixC, numC, suffixC] = matchCurr
+        const [, prefixP1, numP1, suffixP1] = matchPrev1
+
+        // Check if prefix and suffix match and numbers increment sequentially (+1)
+        if (prefixC === prefixP1 && suffixC === suffixP1) {
+          const n1 = parseInt(numP1, 10)
+          const nCurr = parseInt(numC, 10)
+
+          if (nCurr === n1 + 1) {
+            // Check if spatial bounding boxes are missing or identical (ungrounded pattern continuation)
+            const isSpatialGroundingMissing = !curr.bbox && !prev1.bbox
+            const isSpatialBboxOverlapping = curr.bbox && prev1.bbox && calculateIoU(curr.bbox, prev1.bbox) > 0.4
+
+            if (isSpatialGroundingMissing || isSpatialBboxOverlapping) {
+              runawayDetected = true
+              // Mark suspicious sequence continuation and truncate remaining artificial sequence loop
+              sanitized.pop() // Remove current hallucination item
+              break
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return { sanitized, runawayDetected }
+}
+
+/**
  * Perform spatial & sequence deduplication on detected OCR items.
- *
- * Rules:
- * 1. If detections include bounding boxes:
- *    - Identical text + IoU > iouThreshold (overlapping position) => DUPLICATE generation artifact -> REMOVE
- *    - Identical text + IoU <= iouThreshold (different physical locations on schematic) => PRESERVE BOTH
- * 2. If bounding boxes are absent:
- *    - Sliding sequence N-gram deduplication to suppress identical multi-line repeated output blocks without dropping legitimate single-word repetitions.
  */
 export function deduplicateOcrDetections(
   detections: readonly OcrDetection[],
@@ -185,9 +237,7 @@ export function deduplicateOcrDetections(
   // Non-spatial fallback: Detect repeated block cycles (e.g. A, B, C, A, B, C)
   const deduplicated: OcrDetection[] = []
   let duplicateCount = 0
-  const seenSequences = new Set<string>()
 
-  // Check for repeated sequence loops of size K (from K=1 to K=10)
   const textList = detections.map(d => d.text.trim())
   const n = textList.length
 
@@ -206,7 +256,6 @@ export function deduplicateOcrDetections(
   }
 
   if (loopLength > 0) {
-    // Keep only the first cycle of length loopLength
     for (let i = 0; i < Math.min(n, loopLength); i++) {
       deduplicated.push(detections[i])
     }
@@ -247,8 +296,11 @@ export function processOcrPipeline(
   const parsedOutput = parseRawOcrOutput(rawOutput)
   logger('PARSED OCR OUTPUT', parsedOutput)
 
+  // Runaway Sequence Detection Guard
+  const { sanitized, runawayDetected } = detectRunawaySequences(parsedOutput)
+
   // Stage 3: Spatial Deduplication
-  const { deduplicated, duplicateCount } = deduplicateOcrDetections(parsedOutput, options)
+  const { deduplicated, duplicateCount } = deduplicateOcrDetections(sanitized, options)
   logger('DEDUPLICATED OCR OUTPUT', deduplicated)
 
   return {
@@ -257,6 +309,7 @@ export function processOcrPipeline(
     parsedOutput,
     deduplicatedOutput: deduplicated,
     repetitionDetected: duplicateCount > 0,
+    runawaySequenceDetected: runawayDetected,
     duplicateCount,
   }
 }

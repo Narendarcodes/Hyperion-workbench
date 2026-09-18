@@ -43,6 +43,7 @@ async function ensureBackgroundServers(): Promise<void> {
           '-np', '1',
           '-ngl', '99',
           '--flash-attn', 'off',
+          '-fit', 'off',
         ],
         {
           detached: true,

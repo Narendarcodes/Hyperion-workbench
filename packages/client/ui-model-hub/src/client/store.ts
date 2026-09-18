@@ -312,8 +312,13 @@ export async function syncOllamaModelsToSettings(force = false): Promise<void> {
         ...(isVision
           ? {
             parameters: {
-              temperature: 0.1,
-              repeat_penalty: 1.05,
+              temperature: 0.0,
+              top_k: 20,
+              top_p: 0.9,
+              min_p: 0.05,
+              repeat_penalty: 1.10,
+              repeat_last_n: 128,
+              max_tokens: 512,
             },
           }
           : {}),
@@ -364,8 +369,13 @@ export async function syncLlamaModelsToSettings(force = false): Promise<void> {
         ...(isVision
           ? {
             parameters: {
-              temperature: 0.1,
-              repeat_penalty: 1.05,
+              temperature: 0.0,
+              top_k: 20,
+              top_p: 0.9,
+              min_p: 0.05,
+              repeat_penalty: 1.10,
+              repeat_last_n: 128,
+              max_tokens: 512,
             },
           }
           : {}),
