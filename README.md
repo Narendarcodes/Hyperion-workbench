@@ -27,14 +27,13 @@ Modern enterprises face a severe dilemma: proprietary CAD blueprints, operationa
 
 ---
 
-## Architecture
-
 Hyperion Workbench uses a layered, reactive micro-kernel powered by the Cordis plugin framework:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                      HYPERION WORKBENCH UI (Port 3080)                  │
 │   Chat Stream  •  Voice Mic (ASR)  •  Trajectory Panel  •  Workspace    │
+│   Mission View (2D Office)  •  Settings  •  Trajectory Inspector        │
 └────────────────────────────────────┬────────────────────────────────────┘
                                      │ RPC / SSE Transport
 ┌────────────────────────────────────▼────────────────────────────────────┐
@@ -42,16 +41,25 @@ Hyperion Workbench uses a layered, reactive micro-kernel powered by the Cordis p
 │  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
 │  │   LLM Adapter Layer   │ │  Tool Execution  │ │  Session & Memory  │  │
 │  │ (llama.cpp / Ollama)  │ │ (FS / Terminal)  │ │ (SQLite / History) │  │
+│  │ vLLM / LM Studio      │ │ (read_pdf, edit) │ │ (Projection Cache) │  │
 │  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
 │  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
-│  │ Indic Conformer ASR   │ │ Guardrails & ACL │ │ Explainability Eng │  │
+│  │ Indic Conformer ASR   │ │ Guardrails & ACL │ │ Explainability Engine│  │
 │  │ (Python FastAPI 8008) │ │ (Host Isolation) │ │ (Citations / Diff) │  │
+│  │ 22 Indian Languages   │ │ (NVIDIA PaIR)    │ │ (Trajectory View)  │  │
+│  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
+│  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
+│  │ RAG & Vector Store    │ │ Multimodal Intake│ │ Orchestrator        │  │
+│  │ (Qdrant/ChromaDB)     │ │ (OCR/Vision)     │ │ (Plan→Act→Observe) │  │
+│  │ Semantic Search       │ │ (P&ID Parsing)   │ │ (HITL Approval)    │  │
 │  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
 └────────────────────────────────────┬────────────────────────────────────┘
                                      │
 ┌────────────────────────────────────▼────────────────────────────────────┐
 │                  SOVEREIGN ON-PREMISE HARDWARE STACK                    │
 │        Local NVIDIA GPU / Workstation  •  No External Internet Required │
+│        NVIDIA PaIR (Process Acceleration Infrastructure Runtime)        │
+│        NVIDIA OpenShell Sandbox Policy (deny-by-default, metered)       │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -64,11 +72,11 @@ Hyperion Workbench uses a layered, reactive micro-kernel powered by the Cordis p
 - Integrated Python inference server running NVIDIA NeMo / IndicConformer / Whisper checkpoints via a sidecar process.
 - Supports 22 scheduled Indian languages with auto-punctuation and transcription paste into the composer bar.
 - Voice pill UI with ChatGPT-style takeover: discard (ghost X), live scrolling transcript, stop (outlined square), send (blue arrow).
-
-### 2. NN/g Explainable AI Trajectory (9-Stage Evidence Trail)
-- Replaces black-box generation with step-by-step observable decision trajectories.
-- Inline citation badges `[1]`, `[2]` linking directly to verified file offsets and tool observations.
-- Real-time display of provider, model, latency, tokens consumed, and target execution endpoint.
+### 3. Bounded Sandboxed Tool Runtime (NVIDIA OpenShell + PaIR)
+- Deterministic tools for filesystem reading/editing (`read_pdf`, `ast_edit`, `edit`, `read`, `write`, `read_image`).
+- Persistent terminal execution with process-tree isolation (NVIDIA PaIR), cancellation tokens, and resource limits.
+- Prevents runaway tool execution through strict per-call timeout policies and deny-by-default permissions (NVIDIA OpenShell).
+- Sandbox verification: read-only filesystem, tmpfs, execution timeout, output limits.
 - **9 stages**: Capture → Understand → Ground → Analyze → Verify → Decide → Deliver → Review → Archive.
 - High-risk claims grouped for human confirmation regardless of model confidence.
 
