@@ -39,19 +39,12 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
       list = list.filter((m) => {
         const caps = Array.isArray(m.capabilities) ? m.capabilities : []
         const arch = (typeof m.architecture === 'string' ? m.architecture : '').toLowerCase()
-        if (filterType === 'vision') return caps.includes('vision') || arch.includes('vision')
+        if (filterType === 'vision') return caps.includes('vision') || arch.includes('vision') || (m.name || m.id || '').toLowerCase().includes('ocr')
         if (filterType === 'tools') return caps.includes('tools')
-        if (filterType === 'industrial') {
-          const nameLower = (m.name || m.id || '').toLowerCase()
-          return nameLower.includes('emsllm') || caps.includes('industrial-maintenance') || caps.includes('fault-diagnosis-reasoning')
-        }
-        if (filterType === 'ocr') {
-          const nameLower = (m.name || m.id || '').toLowerCase()
-          return nameLower.includes('ocr') || nameLower.includes('glm-ocr')
-        }
         return true
       })
     }
+
 
 
 
@@ -140,11 +133,10 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
 
           <select className={css.select} value={filterType} onChange={e => setFilterType(e.target.value)}>
             <option value="all">All Types</option>
-            <option value="industrial">Industrial Specialist (emsLLM-4B)</option>
-            <option value="ocr">Drawing OCR Specialist (GLM-OCR)</option>
             <option value="vision">Vision / Multimodal</option>
             <option value="tools">Tools Capable</option>
           </select>
+
 
 
 

@@ -9,11 +9,12 @@ interface AddLlamaModelModalProps {
 }
 
 const RECOMMENDED_GGUF_MODELS = [
-  { repo: 'PEGAAICC/emsLLM-4B', quant: 'Q4_K_M', label: 'emsLLM-4B — Industrial Maintenance Specialist' },
   { repo: 'ggml-org/GLM-OCR-GGUF', quant: 'Q8_0', label: 'GLM-OCR — Precision Drawing OCR Specialist' },
   { repo: 'ggml-org/Llama-3.2-3B-Instruct-GGUF', quant: 'Q4_K_M', label: 'Llama 3.2 3B Instruct' },
   { repo: 'Qwen/Qwen2.5-Coder-7B-Instruct-GGUF', quant: 'Q4_K_M', label: 'Qwen 2.5 Coder 7B' },
+  { repo: 'bartowski/DeepSeek-R1-Distill-Qwen-1.5B-GGUF', quant: 'Q4_K_M', label: 'DeepSeek R1 Distill 1.5B (Q4_K_M)' },
 ]
+
 
 
 
