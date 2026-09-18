@@ -320,31 +320,144 @@
   text-underline-offset: 3px;
 }
 /* Inline citation badge (NN/g Explainable AI: distinct inline citation tags) */
+.citationSpan {
+  display: inline;
+  vertical-align: baseline;
+  line-height: inherit;
+}
 .citationBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  vertical-align: super;
-  font-size: 10px;
+  vertical-align: baseline;
+  font-size: 11px;
   font-weight: 600;
   line-height: 1;
-  padding: 1px 5px;
-  margin: 0 2px;
-  border-radius: 9999px;
+  padding: 1px 6px;
+  margin: 0 3px;
+  border-radius: 4px;
   background: var(--dsw-alias-interactive-bg-solid, rgba(57, 100, 254, 0.12));
   color: var(--dsw-alias-link, #3964fe);
-  border: 1px solid var(--dsw-alias-border-subtle, rgba(57, 100, 254, 0.25));
+  border: 0.5px solid var(--dsw-alias-border-subtle, rgba(57, 100, 254, 0.25));
   cursor: default;
   user-select: none;
-  transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
+  transition: background-color 120ms ease, border-color 120ms ease;
 }
 
 .citationBadge:hover {
   background: var(--dsw-alias-button-info-hover, rgba(57, 100, 254, 0.22));
   border-color: var(--dsw-alias-link, #3964fe);
-  transform: translateY(-1px);
+}
+
+button.citationBadge {
+  font: inherit;
+  cursor: pointer;
+}
+
+button.citationBadge:focus-visible {
+  outline: 2px solid var(--dsw-alias-link, #3964fe);
+  outline-offset: 1px;
+}
+
+button.citationBadge[data-selected] {
+  background: var(--dsw-alias-button-info-hover, rgba(57, 100, 254, 0.28));
+  border-color: var(--dsw-alias-link, #3964fe);
+  box-shadow: 0 0 0 1px var(--dsw-alias-link, #3964fe);
 }
 
 .citationIndex {
   font-feature-settings: 'tnum';
+}
+
+/* Clean, modern Footnotes section */
+.footnotesSection {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+}
+
+.footnotesTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dsw-alias-label-secondary, #666);
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.footnotesList {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footnoteListItem {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.footnoteButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary, inherit);
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 120ms ease, border-color 120ms ease;
+  width: 100%;
+}
+
+.footnoteButton:hover {
+  background: var(--dsw-alias-bg-hover, rgba(0, 0, 0, 0.04));
+  border-color: var(--dsw-alias-border-subtle, rgba(0, 0, 0, 0.1));
+}
+
+.footnoteButton:focus-visible {
+  outline: 2px solid var(--dsw-alias-link, #3964fe);
+  outline-offset: 1px;
+}
+
+.footnoteButton[data-selected] {
+  background: var(--dsw-alias-interactive-bg-solid, rgba(57, 100, 254, 0.08));
+  border-color: var(--dsw-alias-link, #3964fe);
+}
+
+.footnoteStatic {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--dsw-alias-label-primary, inherit);
+}
+
+.footnoteIndex {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--dsw-alias-interactive-bg-solid, rgba(57, 100, 254, 0.12));
+  color: var(--dsw-alias-link, #3964fe);
+  border: 0.5px solid var(--dsw-alias-border-subtle, rgba(57, 100, 254, 0.25));
+  flex-shrink: 0;
+}
+
+.footnoteTitle {
+  font-weight: 500;
+  color: var(--dsw-alias-label-primary, inherit);
+}
+
+.footnotePage {
+  color: var(--dsw-alias-label-secondary, #666);
+  font-size: 12px;
 }

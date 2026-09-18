@@ -4,7 +4,7 @@ import { createChatStore } from '../src/client/stores.ts'
 describe('createChatStore', () => {
   it('starts without a selected Chat target', () => {
     const store = createChatStore().create()
-    expect(store.store.getSnapshot()).toEqual({ selection: null, turnProcesses: [] })
+    expect(store.store.getSnapshot()).toEqual({ selection: null, selectedCitation: null, turnProcesses: [] })
   })
 
   it('selects and clears one Chat details target', () => {
@@ -14,6 +14,40 @@ describe('createChatStore', () => {
       .toEqual({ turnSeq: 3, callId: 'c1', toolName: 'bash' })
     store.actions.select(null)
     expect(store.store.getSnapshot().selection).toBeNull()
+  })
+
+  it('selects one citation and clears the tool selection', () => {
+    const store = createChatStore().create()
+    store.actions.select({ turnSeq: 3, callId: 'c1', toolName: 'bash' })
+    store.actions.selectCitation({
+      index: 1,
+      identifier: 'A',
+      target: { href: 'https://example.com/manual.pdf', page: 12, title: 'manual.pdf' },
+    })
+    expect(store.store.getSnapshot().selectedCitation).toEqual({
+      index: 1,
+      identifier: 'A',
+      target: { href: 'https://example.com/manual.pdf', page: 12, title: 'manual.pdf' },
+    })
+    expect(store.store.getSnapshot().selection).toBeNull()
+    store.actions.clearCitation()
+    expect(store.store.getSnapshot().selectedCitation).toBeNull()
+  })
+
+  it('clearing a null citation keeps the tool selection', () => {
+    const store = createChatStore().create()
+    store.actions.select({ turnSeq: 1, callId: 'c1' })
+    store.actions.selectCitation(null)
+    expect(store.store.getSnapshot().selectedCitation).toBeNull()
+    expect(store.store.getSnapshot().selection).toEqual({ turnSeq: 1, callId: 'c1' })
+  })
+
+  it('selecting a tool target clears the citation', () => {
+    const store = createChatStore().create()
+    store.actions.selectCitation({ index: 2, identifier: 'B', target: {} })
+    store.actions.select({ turnSeq: 4 })
+    expect(store.store.getSnapshot().selectedCitation).toBeNull()
+    expect(store.store.getSnapshot().selection).toEqual({ turnSeq: 4 })
   })
 
   it('creates independent instances', () => {

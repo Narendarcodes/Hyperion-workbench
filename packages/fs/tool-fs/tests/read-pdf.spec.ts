@@ -171,8 +171,12 @@ afterEach(async () => {
 })
 
 describe('read_pdf tool', () => {
-  it('registers alongside read with its prompt section', async () => {
+  it('registers alongside read with its prompt section and citation guidance', async () => {
     expect(ctx.tools.schemas().map(s => s.name)).toContain('read_pdf')
+    const assembly = await ctx.systemPrompt.assemble()
+    const section = assembly.sections.find(s => s.name === 'tool:read-pdf')
+    expect(section?.text).toContain('cite the source using Markdown footnotes')
+    expect(section?.text).toContain('[^1]: [filename.pdf](file_path#page=N)')
   })
 
   it('returns paged text from a two-page PDF', async () => {

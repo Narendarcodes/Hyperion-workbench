@@ -123,6 +123,25 @@ describe('Chat inject API', () => {
     await b.runtime.dispose()
   })
 
+  it('writes the citation selection before opening details', async () => {
+    const b = await bench()
+    const { instance, injected } = b.chatViewApi(ROOT)
+    injected.openDetails({ turnSeq: 2, callId: 'c1' })
+    injected.openCitation({
+      index: 1,
+      identifier: 'A',
+      target: { href: 'https://example.com/manual.pdf', page: 12, title: 'manual.pdf' },
+    })
+    expect(instance.store.getSnapshot().selectedCitation).toEqual({
+      index: 1,
+      identifier: 'A',
+      target: { href: 'https://example.com/manual.pdf', page: 12, title: 'manual.pdf' },
+    })
+    expect(instance.store.getSnapshot().selection).toBeNull()
+    expect(b.layout.openDetails).toHaveBeenCalledTimes(2)
+    await b.runtime.dispose()
+  })
+
   it('resolves file paths against the Session cwd and preserves failures', async () => {
     const b = await bench()
     const { injected } = b.chatViewApi(ROOT)

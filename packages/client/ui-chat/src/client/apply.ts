@@ -118,6 +118,10 @@ export function apply(ctx: Context): void {
             actions.select(target)
             ctx.layout.openDetails()
           },
+          openCitation: (target) => {
+            actions.selectCitation(target)
+            ctx.layout.openDetails()
+          },
           fileMentions: (owner: TurnTailOwnerProps) => ctx.get('chatFileMentions')?.forClosing(owner),
           openFile: async (path) => {
             const cwd = ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd
