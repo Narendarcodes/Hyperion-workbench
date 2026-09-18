@@ -143,8 +143,34 @@ export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
     capabilities: ['vision', 'ocr', 'precision-engineering-ocr'],
   },
   {
+    id: 'glm-ocr:latest',
+    name: 'glm-ocr:latest',
+    format: 'GGUF',
+    quantization: 'Q8_0',
+    size: 4900000000,
+    parameterSize: '0.9B',
+    contextLength: 65536,
+    architecture: 'vision',
+    modifiedAt: new Date().toISOString(),
+    status: 'installed',
+    capabilities: ['vision', 'ocr'],
+  },
+  {
     id: 'emsllm-4b',
     name: 'emsLLM-4B — Local Industrial Maintenance Specialist',
+    format: 'GGUF',
+    quantization: 'Q4_K_M',
+    size: 2500000000,
+    parameterSize: '4B',
+    contextLength: 4096,
+    architecture: 'llama',
+    modifiedAt: new Date().toISOString(),
+    status: 'installed',
+    capabilities: ['completion', 'chat', 'fault-diagnosis-reasoning', 'sop-generation', 'equipment-troubleshooting'],
+  },
+  {
+    id: 'PEGAAICC/emsLLM-4B:Q4_K_M',
+    name: 'emsLLM-4B (Llama.cpp Engine)',
     format: 'GGUF',
     quantization: 'Q4_K_M',
     size: 2500000000,
@@ -169,6 +195,7 @@ export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
     capabilities: ['completion', 'chat', 'tools'],
   },
 ]
+
 
   /** List installed & available llama.cpp GGUF models */
   async listModels(): Promise<LlamaModel[]> {
