@@ -35,6 +35,7 @@ Hyperion Workbench uses a layered, reactive micro-kernel powered by the Cordis p
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                      HYPERION WORKBENCH UI (Port 3080)                  │
 │   Chat Stream  •  Voice Mic (ASR)  •  Trajectory Panel  •  Workspace    │
+│   Mission View (2D Office)  •  Settings  •  Trajectory Inspector        │
 └────────────────────────────────────┬────────────────────────────────────┘
                                      │ RPC / SSE Transport
 ┌────────────────────────────────────▼────────────────────────────────────┐
@@ -42,16 +43,25 @@ Hyperion Workbench uses a layered, reactive micro-kernel powered by the Cordis p
 │  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
 │  │   LLM Adapter Layer   │ │  Tool Execution  │ │  Session & Memory  │  │
 │  │ (llama.cpp / Ollama)  │ │ (FS / Terminal)  │ │ (SQLite / History) │  │
+│  │ vLLM / LM Studio      │ │ (read_pdf, edit) │ │ (Projection Cache) │  │
 │  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
 │  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
-│  │ Indic Conformer ASR   │ │ Guardrails & ACL │ │ Explainability Eng │  │
+│  │ Indic Conformer ASR   │ │ Guardrails & ACL │ │ Explainability Engine│  │
 │  │ (Python FastAPI 8008) │ │ (Host Isolation) │ │ (Citations / Diff) │  │
+│  │ 22 Indian Languages   │ │ (NVIDIA PaIR)    │ │ (Trajectory View)  │  │
+│  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
+│  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
+│  │ RAG & Vector Store    │ │ Multimodal Intake│ │ Orchestrator        │  │
+│  │ (Qdrant/ChromaDB)     │ │ (OCR/Vision)     │ │ (Plan→Act→Observe) │  │
+│  │ Semantic Search       │ │ (P&ID Parsing)   │ │ (HITL Approval)    │  │
 │  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
 └────────────────────────────────────┬────────────────────────────────────┘
                                      │
 ┌────────────────────────────────────▼────────────────────────────────────┐
 │                  SOVEREIGN ON-PREMISE HARDWARE STACK                    │
 │        Local NVIDIA GPU / Workstation  •  No External Internet Required │
+│        NVIDIA PaIR (Process Acceleration Infrastructure Runtime)        │
+│        NVIDIA OpenShell Sandbox Policy (deny-by-default, metered)       │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
