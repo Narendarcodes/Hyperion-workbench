@@ -40,3 +40,22 @@ export const hi = {
   'plan.decline': 'अस्वीकार करें',
   'plan.discuss': 'इस पर चर्चा करें',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'error.incomplete': 'ముందు ఈ ప్రశ్నను పూర్తి చేయండి.',
+  'error.unanswered': 'ఎంపికను ఎంచుకోండి లేదా కస్టమ్ సమాధానం వ్రాయండి.',
+  'nav.prev': 'మునుపటి ప్రశ్న',
+  'nav.next': 'తర్వాతి ప్రశ్న',
+  'nav.minimize': 'ప్రశ్న కార్డును కుదించండి',
+  'nav.maximize': 'ప్రశ్న కార్డును విస్తరించండి',
+  'nav.cancel': 'అన్ని ప్రశ్నలను తొలగించండి',
+  'option.recommended': 'సిఫార్సు చేయబడింది',
+  'custom.placeholder': 'మీ సమాధానం వ్రాయండి',
+  'action.skip': 'ఈ ప్రశ్నను దాటవేయండి',
+  'action.next': 'తర్వాత',
+  'plan.header': 'ప్రణాళిక సమీక్ష',
+  'plan.approve': 'ఆమోదించండి',
+  'plan.decline': 'తిరస్కరించండి',
+  'plan.discuss': 'దీని గురించి చర్చించండి',
+}

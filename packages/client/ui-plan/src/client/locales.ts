@@ -22,3 +22,13 @@ export const hi = {
   'chip.off.title': 'योजना मोड बंद — चालू हेतु क्लिक करें (/plan)',
   'chip.exitFailed': 'योजना मोड से निकलना विफल रहा',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'chip.label': 'ప్రణాళిక',
+  'chip.on.aria': 'ప్రణాళిక మోడ్ ఆన్‌లో ఉంది, ఆఫ్ చేయడానికి నొక్కండి',
+  'chip.on.title': 'ప్రణాళిక మోడ్ ఆన్‌లో ఉంది — ఆఫ్ చేయడానికి క్లిక్ చేయండి (/plan off)',
+  'chip.off.aria': 'ప్రణాళిక మోడ్ ఆఫ్‌లో ఉంది, ఆన్ చేయడానికి నొక్కండి',
+  'chip.off.title': 'ప్రణాళిక మోడ్ ఆఫ్‌లో ఉంది — ఆన్ చేయడానికి క్లిక్ చేయండి (/plan)',
+  'chip.exitFailed': 'ప్రణాళిక మోడ్ నుండి నిష్క్రమించడం విఫలమైంది',
+}

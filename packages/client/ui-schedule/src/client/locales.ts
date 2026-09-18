@@ -47,5 +47,27 @@ export const hi = {
   'relative.overdue': '{value} {unit} विलंबित',
 }
 
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'trigger.one': '{count} రిమైండర్',
+  'trigger.other': '{count} రిమైండర్లు',
+  'list.aria': 'చురుకైన రిమైండర్లు',
+  'status.scheduled': 'షెడ్యూల్ చేయబడింది',
+  'status.overdue': 'గడువు దాటింది',
+  'frequency.once': 'ఒకసారి',
+  'frequency.every': 'ప్రతి {value} {unit}',
+  'unit.day.one': 'రోజు',
+  'unit.day.other': 'రోజులు',
+  'unit.hour.one': 'గంట',
+  'unit.hour.other': 'గంటలు',
+  'unit.minute.one': 'నిమిషం',
+  'unit.minute.other': 'నిమిషాలు',
+  'unit.second.one': 'సెకను',
+  'unit.second.other': 'సెకన్లు',
+  'relative.now': 'ఇప్పుడు గడువు',
+  'relative.future': '{value} {unit} లో',
+  'relative.overdue': '{value} {unit} గడువు దాటింది',
+}
+
 /** Key domain of the Schedule catalog namespace. */
 export type ScheduleCatalogKey = keyof typeof en

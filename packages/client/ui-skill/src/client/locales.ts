@@ -27,3 +27,14 @@ export const hi = {
   'row.inspect': 'निरीक्षण करें',
   'menu.userOnly': 'केवल-उपयोगकर्ता',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'row.title': 'నైపుణ్యం',
+  'row.running': 'నైపుణ్యం లోడ్ అవుతోంది',
+  'row.failed': 'నైపుణ్యం లోడ్ విఫలమైంది',
+  'row.stopped': 'నైపుణ్యం లోడ్ ఆగిపోయింది',
+  'row.instructions': 'సూచనలు',
+  'row.inspect': 'పరిశీలించండి',
+  'menu.userOnly': 'వినియోగదారునికి-మాత్రమే',
+}

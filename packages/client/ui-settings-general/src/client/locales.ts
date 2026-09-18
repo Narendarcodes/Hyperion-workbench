@@ -34,3 +34,19 @@ export const hi = {
   'connection.reconnect': 'विच्छेदित, अभी पुनः संयोजित करें',
   'connection.restart': 'स्वतः पुनः संयोजन हो रहा है, अभी पुनः संयोजित करें',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'trigger': 'సెట్టింగ్‌లు',
+  'title': 'సెట్టింగ్‌లు',
+  'close': 'మూసివేయండి',
+  'openDocument': 'కాన్ఫిగరేషన్ ఫైల్‌ను తెరవండి',
+  'openDocument.error': 'కాన్ఫిగరేషన్ ఫైల్ తెరవలేకపోయింది',
+  'general.nav': 'సాధారణ',
+  'connection.error': 'డిస్‌కనెక్ట్ అయ్యింది',
+  'connection.retry': 'ఇప్పుడు మళ్లీ కనెక్ట్ చేయండి',
+  'connection.connecting': 'మళ్లీ కనెక్ట్ అవుతోంది',
+  'connection.connected': 'కనెక్ట్ అయ్యింది',
+  'connection.reconnect': 'డిస్‌కనెక్ట్ అయ్యింది, ఇప్పుడు మళ్లీ కనెక్ట్ చేయండి',
+  'connection.restart': 'స్వయంచాలకంగా మళ్లీ కనెక్ట్ అవుతోంది, ఇప్పుడు మళ్లీ కనెక్ట్ చేయండి',
+}

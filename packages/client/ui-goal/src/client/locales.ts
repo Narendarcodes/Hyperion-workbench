@@ -32,3 +32,18 @@ export const hi = {
   'action.edit': 'लक्ष्य संपादित करें',
   'action.clear': 'लक्ष्य साफ़ करें',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'phase.active': 'కొనసాగుతున్న లక్ష్యం',
+  'phase.paused': 'ఆపిన లక్ష్యం',
+  'phase.blocked': 'నిరోధించబడిన లక్ష్యం',
+  'objective.aria': 'లక్ష్య ఉద్దేశం',
+  'commandInput.aria': 'ఆదేశ ఇన్‌పుట్',
+  'action.save': 'లక్ష్యాన్ని సేవ్ చేయండి',
+  'action.cancel': 'సవరణను రద్దు చేయండి',
+  'action.pause': 'లక్ష్యాన్ని ఆపండి',
+  'action.resume': 'లక్ష్యాన్ని పునఃప్రారంభించండి',
+  'action.edit': 'లక్ష్యాన్ని సవరించండి',
+  'action.clear': 'లక్ష్యాన్ని తొలగించండి',
+}

@@ -28,3 +28,16 @@ export const hi = {
   'fontSize.increase': 'फ़ॉन्ट आकार बढ़ाएँ',
   'fontSize.decrease': 'फ़ॉन्ट आकार घटाएँ',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'appearance.title': 'రూపం',
+  'appearance.light': 'వెలుగు',
+  'appearance.dark': 'చీకటి',
+  'appearance.system': 'సిస్టమ్',
+  'fontSize.title': 'ఫాంట్ పరిమాణం',
+  'fontSize.description': 'సంభాషణ విషయాన్ని మాత్రమే ప్రభావితం చేస్తుంది',
+  'fontSize.unit': 'px',
+  'fontSize.increase': 'ఫాంట్ పరిమాణాన్ని పెంచండి',
+  'fontSize.decrease': 'ఫాంట్ పరిమాణాన్ని తగ్గించండి',
+}

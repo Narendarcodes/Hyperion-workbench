@@ -21,5 +21,14 @@ export const hi = {
   'produced.showInFolder': 'फ़ोल्डर में दिखाएँ',
 }
 
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'produced.label': 'ఉత్పత్తి చేయబడింది',
+  'produced.moreOne': '+ 1 ఫైల్',
+  'produced.more': '+ {count} ఫైళ్లు',
+  'produced.open': '{name} తెరవండి',
+  'produced.showInFolder': 'ఫోల్డర్‌లో చూపండి',
+}
+
 /** Union of this namespace's dictionary keys. */
 export type DeliverablesKey = keyof typeof en

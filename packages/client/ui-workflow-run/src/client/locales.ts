@@ -47,5 +47,27 @@ export const hi = {
   'status.interrupted': 'बाधित',
 }
 
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'run.title': '{name}',
+  'run.members.one': '{count} సభ్యుడు',
+  'run.members.other': '{count} సభ్యులు',
+  'run.empty': 'ఏ సభ్యులు ప్రారంభం కాలేదు',
+  'phase.unassigned': 'దశ కేటాయించబడలేదు',
+  'phase.empty': 'ఖాళీ దశ పేరు',
+  'statusCount.running': 'నడుస్తున్నవి {count}',
+  'statusCount.completed': 'పూర్తయినవి {count}',
+  'statusCount.failed': 'విఫలమైనవి {count}',
+  'statusCount.cancelled': 'రద్దు చేయబడినవి {count}',
+  'statusCount.interrupted': 'అంతరాయం కలిగినవి {count}',
+  'member.empty': 'ఖాళీ సభ్యుని పేరు',
+  'member.open': '{name} తెరవండి',
+  'status.running': 'నడుస్తోంది',
+  'status.completed': 'పూర్తయ్యింది',
+  'status.failed': 'విఫలమైంది',
+  'status.cancelled': 'రద్దు చేయబడింది',
+  'status.interrupted': 'అంతరాయం కలిగింది',
+}
+
 /** Union of this namespace's dictionary keys. */
 export type WorkflowRunKey = keyof typeof en

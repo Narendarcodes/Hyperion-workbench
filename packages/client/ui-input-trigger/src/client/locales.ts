@@ -32,3 +32,16 @@ export const hi = {
   'crumbs.aria': 'फ़ोल्डर नेविगेशन',
   'suggestions.aria': 'ट्रिगर सुझाव',
 }
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'command': 'ఆదేశాలు',
+  'skill': 'నైపుణ్యాలు',
+  'subagent': 'ఉప-ఏజెంట్లు',
+  'loading': 'లోడ్ అవుతోంది…',
+  'drill.aria': 'ఫోల్డర్‌ను బ్రౌజ్ చేయండి',
+  'drill.hint': 'ఫోల్డర్‌ను బ్రౌజ్ చేయండి',
+  'drill.key': 'Tab',
+  'crumbs.aria': 'ఫోల్డర్ నావిగేషన్',
+  'suggestions.aria': 'ట్రిగర్ సూచనలు',
+}

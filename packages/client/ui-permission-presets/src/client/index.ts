@@ -30,7 +30,7 @@ import type { PermissionSelect } from '@deepseek-ai/dsh-permission-presets/clien
 import { PermissionRow } from './PermissionRow.tsx'
 import type { PermissionRowInjected } from './PermissionRow.tsx'
 import {
-  accessEn, accessHi, en, hi,
+  accessEn, accessHi, accessTe, en, hi, te,
 } from './locales.ts'
 import {
   displayPermissionPreset, FULL_ACCESS_PRESET,
@@ -111,6 +111,16 @@ export function apply(ctx: ClientContext): void {
         'confirm.cancel': accessHi['confirm.cancel'],
         'confirm.enable': accessHi['confirm.enable'],
       }),
+      ctx.locale.register(ACCESS_NS, 'te', {
+        'preset.readOnly': accessTe['preset.readOnly'],
+        'preset.workspaceWrite': accessTe['preset.workspaceWrite'],
+        'preset.fullAccess': accessTe['preset.fullAccess'],
+        'confirm.title': accessTe['confirm.title'],
+        'confirm.description': accessTe['confirm.description'],
+        'confirm.acknowledge': accessTe['confirm.acknowledge'],
+        'confirm.cancel': accessTe['confirm.cancel'],
+        'confirm.enable': accessTe['confirm.enable'],
+      }),
     ]
     return () => { for (const dispose of disposers) dispose() }
   }, 'ui-permission: Full access confirmation dictionaries')
@@ -119,7 +129,7 @@ export function apply(ctx: ClientContext): void {
   const sessionFor = (session: ClientSessionContext): SessionFace | undefined =>
     sessions.binding(session.sessionId)?.session
 
-  ctx.effect(() => ctx.locale.register('settings.permission', { en, hi }), 'ui-permission: settings row dictionaries')
+  ctx.effect(() => ctx.locale.register('settings.permission', { en, hi, te }), 'ui-permission: settings row dictionaries')
 
   // The shared SettingsScope mirror updates after document commits and reconnects.
   const controller = new PermissionPresetSettingsController(

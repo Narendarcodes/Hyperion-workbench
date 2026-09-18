@@ -109,7 +109,7 @@ describe('locale apply', () => {
     // The inject-time re-sync sealed the init window: the mirror is current.
     expect(instance.getSnapshot().active).toBe('en')
     expect(instance.getSnapshot().options.map(o => o.id)).toEqual([
-      'en', 'hi', 'bn', 'mr', 'te', 'ta', 'gu', 'kn', 'ml', 'pa', 'or',
+      'en', 'hi', 'te', 'bn', 'mr', 'ta', 'gu', 'kn', 'ml', 'pa', 'or',
     ])
     // Copy rides the standard locale seat: the entry declares the namespace.
     expect(entry.locale).toBe(SETTINGS_NS)
@@ -119,7 +119,7 @@ describe('locale apply', () => {
     face.setLocale('ja')
     expect(locale.getLocale().active).toBe('ja')
     expect(instance.getSnapshot().active).toBe('ja')
-    // The settings namespace ships English only; ja falls back to it.
+    // The settings namespace ships no Japanese dictionary; ja falls back to English.
     expect(locale.bind(SETTINGS_NS)('language.title')).toBe('Language')
     await vi.waitFor(() => { expect(b.mutate).toHaveBeenCalledTimes(2) })
   })
@@ -141,9 +141,9 @@ describe('locale apply', () => {
     expect(instance.getSnapshot().options).toEqual([
       { id: 'en', label: 'English' },
       { id: 'hi', label: 'हिन्दी' },
+      { id: 'te', label: 'తెలుగు' },
       { id: 'bn', label: 'বাংলা' },
       { id: 'mr', label: 'मराठी' },
-      { id: 'te', label: 'తెలుగు' },
       { id: 'ta', label: 'தமிழ்' },
       { id: 'gu', label: 'ગુજરાતી' },
       { id: 'kn', label: 'ಕನ್ನಡ' },
@@ -155,7 +155,7 @@ describe('locale apply', () => {
 
     await languagePack.dispose()
     expect(instance.getSnapshot().options.map(option => option.id)).toEqual([
-      'en', 'hi', 'bn', 'mr', 'te', 'ta', 'gu', 'kn', 'ml', 'pa', 'or',
+      'en', 'hi', 'te', 'bn', 'mr', 'ta', 'gu', 'kn', 'ml', 'pa', 'or',
     ])
   })
 
@@ -172,6 +172,21 @@ describe('locale apply', () => {
     // A namespace with only an English dictionary resolves English for Hindi readers.
     locale.register('ns', 'en', { onlyEn: 'English only' })
     expect(locale.bind('ns')('onlyEn')).toBe('English only')
+  })
+
+  it('serves Telugu copy where translated and English elsewhere', async () => {
+    const b = await bench()
+    declareItems(b.slots)
+    await b.ctx.plugin({ inject: [...inject], apply }).await()
+    const locale = b.ctx.get('locale') as LocaleRuntime
+
+    locale.setLocale('te')
+    expect(locale.getLocale().active).toBe('te')
+    expect(locale.bind(SETTINGS_NS)('language.title')).toBe('భాష')
+    expect(locale.bind(COMMON_NS)('cancel')).toBe('రద్దు చేయండి')
+    // A namespace with only an English dictionary resolves English for Telugu readers.
+    locale.register('ns-te', 'en', { onlyEn: 'English only' })
+    expect(locale.bind('ns-te')('onlyEn')).toBe('English only')
   })
 
   it('falls back to English for catalogued languages without dictionaries', async () => {

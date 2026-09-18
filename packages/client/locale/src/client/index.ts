@@ -18,9 +18,9 @@ import {
   LOCALE_ID_PATTERN, LOCALE_IDS, LOCALE_PREFERENCE_FIELD, LOCALE_SETTINGS_NAMESPACE,
   type BuiltInLocaleId, type LocaleId, type LocaleSettings,
 } from '../locale-settings.ts'
-import { en, hi, type CommonKey } from '../locales/index.ts'
+import { en, hi, te, type CommonKey } from '../locales/index.ts'
 import {
-  en as settingsEn, hi as settingsHi, type SettingsLocaleKey,
+  en as settingsEn, hi as settingsHi, te as settingsTe, type SettingsLocaleKey,
 } from '../locales/settings.ts'
 import type { LanguageRowInjected } from './LanguageRow.tsx'
 import { LanguageRow } from './LanguageRow.tsx'
@@ -113,6 +113,7 @@ export const SETTINGS_NS = 'settings.locale'
 const BUILT_IN_LOCALE_METADATA = {
   en: { label: 'English' },
   hi: { label: 'हिन्दी' },
+  te: { label: 'తెలుగు' },
 } as const satisfies Record<BuiltInLocaleId, Omit<LocaleDefinition, 'id'>>
 const BUILT_IN_LOCALES: readonly LocaleDefinition[] = Object.freeze(
   LOCALE_IDS.map(id => Object.freeze({ id, ...BUILT_IN_LOCALE_METADATA[id] })),
@@ -120,14 +121,13 @@ const BUILT_IN_LOCALES: readonly LocaleDefinition[] = Object.freeze(
 
 /**
  * Indic language catalog offered in the Language row alongside the built-in
- * English and Hindi. These entries have no dictionaries yet, so per-key lookup
- * falls back to English until their translations land. Every entry terminates
- * at English, keeping the fallback chains the registry requires.
+ * English, Hindi, and Telugu. These entries have no dictionaries yet, so per-key
+ * lookup falls back to English until their translations land. Every entry
+ * terminates at English, keeping the fallback chains the registry requires.
  */
 const INDIC_LANGUAGES = [
   { id: 'bn', label: 'বাংলা' },
   { id: 'mr', label: 'मराठी' },
-  { id: 'te', label: 'తెలుగు' },
   { id: 'ta', label: 'தமிழ்' },
   { id: 'gu', label: 'ગુજરાતી' },
   { id: 'kn', label: 'ಕನ್ನಡ' },
@@ -554,8 +554,8 @@ export const inject = ['slots', 'remote', 'settingsScope']
 export function apply(ctx: ClientContext): void {
   const host = ctx.settingsScope.bind<LocaleSettings>({ namespace: LOCALE_SETTINGS_NAMESPACE })
   const locale = new LocaleRuntime(ctx, host)
-  locale.register(COMMON_NS, { en, hi })
-  locale.register(SETTINGS_NS, { en: settingsEn, hi: settingsHi })
+  locale.register(COMMON_NS, { en, hi, te })
+  locale.register(SETTINGS_NS, { en: settingsEn, hi: settingsHi, te: settingsTe })
   for (const language of INDIC_LANGUAGES) {
     const { id, label } = language
     ctx.effect(

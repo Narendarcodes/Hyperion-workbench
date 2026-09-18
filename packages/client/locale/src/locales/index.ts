@@ -4,4 +4,5 @@
  */
 export { en } from './en.ts'
 export { hi } from './hi.ts'
+export { te } from './te.ts'
 export type { CommonKey } from './en.ts'

@@ -300,7 +300,8 @@ describe('approval Remote Event consumer', () => {
     const bench = setupPlugin()
     await bench.ctx.fiber.dispose()
     expect(bench.disposeSlot).toHaveBeenCalledOnce()
-    // The single typed (en + hi) dictionary registration disposes with the plugin lifetime.
+    // The single typed (en + hi + te) dictionary registration disposes with
+    // the plugin lifetime.
     expect(bench.disposeLocale).toHaveBeenCalledOnce()
   })
 })
