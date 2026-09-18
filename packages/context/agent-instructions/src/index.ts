@@ -42,6 +42,8 @@ export type {
 } from './files.ts'
 export { renderWorkspaceContext } from './render.ts'
 export type { RenderedWorkspaceContext, TruncatedInstruction } from './render.ts'
+export { buildOcrSystemPrompt, DEFAULT_OCR_SYSTEM_PROMPT } from './ocr-system-prompt.ts'
+export type { OcrSystemPromptOptions } from './ocr-system-prompt.ts'
 
 function visibleBaselineSource(
   agent: Agent,
