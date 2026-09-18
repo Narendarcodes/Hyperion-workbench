@@ -41,9 +41,14 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
         const arch = (typeof m.architecture === 'string' ? m.architecture : '').toLowerCase()
         if (filterType === 'vision') return caps.includes('vision') || arch.includes('vision')
         if (filterType === 'tools') return caps.includes('tools')
+        if (filterType === 'industrial') {
+          const nameLower = (m.name || m.id || '').toLowerCase()
+          return nameLower.includes('emsllm') || caps.includes('industrial-maintenance') || caps.includes('fault-diagnosis-reasoning')
+        }
         return true
       })
     }
+
 
     list.sort((a, b) => {
       if (sortBy === 'modified') {
@@ -130,9 +135,11 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
 
           <select className={css.select} value={filterType} onChange={e => setFilterType(e.target.value)}>
             <option value="all">All Types</option>
+            <option value="industrial">Industrial Specialist (emsLLM)</option>
             <option value="vision">Vision / Multimodal</option>
             <option value="tools">Tools Capable</option>
           </select>
+
 
           <select className={css.select} value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
             <option value="modified">Recently Modified</option>

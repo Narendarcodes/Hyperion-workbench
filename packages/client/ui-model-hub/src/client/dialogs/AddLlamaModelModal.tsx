@@ -9,10 +9,13 @@ interface AddLlamaModelModalProps {
 }
 
 const RECOMMENDED_GGUF_MODELS = [
+  { repo: 'PEGAAICC/emsLLM-4B', quant: 'Q4_K_M', label: 'emsLLM-4B Industrial Specialist (Q4_K_M)' },
+  { repo: 'PEGAAICC/emsLLM-8B', quant: 'Q4_K_M', label: 'emsLLM-8B Industrial Specialist (Q4_K_M)' },
   { repo: 'ggml-org/Llama-3.2-3B-Instruct-GGUF', quant: 'Q4_K_M', label: 'Llama 3.2 3B (Q4_K_M)' },
   { repo: 'Qwen/Qwen2.5-Coder-7B-Instruct-GGUF', quant: 'Q4_K_M', label: 'Qwen 2.5 Coder 7B (Q4_K_M)' },
   { repo: 'bartowski/DeepSeek-R1-Distill-Qwen-1.5B-GGUF', quant: 'Q4_K_M', label: 'DeepSeek R1 Distill 1.5B (Q4_K_M)' },
 ]
+
 
 export const AddLlamaModelModal: React.FC<AddLlamaModelModalProps> = ({ isOpen, onClose }) => {
   const [tab, setTab] = useState<'library' | 'airgap'>('library')
