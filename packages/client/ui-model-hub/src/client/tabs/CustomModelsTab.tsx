@@ -32,7 +32,7 @@ export function CustomModelsTab({ storeState }: CustomModelsTabProps) {
     mf += `PARAMETER num_ctx ${contextLength}\n`
     mf += `PARAMETER top_p ${topP}\n`
     if (stopSequences.trim()) {
-      stopSequences.split(',').forEach(s => {
+      stopSequences.split(',').forEach((s) => {
         if (s.trim()) mf += `PARAMETER stop "${s.trim()}"\n`
       })
     }

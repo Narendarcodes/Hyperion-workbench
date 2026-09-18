@@ -53,7 +53,7 @@ export const ModelDetailsModal: React.FC<ModelDetailsModalProps> = ({ modelName,
 
   return (
     <div className={css.overlay} onClick={onClose}>
-      <div className={css.modal} onClick={(e) => e.stopPropagation()}>
+      <div className={css.modal} onClick={e => e.stopPropagation()}>
         <div className={css.modalHeader}>
           <h3 className={css.modalTitle}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

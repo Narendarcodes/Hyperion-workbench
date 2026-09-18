@@ -56,7 +56,7 @@ export class LlamaService {
     try {
       const controller = new AbortController()
       const timeout = setTimeout(() => controller.abort(), 2000)
-      
+
       const res = await fetch(`${this.endpoint}/health`, {
         method: 'GET',
         signal: controller.signal,
@@ -304,7 +304,7 @@ export class LlamaService {
         dataView.getUint8(0),
         dataView.getUint8(1),
         dataView.getUint8(2),
-        dataView.getUint8(3)
+        dataView.getUint8(3),
       )
 
       if (magicBytes !== 'GGUF') {

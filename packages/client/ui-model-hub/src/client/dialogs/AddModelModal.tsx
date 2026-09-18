@@ -18,7 +18,7 @@ const RECOMMENDED_MODELS = [
 
 export const AddModelModal: React.FC<AddModelModalProps> = ({ isOpen, onClose }) => {
   const [tab, setTab] = useState<'library' | 'airgap'>('library')
-  
+
   // Library pull state
   const [pullModelName, setPullModelName] = useState('')
   const [isPulling, setIsPulling] = useState(false)
@@ -112,7 +112,7 @@ export const AddModelModal: React.FC<AddModelModalProps> = ({ isOpen, onClose })
 
   return (
     <div className={css.overlay} onClick={() => !isPulling && !isImporting && onClose()}>
-      <div className={css.modal} onClick={(e) => e.stopPropagation()}>
+      <div className={css.modal} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className={css.modalHeader}>
           <h3 className={css.modalTitle}>
@@ -177,7 +177,7 @@ export const AddModelModal: React.FC<AddModelModalProps> = ({ isOpen, onClose })
                   className={css.input}
                   placeholder="e.g. deepseek-r1:1.5b, llama3.2, qwen2.5:3b"
                   value={pullModelName}
-                  onChange={(e) => setPullModelName(e.target.value)}
+                  onChange={e => setPullModelName(e.target.value)}
                   disabled={isPulling}
                   autoFocus
                 />
@@ -189,7 +189,7 @@ export const AddModelModal: React.FC<AddModelModalProps> = ({ isOpen, onClose })
               <div className={css.formGroup}>
                 <label className={css.formLabel}>Recommended for RTX 2050 (4GB VRAM):</label>
                 <div className={css.curatedPills}>
-                  {RECOMMENDED_MODELS.map((m) => (
+                  {RECOMMENDED_MODELS.map(m => (
                     <button
                       key={m.name}
                       type="button"
@@ -252,7 +252,7 @@ export const AddModelModal: React.FC<AddModelModalProps> = ({ isOpen, onClose })
                   className={css.input}
                   placeholder="e.g. E:\models\DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf"
                   value={ggufPath}
-                  onChange={(e) => setGgufPath(e.target.value)}
+                  onChange={e => setGgufPath(e.target.value)}
                   disabled={isImporting}
                   autoFocus
                 />
@@ -268,7 +268,7 @@ export const AddModelModal: React.FC<AddModelModalProps> = ({ isOpen, onClose })
                   className={css.input}
                   placeholder="e.g. custom-deepseek:latest"
                   value={ggufName}
-                  onChange={(e) => setGgufName(e.target.value)}
+                  onChange={e => setGgufName(e.target.value)}
                   disabled={isImporting}
                 />
               </div>
@@ -280,7 +280,7 @@ export const AddModelModal: React.FC<AddModelModalProps> = ({ isOpen, onClose })
                   style={{ minHeight: '64px', resize: 'vertical' }}
                   placeholder="Optional default system persona or instructions..."
                   value={ggufSystemPrompt}
-                  onChange={(e) => setGgufSystemPrompt(e.target.value)}
+                  onChange={e => setGgufSystemPrompt(e.target.value)}
                   disabled={isImporting}
                 />
               </div>

@@ -29,8 +29,8 @@ export function apply(ctx: Context): void {
         name: 'sidebar.footer.action',
         id: 'model-hub-sidebar-button',
       },
-      ModelHubSidebarButton
-    )
+      ModelHubSidebarButton,
+    ),
   )
 
   // Register the Model Hub full workspace overlay in shell.overlay
@@ -40,7 +40,7 @@ export function apply(ctx: Context): void {
         name: 'shell.overlay',
         id: 'model-hub-workspace',
       },
-      ModelHubWorkspace
-    )
+      ModelHubWorkspace,
+    ),
   )
 }

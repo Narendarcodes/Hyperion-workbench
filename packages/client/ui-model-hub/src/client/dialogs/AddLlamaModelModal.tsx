@@ -43,7 +43,7 @@ export const AddLlamaModelModal: React.FC<AddLlamaModelModalProps> = ({ isOpen, 
             setSuggestions(
               items
                 .map((i: any) => ({ id: i.id || i.modelId, downloads: i.downloads || 0 }))
-                .filter(i => Boolean(i.id))
+                .filter(i => Boolean(i.id)),
             )
           }
         }
@@ -108,7 +108,7 @@ export const AddLlamaModelModal: React.FC<AddLlamaModelModalProps> = ({ isOpen, 
       const dummyHeader = defaultLlama.parseGgufMetadata(
         new ArrayBuffer(16),
         ggufName.trim(),
-        4200000000
+        4200000000,
       )
 
       setImportStatus(`Validated GGUF: ${dummyHeader.architecture} (${dummyHeader.quantization})`)

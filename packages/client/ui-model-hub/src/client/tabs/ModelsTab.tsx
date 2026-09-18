@@ -43,7 +43,7 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
 
     // Type filter
     if (filterType !== 'all') {
-      list = list.filter(m => {
+      list = list.filter((m) => {
         const caps = Array.isArray(m.capabilities) ? m.capabilities : []
         if (filterType === 'vision') return caps.includes('vision') || (m.details?.family || '').toLowerCase().includes('vision')
         if (filterType === 'tools') return caps.includes('tools')
@@ -186,7 +186,7 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
               </tr>
             </thead>
             <tbody>
-              {filteredModels.map(m => {
+              {filteredModels.map((m) => {
                 const isLoaded = runningMap.has(m.name) || runningMap.has(m.model)
                 const isLoadingThis = actionLoading === m.name
                 const caps = m.capabilities || ['completion', 'chat']

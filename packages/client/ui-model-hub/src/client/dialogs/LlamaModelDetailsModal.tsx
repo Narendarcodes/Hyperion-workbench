@@ -10,7 +10,7 @@ interface LlamaModelDetailsModalProps {
 
 export const LlamaModelDetailsModal: React.FC<LlamaModelDetailsModalProps> = ({ modelName, onClose }) => {
   const store = useStoreSnapshot()
-  
+
   if (!store.isLlamaDetailsOpen || !modelName) return null
 
   const model = store.llamaModels.find(m => m.name === modelName || m.id === modelName)

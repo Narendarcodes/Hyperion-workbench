@@ -131,7 +131,7 @@ export const ModelHubWorkspace: React.FC = () => {
           <button
             type="button"
             className={`${css.tabBtn} ${activeTab === 'models' ? css.active : ''}`}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setActiveTab('models')
@@ -150,7 +150,7 @@ export const ModelHubWorkspace: React.FC = () => {
           <button
             type="button"
             className={`${css.tabBtn} ${activeTab === 'llama-models' ? css.active : ''}`}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setActiveTab('llama-models')
@@ -166,7 +166,7 @@ export const ModelHubWorkspace: React.FC = () => {
           <button
             type="button"
             className={`${css.tabBtn} ${activeTab === 'custom' ? css.active : ''}`}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setActiveTab('custom')
@@ -182,7 +182,7 @@ export const ModelHubWorkspace: React.FC = () => {
           <button
             type="button"
             className={`${css.tabBtn} ${activeTab === 'updates' ? css.active : ''}`}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setActiveTab('updates')
@@ -199,7 +199,7 @@ export const ModelHubWorkspace: React.FC = () => {
           <button
             type="button"
             className={`${css.tabBtn} ${activeTab === 'resources' ? css.active : ''}`}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setActiveTab('resources')
@@ -226,7 +226,7 @@ export const ModelHubWorkspace: React.FC = () => {
           <button
             type="button"
             className={css.closeHubBtn}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               closeModelHub()

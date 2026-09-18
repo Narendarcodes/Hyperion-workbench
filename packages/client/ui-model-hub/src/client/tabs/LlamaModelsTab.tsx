@@ -31,12 +31,12 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
         m =>
           (typeof m.name === 'string' ? m.name : '').toLowerCase().includes(q) ||
           (typeof m.id === 'string' ? m.id : '').toLowerCase().includes(q) ||
-          (typeof m.architecture === 'string' ? m.architecture : '').toLowerCase().includes(q)
+          (typeof m.architecture === 'string' ? m.architecture : '').toLowerCase().includes(q),
       )
     }
 
     if (filterType !== 'all') {
-      list = list.filter(m => {
+      list = list.filter((m) => {
         const caps = Array.isArray(m.capabilities) ? m.capabilities : []
         const arch = (typeof m.architecture === 'string' ? m.architecture : '').toLowerCase()
         if (filterType === 'vision') return caps.includes('vision') || arch.includes('vision')
@@ -171,7 +171,7 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
               </tr>
             </thead>
             <tbody>
-              {filteredModels.map(m => {
+              {filteredModels.map((m) => {
                 const isLoaded = loadedSet.has(m.id) || loadedSet.has(m.name) || m.status === 'loaded'
                 const isLoadingThis = actionLoading === m.name
                 const archName = typeof m.architecture === 'string' ? m.architecture : 'llama'

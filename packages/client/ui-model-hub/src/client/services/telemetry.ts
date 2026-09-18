@@ -61,12 +61,12 @@ export interface OllamaReleaseUpdate {
 function enrichResources(raw: any): SystemResources {
   const gpu = raw.gpu
     ? {
-        ...raw.gpu,
-        vramTotalMB: raw.gpu.totalVramMB,
-        vramUsedMB: raw.gpu.usedVramMB,
-        temperatureC: raw.gpu.temperature,
-        utilizationGPU: raw.gpu.utilization,
-      }
+      ...raw.gpu,
+      vramTotalMB: raw.gpu.totalVramMB,
+      vramUsedMB: raw.gpu.usedVramMB,
+      temperatureC: raw.gpu.temperature,
+      utilizationGPU: raw.gpu.utilization,
+    }
     : null
 
   const cpu = {
