@@ -45,9 +45,14 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
           const nameLower = (m.name || m.id || '').toLowerCase()
           return nameLower.includes('emsllm') || caps.includes('industrial-maintenance') || caps.includes('fault-diagnosis-reasoning')
         }
+        if (filterType === 'ocr') {
+          const nameLower = (m.name || m.id || '').toLowerCase()
+          return nameLower.includes('ocr') || nameLower.includes('glm-ocr')
+        }
         return true
       })
     }
+
 
 
     list.sort((a, b) => {
@@ -135,10 +140,12 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
 
           <select className={css.select} value={filterType} onChange={e => setFilterType(e.target.value)}>
             <option value="all">All Types</option>
-            <option value="industrial">Industrial Specialist (emsLLM)</option>
+            <option value="industrial">Industrial Specialist (emsLLM-4B)</option>
+            <option value="ocr">Drawing OCR Specialist (GLM-OCR)</option>
             <option value="vision">Vision / Multimodal</option>
             <option value="tools">Tools Capable</option>
           </select>
+
 
 
           <select className={css.select} value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
