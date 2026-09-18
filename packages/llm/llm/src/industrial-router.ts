@@ -45,20 +45,8 @@ export const DEFAULT_INDUSTRIAL_CANDIDATES: ModelCapabilityCandidate[] = [
     ],
     localOnly: true,
   },
-  {
-    id: 'emsllm-8b',
-    name: 'emsLLM-8B',
-    provider: 'local',
-    domain: 'industrial-maintenance',
-    capabilities: [
-      'fault-diagnosis-reasoning',
-      'maintenance-reasoning',
-      'sop-generation',
-      'industrial-technical-qa',
-    ],
-    localOnly: true,
-  },
 ]
+
 
 const INDUSTRIAL_KEYWORDS = [
   'dispensing machine',

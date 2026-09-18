@@ -12,16 +12,12 @@ import {
 describe('emsLLM-4B Industrial Maintenance Specialist Integration', () => {
   it('TEST 1: Model Discovery & Capability Registration', () => {
     const ems4b = DEFAULT_INDUSTRIAL_CANDIDATES.find(c => c.id === 'emsllm-4b')
-    const ems8b = DEFAULT_INDUSTRIAL_CANDIDATES.find(c => c.id === 'emsllm-8b')
 
     expect(ems4b).toBeDefined()
     expect(ems4b?.domain).toBe('industrial-maintenance')
     expect(ems4b?.localOnly).toBe(true)
     expect(ems4b?.capabilities).toContain('fault-diagnosis-reasoning')
     expect(ems4b?.capabilities).toContain('sop-generation')
-
-    expect(ems8b).toBeDefined()
-    expect(ems8b?.domain).toBe('industrial-maintenance')
   })
 
   it('TEST 2: Router selects emsLLM-4B for Industrial Maintenance Queries', () => {
@@ -67,15 +63,7 @@ describe('emsLLM-4B Industrial Maintenance Specialist Integration', () => {
     expect(prompt).toContain('[SOURCE X]')
   })
 
-  it('TEST 6: Future Upgradeability — Seamless upgrade to emsLLM-8B', () => {
-    const query = 'Analyze vibration harmonics on turbine gearbox bearing #3.'
-    const decision = routeIndustrialTask(query, { preferredModelId: 'emsllm-8b' })
-
-    expect(decision.isIndustrialTask).toBe(true)
-    expect(decision.selectedModelId).toBe('emsllm-8b')
-  })
-
-  it('TEST 7: Local Benchmark Metric Calculation', async () => {
+  it('TEST 6: Local Benchmark Metric Calculation', async () => {
     const res = await runLocalEmsllmBenchmark({
       modelId: 'PEGAAICC/emsLLM-4B',
       maxTokens: 32,
