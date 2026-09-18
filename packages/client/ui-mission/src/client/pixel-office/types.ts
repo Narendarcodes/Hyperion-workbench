@@ -286,6 +286,8 @@ export type PixelAgentInput = {
   name: string
   status: 'working' | 'idle' | 'error'
   color: string
+  /** Optional live speech / thought bubble text. */
+  bubble?: string | null
   /** True while the agent streams tokens (drives speech bubble). */
   streaming: boolean
   /** True while the agent is in a reasoning/thinking stretch. */

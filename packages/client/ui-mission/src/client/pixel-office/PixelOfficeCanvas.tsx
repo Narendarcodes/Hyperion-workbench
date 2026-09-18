@@ -49,10 +49,10 @@ export interface PixelOfficeCanvasProps {
 }
 
 const DEFAULT_AGENTS = [
-  { id: 'lead', name: 'Lead Architect', role: 'Orchestrator', color: '#f59e0b' },
-  { id: 'analyst', name: 'Domain Analyst', role: 'Specification', color: '#3b82f6' },
-  { id: 'engineer', name: 'Core Engineer', role: 'Implementation', color: '#10b981' },
-  { id: 'verifier', name: 'Safety Officer', role: 'Verification', color: '#ec4899' },
+  { id: 'lead', name: 'Orchestrator', role: 'Lead Architect', color: '#f59e0b' },
+  { id: 'analyst', name: 'Analyst', role: 'Domain Specialist', color: '#3b82f6' },
+  { id: 'engineer', name: 'Engineer', role: 'Implementation Specialist', color: '#10b981' },
+  { id: 'verifier', name: 'Verifier', role: 'Safety & Verification', color: '#ec4899' },
 ]
 
 export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
@@ -135,21 +135,53 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
     const orchestrator = snapshot.office.orchestrator
 
     if (workers.length === 0) {
-      // Map default squad
-      return DEFAULT_AGENTS.map((item, idx) => {
-        const isLead = idx === 0
-        const isWorking = isLead ? orchestrator.status === 'working' : false
+      const isOrchestratorActive = orchestrator.status !== 'idle' && orchestrator.status !== 'completed'
+      const isOrchestratorCompleted = orchestrator.status === 'completed'
+      const isOrchestratorBlocked = orchestrator.status === 'blocked' || orchestrator.status === 'failed'
+
+      // Check roadmap phase states
+      const isPlanning = snapshot.phases.plan.status === 'real' || orchestrator.status === 'planning' || orchestrator.status === 'listening'
+      const isRetrieving = snapshot.phases.retrieve.status === 'real' || orchestrator.status === 'searching'
+      const isExecuting = snapshot.phases.execute.status === 'real' || orchestrator.status === 'working' || orchestrator.status === 'executing' || orchestrator.status === 'delegating'
+      const isVerifying = snapshot.phases.verify.status === 'real' || orchestrator.status === 'verifying' || snapshot.verification.some(v => v.status === 'pending')
+
+      return DEFAULT_AGENTS.map((item) => {
+        let status: 'working' | 'idle' | 'error' = 'idle'
+        let hold: PixelAgentInput['hold'] = null
+        let bubble: string | null = null
+
+        if (item.id === 'lead') {
+          status = isOrchestratorBlocked ? 'error' : isOrchestratorActive ? 'working' : 'idle'
+          hold = isOrchestratorActive ? 'orchestrator' : null
+          bubble = orchestrator.bubble || (isOrchestratorActive ? 'Coordinating mission…' : 'Ready for mission')
+        } else if (item.id === 'analyst') {
+          const active = isOrchestratorActive && (isPlanning || isRetrieving)
+          status = active ? 'working' : 'idle'
+          hold = isRetrieving ? 'library' : null
+          bubble = active ? (isRetrieving ? 'Searching references…' : 'Analyzing prompt…') : null
+        } else if (item.id === 'engineer') {
+          const active = isOrchestratorActive && isExecuting
+          status = active ? 'working' : 'idle'
+          hold = active ? 'qa_lab' : null
+          bubble = active ? (orchestrator.bubble || 'Executing task…') : null
+        } else if (item.id === 'verifier') {
+          const active = isOrchestratorActive && isVerifying
+          status = active ? 'working' : 'idle'
+          hold = isVerifying ? 'phone_booth' : null
+          bubble = active ? 'Checking verification…' : null
+        }
 
         return {
           id: item.id,
           name: item.name,
-          status: isWorking ? 'working' : 'idle',
+          status,
           color: item.color,
-          streaming: isWorking,
+          bubble,
+          streaming: status === 'working',
           thinking: orchestrator.status === 'searching' || orchestrator.status === 'waiting',
-          awaitingApproval: snapshot.verification.some(v => v.status === 'pending'),
-          dancing: orchestrator.status === 'completed',
-          hold: isLead ? 'orchestrator' : null,
+          awaitingApproval: isVerifying,
+          dancing: isOrchestratorCompleted,
+          hold,
           standup: false,
           skill: null,
           plan: null,
@@ -174,6 +206,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
         name: worker.label,
         status: isWorking || isSearching ? 'working' : isBlocked ? 'error' : 'idle',
         color: worker.id === 'lead' ? '#f59e0b' : '#3b82f6',
+        bubble: worker.bubble,
         streaming: isWorking,
         thinking: isSearching || isWaiting,
         awaitingApproval: isWaiting || snapshot.verification.some(v => v.status === 'pending'),
@@ -345,34 +378,36 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
 
             // Render Speech / Thought Bubble if present
             const workerInfo = snapshot.office.workers.find(w => w.id === input.id)
-            const bubbleText = workerInfo?.bubble || (input.id === 'lead' ? snapshot.office.orchestrator.bubble : null)
+            const bubbleText = input.bubble || workerInfo?.bubble || (input.id === 'lead' ? snapshot.office.orchestrator.bubble : null)
 
             if (bubbleText && bubbleText.length > 0) {
-              const displayBubble = bubbleText.length > 40 ? `${bubbleText.slice(0, 37)}...` : bubbleText
-              ctx.font = '10.5px system-ui, sans-serif'
-              const bubbleWidth = ctx.measureText(displayBubble).width + 16
+              const displayBubble = bubbleText.length > 36 ? `${bubbleText.slice(0, 33)}...` : bubbleText
+              ctx.font = 'bold 11px system-ui, -apple-system, sans-serif'
+              const bubbleWidth = ctx.measureText(displayBubble).width + 18
               const bubbleX = Math.round(pose.x - bubbleWidth / 2)
-              const bubbleY = tagY - 24
+              const bubbleY = tagY - 26
 
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.95)'
-              ctx.strokeStyle = '#3b82f6'
-              ctx.lineWidth = 1.5
+              // Bubble backdrop with slight shadow
+              ctx.fillStyle = '#ffffff'
               ctx.beginPath()
-              ctx.roundRect(bubbleX, bubbleY - 14, bubbleWidth, 20, 6)
+              ctx.roundRect(bubbleX, bubbleY - 14, bubbleWidth, 22, 6)
               ctx.fill()
+
+              ctx.strokeStyle = input.color || '#3b82f6'
+              ctx.lineWidth = 1.5
               ctx.stroke()
 
               // Bubble tail
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.95)'
+              ctx.fillStyle = '#ffffff'
               ctx.beginPath()
-              ctx.moveTo(pose.x - 4, bubbleY + 6)
-              ctx.lineTo(pose.x + 4, bubbleY + 6)
-              ctx.lineTo(pose.x, bubbleY + 11)
+              ctx.moveTo(pose.x - 5, bubbleY + 8)
+              ctx.lineTo(pose.x + 5, bubbleY + 8)
+              ctx.lineTo(pose.x, bubbleY + 13)
               ctx.closePath()
               ctx.fill()
 
               ctx.fillStyle = '#0f172a'
-              ctx.fillText(displayBubble, bubbleX + 8, bubbleY)
+              ctx.fillText(displayBubble, bubbleX + 9, bubbleY + 2)
             }
           }
         }
