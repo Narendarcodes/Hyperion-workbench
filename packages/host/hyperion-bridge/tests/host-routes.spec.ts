@@ -14,6 +14,7 @@ import { Context } from '@deepseek-ai/cordis'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
 import Include from '@deepseek-ai/cordis-plugin-include'
 import WebServer from '@deepseek-ai/dsh-host-webserver'
+import { SessionId, type Session, type SessionEvent } from '@deepseek-ai/dsh-session'
 import * as HyperionBridge from '../src/index.ts'
 import {
   HYPERION_CHAT_ROUTE,
@@ -137,7 +138,7 @@ function emitSessionEvent(sessionId: string, event: { type: string; seq: number;
   const entries = [...context.loader.entries()] as unknown as readonly LoaderEntryShape[]
   const entry = entries.find(candidate => candidate.options.name === '@deepseek-ai/dsh-host-hyperion-bridge')
   const pluginCtx = entry?.fiber?.ctx ?? context
-  pluginCtx.emit('session/event', { id: sessionId }, event)
+  pluginCtx.emit('session/event', { id: SessionId(sessionId) } as unknown as Session, event as unknown as SessionEvent)
 }
 
 describe('hyperion-bridge host routes (real Loader composition)', () => {
