@@ -60,16 +60,11 @@ The renderer section is intentionally thin: the live office picture is owned by 
 <a id="model-experience"></a>
 ## Model Experience
 
-None. This package registers no model-facing prompt, tool, or provider behavior.
-
-#### Token effect
-
-Zero token effect.
+None, as the UI mission view manages browser viewing state; nothing here reaches a model request.
 
 #### KV Cache effect
 
-Zero KV-cache effect.
-
+None; this package neither assembles nor sends a provider request.
 ## Known Limitations and Deferred Work
 
 <a id="known-limitations-and-deferred-work"></a>
