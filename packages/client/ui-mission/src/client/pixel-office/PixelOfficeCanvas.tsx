@@ -1,7 +1,8 @@
 /**
  * Native Gather-style 2D pixel office canvas component for Hyperion Mission View.
  * Renders the full Hermes HQ pixel map, animated agents, speech bubbles,
- * furniture, and zones directly on an HTML5 2D canvas with 60fps performance.
+ * furniture, and zones directly on an HTML5 2D canvas with 60fps performance
+ * and a visual pacing engine for human-readable action durations.
  * @module @deepseek-ai/dsh-client-ui-mission/client/pixel-office/PixelOfficeCanvas
  */
 
@@ -33,6 +34,8 @@ import css from './PixelOfficeCanvas.module.css'
 const TILE = PIXEL_TILE_SIZE
 const WALK_FRAME_MS = 140
 const DANCE_FRAME_MS = 260
+const MIN_ACTION_LINGER_MS = 4000
+const BUBBLE_LINGER_MS = 4500
 
 const STATUS_COLOR: Record<string, string> = {
   working: '#10b981',
@@ -55,6 +58,14 @@ const DEFAULT_AGENTS = [
   { id: 'verifier', name: 'Verifier', role: 'Safety & Verification', color: '#ec4899' },
 ]
 
+interface AgentVisualMemory {
+  latchedStatus: 'working' | 'idle' | 'error'
+  latchedBubble: string | null
+  latchedHold: PixelAgentInput['hold']
+  latchedUntilMs: number
+  bubbleUntilMs: number
+}
+
 export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -73,6 +84,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
   const groundCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const furnitureSpritesRef = useRef<Record<string, PixelSprite>>({})
   const characterFrameSetsRef = useRef<Map<string, CharacterFrameSet>>(new Map())
+  const visualMemoryRef = useRef<Map<string, AgentVisualMemory>>(new Map())
 
   // Pan / drag state
   const isDraggingRef = useRef(false)
@@ -134,31 +146,46 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
     const workers = snapshot.office.workers
     const orchestrator = snapshot.office.orchestrator
 
+    const isOrchestratorActive = orchestrator.status !== 'idle' && orchestrator.status !== 'completed'
+    const isOrchestratorCompleted = orchestrator.status === 'completed'
+    const isOrchestratorBlocked = orchestrator.status === 'blocked' || orchestrator.status === 'failed'
+
+    // Check roadmap phase states
+    const isPlanning = snapshot.phases.plan.status === 'real' || orchestrator.status === 'planning' || orchestrator.status === 'listening'
+    const isRetrieving = snapshot.phases.retrieve.status === 'real' || orchestrator.status === 'searching'
+    const isExecuting = snapshot.phases.execute.status === 'real' || orchestrator.status === 'working' || orchestrator.status === 'executing' || orchestrator.status === 'delegating'
+    const isVerifying = snapshot.phases.verify.status === 'real' || orchestrator.status === 'verifying' || snapshot.verification.some(v => v.status === 'pending')
+
+    const orchestratorInput: PixelAgentInput = {
+      id: 'lead',
+      name: 'Orchestrator',
+      status: isOrchestratorBlocked ? 'error' : isOrchestratorActive ? 'working' : 'idle',
+      color: '#f59e0b',
+      bubble: orchestrator.bubble || (isOrchestratorActive ? 'Coordinating mission…' : 'Ready for mission'),
+      streaming: isOrchestratorActive,
+      thinking: orchestrator.status === 'searching' || orchestrator.status === 'waiting',
+      awaitingApproval: isVerifying,
+      dancing: isOrchestratorCompleted,
+      hold: isOrchestratorActive ? 'orchestrator' : null,
+      standup: false,
+      skill: null,
+      plan: null,
+    }
+
     if (workers.length === 0) {
-      const isOrchestratorActive = orchestrator.status !== 'idle' && orchestrator.status !== 'completed'
-      const isOrchestratorCompleted = orchestrator.status === 'completed'
-      const isOrchestratorBlocked = orchestrator.status === 'blocked' || orchestrator.status === 'failed'
+      // Return full default squad (Orchestrator + Analyst + Engineer + Verifier)
+      const squad = DEFAULT_AGENTS.map((item) => {
+        if (item.id === 'lead') return orchestratorInput
 
-      // Check roadmap phase states
-      const isPlanning = snapshot.phases.plan.status === 'real' || orchestrator.status === 'planning' || orchestrator.status === 'listening'
-      const isRetrieving = snapshot.phases.retrieve.status === 'real' || orchestrator.status === 'searching'
-      const isExecuting = snapshot.phases.execute.status === 'real' || orchestrator.status === 'working' || orchestrator.status === 'executing' || orchestrator.status === 'delegating'
-      const isVerifying = snapshot.phases.verify.status === 'real' || orchestrator.status === 'verifying' || snapshot.verification.some(v => v.status === 'pending')
-
-      return DEFAULT_AGENTS.map((item) => {
         let status: 'working' | 'idle' | 'error' = 'idle'
         let hold: PixelAgentInput['hold'] = null
         let bubble: string | null = null
 
-        if (item.id === 'lead') {
-          status = isOrchestratorBlocked ? 'error' : isOrchestratorActive ? 'working' : 'idle'
-          hold = isOrchestratorActive ? 'orchestrator' : null
-          bubble = orchestrator.bubble || (isOrchestratorActive ? 'Coordinating mission…' : 'Ready for mission')
-        } else if (item.id === 'analyst') {
+        if (item.id === 'analyst') {
           const active = isOrchestratorActive && (isPlanning || isRetrieving)
           status = active ? 'working' : 'idle'
           hold = isRetrieving ? 'library' : null
-          bubble = active ? (isRetrieving ? 'Searching references…' : 'Analyzing prompt…') : null
+          bubble = active ? (isRetrieving ? 'Searching references…' : 'Analyzing requirements…') : null
         } else if (item.id === 'engineer') {
           const active = isOrchestratorActive && isExecuting
           status = active ? 'working' : 'idle'
@@ -187,36 +214,43 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
           plan: null,
         }
       })
+      return squad
     }
 
-    return workers.map((worker) => {
+    // Workers spawned: Orchestrator + all specialist workers
+    const workerColors = ['#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316']
+    const workerInputs = workers.map((worker, idx) => {
       const isWorking = worker.status === 'working' || worker.status === 'executing'
       const isSearching = worker.status === 'searching'
       const isWaiting = worker.status === 'waiting'
       const isBlocked = worker.status === 'blocked' || worker.status === 'failed'
-
+      const status: 'working' | 'idle' | 'error' = (isWorking || isSearching) ? 'working' : isBlocked ? 'error' : 'idle'
       let hold: PixelAgentInput['hold'] = null
       if (worker.currentTool === 'web_search') hold = 'library'
       else if (worker.currentTool === 'bash' || worker.currentTool === 'terminal') hold = 'qa_lab'
       else if (worker.currentTool === 'skill') hold = 'gym'
       else if (isWaiting) hold = 'phone_booth'
 
+      const workerColor = workerColors[idx % workerColors.length] ?? '#3b82f6'
+
       return {
         id: worker.id,
         name: worker.label,
-        status: isWorking || isSearching ? 'working' : isBlocked ? 'error' : 'idle',
-        color: worker.id === 'lead' ? '#f59e0b' : '#3b82f6',
+        status,
+        color: workerColor,
         bubble: worker.bubble,
         streaming: isWorking,
         thinking: isSearching || isWaiting,
         awaitingApproval: isWaiting || snapshot.verification.some(v => v.status === 'pending'),
-        dancing: orchestrator.status === 'completed',
+        dancing: isOrchestratorCompleted,
         hold,
         standup: false,
         skill: null,
         plan: null,
       }
     })
+
+    return [orchestratorInput, ...workerInputs]
   }, [snapshot])
 
   // Get cached character frames
@@ -233,7 +267,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
     return set
   }, [])
 
-  // Animation Loop
+  // Animation Loop with Visual Pacing Engine
   const posesRef = useRef<PixelAgentPose[]>([])
 
   useEffect(() => {
@@ -256,10 +290,50 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
         return
       }
 
-      // Update simulation
+      // Visual Pacing Engine: update latched memories
+      const pacedInputs: PixelAgentInput[] = agentInputs.map((input) => {
+        let mem = visualMemoryRef.current.get(input.id)
+        if (!mem) {
+          mem = {
+            latchedStatus: input.status,
+            latchedBubble: input.bubble ?? null,
+            latchedHold: input.hold,
+            latchedUntilMs: input.status === 'working' ? now + MIN_ACTION_LINGER_MS : 0,
+            bubbleUntilMs: input.bubble ? now + BUBBLE_LINGER_MS : 0,
+          }
+          visualMemoryRef.current.set(input.id, mem)
+        }
+
+        // Check for new activity trigger
+        if (input.status === 'working' || input.status === 'error') {
+          mem.latchedStatus = input.status
+          mem.latchedUntilMs = now + MIN_ACTION_LINGER_MS
+          if (input.hold) mem.latchedHold = input.hold
+        }
+
+        if (input.bubble && input.bubble.trim().length > 0 && input.bubble !== mem.latchedBubble) {
+          mem.latchedBubble = input.bubble
+          mem.bubbleUntilMs = now + BUBBLE_LINGER_MS
+        }
+
+        const isHoldingWork = now < mem.latchedUntilMs
+        const effectiveStatus = isHoldingWork ? mem.latchedStatus : input.status
+        const effectiveHold = isHoldingWork && mem.latchedHold ? mem.latchedHold : input.hold
+        const effectiveBubble = now < mem.bubbleUntilMs ? mem.latchedBubble : (input.bubble ?? null)
+
+        return {
+          ...input,
+          status: effectiveStatus,
+          hold: effectiveHold,
+          bubble: effectiveBubble,
+          streaming: input.streaming || isHoldingWork,
+        }
+      })
+
+      // Update simulation with paced inputs
       if (simRef.current) {
         posesRef.current = simRef.current.tick({
-          inputs: agentInputs,
+          inputs: pacedInputs,
           nowMs: now,
           dtMs: dt,
           cleaningActive: false,
@@ -302,7 +376,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
 
       // Agent items
       for (const pose of posesRef.current) {
-        const input = agentInputs.find(a => a.id === pose.id) ?? {
+        const input = pacedInputs.find(a => a.id === pose.id) ?? {
           id: pose.id,
           name: pose.id,
           status: 'idle' as const,
@@ -362,7 +436,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
             const tagX = Math.round(pose.x - textWidth / 2 - 8)
             const tagY = drawY - 8
 
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)'
+            ctx.fillStyle = input.id === 'lead' ? 'rgba(30, 27, 75, 0.92)' : 'rgba(15, 23, 42, 0.88)'
             ctx.beginPath()
             ctx.roundRect(tagX, tagY - 12, textWidth + 16, 16, 4)
             ctx.fill()
@@ -373,12 +447,11 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
             ctx.arc(tagX + 6, tagY - 4, 3, 0, Math.PI * 2)
             ctx.fill()
 
-            ctx.fillStyle = '#f8fafc'
+            ctx.fillStyle = input.id === 'lead' ? '#fde047' : '#f8fafc'
             ctx.fillText(input.name, tagX + 13, tagY - 1)
 
             // Render Speech / Thought Bubble if present
-            const workerInfo = snapshot.office.workers.find(w => w.id === input.id)
-            const bubbleText = input.bubble || workerInfo?.bubble || (input.id === 'lead' ? snapshot.office.orchestrator.bubble : null)
+            const bubbleText = input.bubble
 
             if (bubbleText && bubbleText.length > 0) {
               const displayBubble = bubbleText.length > 36 ? `${bubbleText.slice(0, 33)}...` : bubbleText
@@ -421,7 +494,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
     return () => {
       cancelAnimationFrame(animationFrameId)
     }
-  }, [agentInputs, getCharacterFrames, map, snapshot])
+  }, [agentInputs, getCharacterFrames, map])
 
   // Handle Resize
   useEffect(() => {

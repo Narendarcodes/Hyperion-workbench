@@ -418,8 +418,38 @@ export function buildMissionSnapshot(
           orchestratorStatus = 'delegating'
           orchestratorBubble = 'Planning next steps…'
 
-          if (toolName === 'subagent' || toolName === 'subagent_fork') {
-            const workerId = `sub-${callId}`
+          let parsedArgs: Record<string, unknown> | null = null
+          if (typeof toolCallData.arguments === 'string') {
+            try { parsedArgs = JSON.parse(toolCallData.arguments) as Record<string, unknown> } catch { /* swallow */ }
+          } else if (typeof toolCallData.arguments === 'object' && toolCallData.arguments !== null) {
+            parsedArgs = toolCallData.arguments as Record<string, unknown>
+          }
+
+          if (parsedArgs && Array.isArray(parsedArgs.tasks) && parsedArgs.tasks.length > 0) {
+            for (const t of parsedArgs.tasks) {
+              if (typeof t === 'object' && t !== null) {
+                const tObj = t as Record<string, unknown>
+                const name = typeof tObj.name === 'string' && tObj.name.trim().length > 0 ? tObj.name.trim() : 'Specialist'
+                const taskText = typeof tObj.task === 'string' ? tObj.task.trim() : ''
+                const workerId = `worker-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`
+                const cabinId = ensureCabinForWorker(workerId, name, 'working')
+                workersMap.set(workerId, {
+                  id: workerId,
+                  role: name,
+                  capabilities: ['read', 'retrieve', 'analyze', 'write', 'execute', 'test', 'verify'],
+                  cabinId,
+                  label: name,
+                  station: 'code',
+                  status: 'working',
+                  bubble: taskText.length > 0 ? (taskText.length > 40 ? `${taskText.slice(0, 37)}…` : taskText) : 'Executing subtask…',
+                  currentLocation: { kind: 'cabin', zone: cabinId, seatId: 'seat-1' },
+                  evidenceSeqs: [seq],
+                })
+                lastActiveWorkerId = workerId
+              }
+            }
+          } else {
+            const workerId = `sub-${callId || seq}`
             const cabinId = ensureCabinForWorker(workerId, classified.tag, 'working')
             workersMap.set(workerId, {
               id: workerId,
