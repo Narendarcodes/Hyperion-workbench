@@ -102,7 +102,7 @@ export function MissionView({
   const isCompleted = currentSnapshot.office.orchestrator.status === 'completed'
 
   return (
-    <div className={css.missionViewRoot} data-mission-view data-conversation-composer-overlay="">
+    <div className={css.missionViewRoot} data-mission-view data-hide-composer="">
       {/* 1. TOP POLISHED HEADER CARD */}
       <div className={css.headerCard}>
         <div className={css.headerMain}>
