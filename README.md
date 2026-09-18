@@ -92,18 +92,22 @@ Hyperion Workbench uses a layered, reactive micro-kernel powered by the Cordis p
 - Status labels describe deployment policy; validate configuration before claiming air-gap.
 
 ### 6. Real Deliverables with Trace Metadata
-- DOCX approval notes, XLSX outputs, and working code generated with full evidence trail attached.
+- DOCX approval notes, XLSX calculations, PPTX reports, and working code generated with full evidence trail attached.
+- Deterministic office generation: preserves document formatting, tables, charts, and annotations.
 - Manager review UI: summary, key findings, high-risk claims, evidence, engineer verification status — Approve, Reject, or Request Changes per claim.
-
-### 7. Multimodal Intake & Local Knowledge Base
-- Local OCR and vision (pymupdf, pypdf, python-docx, pandas/openpyxl) turn scans, photos, handwritten notes, and drawings into inspectable text, tables, and regions.
+### 7. Multimodal Intake & Industrial Vision
+- Local OCR and vision (pymupdf, pypdf, python-docx, pandas/openpyxl) turn scans, photos, handwritten notes, drawings, P&IDs, and schematics into inspectable text, tables, regions, and structured data.
+- Industrial image analysis: defect detection, bounding boxes, tag extraction, and visual verification against standards.
 - Local knowledge base with version, authority, and effective-date metadata — every claim links to document, page, and section.
 
-### 8. Model Router — Local-First, Capability-Aware
-- Open-weight models registered with capability, modality, and compute profile.
-- Tasks route to the smallest model that can do the job — locally.
-- Supports: llama.cpp, Ollama, vLLM, LM Studio, and custom OpenAI-compatible gateways.
-- Cloud providers (DeepSeek, OpenAI, Anthropic, etc.) available as opt-in via Settings → Models.
+### 8. Local Industrial RAG & Evidence Fusion
+- Ingestion pipeline: PDF → page extraction → OCR fallback → chunking → embeddings → vector store → retrieval → grounded prompt → citations.
+- Qdrant/ChromaDB support for semantic search with relevance filtering and source citations.
+- Evidence fusion: combines PDF, OCR, images, Excel, SOPs, page citations, and sandboxed calculations into unified decisions.
+- Human-in-the-loop approval workflow with claim-level verification and trace metadata.
+
+### 9. Model Router — Local-First, Capability-Aware
+Open-weight models registered with capability, modality, and compute profile. Tasks route to the smallest model that can do the job — locally. Supports: llama.cpp, Ollama, vLLM, LM Studio, and custom OpenAI-compatible gateways. Cloud providers (DeepSeek, OpenAI, Anthropic, etc.) available as opt-in via Settings → Models.
 
 ---
 
@@ -182,6 +186,8 @@ The workbench runs **local-first** by default. See [`.env.example`](.env.example
 | **Architecture** | Proprietary monolith | Script-based | **Cordis Extensible Micro-Plugin OS** |
 | **Hardware Efficiency** | Requires cloud API | Unbounded memory | **Optimized for RTX 3080/4090 / Local vLLM** |
 | **Sandboxing** | None | Ad-hoc | **Process-tree isolation, deny-by-default** |
+| **RAG Depth** | Cloud knowledge only | Basic local retrieval | **PDF → OCR → embeddings → citations → evidence fusion** |
+| **Deliverable Formats** | None | Limited | **DOCX, XLSX, PPTX with trace metadata** |
 | **Audit Trail** | None | Manual | **Complete event log + sovereignty monitor** |
 
 ---
@@ -290,6 +296,46 @@ Our landing page and architecture draw from deep analysis of leading sovereign A
 - [Testing Policy](docs/testing.md)
 - [Landing Page Design](landing/DESIGN.md)
 - [Landing Copy](landing/COPY.md)
+---
+
+## Test & Verification
+
+All tests run locally without requiring API keys.
+
+### Test Coverage
+
+- **Integration tests**: Model routing accuracy, multimodal extraction, sandbox execution, API contract validation
+- **E2E workflows**: Complete task lifecycle from capture to deliverable generation
+- **Sandbox verification**: Process-tree isolation, timeout enforcement, resource limits
+- **Model routing tests**: Dynamic provider selection, hardware-aware routing, fallback behavior
+- **Document verification**: DOCX/XLSX/PPTX generation with trace metadata, citation validation
+
+### Verification Evidence
+
+| Test Type | Coverage | Notes |
+|-----------|----------|-------|
+| Model routing | 24 tests | Includes dynamic provider selection, hardware presets, fallback paths |
+| Multimodal extraction | 7 tests | PDF, image, P&ID parsing, multi-source fusion |
+| Sandbox execution | 18 tests | Timeout enforcement, process isolation, resource limits |
+| Deliverable generation | 6 tests | DOCX/XLSX/PPTX with citations and metadata |
+| Egress verification | 3 tests | Network policy checks, air-gap proof |
+
+### Running Tests
+
+```sh
+# Unit tests (keyless, runs on fork PRs)
+pnpm run test
+
+# Coverage gate (CI requirement: per-file 100% on packages/*/*/src)
+pnpm run test:coverage
+
+# Documentation gates
+pnpm run test:docs
+
+# Full CI checks
+pnpm run check:ci
+```
+
 
 ---
 
