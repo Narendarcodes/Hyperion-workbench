@@ -11,6 +11,7 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
+import z from '@deepseek-ai/schemastery'
 import { en, NS } from './locales.ts'
 import {
   EMPTY_MISSION_SNAPSHOT,
@@ -21,6 +22,7 @@ import {
   registerMissionConversationView,
 } from './mission-snapshot-builder.ts'
 import { MissionView } from './MissionView.tsx'
+import { setStudioUrl } from './studio-url.ts'
 
 export type { MissionKey } from './locales.ts'
 export type {
@@ -42,12 +44,24 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
 /** Required services: the conversation slot, session controller, renderer, and locale service. */
 export const inject = ['slots', 'sessions', 'uiSession', 'uiConversation', 'locale']
 
+/** Plugin config, validated by the same-named schemastery schema. */
+export interface Config {
+  /** Studio base URL hosting the live 2D office embed. */
+  studioUrl?: string
+}
+
+export const Config: z<Config> = z.object({
+  studioUrl: z.string().min(1).default('http://localhost:3000'),
+})
+
 /**
  * Client plugin body: registers the mission view tab into the conversation view slot ring.
  *
  * @param ctx - Root client cordis context.
+ * @param config - Validated plugin config carrying the Studio base URL.
  */
-export function apply(ctx: Context): void {
+export function apply(ctx: Context, config: Config = {}): void {
+  setStudioUrl(typeof config.studioUrl === 'string' ? config.studioUrl : 'http://localhost:3000')
   const missionSources = new WeakMap<SessionBinding, ObservableSnapshot<MissionSnapshot>>()
   const missionSource = (binding: SessionBinding): ObservableSnapshot<MissionSnapshot> => {
     let source = missionSources.get(binding)

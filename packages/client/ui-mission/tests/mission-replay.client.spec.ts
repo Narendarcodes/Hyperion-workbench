@@ -3,7 +3,6 @@ import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
 import { buildMissionSnapshot } from '../src/client/mission-snapshot-builder.ts'
-import { deriveVisualBehavior } from '../src/client/visual-behavior.ts'
 
 function loadFixtureEvents(): SessionEvent[] {
   const fixturePath = resolve(import.meta.dirname, 'fixtures/mission-session.jsonl')
@@ -70,7 +69,7 @@ describe('Mission Replay Parity', () => {
     expect(wfWorker?.status).toBe('completed')
   })
 
-  it('guarantees byte-identical snapshot and visual behavior for incremental live vs cold replay', () => {
+  it('guarantees byte-identical snapshot for incremental live vs cold replay', () => {
     // 1. Cold replay (all events at once)
     const coldSnapshot = buildMissionSnapshot(events)
 
@@ -81,12 +80,5 @@ describe('Mission Replay Parity', () => {
     }
 
     expect(JSON.stringify(liveSnapshot)).toBe(JSON.stringify(coldSnapshot))
-
-    // Check visual behaviors for all workers
-    for (const worker of coldSnapshot.office.workers) {
-      const visualCold = deriveVisualBehavior(worker)
-      const visualLive = deriveVisualBehavior(worker)
-      expect(visualLive).toEqual(visualCold)
-    }
   })
 })

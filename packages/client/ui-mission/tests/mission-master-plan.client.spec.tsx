@@ -7,15 +7,8 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { render } from '@testing-library/react'
 import { SessionSeq, type SessionEvent } from '@deepseek-ai/dsh-session/types'
 import { buildMissionSnapshot } from '../src/client/mission-snapshot-builder.ts'
-import {
-  allocateSharedSeat,
-  getCabinGeometry,
-} from '../src/client/office-layout.ts'
-import { deriveVisualBehavior } from '../src/client/visual-behavior.ts'
-import { HyperionOffice } from '../src/client/HyperionOffice.tsx'
 
 function loadFixtureEvents(): SessionEvent[] {
   const fixturePath = resolve(import.meta.dirname, 'fixtures/mission-session.jsonl')
@@ -134,34 +127,10 @@ describe('Hyperion Mission View — 9 Master Plan Required Test Cases', () => {
     // Both hold dynamic task label
     expect(c1.label).toBe('Pump Failure Analysis')
     expect(c2.label).toBe('Pump Failure Analysis')
-
-    // Cabin geometries have completely distinct coordinates (no spatial overlap)
-    const geom1 = getCabinGeometry(c1.seatIndex!)
-    const geom2 = getCabinGeometry(c2.seatIndex!)
-    expect(geom1.seat.x).not.toBe(geom2.seat.x)
-    expect(geom1.zone.x + geom1.zone.w).toBeLessThanOrEqual(geom2.zone.x)
   })
 
-  // TEST 3 — SAME STATION, TWO AGENTS (MULTI-SEAT ALLOCATION)
-  it('TEST 3: deterministically allocates distinct seats when multiple agents occupy the same shared area', () => {
-    const concurrent = ['agent-alpha', 'agent-beta']
-
-    // Both visit Knowledge Base concurrently
-    const seatAlpha = allocateSharedSeat('knowledge', 'agent-alpha', concurrent)
-    const seatBeta = allocateSharedSeat('knowledge', 'agent-beta', concurrent)
-
-    // Must receive distinct coordinates
-    expect(seatAlpha).toBeDefined()
-    expect(seatBeta).toBeDefined()
-    expect(seatAlpha).not.toEqual(seatBeta)
-    expect(seatAlpha.x).not.toBe(seatBeta.x)
-
-    // Guaranteed determinism: repeated execution yields exact identical seats
-    const seatAlpha2 = allocateSharedSeat('knowledge', 'agent-alpha', concurrent)
-    const seatBeta2 = allocateSharedSeat('knowledge', 'agent-beta', concurrent)
-    expect(seatAlpha).toEqual(seatAlpha2)
-    expect(seatBeta).toEqual(seatBeta2)
-  })
+  // TEST 3 dropped with the SVG sim: shared-seat allocation lived in the
+  // deleted office-layout module; seating is now owned by the Studio office.
 
   // TEST 4 — MULTI-STEP CODING AGENT
   it('TEST 4: a single worker performs multi-step workflow without creating separate agents', () => {
@@ -245,10 +214,6 @@ describe('Hyperion Mission View — 9 Master Plan Required Test Cases', () => {
     expect(worker.status).toBe('searching')
     expect(worker.station).toBe('knowledge')
     expect(worker.currentLocation?.zone).toBe('knowledge')
-
-    // Visual behavior derivation
-    const visual = deriveVisualBehavior(worker)
-    expect(visual.glyph).toBe('loupe')
   })
 
   // TEST 6 — BLOCKED WORKER
@@ -281,10 +246,6 @@ describe('Hyperion Mission View — 9 Master Plan Required Test Cases', () => {
     const worker = snapshot.office.workers[0]!
     expect(worker.status).toBe('blocked')
     expect(worker.bubble).toContain('ConnectionRefused')
-
-    const visual = deriveVisualBehavior(worker)
-    expect(visual.glyph).toBe('alert')
-    expect(visual.bubblePriority).toBe(1)
   })
 
   // TEST 7 — HUMAN VERIFICATION
@@ -338,13 +299,6 @@ describe('Hyperion Mission View — 9 Master Plan Required Test Cases', () => {
     const worker = snapshot.office.workers[0]!
     expect(worker.status).toBe('completed')
     expect(worker.cabinId).toBe('cabin-1')
-
-    // Render in office component: character figure remains in DOM
-    const { container } = render(
-      <HyperionOffice officeState={snapshot.office} reducedMotion />,
-    )
-    const figure = container.querySelector('[data-agent="auditor"], [data-agent="code"], [data-agent="orchestrator"]')
-    expect(figure).toBeDefined()
   })
 
   // TEST 9 — REPLAY DETERMINISM
@@ -363,14 +317,13 @@ describe('Hyperion Mission View — 9 Master Plan Required Test Cases', () => {
     // Byte-identical snapshot state
     expect(JSON.stringify(liveSnapshot)).toBe(JSON.stringify(coldSnapshot))
 
-    // Compare worker cabins, locations, and visual behaviors
+    // Compare worker cabins and locations
     for (let i = 0; i < coldSnapshot.office.workers.length; i++) {
       const coldW = coldSnapshot.office.workers[i]!
       const liveW = liveSnapshot.office.workers[i]!
       expect(liveW.id).toBe(coldW.id)
       expect(liveW.cabinId).toBe(coldW.cabinId)
       expect(liveW.currentLocation).toEqual(coldW.currentLocation)
-      expect(deriveVisualBehavior(liveW)).toEqual(deriveVisualBehavior(coldW))
     }
   })
 })

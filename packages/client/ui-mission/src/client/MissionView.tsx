@@ -9,8 +9,8 @@ import type { InjectFace, PropsLocale, PropsRenderSlots, SnapshotSelectorHook } 
 import type { MissionSnapshot } from './mission-contract.ts'
 import { EMPTY_MISSION_SNAPSHOT } from './mission-contract.ts'
 import type { MissionPhase } from './mission-vocabulary.ts'
-import { HyperionOffice } from './HyperionOffice.tsx'
 import type { MissionKey } from './locales.ts'
+import { getStudioUrl } from './studio-url.ts'
 import css from './MissionView.module.css'
 
 /** Hook selector type for MissionSnapshot. */
@@ -52,12 +52,14 @@ export function MissionView({
   useMission = fallbackSelector,
   openView,
   renderSlot,
+  sessionId,
   t,
 }: ConvViewProps
   & PropsRenderSlots<'mission.orb'>
   & InjectFace<MissionViewInjected>
   & PropsLocale<'mission'>) {
   const currentSnapshot = useMission(s => s)
+  const officeUrl = `${getStudioUrl()}/office/embed?sessionId=${encodeURIComponent(String(sessionId))}`
 
   // Calculate status counts
   const counts = {
@@ -157,15 +159,19 @@ export function MissionView({
         </div>
       )}
 
-      {/* 3. DOMINANT LIVING PIXEL OFFICE SIMULATION */}
+      {/* 3. LIVE STUDIO OFFICE (embedded; replaces the dropped SVG sim) */}
       <div className={css.simulationArea}>
-        <HyperionOffice
-          officeState={currentSnapshot.office}
-          hasPendingVerification={hasPendingVerification}
-          t={t}
+        <iframe
+          className={css.officeFrame}
+          title={t('simulation.aria')}
+          src={officeUrl}
+          allow="clipboard-read; clipboard-write"
         />
         {renderSlot('mission.orb', {})}
       </div>
+      <a className={css.officeOpenLink} href={officeUrl} target="_blank" rel="noopener">
+        {t('office.openStudio')}
+      </a>
 
       {/* 4. BOTTOM 3-CARD EXECUTION STRIP */}
       <div className={css.bottomGrid}>

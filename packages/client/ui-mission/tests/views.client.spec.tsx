@@ -57,7 +57,7 @@ describe('MissionView and Plugin Registration', () => {
     expect(labelVal).toBe('Mission')
   })
 
-  it('renders MissionView with header, office simulation, and bottom status counts', () => {
+  it('renders MissionView with header, live office iframe, and bottom status counts', () => {
     const snapshot: MissionSnapshot = {
       phases: {
         input: { status: 'real', evidenceSeqs: [1] },
@@ -122,12 +122,19 @@ describe('MissionView and Plugin Registration', () => {
       viewRequest: null,
       completeViewRequest: vi.fn(),
       renderSlot: () => null,
+      sessionId: 'session-1',
       t,
     } as unknown as ComponentProps<typeof MissionView>
 
     const { container } = render(<MissionView {...props} />)
 
     expect(container.querySelector('[data-mission-view]')).not.toBeNull()
+
+    // Live Studio office iframe carries the session binding
+    const frame = container.querySelector('iframe')
+    expect(frame).not.toBeNull()
+    expect(frame?.getAttribute('src')).toBe('http://localhost:3000/office/embed?sessionId=session-1')
+    expect(frame?.getAttribute('title')).toBe('Live Hyperion office')
     expect(container.textContent).toContain('Start mission')
     expect(container.textContent).toContain('Sandboxworkspace-write')
     expect(container.textContent).toContain('Approvalprompt')

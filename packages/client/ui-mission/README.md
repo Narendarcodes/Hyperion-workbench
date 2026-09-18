@@ -1,5 +1,5 @@
 ---
-description: "Mission View for the dsh web client: a pixel-art office simulation projecting real session events into specialist agent stations, activity bubbles, and mission progression."
+description: "Mission View for the dsh web client: header, verification, phases, and activity over session events, with the live Studio office embedded."
 kind: "package-reference"
 ---
 
@@ -9,7 +9,7 @@ English
 
 ## Summary
 
-`dsh-client-ui-mission` is a browser-only Mission View for the dsh web client. It renders a top-down pixel-art office with a Hyperion orchestrator dais, six labeled specialist stations, deterministic worker movement, activity bubbles, a phase roadmap, sovereignty facts, verification status, and produced-file chips. The office is a pure projection of the existing session event window: it adds no session events, backend, polling loop, spatial persistence, or synthetic activity scheduler.
+`dsh-client-ui-mission` is a browser-only Mission View for the dsh web client. It renders the mission header (task title, status, orchestrator line, deliverables, sovereignty facts), the pending-verification banner, a live Studio 2D office embedded by session id, and the bottom strip (status counts, seven phase states, activity feed, deliverables). The office picture is owned by the external Studio, not this package: the view only frames it with the session binding.
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ English
 
 Mount this package with `ui-conversation` in the Web bundle. It contributes the Mission tab to the conversation view ring. Chat remains the default tab; selecting Mission does not cancel or alter the running task.
 
-The office dominates the view. The orchestrator occupies the top-center dais. Workers are created only from durable delegation or workflow-agent evidence, enter through the office entrance, and route to the station selected by the event-derived tool family. Stations without workers remain labeled but empty. Verification pending highlights the Verification chamber and opens the existing chat verification surface when selected.
+Configure `studioUrl` (default `http://localhost:3000`) to point the embedded office at the running Studio. The iframe loads `{studioUrl}/office/embed?sessionId=<id>`; Studio opens its own gateway connection and renders the live 2D office for that session.
 
 The bottom strip shows status counts, the seven phase states, a collapsed activity feed, and deliverable paths limited to successful `write`, `edit`, and mutating editor locations. Network telemetry is displayed as unavailable because the runtime reports no egress metric.
 
@@ -39,11 +39,9 @@ The bottom strip shows status counts, the seven phase states, a collapsed activi
 <details>
 <summary>Implementation internals — click to expand</summary>
 
-`mission-snapshot-builder.ts` folds durable `SessionEventLike` entries and transient assistant chunks into `MissionSnapshot`. `mission-vocabulary.ts` owns tool-family classification and safe activity wording. `visual-behavior.ts` maps a worker snapshot to a station target, glyph, motion directive, and bubble priority. `visual-driver.ts` owns only renderer-side interpolation; it uses requestAnimationFrame to move figures toward domain-derived station seats and skips interpolation for reduced motion.
+`mission-snapshot-builder.ts` folds durable `SessionEventLike` entries and transient assistant chunks into `MissionSnapshot`. `mission-vocabulary.ts` owns tool-family classification and safe activity wording. `studio-url.ts` holds the Studio base URL from the plugin Config for the office iframe.
 
-The renderer uses a single SVG layering order: room shell, furniture, workers, status rings, bubbles, and verification highlight. Live and recorded windows use the same builder and renderer. The owner-local replay fixture covers delegation, workflow workers, tools, approval, and deliverables.
-
-The small files under `src/client/` adapt pure geometry, sprite-grid, bubble, and furniture pieces from Agent Virtual Office. Each retains the MIT attribution header. AI Town and Race Condition are architectural references only; no code or second runtime is copied.
+The renderer section is intentionally thin: the live office picture is owned by the external Studio (embedded by session id). Live and recorded windows use the same snapshot builder. The owner-local replay fixture covers delegation, workflow workers, tools, approval, and deliverables.
 
 </details>
 

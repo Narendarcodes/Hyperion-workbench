@@ -3,8 +3,6 @@ import { SessionSeq, type SessionEvent } from '@deepseek-ai/dsh-session/types'
 import {
   buildMissionSnapshot,
 } from '../src/client/mission-snapshot-builder.ts'
-import { deriveVisualBehavior } from '../src/client/visual-behavior.ts'
-import type { MissionWorker } from '../src/client/mission-contract.ts'
 
 describe('mission-snapshot-builder', () => {
   it('folds an empty event stream into empty snapshot with future phases and unavailable egress', () => {
@@ -167,7 +165,7 @@ describe('mission-snapshot-builder', () => {
     expect(snapshot.office.workers[0]?.status).toBe('completed')
   })
 
-  it('guarantees purity: same event stream produces byte-identical snapshots and visual behaviors', () => {
+  it('guarantees purity: same event stream produces byte-identical snapshots', () => {
     const events: SessionEvent[] = [
       {
         type: 'user/message',
@@ -186,63 +184,5 @@ describe('mission-snapshot-builder', () => {
     const s1 = buildMissionSnapshot(events)
     const s2 = buildMissionSnapshot(events)
     expect(JSON.stringify(s1)).toBe(JSON.stringify(s2))
-
-    const worker: MissionWorker = {
-      id: 'w1',
-      label: 'Worker 1',
-      station: 'knowledge',
-      status: 'searching',
-      bubble: 'Searching…',
-      evidenceSeqs: [2],
-    }
-
-    const v1 = deriveVisualBehavior(worker)
-    const v2 = deriveVisualBehavior(worker)
-    expect(v1).toEqual(v2)
-  })
-
-  it('deriveVisualBehavior obeys motion rules, glyph mappings, and bubble priorities', () => {
-    const searchingWorker: MissionWorker = {
-      id: 'w1',
-      label: 'Searcher',
-      station: 'knowledge',
-      status: 'searching',
-      bubble: 'Searching…',
-      evidenceSeqs: [1],
-    }
-    const searchVisual = deriveVisualBehavior(searchingWorker)
-    expect(searchVisual.glyph).toBe('loupe')
-    expect(searchVisual.motion).toBe('seated')
-    expect(searchVisual.bubblePriority).toBe(2)
-
-    // Moving station triggers walk motion
-    const movedVisual = deriveVisualBehavior(searchingWorker, 'code')
-    expect(movedVisual.motion).toBe('walk')
-
-    // Blocked worker has alert glyph and high priority
-    const blockedWorker: MissionWorker = {
-      id: 'w2',
-      label: 'Coder',
-      station: 'code',
-      status: 'blocked',
-      bubble: 'Blocked',
-      evidenceSeqs: [2],
-    }
-    const blockedVisual = deriveVisualBehavior(blockedWorker)
-    expect(blockedVisual.glyph).toBe('alert')
-    expect(blockedVisual.bubblePriority).toBe(1)
-
-    // Completed worker has check glyph
-    const completedWorker: MissionWorker = {
-      id: 'w3',
-      label: 'Verifier',
-      station: 'verification',
-      status: 'completed',
-      bubble: 'Ready',
-      evidenceSeqs: [3],
-    }
-    const completedVisual = deriveVisualBehavior(completedWorker)
-    expect(completedVisual.glyph).toBe('check')
-    expect(completedVisual.bubblePriority).toBe(3)
   })
 })
