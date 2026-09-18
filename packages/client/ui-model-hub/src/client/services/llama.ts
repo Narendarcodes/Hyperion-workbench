@@ -128,13 +128,63 @@ export class LlamaService {
     }
   }
 
+export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
+  {
+    id: 'ggml-org/GLM-OCR-GGUF:Q8_0',
+    name: 'GLM-OCR (Precision Drawing OCR)',
+    format: 'GGUF',
+    quantization: 'Q8_0',
+    size: 4900000000,
+    parameterSize: '0.9B',
+    contextLength: 65536,
+    architecture: 'vision',
+    modifiedAt: new Date().toISOString(),
+    status: 'installed',
+    capabilities: ['vision', 'ocr', 'precision-engineering-ocr'],
+  },
+  {
+    id: 'emsllm-4b',
+    name: 'emsLLM-4B — Local Industrial Maintenance Specialist',
+    format: 'GGUF',
+    quantization: 'Q4_K_M',
+    size: 2500000000,
+    parameterSize: '4B',
+    contextLength: 4096,
+    architecture: 'llama',
+    modifiedAt: new Date().toISOString(),
+    status: 'installed',
+    capabilities: ['completion', 'chat', 'fault-diagnosis-reasoning', 'sop-generation', 'equipment-troubleshooting'],
+  },
+  {
+    id: 'Llama-3.2-3B-Instruct-Q4_K_M.gguf',
+    name: 'Llama 3.2 3B Instruct',
+    format: 'GGUF',
+    quantization: 'Q4_K_M',
+    size: 2020000000,
+    parameterSize: '3B',
+    contextLength: 131072,
+    architecture: 'llama',
+    modifiedAt: new Date().toISOString(),
+    status: 'installed',
+    capabilities: ['completion', 'chat', 'tools'],
+  },
+]
+
   /** List installed & available llama.cpp GGUF models */
   async listModels(): Promise<LlamaModel[]> {
     const status = await this.getServerStatus()
     const loadedSet = new Set(status.loadedModels)
 
-    // Query active server models
-    const models: LlamaModel[] = []
+    const modelMap = new Map<string, LlamaModel>()
+
+    // Seed with known registered models
+    for (const km of DEFAULT_KNOWN_LLAMA_MODELS) {
+      const isLoaded = loadedSet.has(km.id) || loadedSet.has(km.name)
+      modelMap.set(km.id, {
+        ...km,
+        status: isLoaded ? 'loaded' : (status.connected ? 'installed' : 'unloaded'),
+      })
+    }
 
     try {
       const res = await fetch(`${this.endpoint}/v1/models`)
@@ -143,9 +193,7 @@ export class LlamaService {
         if (data && Array.isArray(data.data)) {
           for (const item of data.data) {
             const id = item.id || item.name || 'llama-model'
-            const isLoaded = loadedSet.has(id) || loadedSet.has(item.id) || item.status?.value === 'loaded'
 
-            // Extract string representation for architecture safely
             let archName = 'llama'
             if (typeof item.architecture === 'string') {
               archName = item.architecture
@@ -155,7 +203,6 @@ export class LlamaService {
               }
             }
 
-            // Extract capabilities safely
             const capabilities: string[] = []
             if (item.architecture && typeof item.architecture === 'object') {
               if (Array.isArray(item.architecture.input_modalities)) {
@@ -180,7 +227,6 @@ export class LlamaService {
               capabilities.push('completion', 'chat')
             }
 
-            // Extract quantization from model ID or item field
             let quantization = 'Q4_K_M'
             if (typeof item.quantization === 'string') {
               quantization = item.quantization
@@ -189,7 +235,6 @@ export class LlamaService {
               if (match && match[1]) quantization = match[1].toUpperCase()
             }
 
-            // Safely parse date created
             let modifiedAt = new Date().toISOString()
             if (typeof item.created === 'number' && item.created > 0) {
               modifiedAt = new Date(item.created * 1000).toISOString()
@@ -197,46 +242,42 @@ export class LlamaService {
               modifiedAt = item.modifiedAt
             }
 
-            models.push({
-              id,
-              name: id,
-              format: 'GGUF',
-              quantization,
-              size: typeof item.size === 'number' ? item.size : 4500000000,
-              parameterSize: typeof item.parameters === 'string' ? item.parameters : '8B',
-              contextLength: typeof item.context_length === 'number' ? item.context_length : 8192,
-              architecture: archName,
-              modifiedAt,
-              status: isLoaded ? 'loaded' : (item.status?.value === 'loaded' ? 'loaded' : 'installed'),
-              capabilities,
-            })
+            // Find matching seed entry or add new
+            const matchedKey = Array.from(modelMap.keys()).find(
+              k => k === id || k.toLowerCase().includes(id.toLowerCase()) || id.toLowerCase().includes(k.toLowerCase())
+            )
+
+            if (matchedKey) {
+              const existing = modelMap.get(matchedKey)!
+              modelMap.set(matchedKey, {
+                ...existing,
+                status: 'loaded',
+              })
+            } else {
+              modelMap.set(id, {
+                id,
+                name: id,
+                format: 'GGUF',
+                quantization,
+                size: typeof item.size === 'number' ? item.size : 4500000000,
+                parameterSize: typeof item.parameters === 'string' ? item.parameters : '8B',
+                contextLength: typeof item.context_length === 'number' ? item.context_length : 8192,
+                architecture: archName,
+                modifiedAt,
+                status: 'loaded',
+                capabilities,
+              })
+            }
           }
         }
       }
     } catch {
-      // Fallback if server is not listable
+      // Ignore API errors when server offline
     }
 
-    // Default fallback models if server is offline or empty
-    if (models.length === 0) {
-      const defaultLlama: LlamaModel = {
-        id: 'Llama-3.2-3B-Instruct-Q4_K_M.gguf',
-        name: 'Llama 3.2 3B Instruct',
-        format: 'GGUF',
-        quantization: 'Q4_K_M',
-        size: 2020000000,
-        parameterSize: '3B',
-        contextLength: 131072,
-        architecture: 'llama',
-        modifiedAt: new Date().toISOString(),
-        status: status.connected ? 'installed' : 'unloaded',
-        capabilities: ['completion', 'chat', 'tools'],
-      }
-      models.push(defaultLlama)
-    }
-
-    return models
+    return Array.from(modelMap.values())
   }
+
 
   /** Load a GGUF model into llama-server memory */
   async loadModel(modelId: string): Promise<boolean> {
