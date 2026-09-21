@@ -426,12 +426,13 @@ export function buildMissionSnapshot(
           }
 
           if (parsedArgs && Array.isArray(parsedArgs.tasks) && parsedArgs.tasks.length > 0) {
-            for (const t of parsedArgs.tasks) {
+            for (const [taskIndex, t] of parsedArgs.tasks.entries()) {
               if (typeof t === 'object' && t !== null) {
                 const tObj = t as Record<string, unknown>
                 const name = typeof tObj.name === 'string' && tObj.name.trim().length > 0 ? tObj.name.trim() : 'Specialist'
                 const taskText = typeof tObj.task === 'string' ? tObj.task.trim() : ''
-                const workerId = `worker-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`
+                const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-')
+                const workerId = `worker-${callId || seq}-${taskIndex}-${slug}`
                 const cabinId = ensureCabinForWorker(workerId, name, 'working')
                 workersMap.set(workerId, {
                   id: workerId,

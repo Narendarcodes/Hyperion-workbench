@@ -185,4 +185,75 @@ describe('mission-snapshot-builder', () => {
     const s2 = buildMissionSnapshot(events)
     expect(JSON.stringify(s1)).toBe(JSON.stringify(s2))
   })
+
+  it('produces distinct workers when task() dispatches multiple tasks with the same name', () => {
+    const events: SessionEvent[] = [
+      {
+        type: 'user/message',
+        seq: SessionSeq(1),
+        time: 10,
+        data: { content: [{ type: 'text', text: 'Do two reviews' }], source: { kind: 'user' } },
+      } as unknown as SessionEvent,
+      {
+        type: 'tool/call',
+        seq: SessionSeq(2),
+        time: 20,
+        data: {
+          turn: 1,
+          step: 1,
+          callId: 'dispatch-1',
+          name: 'task',
+          arguments: JSON.stringify({
+            tasks: [
+              { name: 'Review', task: 'Review the auth module' },
+              { name: 'Review', task: 'Review the payment module' },
+            ],
+          }),
+        },
+      } as unknown as SessionEvent,
+    ]
+
+    const snapshot = buildMissionSnapshot(events)
+    const workerIds = snapshot.office.workers.map(w => w.id)
+
+    // Two tasks with the same name must produce two distinct workers
+    expect(snapshot.office.workers).toHaveLength(2)
+    expect(new Set(workerIds).size).toBe(2)
+    // Both should carry the "Review" label
+    expect(snapshot.office.workers.every(w => w.label === 'Review')).toBe(true)
+  })
+
+  it('produces distinct workers when task names normalize to the same slug', () => {
+    const events: SessionEvent[] = [
+      {
+        type: 'user/message',
+        seq: SessionSeq(1),
+        time: 10,
+        data: { content: [{ type: 'text', text: 'Slug collision test' }], source: { kind: 'user' } },
+      } as unknown as SessionEvent,
+      {
+        type: 'tool/call',
+        seq: SessionSeq(2),
+        time: 20,
+        data: {
+          turn: 1,
+          step: 1,
+          callId: 'dispatch-2',
+          name: 'task',
+          arguments: JSON.stringify({
+            tasks: [
+              { name: 'A/B', task: 'First task' },
+              { name: 'A B', task: 'Second task' },
+            ],
+          }),
+        },
+      } as unknown as SessionEvent,
+    ]
+
+    const snapshot = buildMissionSnapshot(events)
+    const workerIds = snapshot.office.workers.map(w => w.id)
+
+    expect(snapshot.office.workers).toHaveLength(2)
+    expect(new Set(workerIds).size).toBe(2)
+  })
 })

@@ -320,7 +320,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
         if (input.status === 'working' || input.status === 'error') {
           mem.latchedStatus = input.status
           mem.latchedUntilMs = now + MIN_ACTION_LINGER_MS
-          if (input.hold) mem.latchedHold = input.hold
+          mem.latchedHold = input.hold
         }
 
         if (input.bubble && input.bubble.trim().length > 0 && input.bubble !== mem.latchedBubble) {
@@ -356,7 +356,13 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
       // AUTO-DIRECTOR CAMERA ENGINE (DeepMind Racing / Broadcast Cinematic Cam)
       // ──────────────────────────────────────────────────────────────────────────
       if (cameraModeRef.current === 'auto') {
-        const activeAgents = pacedInputs.filter(a => a.status === 'working' || a.hold !== null || (a.bubble && a.bubble.length > 0))
+        const activeAgents = pacedInputs.filter(a =>
+          a.status === 'working'
+          || a.hold !== null
+          || a.streaming
+          || a.thinking
+          || a.awaitingApproval,
+        )
 
         let targetAgentId: string | null = lockedAgentId
 
