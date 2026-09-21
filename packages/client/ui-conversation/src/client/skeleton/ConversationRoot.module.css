@@ -276,6 +276,15 @@
   display: none;
 }
 
+/* Views that opt out of showing the resident composer (Mission View command deck). */
+.root:has([data-hide-composer]) .composerSeat,
+.scrollBody:has([data-hide-composer]) > .composerSeat {
+  display: none !important;
+}
+.root:has([data-hide-composer]) .widthHandle {
+  display: none;
+}
+
 /* Composer context stack (Figma 9:937): standalone dock cards share one
    rhythm above the input card. */
 .composerStack {

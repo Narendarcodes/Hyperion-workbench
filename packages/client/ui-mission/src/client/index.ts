@@ -12,7 +12,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import z from '@deepseek-ai/schemastery'
-import { en, NS } from './locales.ts'
+import { en, hi, te, NS } from './locales.ts'
 import {
   EMPTY_MISSION_SNAPSHOT,
   type MissionSnapshot,
@@ -92,7 +92,7 @@ export function apply(ctx: Context, config: Config = {}): void {
     return source
   }
 
-  ctx.effect(() => ctx.locale.register(NS, { en }), 'ui-mission: dictionaries')
+  ctx.effect(() => ctx.locale.register(NS, { en, hi, te }), 'ui-mission: dictionaries')
   const t = ctx.locale.bind(NS)
 
   registerMissionConversationView(ctx)

@@ -64,3 +64,5 @@ export const en = {
   'station.verification': 'Verifier',
   'station.report': 'Report Agent',
 }
+export const hi = en
+export const te = en

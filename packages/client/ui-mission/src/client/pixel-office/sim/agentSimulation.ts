@@ -135,29 +135,33 @@ export const createPixelSimulation = (map: PixelOfficeMap): PixelSimulation => {
     janitor: null,
   }
 
-  const createAgentState = (id: string): InternalAgentState => ({
-    id,
-    x: spawnCenter.x,
-    y: spawnCenter.y,
-    facing: 'down',
-    path: [],
-    goalKind: 'wander',
-    goalStationId: null,
-    deskId: null,
-    pauseUntil: 0,
-    arrived: false,
-    rng: mulberry32(hashString(id)),
-    holdKind: null,
-    targetX: spawnCenter.x,
-    targetY: spawnCenter.y,
-    // Sentinel target tile so the first real goal always triggers a repath.
-    targetTx: -1,
-    targetTy: -1,
-    targetFacing: 'down',
-    lastStationId: null,
-    wanderIndex: 0,
-  })
-
+  const createAgentState = (id: string): InternalAgentState => {
+    const deskId = state.deskByAgentId[id]
+    const deskSlot = deskId ? map.desks.find(d => d.id === deskId) : null
+    const startPos = deskSlot ? tileCenter(deskSlot.seatTx, deskSlot.seatTy) : spawnCenter
+    const startFacing = deskSlot ? deskSlot.facing : 'down'
+    return {
+      id,
+      x: startPos.x,
+      y: startPos.y,
+      facing: startFacing,
+      path: [],
+      goalKind: deskSlot ? 'desk' : 'wander',
+      goalStationId: null,
+      deskId: deskId ?? null,
+      pauseUntil: 0,
+      arrived: true,
+      rng: mulberry32(hashString(id)),
+      holdKind: null,
+      targetX: startPos.x,
+      targetY: startPos.y,
+      targetTx: deskSlot ? deskSlot.seatTx : Math.floor(startPos.x / PIXEL_TILE_SIZE),
+      targetTy: deskSlot ? deskSlot.seatTy : Math.floor(startPos.y / PIXEL_TILE_SIZE),
+      targetFacing: startFacing,
+      lastStationId: null,
+      wanderIndex: 0,
+    }
+  }
   /** True when another agent currently targets or sits on the station. */
   const isStationOccupied = (stationId: string, selfId: string): boolean => {
     for (const other of Object.values(state.agents)) {
@@ -497,26 +501,25 @@ export const createPixelSimulation = (map: PixelOfficeMap): PixelSimulation => {
         Reflect.deleteProperty(state.deskByAgentId, id)
       }
     }
-
     // Iterate agents sorted by id so assignments and picks are deterministic.
-    const sortedInputs = [...inputs].sort((a, b) =>
-      a.id < b.id ? -1 : a.id > b.id ? 1 : 0,
-    )
+    const sortedInputs = [...inputs].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+    // Assign sticky desk to all agents (Orchestrator gets CX Pod, others get Pod A/B desks)
+    for (const input of sortedInputs) {
+      if (state.deskByAgentId[input.id]) continue
+      const used = new Set(Object.values(state.deskByAgentId))
+      const freeDesk = input.id === 'lead'
+        ? map.desks.find(d => d.id.startsWith('desk-cx') && !used.has(d.id)) ?? map.desks.find(d => !used.has(d.id))
+        : map.desks.find(d => !d.id.startsWith('desk-cx') && !used.has(d.id)) ?? map.desks.find(d => !used.has(d.id))
+      if (freeDesk) {
+        state.deskByAgentId[input.id] = freeDesk.id
+      }
+    }
+
     for (const input of sortedInputs) {
       if (!state.agents[input.id]) {
         state.agents[input.id] = createAgentState(input.id)
       }
     }
-
-    // Sticky desk assignment: first free desk in map order, agents by id.
-    for (const input of sortedInputs) {
-      if (input.status !== 'working' && input.status !== 'error') continue
-      if (state.deskByAgentId[input.id]) continue
-      const used = new Set(Object.values(state.deskByAgentId))
-      const freeDesk = map.desks.find(deskSlot => !used.has(deskSlot.id))
-      if (freeDesk) state.deskByAgentId[input.id] = freeDesk.id
-    }
-
     for (const input of sortedInputs) {
       const agent = state.agents[input.id]
       if (!agent) continue
