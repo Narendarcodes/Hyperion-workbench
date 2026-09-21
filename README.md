@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Platform: On-Premise](https://img.shields.io/badge/Deployment-100%25%20On--Premise-emerald.svg)](#key-capabilities) [![AI Architecture: Sovereign](https://img.shields.io/badge/Architecture-Sovereign%20%26%20Air--Gapped-orange.svg)](#architecture) [![SIH: 2026](https://img.shields.io/badge/Smart%20India%20Hackathon-SIH26117-red.svg)](#overview) [![Voice: Indic Conformer](https://img.shields.io/badge/Voice%20ASR-Indic%20Conformer%20(22%20Langs)-purple.svg)](#1-indic-conformer-asr-voice-to-prompt)
+[![Platform: On-Premise](https://img.shields.io/badge/Deployment-100%25%20On--Premise-emerald.svg)](#key-capabilities) [![AI Architecture: Sovereign](https://img.shields.io/badge/Architecture-Sovereign%20%26%20Air--Gapped-orange.svg)](#architecture) [![Voice: Indic Conformer](https://img.shields.io/badge/Voice%20ASR-Indic%20Conformer%20(22%20Langs)-purple.svg)](#1-indic-conformer-asr-voice-to-prompt)
 
 **Sovereign Intelligence for Industrial Knowledge Work — Intelligence That Never Leaves Your Network.**
 
@@ -14,7 +14,7 @@
 
 ## Overview
 
-**Hyperion Workbench** is a sovereign, on-premise agentic AI operating environment built specifically for confidential industrial operations, critical infrastructure, and defense knowledge work (**SIH 2026 Problem SIH26117**).
+**Hyperion Workbench** is a sovereign, on-premise agentic AI operating environment built specifically for confidential industrial operations, critical infrastructure, and defense knowledge work.
 
 Modern enterprises face a severe dilemma: proprietary CAD blueprints, operational logs, and classified technical manuals cannot be sent to third-party cloud LLM APIs due to strict data sovereignty and compliance laws. Generic local agents often hallucinate, lack domain auditing, and operate as unverified "black boxes."
 
@@ -382,9 +382,9 @@ Hyperion Workbench runs on our fork of **DeepSeek Harness** — the open-source 
 
 We chose it because the harness — not the model — decides how much of a model's capability becomes completed, reliable work. DeepSeek's published benchmarks (Terminal-Bench 87.9, Cybergym 83.3, Toolathlon 74.1, all via Harness minimal mode with fixed sampling and maximal reasoning effort) demonstrate that the runtime architecture is the force multiplier.
 
-Same model weights, different harness: an independent rerun of V4-Flash on a third-party harness swung Terminal-Bench by twenty tasks. That swing is exactly why our workbench fork is the investment: every capability — models, tools, skills, sessions, sandboxes, scheduling, even the UI — is a plugin we recompose for MRPL's workflow.
+Same model weights, different harness: an independent rerun of V4-Flash on a third-party harness swung Terminal-Bench by twenty tasks. That swing is exactly why our workbench fork is the investment: every capability — models, tools, skills, sessions, sandboxes, scheduling, even the UI — is a plugin we recompose for industrial workflows.
 
-**Upstream:** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) **Sandbox direction informed by:** NVIDIA OpenShell (Apache 2.0) **Requirements per:** SIH26117 Product Requirements Document
+**Upstream:** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) **Sandbox direction informed by:** NVIDIA OpenShell (Apache 2.0)
 
 ---
 
@@ -392,4 +392,4 @@ Same model weights, different harness: an independent rerun of V4-Flash on a thi
 
 Hyperion Workbench builds upon the open-source Cordis plugin framework and foundational runtime primitives from DeepSeek Harness, extending them into a fully sovereign, voice-enabled, and explainable industrial AI workstation.
 
-**Engine:** Our fork of DeepSeek Harness (open-source, all-plugin Cordis runtime) **Sandbox policy direction:** NVIDIA OpenShell (Apache 2.0) **Workflow, roles, sovereignty requirements:** SIH26117 PRD
+**Engine:** Our fork of DeepSeek Harness (open-source, all-plugin Cordis runtime) **Sandbox policy direction:** NVIDIA OpenShell (Apache 2.0)
