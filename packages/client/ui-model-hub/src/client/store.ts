@@ -2,6 +2,7 @@
  * State store for Model Hub UI (Ollama & llama.cpp support).
  */
 
+import type { Context } from '@deepseek-ai/cordis'
 import { useSyncExternalStore } from 'react'
 import {
   defaultOllama,
@@ -166,35 +167,21 @@ class ModelHubStore {
         defaultLlama.getServerStatus(),
       ])
 
-      const tasks: Promise<any>[] = [fetchSystemResources()]
+      const [telemetry, llamaModels, ollamaDetails] = await Promise.all([
+        fetchSystemResources(),
+        defaultLlama.listModels(),
+        ollamaConnected
+          ? Promise.all([
+            defaultOllama.getVersion(),
+            defaultOllama.listModels(),
+            defaultOllama.listRunning(),
+          ])
+          : Promise.resolve(null),
+      ])
 
-      if (ollamaConnected) {
-        tasks.push(
-          defaultOllama.getVersion(),
-          defaultOllama.listModels(),
-          defaultOllama.listRunning(),
-        )
-      }
-
-      tasks.push(defaultLlama.listModels())
-
-      const results = await Promise.all(tasks)
-      const telemetry = results[0]
-
-      let ollamaVersion = '0.34.0'
-      let models: OllamaModel[] = []
-      let runningModels: OllamaRunningModel[] = []
-      let llamaModels: LlamaModel[] = []
-
-      if (ollamaConnected) {
-        ollamaVersion = results[1]
-        models = results[2] || []
-        runningModels = results[3] || []
-        llamaModels = results[4] || []
-      } else {
-        llamaModels = results[1] || []
-      }
-
+      const ollamaVersion = ollamaDetails ? ollamaDetails[0] : '0.34.0'
+      const models: OllamaModel[] = ollamaDetails ? ollamaDetails[1] : []
+      const runningModels: OllamaRunningModel[] = ollamaDetails ? ollamaDetails[2] : []
       void syncOllamaModelsToSettings()
       void syncLlamaModelsToSettings()
 
@@ -281,10 +268,51 @@ export function startTelemetryPolling(intervalMs = 4000): () => void {
   return () => clearInterval(timer)
 }
 
-let boundContext: any = null
+interface BoundModelDirectory {
+  load(): Promise<{
+    groups?: Array<{
+      id: string
+      name?: string
+      models: Array<{ id: string; name?: string }>
+    }>
+  }>
+  select(selection: { provider: string; model: string }): Promise<void>
+}
 
-export function bindCordisContext(ctx: any): void {
-  boundContext = ctx
+interface BoundCordisContext {
+  remote?: {
+    settings?: { mutate: (section: string, entries: unknown[]) => Promise<void> }
+    $emit?: (event: string) => void
+  }
+  modelDirectories?: {
+    catalog?: { refresh: () => void }
+    directoryFor: (sessionId: string) => BoundModelDirectory | undefined
+  }
+  sessions?: {
+    list?: {
+      getSnapshot: () => { current?: string }
+      subscribe: (listener: () => void) => () => void
+    }
+  }
+}
+
+let boundContext: BoundCordisContext | null = null
+
+export function bindCordisContext(ctx: Context): void {
+  boundContext = ctx as unknown as BoundCordisContext
+  const sessionsList = boundContext.sessions?.list
+  if (sessionsList?.subscribe) {
+    let lastSessionId = sessionsList.getSnapshot()?.current
+    sessionsList.subscribe(() => {
+      const nextId = sessionsList.getSnapshot()?.current
+      if (nextId && nextId !== lastSessionId) {
+        lastSessionId = nextId
+        if (modelHubStore.getSnapshot().isOpen) {
+          closeModelHub()
+        }
+      }
+    })
+  }
 }
 
 let lastOllamaModelsHash = ''
@@ -465,21 +493,19 @@ export async function selectModelForActiveSession(
 
       // Pass 1: Check requested provider hint group first (e.g. 'llama')
       const hintGroup = state.groups.find(
-        (g: any) => g.id === providerHint || g.name?.toLowerCase().includes('llama'),
+        (g: { id: string; name?: string }) => g.id === providerHint || g.name?.toLowerCase().includes('llama'),
       )
       if (hintGroup) {
         const match = hintGroup.models.find(
-          (m: any) =>
+          (m: { id: string; name?: string }) =>
             m.id === modelName ||
-            m.id.toLowerCase() === modelName.toLowerCase() ||
-            m.name === modelName ||
-            m.name.toLowerCase() === modelName.toLowerCase(),
+            (m.name ? m.name.toLowerCase() === modelName.toLowerCase() : false),
         )
         if (match) {
           targetProvider = hintGroup.id
           targetModelId = match.id
           found = true
-        } else if (hintGroup.models.length > 0) {
+        } else if (hintGroup.models.length > 0 && hintGroup.models[0]) {
           targetProvider = hintGroup.id
           targetModelId = hintGroup.models[0].id
           found = true
@@ -490,11 +516,9 @@ export async function selectModelForActiveSession(
       if (!found) {
         for (const group of state.groups) {
           const match = group.models.find(
-            (m: any) =>
+            (m: { id: string; name?: string }) =>
               m.id === modelName ||
-              m.id.toLowerCase() === modelName.toLowerCase() ||
-              m.name === modelName ||
-              m.name.toLowerCase() === modelName.toLowerCase(),
+              (m.name ? m.name.toLowerCase() === modelName.toLowerCase() : false),
           )
           if (match) {
             targetProvider = group.id

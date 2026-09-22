@@ -4,12 +4,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #ffffff;
-  z-index: 10000;
+  background: var(--dsw-alias-bg-base, #0b0f19);
+  z-index: 100;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  color: #1e293b;
+  color: var(--dsw-alias-label-primary, #f8fafc);
 }
 
 /* When mounted in shell, leave room for sidebar if visible */
@@ -21,13 +21,13 @@
 
 .topBar {
   height: 56px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.08));
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  background: #f8fafc;
-  backdrop-filter: blur(12px);
+  background: var(--dsw-alias-bg-layer-1, rgba(15, 23, 42, 0.8));
+  backdrop-filter: blur(16px);
   flex-shrink: 0;
 }
 
@@ -44,9 +44,9 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  color: #334155;
+  background: var(--dsw-alias-bg-layer-2, rgba(30, 41, 59, 0.6));
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.1));
+  color: var(--dsw-alias-label-primary, #f8fafc);
 }
 
 .brandTitles {
@@ -57,23 +57,23 @@
 .brandTitle {
   font-size: 15px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--dsw-alias-label-primary, #f8fafc);
   line-height: 1.2;
 }
 
 .brandTagline {
   font-size: 11px;
-  color: #64748b;
+  color: var(--dsw-alias-label-secondary, #94a3b8);
 }
 
 .tabNavigation {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #f1f5f9;
+  background: var(--dsw-alias-bg-layer-2, rgba(30, 41, 59, 0.6));
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.08));
 }
 
 .tabBtn {
@@ -86,20 +86,20 @@
   border: none;
   font-size: 13px;
   font-weight: 500;
-  color: #64748b;
+  color: var(--dsw-alias-label-secondary, #94a3b8);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .tabBtn:hover {
-  color: #0f172a;
-  background: #e2e8f0;
+  color: var(--dsw-alias-label-primary, #f8fafc);
+  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.06));
 }
 
 .tabBtn.active {
   color: #ffffff;
-  background: #334155;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: var(--dsw-alias-accent, #3b82f6);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .tabBadge {
@@ -107,8 +107,8 @@
   font-weight: 600;
   padding: 1px 6px;
   border-radius: 10px;
-  background: #475569;
-  color: #ffffff;
+  background: var(--dsw-alias-bg-layer-3, rgba(255, 255, 255, 0.15));
+  color: inherit;
 }
 
 .topBarActions {
@@ -123,9 +123,9 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #334155;
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.12));
+  background: var(--dsw-alias-bg-layer-2, rgba(30, 41, 59, 0.5));
+  color: var(--dsw-alias-label-primary, #f8fafc);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -133,9 +133,9 @@
 }
 
 .closeHubBtn:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-  border-color: #94a3b8;
+  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.08));
+  color: var(--dsw-alias-label-primary, #ffffff);
+  border-color: var(--dsw-alias-border-l3, rgba(255, 255, 255, 0.2));
 }
 
 .workspaceContent {
@@ -144,7 +144,7 @@
   overflow: hidden;
   padding: 24px;
   gap: 24px;
-  background: #ffffff;
+  background: var(--dsw-alias-bg-base, #0b0f19);
 }
 
 .mainPanel {
@@ -158,6 +158,6 @@
   width: 6px;
 }
 .mainPanel::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--dsw-alias-scrollbar-bg-l1, rgba(255, 255, 255, 0.15));
   border-radius: 3px;
 }

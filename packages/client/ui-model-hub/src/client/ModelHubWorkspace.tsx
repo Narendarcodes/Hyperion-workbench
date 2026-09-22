@@ -106,6 +106,25 @@ export const ModelHubWorkspace: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, isAddModelOpen, isAddLlamaModelOpen, isModelDetailsOpen, isLlamaDetailsOpen])
 
+  // Auto-dismiss Model Hub when clicking inside the navigation sidebar (e.g. switching sessions or settings)
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handlePointerDown = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null
+      if (!target) return
+      const clickedSidebarWorkspace = target.closest('[data-slot="sidebar.workspaces"]')
+      const clickedSidebarSettings = target.closest('[data-slot="sidebar.settings"]')
+      const clickedSidebarBrand = target.closest('[data-slot="sidebar.brand.mark"]') || target.closest('[data-slot="sidebar.brand.name"]')
+      if (clickedSidebarWorkspace || clickedSidebarSettings || clickedSidebarBrand) {
+        closeModelHub()
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown, true)
+    return () => document.removeEventListener('pointerdown', handlePointerDown, true)
+  }, [isOpen])
+
   if (!isOpen) return null
 
   return (

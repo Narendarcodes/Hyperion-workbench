@@ -3,6 +3,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type {} from '@deepseek-ai/dsh-api-remotes/client'
+import type {} from '@deepseek-ai/dsh-client-ui-slots'
 import { ModelHubSidebarButton } from './ModelHubSidebarButton'
 import { ModelHubWorkspace } from './ModelHubWorkspace'
 import { startTelemetryPolling, bindCordisContext } from './store'
@@ -22,9 +23,8 @@ export function apply(ctx: Context): void {
   }, 'ui-model-hub: telemetry polling')
 
   // Register the sidebar footer button (stacks above Settings in sidebar footArea)
-  const slots = (ctx as any).slots
-  slots.inject('sidebar.footer.action', () =>
-    slots.register(
+  ctx.slots.inject('sidebar.footer.action', () =>
+    ctx.slots.register(
       {
         name: 'sidebar.footer.action',
         id: 'model-hub-sidebar-button',
@@ -34,8 +34,8 @@ export function apply(ctx: Context): void {
   )
 
   // Register the Model Hub full workspace overlay in shell.overlay
-  slots.inject('shell.overlay', () =>
-    slots.register(
+  ctx.slots.inject('shell.overlay', () =>
+    ctx.slots.register(
       {
         name: 'shell.overlay',
         id: 'model-hub-workspace',

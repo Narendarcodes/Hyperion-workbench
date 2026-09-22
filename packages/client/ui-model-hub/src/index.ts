@@ -142,19 +142,24 @@ function getSystemMetrics(): Omit<SystemResources, 'gpu'> {
   const freeMem = os.freemem()
   const usedMem = totalMem - freeMem
 
-  let storageInfo = { drive: 'E:', totalGB: 100, usedGB: 45, freeGB: 55, usagePercent: 45 }
+  const targetDrive = process.platform === 'win32'
+    ? (process.cwd().match(/^[A-Za-z]:/)?.[0] || 'C:') + '\\'
+    : '/'
+  const driveLabel = process.platform === 'win32' ? targetDrive.slice(0, 2) : '/'
+
+  let storageInfo = { drive: driveLabel, totalGB: 0, usedGB: 0, freeGB: 0, usagePercent: 0 }
   try {
-    const stats = fs.statfsSync ? fs.statfsSync('E:\\') : null
+    const stats = fs.statfsSync ? fs.statfsSync(targetDrive) : null
     if (stats) {
       const totalBytes = stats.bsize * stats.blocks
       const freeBytes = stats.bsize * stats.bfree
-      const usedBytes = totalBytes - freeBytes
+      const usedBytes = Math.max(0, totalBytes - freeBytes)
       storageInfo = {
-        drive: 'E:',
+        drive: driveLabel,
         totalGB: Math.round((totalBytes / (1024 * 1024 * 1024)) * 10) / 10,
         usedGB: Math.round((usedBytes / (1024 * 1024 * 1024)) * 10) / 10,
         freeGB: Math.round((freeBytes / (1024 * 1024 * 1024)) * 10) / 10,
-        usagePercent: Math.round((usedBytes / totalBytes) * 100),
+        usagePercent: totalBytes > 0 ? Math.round((usedBytes / totalBytes) * 100) : 0,
       }
     }
   } catch {

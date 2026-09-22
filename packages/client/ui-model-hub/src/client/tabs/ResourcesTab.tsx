@@ -13,8 +13,9 @@ export const ResourcesTab: React.FC = () => {
       setUnloadingModel(modelName)
       await unloadModel(modelName)
       await refreshAll()
-    } catch (err: any) {
-      alert(`Failed to unload ${modelName}: ${err.message}`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      alert(`Failed to unload ${modelName}: ${msg}`)
     } finally {
       setUnloadingModel(null)
     }
@@ -173,7 +174,7 @@ export const ResourcesTab: React.FC = () => {
               </svg>
               Drive Storage
             </span>
-            <span className={css.metricBadge}>Drive {disk?.drive || 'E:'}</span>
+            <span className={css.metricBadge}>{disk?.drive ? `Drive ${disk.drive}` : 'System Disk'}</span>
           </div>
           <div className={css.metricValueRow}>
             <span className={css.metricMainValue}>{diskPercent}%</span>
@@ -243,7 +244,9 @@ export const ResourcesTab: React.FC = () => {
       <div className={css.infoBanner}>
         <span className={css.infoIcon}>ℹ</span>
         <div>
-          <strong>Real-Time Local Introspection:</strong> HYPERION queries hardware state directly through local system APIs (NVIDIA System Management Interface `nvidia-smi` and local Node OS diagnostics). No external analytical telemetry or third-party connections are ever initiated.
+          <strong>Real-Time Local Introspection:</strong> HYPERION queries hardware state directly
+          through local system APIs (NVIDIA System Management Interface `nvidia-smi` and local Node OS diagnostics).
+          No external analytical telemetry or third-party connections are ever initiated.
         </div>
       </div>
     </div>
