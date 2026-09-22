@@ -27,8 +27,11 @@ async function probePort(url: string): Promise<boolean> {
 async function ensureBackgroundServers(): Promise<void> {
   const isLlamaRunning = await probePort('http://127.0.0.1:8080/health')
   if (!isLlamaRunning) {
-    const customPath = 'E:\\Hyperion\\llama\\llama-server.exe'
-    const llamaExe = fs.existsSync(customPath) ? customPath : 'llama-server'
+    const candidatePaths = [
+      'E:\\Hyperion\\llama\\llama-server.exe',
+      `${os.homedir()}\\AppData\\Local\\Microsoft\\WinGet\\Packages\\ggml.llamacpp_Microsoft.Winget.Source_8wekyb3d8bbwe\\llama-server.exe`,
+    ]
+    const llamaExe = candidatePaths.find(p => fs.existsSync(p)) || 'llama-server'
     try {
       const child = spawn(
         llamaExe,

@@ -36,8 +36,9 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
     try {
       await unloadModel(name)
       await refreshAll()
-    } catch (err: any) {
-      alert(`Failed to unload: ${err.message}`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      alert(`Failed to unload: ${msg}`)
     }
   }
 
@@ -48,16 +49,21 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
         await unloadModel(m.name)
       }
       await refreshAll()
-    } catch (err: any) {
-      alert(`Failed to unload models: ${err.message}`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      alert(`Failed to unload models: ${msg}`)
     }
   }
 
   // Calculate quick metrics
   const gpu = systemResources?.gpu
   const vramUsed = gpu?.vramUsedMB || 0
-  const vramTotal = gpu?.vramTotalMB || 8192
-  const vramPct = Math.min(100, Math.round((vramUsed / vramTotal) * 100))
+  const vramTotal = gpu?.vramTotalMB || 0
+  const vramPct = vramTotal > 0 ? Math.min(100, Math.round((vramUsed / vramTotal) * 100)) : 0
+  const gpuMemGB = gpu?.vramTotalMB ? `${Math.round(gpu.vramTotalMB / 1024)}GB` : ''
+  const vramLabel = gpu?.name
+    ? `CUDA VRAM (${gpu.name}${gpuMemGB ? ` ${gpuMemGB}` : ''})`
+    : (gpuMemGB ? `CUDA VRAM (${gpuMemGB})` : 'CUDA VRAM')
 
   const memory = systemResources?.memory
   const ramUsed = memory?.used || 0
@@ -171,7 +177,7 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
         {/* VRAM */}
         <div className={css.meterRow}>
           <div className={css.meterLabelRow}>
-            <span>CUDA VRAM (NVIDIA GPU 8GB)</span>
+            <span>{vramLabel}</span>
             <span>{vramPct}%</span>
           </div>
           <div className={css.meterBg}>
