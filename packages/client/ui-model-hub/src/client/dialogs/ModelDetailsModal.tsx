@@ -3,11 +3,16 @@ import { showModel, type OllamaModelInfo } from '../services/ollama'
 import css from './ModelDetailsModal.module.css'
 
 interface ModelDetailsModalProps {
+  isOpen?: boolean
   modelName: string | null
   onClose: () => void
 }
 
-export const ModelDetailsModal: React.FC<ModelDetailsModalProps> = ({ modelName, onClose }) => {
+export const ModelDetailsModal: React.FC<ModelDetailsModalProps> = ({
+  isOpen = true,
+  modelName,
+  onClose,
+}) => {
   const [details, setDetails] = useState<OllamaModelInfo | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,7 +47,7 @@ export const ModelDetailsModal: React.FC<ModelDetailsModalProps> = ({ modelName,
     }
   }, [modelName])
 
-  if (!modelName) return null
+  if (!isOpen || !modelName) return null
 
   const handleCopyModelfile = () => {
     if (!details?.modelfile) return

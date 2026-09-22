@@ -286,6 +286,7 @@ export const ModelHubWorkspace: React.FC = () => {
       <AddLlamaModelModal isOpen={isAddLlamaModelOpen} onClose={() => setAddLlamaModelOpen(false)} />
 
       <ModelDetailsModal
+        isOpen={isModelDetailsOpen}
         modelName={selectedModel?.name ?? null}
         onClose={() => setModelDetailsOpen(false)}
       />

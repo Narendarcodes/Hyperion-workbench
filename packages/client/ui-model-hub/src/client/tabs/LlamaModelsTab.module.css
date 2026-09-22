@@ -250,12 +250,14 @@
 }
 
 .useBtn {
-  background: var(--dsw-alias-button-contrast-fill, #3b82f6);
-  color: #ffffff;
+  background: var(--dsw-alias-accent, #3b82f6);
+  color: #ffffff !important;
   border: none;
+  font-weight: 600;
 }
 
 .useBtn:hover {
+  background: #2563eb;
   filter: brightness(1.1);
 }
 

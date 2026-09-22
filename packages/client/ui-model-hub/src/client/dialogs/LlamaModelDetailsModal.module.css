@@ -55,18 +55,22 @@
 }
 
 .closeBtn {
-  background: none;
-  color: var(--dsw-alias-label-secondary, #94a3b8);
+  background: transparent;
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.15));
+  color: var(--dsw-alias-label-primary, #f8fafc);
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
 .closeBtn:hover {
-  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.08));
-  color: #ffffff;
+  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.12));
+  color: var(--dsw-alias-label-primary, #ffffff);
+  border-color: var(--dsw-alias-border-l3, rgba(255, 255, 255, 0.25));
 }
 
 .modalBody {
@@ -118,17 +122,19 @@
 }
 
 .closeFooterBtn {
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 6px;
-  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.12));
-  background: var(--dsw-alias-bg-layer-2, rgba(30, 41, 59, 0.4));
-  color: var(--dsw-alias-label-secondary, #94a3b8);
+  border: 1px solid var(--dsw-alias-border-l3, rgba(255, 255, 255, 0.2));
+  background: var(--dsw-alias-bg-layer-3, rgba(51, 65, 85, 0.8));
+  color: #ffffff;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .closeFooterBtn:hover {
-  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.08));
+  background: var(--dsw-alias-accent, #3b82f6);
+  border-color: var(--dsw-alias-accent, #3b82f6);
   color: #ffffff;
 }
