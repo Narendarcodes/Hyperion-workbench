@@ -21,6 +21,9 @@
 - id: directory-picker
   disabled: true
 
+- id: hyperion-bridge
+  disabled: true
+
 - id: connection
   inject:
     - credentials

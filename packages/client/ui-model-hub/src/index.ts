@@ -14,7 +14,6 @@ import type {} from '@deepseek-ai/dsh-host-webserver'
 const execAsync = promisify(exec)
 
 export const name = 'ui-model-hub'
-export const inject = ['webServer']
 
 async function probePort(url: string): Promise<boolean> {
   try {
@@ -28,9 +27,8 @@ async function probePort(url: string): Promise<boolean> {
 async function ensureBackgroundServers(): Promise<void> {
   const isLlamaRunning = await probePort('http://127.0.0.1:8080/health')
   if (!isLlamaRunning) {
-    const llamaExe = fs.existsSync('E:\\Hyperion\\llama\\llama-server.exe')
-      ? 'E:\\Hyperion\\llama\\llama-server.exe'
-      : 'llama-server'
+    const customPath = 'E:\\Hyperion\\llama\\llama-server.exe'
+    const llamaExe = fs.existsSync(customPath) ? customPath : 'llama-server'
     try {
       const child = spawn(
         llamaExe,
@@ -51,9 +49,12 @@ async function ensureBackgroundServers(): Promise<void> {
           windowsHide: true,
         },
       )
+      child.on('error', (e) => {
+        console.warn('[Model Hub] Local llama-server not installed or not in PATH:', e.message)
+      })
       child.unref()
     } catch (e) {
-      console.warn('Could not auto-start llama-server background process:', e)
+      console.warn('[Model Hub] Could not auto-start llama-server background process:', e)
     }
   }
 
@@ -65,9 +66,12 @@ async function ensureBackgroundServers(): Promise<void> {
         stdio: 'ignore',
         windowsHide: true,
       })
+      child.on('error', (e) => {
+        console.warn('[Model Hub] Ollama not installed or not in PATH:', e.message)
+      })
       child.unref()
     } catch (e) {
-      console.warn('Could not auto-start Ollama background process:', e)
+      console.warn('[Model Hub] Could not auto-start Ollama background process:', e)
     }
   }
 }
@@ -173,29 +177,36 @@ function getSystemMetrics(): Omit<SystemResources, 'gpu'> {
 export function apply(ctx: Context): void {
   // Auto-probe and launch background servers on boot
   void ensureBackgroundServers()
+  const registerRoute = (serverCtx: Context) => {
+    serverCtx.effect(() => {
+      return serverCtx.webServer.register({
+        kind: 'exact',
+        path: '/api/system/resources',
+        handler: async (req, res) => {
+          if (req.method !== 'GET') {
+            res.writeHead(405)
+            res.end()
+            return
+          }
 
-  ctx.effect(() => {
-    return ctx.webServer.register({
-      kind: 'exact',
-      path: '/api/system/resources',
-      handler: async (req, res) => {
-        if (req.method !== 'GET') {
-          res.writeHead(405)
-          res.end()
-          return
-        }
+          const gpu = await getGpuMetrics()
+          const system = getSystemMetrics()
+          const payload: SystemResources = { gpu, ...system }
 
-        const gpu = await getGpuMetrics()
-        const system = getSystemMetrics()
-        const payload: SystemResources = { gpu, ...system }
+          res.writeHead(200, {
+            'content-type': 'application/json; charset=utf-8',
+            'access-control-allow-origin': '*',
+          })
+          res.end(JSON.stringify(payload))
+        },
+      })
+    }, 'ui-model-hub: system telemetry route')
+  }
 
-        res.writeHead(200, {
-          'content-type': 'application/json; charset=utf-8',
-          'access-control-allow-origin': '*',
-        })
-        res.end(JSON.stringify(payload))
-      },
-    })
-  }, 'ui-model-hub: system telemetry route')
+  if (ctx.get('webServer') !== undefined) {
+    registerRoute(ctx)
+  } else {
+    ctx.inject(['webServer'], registerRoute)
+  }
 }
 
