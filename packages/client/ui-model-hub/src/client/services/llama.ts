@@ -40,6 +40,48 @@ export interface GgufHeaderMetadata {
 
 const DEFAULT_LLAMA_ENDPOINT = 'http://127.0.0.1:8080'
 
+export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
+  {
+    id: 'ggml-org/GLM-OCR-GGUF:Q8_0',
+    name: 'GLM-OCR (Precision Drawing OCR)',
+    format: 'GGUF',
+    quantization: 'Q8_0',
+    size: 4900000000,
+    parameterSize: '0.9B',
+    contextLength: 65536,
+    architecture: 'vision',
+    modifiedAt: new Date().toISOString(),
+    status: 'installed',
+    capabilities: ['vision', 'ocr', 'precision-engineering-ocr'],
+  },
+  {
+    id: 'glm-ocr:latest',
+    name: 'glm-ocr:latest',
+    format: 'GGUF',
+    quantization: 'Q8_0',
+    size: 4900000000,
+    parameterSize: '0.9B',
+    contextLength: 65536,
+    architecture: 'vision',
+    modifiedAt: new Date().toISOString(),
+    status: 'installed',
+    capabilities: ['vision', 'ocr'],
+  },
+  {
+    id: 'Llama-3.2-3B-Instruct-Q4_K_M.gguf',
+    name: 'Llama 3.2 3B Instruct',
+    format: 'GGUF',
+    quantization: 'Q4_K_M',
+    size: 2020000000,
+    parameterSize: '3B',
+    contextLength: 131072,
+    architecture: 'llama',
+    modifiedAt: new Date().toISOString(),
+    status: 'installed',
+    capabilities: ['completion', 'chat', 'tools'],
+  },
+]
+
 export class LlamaService {
   private endpoint = DEFAULT_LLAMA_ENDPOINT
 
@@ -100,7 +142,9 @@ export class LlamaService {
       if (res.ok) {
         const data = await res.json()
         if (data && Array.isArray(data.data)) {
-          loadedModels = data.data.map((m: any) => m.id || m.name).filter(Boolean)
+          loadedModels = data.data
+            .map((m: { id?: string; name?: string }) => m.id || m.name)
+            .filter((id: string | undefined): id is string => Boolean(id))
         }
       }
     } catch {
@@ -127,50 +171,6 @@ export class LlamaService {
       loadedModels,
     }
   }
-
-export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
-  {
-    id: 'ggml-org/GLM-OCR-GGUF:Q8_0',
-    name: 'GLM-OCR (Precision Drawing OCR)',
-    format: 'GGUF',
-    quantization: 'Q8_0',
-    size: 4900000000,
-    parameterSize: '0.9B',
-    contextLength: 65536,
-    architecture: 'vision',
-    modifiedAt: new Date().toISOString(),
-    status: 'installed',
-    capabilities: ['vision', 'ocr', 'precision-engineering-ocr'],
-  },
-  {
-    id: 'glm-ocr:latest',
-    name: 'glm-ocr:latest',
-    format: 'GGUF',
-    quantization: 'Q8_0',
-    size: 4900000000,
-    parameterSize: '0.9B',
-    contextLength: 65536,
-    architecture: 'vision',
-    modifiedAt: new Date().toISOString(),
-    status: 'installed',
-    capabilities: ['vision', 'ocr'],
-  },
-  {
-    id: 'Llama-3.2-3B-Instruct-Q4_K_M.gguf',
-    name: 'Llama 3.2 3B Instruct',
-    format: 'GGUF',
-    quantization: 'Q4_K_M',
-    size: 2020000000,
-    parameterSize: '3B',
-    contextLength: 131072,
-    architecture: 'llama',
-    modifiedAt: new Date().toISOString(),
-    status: 'installed',
-    capabilities: ['completion', 'chat', 'tools'],
-  },
-]
-
-
 
   /** List installed & available llama.cpp GGUF models */
   async listModels(): Promise<LlamaModel[]> {
@@ -233,7 +233,8 @@ export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
             if (typeof item.quantization === 'string') {
               quantization = item.quantization
             } else if (typeof id === 'string') {
-              const match = id.match(/:(Q[0-9]_[A-Z0-9_]+|IQ[0-9]_[A-Z0-9_]+|[A-Z0-9_]+)$/i) || id.match(/-(Q[0-9]_[A-Z0-9_]+|IQ[0-9]_[A-Z0-9_]+)/i)
+              const match = id.match(/:(Q[0-9]_[A-Z0-9_]+|IQ[0-9]_[A-Z0-9_]+|[A-Z0-9_]+)$/i)
+                || id.match(/-(Q[0-9]_[A-Z0-9_]+|IQ[0-9]_[A-Z0-9_]+)/i)
               if (match && match[1]) quantization = match[1].toUpperCase()
             }
 
@@ -246,15 +247,17 @@ export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
 
             // Find matching seed entry or add new
             const matchedKey = Array.from(modelMap.keys()).find(
-              k => k === id || k.toLowerCase().includes(id.toLowerCase()) || id.toLowerCase().includes(k.toLowerCase())
+              k => k === id || k.toLowerCase().includes(id.toLowerCase()) || id.toLowerCase().includes(k.toLowerCase()),
             )
 
             if (matchedKey) {
-              const existing = modelMap.get(matchedKey)!
-              modelMap.set(matchedKey, {
-                ...existing,
-                status: 'loaded',
-              })
+              const existing = modelMap.get(matchedKey)
+              if (existing) {
+                modelMap.set(matchedKey, {
+                  ...existing,
+                  status: 'loaded',
+                })
+              }
             } else {
               modelMap.set(id, {
                 id,
@@ -373,8 +376,8 @@ export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
       else if (/70b/i.test(fileName)) parameterCount = '70B'
 
       let quantization = 'Q4_K_M'
-      const quantMatch = fileName.match(/Q[0-9]_[K_S_M_L]+|Q[0-9]_0|Q[0-9]_1|IQ[0-9]_[A-Z_]+/i)
-      if (quantMatch) quantization = quantMatch[0].toUpperCase()
+      const quantMatch = fileName.match(/Q[0-9]_[KSML_]+|Q[0-9]_0|Q[0-9]_1|IQ[0-9]_[A-Z_]+/i)
+      if (quantMatch && quantMatch[0]) quantization = quantMatch[0].toUpperCase()
 
       let architecture = 'llama'
       if (/qwen/i.test(fileName)) architecture = 'qwen2'
