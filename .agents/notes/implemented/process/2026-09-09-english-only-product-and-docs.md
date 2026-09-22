@@ -4,7 +4,7 @@ Status: implemented
 
 ## Problem
 
-HYPERION ships an English-only product for SIH 2026, but the fork carried the full upstream bilingual system: 1360 Chinese doc files, Chinese dictionaries in every client locale, a Chinese-first onboarding path, and the translation-pairing gates, merge driver, hooks, website locale trees, and translation skills that maintained them. Every product surface a reviewer opens showed Chinese first, and every docs edit paid the pairing tax.
+HYPERION ships an English-only product, but the fork carried the full upstream bilingual system: 1360 Chinese doc files, Chinese dictionaries in every client locale, a Chinese-first onboarding path, and the translation-pairing gates, merge driver, hooks, website locale trees, and translation skills that maintained them. Every product surface a reviewer opens showed Chinese first, and every docs edit paid the pairing tax.
 
 ## Decision
 

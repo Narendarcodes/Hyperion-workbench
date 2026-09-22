@@ -25,5 +25,49 @@ export const en = {
   'relative.overdue': '{value} {unit} overdue',
 }
 
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'trigger.one': '{count} अनुस्मारक',
+  'trigger.other': '{count} अनुस्मारक',
+  'list.aria': 'सक्रिय अनुस्मारक',
+  'status.scheduled': 'निर्धारित',
+  'status.overdue': 'विलंबित',
+  'frequency.once': 'एक बार',
+  'frequency.every': 'प्रत्येक {value} {unit}',
+  'unit.day.one': 'दिन',
+  'unit.day.other': 'दिन',
+  'unit.hour.one': 'घंटा',
+  'unit.hour.other': 'घंटे',
+  'unit.minute.one': 'मिनट',
+  'unit.minute.other': 'मिनट',
+  'unit.second.one': 'सेकंड',
+  'unit.second.other': 'सेकंड',
+  'relative.now': 'अभी देय',
+  'relative.future': '{value} {unit} में',
+  'relative.overdue': '{value} {unit} विलंबित',
+}
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'trigger.one': '{count} రిమైండర్',
+  'trigger.other': '{count} రిమైండర్లు',
+  'list.aria': 'చురుకైన రిమైండర్లు',
+  'status.scheduled': 'షెడ్యూల్ చేయబడింది',
+  'status.overdue': 'గడువు దాటింది',
+  'frequency.once': 'ఒకసారి',
+  'frequency.every': 'ప్రతి {value} {unit}',
+  'unit.day.one': 'రోజు',
+  'unit.day.other': 'రోజులు',
+  'unit.hour.one': 'గంట',
+  'unit.hour.other': 'గంటలు',
+  'unit.minute.one': 'నిమిషం',
+  'unit.minute.other': 'నిమిషాలు',
+  'unit.second.one': 'సెకను',
+  'unit.second.other': 'సెకన్లు',
+  'relative.now': 'ఇప్పుడు గడువు',
+  'relative.future': '{value} {unit} లో',
+  'relative.overdue': '{value} {unit} గడువు దాటింది',
+}
+
 /** Key domain of the Schedule catalog namespace. */
 export type ScheduleCatalogKey = keyof typeof en

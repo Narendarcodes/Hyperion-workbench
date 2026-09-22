@@ -1,0 +1,17 @@
+{"type":"user/message","seq":1,"time":1000,"data":{"content":[{"type":"text","text":"Implement the hyperion mission simulation and export bundle"}],"source":{"kind":"user"}}}
+{"type":"request/header","seq":2,"time":1050,"data":{"header":{"config":{"provider":"deepseek","model":"deepseek-chat"}},"reason":"initial"}}
+{"type":"plan/mode","seq":3,"time":1100,"data":{"active":true}}
+{"type":"sandbox/mode","seq":4,"time":1150,"data":{"mode":"workspace-write"}}
+{"type":"approval/policy","seq":5,"time":1200,"data":{"policy":"on-demand"}}
+{"type":"subagent/descriptor","seq":6,"time":1250,"data":{"agentId":"doc-specialist","label":"Document Specialist","persona":"read_docs"}}
+{"type":"tool-workflow/run-start","seq":7,"time":1300,"data":{"runId":"wf-1","name":"Hyperion Pipeline"}}
+{"type":"tool-workflow/agent-start","seq":8,"time":1350,"data":{"runId":"wf-1","seq":1,"label":"Workflow Coder","phase":"write_code","childId":"wf-coder-1"}}
+{"type":"tool/call","seq":9,"time":1400,"data":{"turn":1,"step":1,"callId":"call-read-1","name":"read","arguments":"{\"path\":\"src/core/pipeline.ts\"}"}}
+{"type":"tool/result","seq":10,"time":1450,"data":{"turn":1,"step":1,"message":{"content":[{"type":"text","text":"export const pipeline = true;"}],"source":{"callId":"call-read-1"}}}}
+{"type":"tool/call","seq":11,"time":1500,"data":{"turn":1,"step":2,"callId":"call-write-1","name":"write","arguments":"{\"path\":\"dist/mission.js\"}"}}
+{"type":"tool/result","seq":12,"time":1550,"data":{"turn":1,"step":2,"message":{"content":[{"type":"text","text":"wrote dist/mission.js successfully"}],"source":{"callId":"call-write-1"}}}}
+{"type":"approval/asked","seq":13,"time":1600,"data":{"id":"appr-bash-1","toolName":"bash"}}
+{"type":"approval/decided","seq":14,"time":1650,"data":{"id":"appr-bash-1","outcome":"allowed-once"}}
+{"type":"tool-workflow/agent-end","seq":15,"time":1700,"data":{"runId":"wf-1","seq":1,"outcome":"completed"}}
+{"type":"tool-workflow/run-end","seq":16,"time":1750,"data":{"runId":"wf-1","stopReason":"completed"}}
+{"type":"turn/end","seq":17,"time":1800,"data":{"turn":1,"reason":{"kind":"completed"}}}

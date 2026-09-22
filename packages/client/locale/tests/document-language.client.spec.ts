@@ -97,4 +97,14 @@ describe('document language', () => {
     locale.setLocale('pt-BR')
     expect(langOf()).toBe('pt-BR')
   })
+
+  it('opens provisionally in a catalogued Indic language the browser asks for', async () => {
+    // The apply-registered catalog includes Hindi: a Hindi browser resolves it
+    // before any Host preference arrives, and the document follows.
+    Object.defineProperty(navigator, 'languages', { value: ['hi-IN'], configurable: true })
+    Object.defineProperty(navigator, 'language', { value: 'hi-IN', configurable: true })
+    const { locale } = await bench()
+    expect(locale.getLocale().active).toBe('hi')
+    expect(langOf()).toBe('hi')
+  })
 })

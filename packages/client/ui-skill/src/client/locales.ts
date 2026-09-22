@@ -16,3 +16,25 @@ export const en = {
   'row.inspect': 'Inspect',
   'menu.userOnly': 'user-only',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'row.title': 'कौशल',
+  'row.running': 'कौशल लोड हो रहा है',
+  'row.failed': 'कौशल लोड विफल रहा',
+  'row.stopped': 'कौशल लोड रुक गया',
+  'row.instructions': 'निर्देश',
+  'row.inspect': 'निरीक्षण करें',
+  'menu.userOnly': 'केवल-उपयोगकर्ता',
+}
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'row.title': 'నైపుణ్యం',
+  'row.running': 'నైపుణ్యం లోడ్ అవుతోంది',
+  'row.failed': 'నైపుణ్యం లోడ్ విఫలమైంది',
+  'row.stopped': 'నైపుణ్యం లోడ్ ఆగిపోయింది',
+  'row.instructions': 'సూచనలు',
+  'row.inspect': 'పరిశీలించండి',
+  'menu.userOnly': 'వినియోగదారునికి-మాత్రమే',
+}

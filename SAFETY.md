@@ -2,7 +2,7 @@
 
 ## Experimental status
 
-**Hyperion Workbench** is experimental developer-preview software built for research and evaluation under the Smart India Hackathon (SIH 2026).
+**Hyperion Workbench** is experimental developer-preview software built for research and evaluation.
 
 The workbench executes model-generated code and commands within bounded local environments and tools. Incorrect model outputs, defects, misconfiguration, or untrusted plugins may modify or delete files, or cause unexpected system behaviors.
 
