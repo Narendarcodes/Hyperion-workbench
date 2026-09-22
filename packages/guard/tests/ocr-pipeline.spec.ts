@@ -22,9 +22,9 @@ describe('OCR Pipeline & Spatial Deduplication', () => {
     expect(validateOcrResponse(result)).toBe(true)
     expect(result.detections.length).toBe(3)
     expect(result.repetitionDetected).toBe(false)
-    expect(result.detections[0].text).toBe('M6-052-00540')
-    expect(result.detections[1].text).toBe('FLH 17668')
-    expect(result.detections[2].text).toBe('052 PG 0026')
+    expect(result.detections[0]!.text).toBe('M6-052-00540')
+    expect(result.detections[1]!.text).toBe('FLH 17668')
+    expect(result.detections[2]!.text).toBe('052 PG 0026')
   })
 
   it('TEST 2: Engineering drawing with REPEATED labels at DIFFERENT coordinates (preserves both)', () => {
@@ -39,8 +39,8 @@ describe('OCR Pipeline & Spatial Deduplication', () => {
     expect(result.detections.length).toBe(2)
     expect(result.repetitionDetected).toBe(false)
     expect(result.duplicateCount).toBe(0)
-    expect(result.detections[0].bbox).toEqual([100, 200, 200, 230])
-    expect(result.detections[1].bbox).toEqual([700, 800, 800, 830])
+    expect(result.detections[0]!.bbox).toEqual([100, 200, 200, 230])
+    expect(result.detections[1]!.bbox).toEqual([700, 800, 800, 830])
   })
 
   it('TEST 3: Preserves uncertainty markers on obscured/unclear characters', () => {
@@ -52,9 +52,9 @@ describe('OCR Pipeline & Spatial Deduplication', () => {
     })
 
     const parsed = parseRawOcrOutput(rawInput)
-    expect(parsed[0].uncertaintyMarkerUsed).toBe(true)
-    expect(parsed[0].text).toBe('FLH 176?8')
-    expect(parsed[1].text).toBe('052 PG 00?6')
+    expect(parsed[0]!.uncertaintyMarkerUsed).toBe(true)
+    expect(parsed[0]!.text).toBe('FLH 176?8')
+    expect(parsed[1]!.text).toBe('052 PG 00?6')
   })
 
   it('TEST 4: Catches and removes DUPLICATE generation loop artifacts (overlapping bbox)', () => {
@@ -72,8 +72,8 @@ describe('OCR Pipeline & Spatial Deduplication', () => {
     expect(result.repetitionDetected).toBe(true)
     expect(result.duplicateCount).toBe(2)
     expect(result.detections.length).toBe(2)
-    expect(result.detections[0].text).toBe('M6-052-00540')
-    expect(result.detections[1].text).toBe('FLH 17668')
+    expect(result.detections[0]!.text).toBe('M6-052-00540')
+    expect(result.detections[1]!.text).toBe('FLH 17668')
   })
 
   it('TEST 5: Non-bbox repeating paragraph sequence deduplication', () => {
@@ -92,6 +92,28 @@ FLH 17668`
     expect(duplicateCount).toBe(6)
     expect(deduplicated.length).toBe(3)
     expect(deduplicated.map(d => d.text)).toEqual(['M6-052-00540', '052 PG 0026', 'FLH 17668'])
+  })
+
+  it('TEST 6: RUNAWAY SEQUENCE DETECTOR catches and truncates artificial c1 -> c100 completion loops', () => {
+    const rawInput = `Section 5
+a1 Error Inspection
+b1 Error Inspection
+c1 Creation
+c2 Creation
+c3 Creation
+c4 Creation
+c5 Creation
+c6 Creation
+c7 Creation
+c8 Creation`
+
+    const result = processOcrPipeline(rawInput, { debugLog: false })
+    expect(result.runawaySequenceDetected).toBe(true)
+    // Should preserve 'c1 Creation' and truncate the artificial 'c2', 'c3', 'c4'... loop
+    const textList = result.detections.map(d => d.text)
+    expect(textList).toContain('c1 Creation')
+    expect(textList).not.toContain('c2 Creation')
+    expect(textList).not.toContain('c3 Creation')
   })
 
   it('Calculates Intersection over Union (IoU) correctly', () => {

@@ -140,7 +140,7 @@ function normalizeDetection(item: any): OcrDetection | null {
  * (e.g. c1 Creation, c2 Creation, c3 Creation... c100 Creation) that lack spatial visual grounding.
  */
 export function detectRunawaySequences(
-  detections: readonly OcrDetection[]
+  detections: readonly OcrDetection[],
 ): { sanitized: OcrDetection[]; runawayDetected: boolean } {
   if (!detections || detections.length < 2) {
     return { sanitized: [...detections], runawayDetected: false }
@@ -153,11 +153,11 @@ export function detectRunawaySequences(
   const patternRegex = /^([a-zA-Z\s_-]*?)(\d+)(.*)$/
 
   for (let i = 0; i < detections.length; i++) {
-    const curr = detections[i]
+    const curr = detections[i]!
     sanitized.push(curr)
 
     if (i >= 1) {
-      const prev1 = detections[i - 1]
+      const prev1 = detections[i - 1]!
 
       const matchCurr = curr.text.trim().match(patternRegex)
       const matchPrev1 = prev1.text.trim().match(patternRegex)
@@ -168,8 +168,8 @@ export function detectRunawaySequences(
 
         // Check if prefix and suffix match and numbers increment sequentially (+1)
         if (prefixC === prefixP1 && suffixC === suffixP1) {
-          const n1 = parseInt(numP1, 10)
-          const nCurr = parseInt(numC, 10)
+          const n1 = parseInt(numP1!, 10)
+          const nCurr = parseInt(numC!, 10)
 
           if (nCurr === n1 + 1) {
             // Check if spatial bounding boxes are missing or identical (ungrounded pattern continuation)
@@ -196,7 +196,7 @@ export function detectRunawaySequences(
  */
 export function deduplicateOcrDetections(
   detections: readonly OcrDetection[],
-  options?: OcrPipelineOptions
+  options?: OcrPipelineOptions,
 ): { deduplicated: OcrDetection[]; duplicateCount: number } {
   const iouThreshold = options?.iouThreshold ?? 0.5
   if (!detections || detections.length === 0) {
@@ -217,7 +217,7 @@ export function deduplicateOcrDetections(
       }
 
       // Check if an existing detection has exact text AND overlapping spatial bbox
-      const isDuplicate = deduplicated.some(existing => {
+      const isDuplicate = deduplicated.some((existing) => {
         if (!existing.bbox) return false
         if (existing.text.trim().toLowerCase() !== det.text.trim().toLowerCase()) return false
         const iou = calculateIoU(existing.bbox, det.bbox!)
@@ -257,7 +257,7 @@ export function deduplicateOcrDetections(
 
   if (loopLength > 0) {
     for (let i = 0; i < Math.min(n, loopLength); i++) {
-      deduplicated.push(detections[i])
+      deduplicated.push(detections[i]!)
     }
     duplicateCount = n - deduplicated.length
     return { deduplicated, duplicateCount }
@@ -265,8 +265,8 @@ export function deduplicateOcrDetections(
 
   // Consecutive exact line deduplication fallback
   for (let i = 0; i < detections.length; i++) {
-    const curr = detections[i]
-    if (i > 0 && curr.text.trim().toLowerCase() === detections[i - 1].text.trim().toLowerCase()) {
+    const curr = detections[i]!
+    if (i > 0 && curr.text.trim().toLowerCase() === detections[i - 1]!.text.trim().toLowerCase()) {
       duplicateCount++
     } else {
       deduplicated.push(curr)
@@ -281,7 +281,7 @@ export function deduplicateOcrDetections(
  */
 export function processOcrPipeline(
   rawOutput: string,
-  options?: OcrPipelineOptions
+  options?: OcrPipelineOptions,
 ): OcrResult {
   const logger = options?.logger ?? ((stage, payload) => {
     if (options?.debugLog !== false) {
