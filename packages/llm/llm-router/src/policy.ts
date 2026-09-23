@@ -46,7 +46,7 @@ export class RoutingPolicy {
         if (this.evaluateMatch(rule.match, evalData)) {
           if (rule.scoreCapabilities) {
             for (const [cap, multiplier] of Object.entries(rule.scoreCapabilities)) {
-              const modelCap = (model.capabilities as Record<string, unknown>)[cap] || 0
+              const modelCap = (model.capabilities as unknown as Record<string, unknown>)[cap] || 0
               score += (modelCap as number) * (multiplier as number)
             }
           }
@@ -80,8 +80,8 @@ export class RoutingPolicy {
       const actual = evalData[key]
       if (typeof expected === 'object' && expected !== null && ('$eq' in expected || '$gt' in expected || '$lt' in expected)) {
         if ('$eq' in expected && actual !== expected.$eq) return false
-        if ('$gt' in expected && actual <= expected.$gt) return false
-        if ('$lt' in expected && actual >= expected.$lt) return false
+        if ('$gt' in expected && (actual as number) <= (expected.$gt as number)) return false
+        if ('$lt' in expected && (actual as number) >= (expected.$lt as number)) return false
       } else {
         if (actual !== expected) return false
       }

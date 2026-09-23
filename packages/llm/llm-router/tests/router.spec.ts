@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { StaticModelRegistry } from '../src/registry'
 import { RoutingPolicy } from '../src/policy'
+import { DEFAULT_ROUTING_CONFIG } from '../src/config'
 
 describe('UniversalModelRouter', () => {
   describe('StaticModelRegistry', () => {
@@ -30,11 +31,12 @@ describe('UniversalModelRouter', () => {
 
     it('should route coding task to capable model', () => {
       const result = policy.selectModel({
-        task_type: 'coding',
-        task_type_confidence: 0.9,
-        complexity: 0.8,
+        answers: {
+          task_type: { choice: 'coding', confidence: 0.9 },
+          complexity: { score: 0.8 },
+        },
         routing_model: 'english',
-      })
+      }, DEFAULT_ROUTING_CONFIG)
       // gpt-4.1 has coding=0.98, Claude 3.5 has 0.96.
       expect(result).toBeDefined()
       expect(['gpt-4.1', 'claude-3.5-sonnet']).toContain(result!.id)
@@ -42,22 +44,24 @@ describe('UniversalModelRouter', () => {
 
     it('should eliminate models below minContextWindow', () => {
       const result = policy.selectModel({
-        task_type: 'qa',
-        task_type_confidence: 0.9,
-        complexity: 0.1,
+        answers: {
+          task_type: { choice: 'qa', confidence: 0.9 },
+          complexity: { score: 0.1 },
+        },
         routing_model: 'english',
-      }, { minContextWindow: 300000 }) // only gemini-1.5-pro has >300k
+      }, DEFAULT_ROUTING_CONFIG, { minContextWindow: 300000 }) // only gemini-1.5-pro has >300k
       expect(result).toBeDefined()
       expect(result!.id).toBe('gemini-1.5-pro')
     })
 
     it('should route simple tasks to cheaper models', () => {
       const result = policy.selectModel({
-        task_type: 'qa',
-        task_type_confidence: 0.9,
-        complexity: 0.1,
+        answers: {
+          task_type: { choice: 'qa', confidence: 0.9 },
+          complexity: { score: 0.1 },
+        },
         routing_model: 'english',
-      })
+      }, DEFAULT_ROUTING_CONFIG)
       // gpt-4o-mini is low cost
       expect(result).toBeDefined()
       expect(result!.id).toBe('gpt-4o-mini')
