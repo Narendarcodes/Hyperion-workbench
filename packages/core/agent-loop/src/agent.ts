@@ -534,13 +534,13 @@ export class ReactLoopAgent implements Agent {
     let preparedCall: PreparedLlmCall | undefined
     try {
       const lastUser = boundaryMessages.filter(m => m.role === 'user').pop()
-      const promptText = lastUser?.content.map((b: any) => b.type === 'text' ? b.text : '').join('') || ''
+      const promptText = lastUser?.content.map((b: { type?: string; text?: string }) => b.type === 'text' ? (b.text || '') : '').join('') || ''
       const decision = await router.route(promptText)
 
-      config = { 
-        ...proposedConfig, 
-        model: decision.selectedModel.id, 
-        provider: decision.selectedModel.provider 
+      config = {
+        ...proposedConfig,
+        model: decision.selectedModel.id,
+        provider: decision.selectedModel.provider,
       }
     } catch (error: unknown) {
       // Middleware may serve an unregistered route; terminal dispatch still requires an adapter.

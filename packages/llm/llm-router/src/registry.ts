@@ -1,18 +1,18 @@
 export interface ModelCapabilities {
-  coding: number;
-  reasoning: number;
-  creative: number;
-  qa: number;
+  coding: number
+  reasoning: number
+  creative: number
+  qa: number
 }
 
 export interface ModelProfile {
-  id: string;
-  provider: string;
-  name: string;
-  contextWindow: number;
-  costTier: 'low' | 'medium' | 'high';
-  capabilities: ModelCapabilities;
-  enabled: boolean;
+  id: string
+  provider: string
+  name: string
+  contextWindow: number
+  costTier: 'low' | 'medium' | 'high'
+  capabilities: ModelCapabilities
+  enabled: boolean
 }
 
 export class StaticModelRegistry {
@@ -85,16 +85,15 @@ export class StaticModelRegistry {
         creative: 0.85,
         qa: 0.9,
       },
-      supportedTools: true,
       enabled: true,
-    }
-  ];
+    },
+  ]
 
   getModels(): ModelProfile[] {
-    return this.models.filter(m => m.enabled);
+    return this.models.filter(m => m.enabled)
   }
 
   getModel(id: string): ModelProfile | undefined {
-    return this.models.find(m => m.id === id);
+    return this.models.find(m => m.id === id)
   }
 }

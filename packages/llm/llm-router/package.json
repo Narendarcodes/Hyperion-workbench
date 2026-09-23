@@ -2,12 +2,16 @@
   "name": "@deepseek-ai/dsh-llm-router",
   "version": "0.1.0",
   "description": "Universal LLM Model Router using Laya",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts",
-      "require": "./src/index.ts"
-    }
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "test": "vitest run",

@@ -21,24 +21,6 @@ def main():
         print(json.dumps({"error": str(e)}), flush=True)
         sys.exit(1)
 
-    questions = {
-        "task_type": {
-            "type": "choice",
-            "instructions": "What type of task is this?",
-            "criteria": {
-                "coding": "writing, debugging or modifying code",
-                "reasoning": "complex logic, planning, math or deep analysis",
-                "qa": "simple question answering, information extraction, summarization",
-                "creative": "writing stories, drafting emails, brainstorming",
-                "other": "everything else"
-            }
-        },
-        "complexity": {
-            "type": "score",
-            "instructions": "How complex is this request?",
-            "criteria": ["simple", "moderate", "highly complex"]
-    }
-
     for line in sys.stdin:
         line = line.strip()
         if not line:
@@ -47,20 +29,23 @@ def main():
             req = json.loads(line)
             req_id = req.get("id")
             text = req.get("text", "")
+            req_questions = req.get("questions")
+
             if not text:
                 print(json.dumps({"id": req_id, "error": "No text provided"}), flush=True)
                 continue
+            if not req_questions:
+                print(json.dumps({"id": req_id, "error": "No questions config provided"}), flush=True)
+                continue
 
             # Pass to Laya
-            result = router.predict({"text": text}, questions)
-            
-            # Format output for the TypeScript client
+            result = router.predict({"text": text}, req_questions)
+
+            # Format output for the TypeScript client dynamically
             out = {
                 "id": req_id,
-                "task_type": result["answers"]["task_type"]["choice"],
-                "task_type_confidence": result["answers"]["task_type"]["confidence"],
-                "complexity": result["answers"]["complexity"]["score"],
-                "routing_model": result["routing"]["model"]
+                "answers": result.get("answers", {}),
+                "routing_model": result.get("routing", {}).get("model")
             }
             print(json.dumps(out), flush=True)
         except Exception as e:
