@@ -36,8 +36,9 @@ import { ReactLoopInbox } from './inbox.ts'
 import { RuntimeContextProjection } from './runtime-context.ts'
 import { AssistantStreamAttempt } from './assistant-stream.ts'
 import { executeToolCalls } from './tool-calls.ts'
-import { AutoRouter } from '@deepseek-ai/dsh-session/src/router.ts'
-import { UniversalModelAdapter } from '@deepseek-ai/dsh-session/src/adapter.ts'
+import { UniversalModelRouter } from '@deepseek-ai/dsh-llm-router'
+
+const router = new UniversalModelRouter()
 
 type Phase =
   | { kind: 'idle'; lastTurn: number }
@@ -534,24 +535,13 @@ export class ReactLoopAgent implements Agent {
     try {
       const lastUser = boundaryMessages.filter(m => m.role === 'user').pop()
       const promptText = lastUser?.content.map((b: any) => b.type === 'text' ? b.text : '').join('') || ''
-      const router = new AutoRouter(new UniversalModelAdapter())
-      const features = router.classifyPrompt(promptText)
-      const { modelId, params } = router.selectModel(features)
+      const decision = await router.route(promptText)
 
-      preparedCall = {
-        config: { ...proposedConfig, model: modelId },
-        retryPolicy: { maxAttempts: 1, initialDelayMs: 100, maxDelayMs: 100, timeoutMs: 10000 },
-        adapterDefaults: {},
-        stream: (_req: GenerateOptions) => {
-          return (async function*() {
-            const res = await router.invokeModel(modelId, params, promptText)
-            yield { type: 'text-delta' as const, index: 0, text: res.text }
-            yield { type: 'usage' as const, usage: res.usage }
-            yield { type: 'finish' as const, reason: { kind: 'stop' } }
-          })() as any // bypass strict stream type for this mock integration
-        }
-      } as any
-      config = preparedCall!.config
+      config = { 
+        ...proposedConfig, 
+        model: decision.selectedModel.id, 
+        provider: decision.selectedModel.provider 
+      }
     } catch (error: unknown) {
       // Middleware may serve an unregistered route; terminal dispatch still requires an adapter.
       if (!(error instanceof LlmError) || error.code !== 'NO_ADAPTER') throw error
