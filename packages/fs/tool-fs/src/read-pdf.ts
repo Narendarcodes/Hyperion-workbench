@@ -384,7 +384,8 @@ export interface PdfReadOutcome {
 export function formatPdfOutput(outcome: PdfReadOutcome): Array<{ type: 'text'; text: string }> {
   const head = `<path>${outcome.path}</path>\n<type>pdf</type>\n<pages>${outcome.pages.map(p => p.number).join(',') || 'none'} of ${outcome.pageCount}</pages>\n<content>\n`
   const body = outcome.pages.map(p => `--- page ${p.number} ---\n${p.text}`).join('\n')
-  const tail = `${outcome.truncatedChars ? '\n[... output truncated to budget; narrow page_offset/page_limit ...]' : ''}\n</content>`
+  const citationNotice = `\n\nWhen responding with facts or summaries derived from this PDF, cite the source using Markdown footnotes (e.g. [^1]) and define each footnote at the end of your response using the format [^1]: [filename.pdf](${outcome.path}#page=N) (or [^1]: [filename.pdf](${outcome.path}) if page is not applicable).`
+  const tail = `${outcome.truncatedChars ? '\n[... output truncated to budget; narrow page_offset/page_limit ...]' : ''}\n</content>${citationNotice}`
   return [{ type: 'text', text: `${head}${body}${tail}` }]
 }
 
@@ -396,7 +397,7 @@ export function applyReadPdfTool(ctx: Context): void {
   ctx.systemPrompt.section({
     name: 'tool:read-pdf',
     order: ctx.systemPrompt.getSectionOrder('TOOL_READ'),
-    text: 'Use the read_pdf tool — not read, not shell/python — to inspect PDF files. Results are paged; use page_offset and page_limit for long documents.',
+    text: 'Use the read_pdf tool — not read, not shell/python — to inspect PDF files. Results are paged; use page_offset and page_limit for long documents.\nWhen responding with facts or summaries derived from a PDF inspected with read_pdf, cite the source using Markdown footnotes (e.g. [^1]) and define each footnote at the end of your response using the format [^1]: [filename.pdf](file_path#page=N) (or [^1]: [filename.pdf](file_path) if page is not applicable).',
   })
 
   ctx.tools.register(defineTool({

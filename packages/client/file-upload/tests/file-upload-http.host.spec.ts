@@ -2,7 +2,7 @@ import { runInNewContext } from 'node:vm'
 import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import type { Mock } from 'vitest'
-import { handleFileUploadHttp } from '../src/http-route.ts'
+import { handleFileDownloadHttp, handleFileUploadHttp } from '../src/http-route.ts'
 import type { FileUploads } from '../src/index.ts'
 
 function request(input: {
@@ -122,5 +122,27 @@ describe('background file upload Fetch route', () => {
     }))).json()).toEqual({
       ok: false, error: { code: 'gateway/internal', message: 'Error: disk exception', details: {} },
     })
+  })
+})
+
+describe('handleFileDownloadHttp', () => {
+  it('rejects unsupported HTTP methods', async () => {
+    const ctx = { get: vi.fn() } as unknown as Parameters<typeof handleFileDownloadHttp>[0]
+    const response = await handleFileDownloadHttp(ctx, new Request('http://host/api/session/readFileBinary', { method: 'POST' }))
+    expect(response.status).toBe(405)
+    expect(response.headers.get('allow')).toBe('GET, HEAD')
+  })
+
+  it('rejects missing name/file parameters', async () => {
+    const ctx = { get: vi.fn() } as unknown as Parameters<typeof handleFileDownloadHttp>[0]
+    const response = await handleFileDownloadHttp(ctx, new Request('http://host/api/session/readFileBinary', { method: 'GET' }))
+    expect(response.status).toBe(400)
+  })
+
+  it('returns 500 when attachment service is unavailable', async () => {
+    const ctx = { get: () => undefined } as unknown as Parameters<typeof handleFileDownloadHttp>[0]
+    const digest = 'a'.repeat(64)
+    const response = await handleFileDownloadHttp(ctx, new Request(`http://host/api/session/readFileBinary?digest=${digest}&name=test.pdf`, { method: 'GET' }))
+    expect(response.status).toBe(500)
   })
 })

@@ -24,6 +24,11 @@ import type {} from 'mdast-util-math'
 import { normalizeUri } from 'micromark-util-sanitize-uri'
 import { CodeBlock } from './CodeBlock.tsx'
 import { renderTexToReact } from './katex.tsx'
+import {
+  citationTitle,
+  resolveFootnoteCitationTarget,
+} from './citation-target.ts'
+import type { FootnoteCitationTarget } from './citation-target.ts'
 import { LinkIcon, classifyLinkPath } from '../LinkIcon.tsx'
 import type { PositionedBlock } from './incremental.ts'
 import css from './MarkdownText.module.css'
@@ -123,6 +128,35 @@ export interface MarkdownFileMentions {
 }
 
 /**
+ * One citation activation from an inline footnote badge.
+ */
+export interface MarkdownCitationSelect {
+  /** 1-based badge number in first-reference order. */
+  index: number
+  /** Upper-cased footnote identifier backing the badge. */
+  identifier: string
+  /** Document target resolved from the footnote definition, when it names one. */
+  target: FootnoteCitationTarget
+}
+
+/** Interactive citation channel threaded from the owning view. */
+export interface MarkdownCitationContext {
+  /**
+   * Handle one badge activation.
+   * @param select - Badge number, identifier, and resolved target.
+   */
+  onSelect: (select: MarkdownCitationSelect) => void
+  /** Currently selected badge number, if any. */
+  selectedIndex?: number | null | undefined
+  /**
+   * Accessible label for one badge.
+   * @param index - 1-based badge number.
+   * @returns Label for the button, when the owner localizes it.
+   */
+  label?: ((index: number) => string) | undefined
+}
+
+/**
  * One render pass's state: immutable options and targets plus the footnote
  * numbering accumulated in document order while references render.
  */
@@ -135,6 +169,8 @@ export interface MarkdownRenderContext {
   readonly inBlockquote?: boolean
   /** Inline-code file mentions; absent wherever no opener vocabulary exists. */
   readonly fileMentions: MarkdownFileMentions | undefined
+  /** Interactive citation channel; absent wherever badges stay inert text. */
+  readonly citation: MarkdownCitationContext | undefined
   /** Inside an anchor's children: interactive mentions must not nest there. */
   readonly inLink?: boolean
   /** Reference targets visible to this pass. */
@@ -575,58 +611,89 @@ function renderFootnoteReference(
   if (seen === undefined) context.footnoteOrder.push(id)
   context.footnoteCounts.set(id, (seen ?? 0) + 1)
   const index = context.footnoteOrder.indexOf(id) + 1
+  const citation = context.citation
+  if (citation === undefined) {
+    return (
+      <span key={key} className={css.citationBadge} title={`Source reference [${String(index)}]`}>
+        <span className={css.citationIndex}>[{String(index)}]</span>
+      </span>
+    )
+  }
+  const definition = context.targets.footnotes.get(id)
+  const target = definition === undefined ? {} : resolveFootnoteCitationTarget(definition)
+  const selected = citation.selectedIndex === index
   return (
-    <sup key={key} className={css.citationBadge} title={`Source reference [${String(index)}]`}>
-      <span className={css.citationIndex}>{String(index)}</span>
-    </sup>
+    <span key={key} className={css.citationSpan}>
+      <button
+        type="button"
+        className={css.citationBadge}
+        data-selected={selected || undefined}
+        title={`Source reference [${String(index)}]`}
+        aria-label={citation.label?.(index) ?? `Open source ${String(index)}`}
+        aria-pressed={selected}
+        onClick={() => { citation.onSelect({ index, identifier: id, target }) }}
+      >
+        <span className={css.citationIndex}>[{String(index)}]</span>
+      </button>
+    </span>
   )
 }
 
 /**
  * Render the trailing footnote section for every footnote referenced during
- * the pass, in first-reference order, with one plain-text back-reference
- * marker per rendered reference.
+ * the pass, in first-reference order, as clean interactive source links.
  * @param context - The pass state after all blocks rendered.
  * @returns The section, or null when no referenced footnote has a definition.
  */
 export function renderFootnoteSection(context: MarkdownRenderContext): ReactNode | null {
   const items: ReactNode[] = []
+  const citation = context.citation
+
   for (const id of context.footnoteOrder) {
     const definition = context.targets.footnotes.get(id)
     if (definition === undefined) continue
-    const count = context.footnoteCounts.get(id) ?? 0
-    const backrefs: ReactNode[] = []
-    for (let reference = 1; reference <= count; reference++) {
-      if (backrefs.length > 0) backrefs.push(' ')
-      backrefs.push('↩')
-      if (reference > 1) backrefs.push(<sup key={`re-${reference}`}>{String(reference)}</sup>)
+    const index = context.footnoteOrder.indexOf(id) + 1
+    const target = resolveFootnoteCitationTarget(definition)
+    const title = target.title ?? citationTitle(id)
+    const selected = citation?.selectedIndex === index
+    const pageHint = target.page !== undefined ? ` · Page ${String(target.page)}` : ''
+
+    if (citation !== undefined) {
+      items.push(
+        <li key={id} className={css.footnoteListItem}>
+          <button
+            type="button"
+            className={css.footnoteButton}
+            data-selected={selected || undefined}
+            aria-label={citation.label?.(index) ?? `Open source ${String(index)}`}
+            aria-pressed={selected}
+            onClick={() => { citation.onSelect({ index, identifier: id, target }) }}
+          >
+            <span className={css.footnoteIndex}>[{String(index)}]</span>
+            <span className={css.footnoteTitle}>{title}</span>
+            {pageHint !== '' && <span className={css.footnotePage}>{pageHint}</span>}
+          </button>
+        </li>,
+      )
+    } else {
+      items.push(
+        <li key={id} className={css.footnoteListItem}>
+          <span className={css.footnoteStatic}>
+            <span className={css.footnoteIndex}>[{String(index)}]</span>
+            <span className={css.footnoteTitle}>{title}</span>
+            {pageHint !== '' && <span className={css.footnotePage}>{pageHint}</span>}
+          </span>
+        </li>,
+      )
     }
-    const entries = renderBlockEntries(definition.children, context)
-    const tail = entries[entries.length - 1]
-    const body: ReactNode[] = entries.map((entry, index) => (
-      'paragraph' in entry
-        ? (
-          <p key={`p-${index}`}>
-            {entry.paragraph}
-            {entry === tail && <>{' '}{backrefs}</>}
-          </p>
-        )
-        : entry.element
-    ))
-    // Without a trailing paragraph the back-references join the block list
-    // itself (and pick up the wrap newlines), as in the replaced pipeline.
-    if (tail === undefined || !('paragraph' in tail)) body.push(...backrefs)
-    items.push(
-      <li key={id} id={`user-content-fn-${normalizeUri(id.toLowerCase())}`}>
-        {wrapBlockChildren(body, true)}
-      </li>,
-    )
   }
+
   if (items.length === 0) return null
+
   return (
-    <section key="footnotes" data-footnotes className="footnotes">
-      <h2 id="footnote-label" className="sr-only">{context.labels.footnotes}</h2>
-      <ol>{items}</ol>
+    <section key="footnotes" data-footnotes className={css.footnotesSection}>
+      <h3 className={css.footnotesTitle}>{context.labels.footnotes}</h3>
+      <ul className={css.footnotesList}>{items}</ul>
     </section>
   )
 }

@@ -8,6 +8,7 @@ import type {
 import type { SessionSeq } from '@deepseek-ai/dsh-session/types'
 import { Button, IconChevronDownOutline14, Modal } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { ChatViewSlotProps } from '../contract/slots.ts'
+import type { SelectedCitation } from '../contract/store.ts'
 import type { ChatSnapshot } from '../contract/snapshot.ts'
 import { PendingSteeringBubble, PendingSubmissionBubble } from './MessageItem.tsx'
 import { ChatNodeSeat } from './ChatNodeSeat.tsx'
@@ -221,7 +222,7 @@ const ChatNodeList = memo(function ChatNodeList({ order, ...seatProps }: ChatNod
  */
 export function ChatView({
   useSession, useChat, useChatNode, useChatNodeProcess, useSessions, useStore, actions, renderSlot,
-  sessionId, openFile, loadOlder, loadThrough, loadImage, openView, chatScroll, forkAt, fileMentions,
+  sessionId, openCitation, openFile, loadOlder, loadThrough, loadImage, openView, chatScroll, forkAt, fileMentions,
   useTranscriptView, useProjection, t,
 }: ChatViewSlotProps) {
   const order = useChat(s => s.order)
@@ -247,10 +248,23 @@ export function ChatView({
   const hasMore = useSession(s => s.hasMore)
   const loadingOlder = useSession(s => s.loadingOlder)
   const selectedCallId = useStore(s => s.selection?.callId)
+  const selectedCitationIndex = useStore(s => s.selectedCitation?.index ?? null)
   const compactTranscript = useTranscriptView(mode => mode === 'compact')
   const inspectCall = useCallback((callId: string) => {
     openView('trajectory', callId)
   }, [openView])
+  const citationLabel = useCallback((index: number) => t('citation.open', { index: String(index) }), [t])
+  const selectCitation = useCallback((select: SelectedCitation) => {
+    openCitation(select)
+  }, [openCitation])
+  const citation = useMemo(
+    () => ({
+      selectedIndex: selectedCitationIndex,
+      onSelect: selectCitation,
+      label: citationLabel,
+    }),
+    [selectedCitationIndex, selectCitation, citationLabel],
+  )
   const [fileOpenError, setFileOpenError] = useState<{ path: string; message: string } | null>(null)
   const [fileOpenBusy, setFileOpenBusy] = useState(false)
   // Close/retry must ignore a settlement that started before the latest
@@ -796,6 +810,7 @@ export function ChatView({
             useStore={useStore}
             actions={actions}
             selectedCallId={selectedCallId}
+            citation={citation}
             cwd={cwd}
             openFile={requestOpenFile}
             inspectCall={inspectCall}

@@ -4,6 +4,7 @@ import { shallowEqual } from '@deepseek-ai/dsh-client-store'
 import type { DetailsSlotProps } from '../contract/slots.ts'
 import type { ChatSnapshot, RunningToolCall, ToolCallBlock, ToolResultNode } from '../contract/snapshot.ts'
 import { findToolCall } from './tool-node-reader.ts'
+import { CitationPdfPanel } from './CitationPdfPanel.tsx'
 import css from './DetailsPanel.module.css'
 
 export type DetailsPanelProps = DetailsSlotProps
@@ -45,8 +46,9 @@ function rawResultText(block: ToolCallBlock): string {
   return parts.join('\n')
 }
 
-export function DetailsPanel({ useChat, useSessions, sessionId, useStore, renderSlot, closeDetails, t }: DetailsPanelProps) {
+export function DetailsPanel({ useChat, useSessions, sessionId, useStore, actions, renderSlot, closeDetails, t }: DetailsPanelProps) {
   const selection = useStore(s => s.selection)
+  const selectedCitation = useStore(s => s.selectedCitation)
   // Session workspace root: a card model resolves omitted or relative
   // tool paths against it without reading Session services.
   const sessionCwd = useSessions(list => list.byId[sessionId]?.cwd)
@@ -56,6 +58,15 @@ export function DetailsPanel({ useChat, useSessions, sessionId, useStore, render
   const material = useChat(
     s => (callId === undefined ? null : materialFor(s, callId)),
     (a, b) => shallowEqual(a, b))
+
+  const closeCitation = (): void => {
+    actions.clearCitation()
+    closeDetails()
+  }
+
+  if (selectedCitation !== null) {
+    return <CitationPdfPanel citation={selectedCitation} onClose={closeCitation} t={t} />
+  }
   return (
     <div className={css.root}>
       <div className={css.header}>

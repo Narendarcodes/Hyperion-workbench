@@ -9,8 +9,8 @@ import type { CommandFileReceiptResolver } from '@deepseek-ai/dsh-commands'
 import { scopeOf } from '@deepseek-ai/dsh-scope'
 import type { Session, SessionEvent, SessionId } from '@deepseek-ai/dsh-session'
 import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import { handleFileUploadHttp } from './http-route.ts'
-import { FILE_UPLOAD_PATH } from './protocol.ts'
+import { handleFileDownloadHttp, handleFileUploadHttp } from './http-route.ts'
+import { FILE_DOWNLOAD_PATH, FILE_UPLOAD_PATH } from './protocol.ts'
 import type { EncodedFileUploadRequest, FileUploadReceiptId, FileUploadValue } from './types.ts'
 
 export type * from './types.ts'
@@ -78,9 +78,19 @@ export class FileUploads extends TypertRemoteService {
       }),
       'file-upload: streaming route',
     )
+    ctx.effect(
+      () => ctx.connection.fetch.register({
+        path: FILE_DOWNLOAD_PATH,
+        methods: ['GET', 'HEAD'],
+        requestBody: 'buffered',
+        fetch: request => handleFileDownloadHttp(ctx, request),
+      }),
+      'file-upload: download route',
+    )
     ctx.on('session/event', (session, event) => { this.observeSessionEvent(session, event) })
     ctx.on('session/disposed', (session) => { this.stagedFiles.delete(session) })
   }
+
 
   /**
    * Register the ordinary-Session resolver used when a raw upload addresses a cold Session.

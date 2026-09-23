@@ -1,7 +1,7 @@
 import { Fragment, memo, useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { JsonBlock, MarkdownText } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { MarkdownFileMentions } from '@deepseek-ai/dsh-client-ui-primitives'
+import type { MarkdownCitationContext, MarkdownFileMentions } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { ChatNodeOwnerProps, ChatViewSlotProps } from '../contract/slots.ts'
 import type { AssistantBlock } from '../contract/snapshot.ts'
 import { markdownLabels } from '../markdown-labels.ts'
@@ -22,6 +22,8 @@ export interface AssistantMarkdownProps {
   revealProcess?: (() => void) | undefined
   /** Resolved prose file mentions for this Assistant's closing turn. */
   mentions?: MarkdownFileMentions | undefined
+  /** Citation channel for footnote badges; absent renders inert badges. */
+  citation?: ChatNodeOwnerProps['citation']
   /** The owning view's locale seat, passed down as a plain prop. */
   t: ChatViewSlotProps['t']
 }
@@ -29,7 +31,7 @@ export interface AssistantMarkdownProps {
 /** Reasoning block as the process-details variant summary row (figma 39:28304). */
 export const AssistantMarkdown = memo(function AssistantMarkdown({
   blocks, streaming, interrupted, renderMessageImages,
-  reasoningHidden = false, revealProcess, mentions, t,
+  reasoningHidden = false, revealProcess, mentions, citation, t,
 }: AssistantMarkdownProps) {
   // Stable per locale revision (t identity changes on switch): a fresh object
   // per render would rebuild MarkdownText's component table every chunk.
@@ -55,6 +57,7 @@ export const AssistantMarkdown = memo(function AssistantMarkdown({
             streaming={streaming}
             labels={labels}
             fileMentions={mentions}
+            citation={citation === undefined ? undefined : toMarkdownCitation(citation)}
           />,
         )
         break
@@ -124,6 +127,15 @@ function ProcessReasoning({ hidden, reveal, children }: {
 }) {
   const ref = useSearchableHidden(hidden, reveal ?? NOOP)
   return <div ref={ref} data-turn-process-inline={hidden || undefined}>{children}</div>
+}
+
+/**
+ * Adapt the chat citation channel to the markdown renderer channel.
+ * @param citation - Chat-owned selection channel.
+ * @returns Renderer channel over the same callbacks.
+ */
+function toMarkdownCitation(citation: NonNullable<ChatNodeOwnerProps['citation']>): MarkdownCitationContext {
+  return { selectedIndex: citation.selectedIndex, onSelect: citation.onSelect, label: citation.label }
 }
 
 const NOOP = (): void => {}

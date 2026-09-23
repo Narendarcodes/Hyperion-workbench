@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render } from '@testing-library/react'
+import { cleanup, fireEvent, render } from '@testing-library/react'
 import { bindSnapshotSelector, makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
 import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
 import type {
@@ -237,5 +237,98 @@ describe('render branch tails', () => {
       call: { name: 'read', argsRaw: '{"path":"notes/demo.txt"}' },
       content: [{ type: 'text', text: longText }],
     })
+  })
+
+  it('DetailsPanel renders the selected citation PDF directly beside the chat', () => {
+    localStorage.clear()
+    const session = sessionSnapshot()
+    const chatSnapshot = chatSnapshotFixture()
+    const chat = createChatStore().create()
+    chat.actions.selectCitation({
+      index: 1,
+      identifier: 'A',
+      target: { href: 'https://example.com/manual.pdf', page: 12, title: 'manual.pdf' },
+    })
+    const emptyList = createSnapshotStore<SessionListState>(
+      { ids: [], byId: {}, current: undefined, phase: 'ready', subagentsByParent: {}, jobsBySession: {}, currentAddress: undefined })
+    const workspaces = emptyWorkspaces()
+    const closeDetails = vi.fn()
+    const view = render(
+      <DetailsPanel
+        SessionProvider={SessionProviderStub}
+        renderSlot={renderToolDetailsProbe()}
+        sessionId={SID}
+        useSession={bindSnapshotSelector(createSnapshotStore(session))}
+        useChat={bindSnapshotSelector(createSnapshotStore(chatSnapshot))}
+        useConversation={bindSnapshotSelector(createSnapshotStore(EMPTY_CONVERSATION_SNAPSHOT))}
+        useTrajectory={(() => { throw new Error('unused') })}
+        useSessions={bindSnapshotSelector(emptyList)}
+        useSessionPendingInteraction={bindSnapshotSelector(
+          createSnapshotStore<SessionPendingInteractionSnapshot>(new Map()),
+        )}
+        useWorkspaces={bindSnapshotSelector(workspaces)}
+        useProjection={(() => undefined)}
+        useInput={(() => { throw new Error('unused') })}
+        inputActions={{
+          setDraft: () => {},
+          addAttachments: () => true,
+          removeAttachment: () => {},
+          pruneAttachments: () => {},
+          submit: () => {},
+        }}
+        useStore={bindSnapshotSelector(chat)}
+        actions={chat.actions}
+        closeDetails={closeDetails}
+        t={t}
+      />,
+    )
+    expect(view.container.querySelector('iframe')?.getAttribute('src'))
+      .toBe('https://example.com/manual.pdf#page=12')
+    expect(view.getByText('manual.pdf')).toBeTruthy()
+    fireEvent.click(view.getByRole('button', { name: 'Close document' }))
+    expect(chat.store.getSnapshot().selectedCitation).toBeNull()
+    expect(closeDetails).toHaveBeenCalledOnce()
+  })
+
+  it('DetailsPanel reports an unopenable citation without crashing', () => {
+    localStorage.clear()
+    const session = sessionSnapshot()
+    const chatSnapshot = chatSnapshotFixture()
+    const chat = createChatStore().create()
+    chat.actions.selectCitation({ index: 2, identifier: 'B', target: {} })
+    const emptyList = createSnapshotStore<SessionListState>(
+      { ids: [], byId: {}, current: undefined, phase: 'ready', subagentsByParent: {}, jobsBySession: {}, currentAddress: undefined })
+    const workspaces = emptyWorkspaces()
+    const view = render(
+      <DetailsPanel
+        SessionProvider={SessionProviderStub}
+        renderSlot={renderToolDetailsProbe()}
+        sessionId={SID}
+        useSession={bindSnapshotSelector(createSnapshotStore(session))}
+        useChat={bindSnapshotSelector(createSnapshotStore(chatSnapshot))}
+        useConversation={bindSnapshotSelector(createSnapshotStore(EMPTY_CONVERSATION_SNAPSHOT))}
+        useTrajectory={(() => { throw new Error('unused') })}
+        useSessions={bindSnapshotSelector(emptyList)}
+        useSessionPendingInteraction={bindSnapshotSelector(
+          createSnapshotStore<SessionPendingInteractionSnapshot>(new Map()),
+        )}
+        useWorkspaces={bindSnapshotSelector(workspaces)}
+        useProjection={(() => undefined)}
+        useInput={(() => { throw new Error('unused') })}
+        inputActions={{
+          setDraft: () => {},
+          addAttachments: () => true,
+          removeAttachment: () => {},
+          pruneAttachments: () => {},
+          submit: () => {},
+        }}
+        useStore={bindSnapshotSelector(chat)}
+        actions={chat.actions}
+        closeDetails={vi.fn()}
+        t={t}
+      />,
+    )
+    expect(view.container.querySelector('iframe')).toBeNull()
+    expect(view.getByText('Unable to open this document.')).toBeTruthy()
   })
 })

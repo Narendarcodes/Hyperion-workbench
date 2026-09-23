@@ -19,17 +19,18 @@ import {
   collectReferenceTargets, createReferenceTargets, renderBlocks, renderFootnoteSection,
   wrapBlockChildren,
 } from './render.tsx'
-import type { MarkdownFileMentions, MarkdownLabels, MarkdownRenderContext, ReferenceTargets } from './render.tsx'
+import type { MarkdownCitationContext, MarkdownFileMentions, MarkdownLabels, MarkdownRenderContext, ReferenceTargets } from './render.tsx'
 import 'katex/dist/katex.min.css'
 import css from './MarkdownText.module.css'
 
-export type { MarkdownCodeLabels, MarkdownFileMentions, MarkdownLabels } from './render.tsx'
+export type { MarkdownCitationContext, MarkdownCitationSelect, MarkdownCodeLabels, MarkdownFileMentions, MarkdownLabels } from './render.tsx'
 
 /** One settled full render: parse with math, resolve references, append the footnote section. */
 function renderSettled(
   text: string,
   labels: MarkdownLabels,
   fileMentions: MarkdownFileMentions | undefined,
+  citation: MarkdownCitationContext | undefined,
 ): ReactNode[] {
   const root = parseGfmWithMath(text)
   const targets = createReferenceTargets()
@@ -38,6 +39,7 @@ function renderSettled(
     streaming: false,
     labels,
     fileMentions,
+    citation,
     targets,
     footnoteOrder: [],
     footnoteCounts: new Map(),
@@ -69,6 +71,7 @@ class StreamingRenderer {
   private frozenFootnoteOrder: string[] = []
   private frozenFootnoteCounts = new Map<string, number>()
   private lastText: string | null = null
+  private lastCitation: MarkdownCitationContext | undefined = undefined
   private lastRendered: ReactNode[] = []
 
   /** @param labels - Localized Markdown chrome baked into cached elements; the owner replaces the renderer when it changes. */
@@ -78,9 +81,23 @@ class StreamingRenderer {
    * Render the current accumulated text. Idempotent per text value, so React
    * may re-execute the calling render freely.
    * @param text - The full accumulated markdown source.
+   * @param citation - Interactive citation channel for this frame. Frozen
+   * badges bake the render-time channel, so a new channel identity clears the
+   * frozen cache and re-renders every badge; the owner keeps `onSelect`
+   * reference-stable and mints a new channel only when the selection moves.
    * @returns Frozen elements, re-rendered tail, and the footnote section.
    */
-  render(text: string): ReactNode[] {
+  render(text: string, citation?: MarkdownCitationContext | undefined): ReactNode[] {
+    if (citation !== this.lastCitation) {
+      this.lastCitation = citation
+      this.generation = -1
+      this.frozenCount = 0
+      this.frozenElements = []
+      this.frozenTargets = createReferenceTargets()
+      this.frozenFootnoteOrder = []
+      this.frozenFootnoteCounts = new Map()
+      this.lastText = null
+    }
     if (text === this.lastText) return this.lastRendered
     const { frozen, tail, generation } = this.parser.update(text)
     if (generation !== this.generation) {
@@ -106,6 +123,7 @@ class StreamingRenderer {
         streaming: true,
         labels: this.labels,
         fileMentions: undefined,
+        citation,
         targets: frameTargets,
         footnoteOrder: this.frozenFootnoteOrder,
         footnoteCounts: this.frozenFootnoteCounts,
@@ -124,6 +142,7 @@ class StreamingRenderer {
       streaming: true,
       labels: this.labels,
       fileMentions: undefined,
+      citation,
       targets: frameTargets,
       footnoteOrder: [...this.frozenFootnoteOrder],
       footnoteCounts: new Map(this.frozenFootnoteCounts),
@@ -153,29 +172,32 @@ class StreamingRenderer {
  * links inline-code tokens its resolver recognizes as real files; this is
  * the single streaming gate — it applies to settled renders only, because a
  * streaming message's vocabulary is not final and frozen cached elements
- * must not bake in handlers that could go stale.
+ * must not bake in handlers that could go stale. `citation` makes footnote
+ * badges keyboard-accessible buttons that report their resolved target; it
+ * stays absent wherever badges must remain inert text.
  * @returns A GFM document with TeX math rendered through KaTeX; raw HTML,
  * relative links, and unsafe protocols are disabled, while absolute HTTP(S)
  * images render directly.
  */
-export const MarkdownText = memo(function MarkdownText({ text, streaming = false, labels, fileMentions }: {
+export const MarkdownText = memo(function MarkdownText({ text, streaming = false, labels, fileMentions, citation }: {
   text: string
   streaming?: boolean
   labels: MarkdownLabels
   fileMentions?: MarkdownFileMentions | undefined
+  citation?: MarkdownCitationContext | undefined
 }) {
   const streamRef = useRef<StreamingRenderer | null>(null)
   const streamLabelsRef = useRef<MarkdownLabels>(labels)
   const children = useMemo(() => {
     if (!streaming) {
       streamRef.current = null
-      return renderSettled(text, labels, fileMentions)
+      return renderSettled(text, labels, fileMentions, citation)
     }
     if (streamRef.current === null || streamLabelsRef.current !== labels) {
       streamRef.current = new StreamingRenderer(labels)
       streamLabelsRef.current = labels
     }
-    return streamRef.current.render(text)
-  }, [text, streaming, labels, fileMentions])
+    return streamRef.current.render(text, citation)
+  }, [text, streaming, labels, fileMentions, citation])
   return <div className={css.markdown}>{children}</div>
 })
