@@ -25,10 +25,10 @@ async function probePort(url: string): Promise<boolean> {
 }
 
 async function ensureBackgroundServers(): Promise<void> {
-  const isLlamaRunning = await probePort('http://127.0.0.1:8080/health')
+  const llamaPort = Number(process.env.LLAMA_PORT) || 8080
+  const isLlamaRunning = await probePort(`http://127.0.0.1:${llamaPort}/health`)
   if (!isLlamaRunning) {
     const candidatePaths = [
-      'E:\\Hyperion\\llama\\llama-server.exe',
       `${os.homedir()}\\AppData\\Local\\Microsoft\\WinGet\\Packages\\ggml.llamacpp_Microsoft.Winget.Source_8wekyb3d8bbwe\\llama-server.exe`,
     ]
     const llamaExe = candidatePaths.find(p => fs.existsSync(p)) || 'llama-server'
@@ -37,7 +37,7 @@ async function ensureBackgroundServers(): Promise<void> {
         llamaExe,
         [
           '--host', '127.0.0.1',
-          '--port', '8080',
+          '--port', String(llamaPort),
           '--alias', 'glm-ocr',
           '--hf-repo', 'ggml-org/GLM-OCR-GGUF',
           '-c', '65536',
@@ -61,7 +61,8 @@ async function ensureBackgroundServers(): Promise<void> {
     }
   }
 
-  const isOllamaRunning = await probePort('http://127.0.0.1:11434/api/version')
+  const ollamaPort = Number(process.env.OLLAMA_PORT) || 11434
+  const isOllamaRunning = await probePort(`http://127.0.0.1:${ollamaPort}/api/version`)
   if (!isOllamaRunning) {
     try {
       const child = spawn('ollama', ['serve'], {

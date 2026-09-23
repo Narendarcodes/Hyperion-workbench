@@ -4,11 +4,13 @@ import {
   unloadModel,
   refreshAll,
   setAddLlamaModelOpen,
+  setConfigModalOpen,
   type ModelHubTab,
 } from '../store'
 import type { OllamaRunningModel } from '../services/ollama'
+import { defaultLlama } from '../services/llama'
+import { defaultOllama } from '../services/ollama'
 import css from './QuickActionsPanel.module.css'
-
 interface QuickActionsPanelProps {
   onOpenAddModal: () => void
   onSelectTab: (tab: ModelHubTab) => void
@@ -116,7 +118,7 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
             </div>
             <div className={css.infoRow}>
               <span className={css.infoLabel}>Endpoint</span>
-              <span className={css.infoValue}>{llamaStatus?.endpoint || '127.0.0.1:8080'}</span>
+              <span className={css.infoValue}>{llamaStatus?.endpoint || defaultLlama.getEndpoint()}</span>
             </div>
             <div className={css.infoRow}>
               <span className={css.infoLabel}>Mode</span>
@@ -141,7 +143,7 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
             </div>
             <div className={css.infoRow}>
               <span className={css.infoLabel}>Endpoint</span>
-              <span className={css.infoValue}>127.0.0.1:11434</span>
+              <span className={css.infoValue}>{defaultOllama.getBaseUrl().replace(/^https?:\/\//, '')}</span>
             </div>
             <div className={css.infoRow}>
               <span className={css.infoLabel}>Security</span>
@@ -151,6 +153,21 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
             </div>
           </>
         )}
+
+        <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid var(--dsw-alias-border-l1, rgba(255,255,255,0.06))' }}>
+          <button
+            type="button"
+            className={css.configureBtn}
+            onClick={() => setConfigModalOpen(true)}
+            title="Configure runtime hosts, ports, and connection settings"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            Configure Runtime...
+          </button>
+        </div>
       </div>
 
       {/* Hardware Telemetry Card */}
@@ -270,7 +287,7 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-            + Add Llama Model
+            Add Llama Model
           </button>
         ) : (
           <button

@@ -10,6 +10,7 @@
   flex-direction: column;
   overflow: hidden;
   color: var(--dsw-alias-label-primary, #f8fafc);
+  min-width: 0;
 }
 
 
@@ -84,10 +85,14 @@
   cursor: pointer;
   transition: all 0.15s ease;
 }
-
 .tabBtn:hover {
   color: var(--dsw-alias-label-primary, #f8fafc);
   background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.06));
+}
+
+.tabBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 2px;
 }
 
 .tabBtn.active {
@@ -103,6 +108,12 @@
   border-radius: 10px;
   background: var(--dsw-alias-bg-layer-3, rgba(255, 255, 255, 0.15));
   color: inherit;
+}
+
+.tabBtn.active .tabBadge {
+  background: rgba(0, 0, 0, 0.28);
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .topBarActions {
@@ -125,11 +136,15 @@
   cursor: pointer;
   transition: all 0.15s ease;
 }
-
 .closeHubBtn:hover {
   background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.08));
   color: var(--dsw-alias-label-primary, #ffffff);
   border-color: var(--dsw-alias-border-l3, rgba(255, 255, 255, 0.2));
+}
+
+.closeHubBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 2px;
 }
 
 .workspaceContent {
@@ -139,12 +154,15 @@
   padding: 24px;
   gap: 24px;
   background: var(--dsw-alias-bg-base, #0b0f19);
+  min-width: 0;
 }
 
 .mainPanel {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 8px;
+  min-width: 0;
 }
 
 /* Custom scrollbar */
@@ -154,4 +172,34 @@
 .mainPanel::-webkit-scrollbar-thumb {
   background: var(--dsw-alias-scrollbar-bg-l1, rgba(255, 255, 255, 0.15));
   border-radius: 3px;
+}
+
+@media (max-width: 1024px) {
+  .workspaceContent {
+    padding: 16px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 860px) {
+  .workspaceContent {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .mainPanel {
+    overflow-y: visible;
+  }
+  .topBar {
+    padding: 0 16px;
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .tabNavigation {
+    overflow-x: auto;
+    max-width: 100%;
+  }
 }

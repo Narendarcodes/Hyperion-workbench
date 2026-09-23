@@ -61,6 +61,38 @@ export class OllamaClient {
     this.baseUrl = baseUrl
   }
 
+  setBaseUrl(url: string): void {
+    this.baseUrl = url.replace(/\/+$/, '')
+  }
+
+  getBaseUrl(): string {
+    return this.baseUrl
+  }
+
+  async testConnection(targetUrl?: string): Promise<{ success: boolean; message: string; version?: string | undefined }> {
+    const url = (targetUrl || this.baseUrl).replace(/\/+$/, '')
+    try {
+      const res = await fetch(`${url}/api/version`, { signal: AbortSignal.timeout(3000) })
+      if (!res.ok) {
+        return {
+          success: false,
+          message: `Ollama returned HTTP error ${res.status}: ${res.statusText}`,
+        }
+      }
+      const data = (await res.json()) as { version?: string }
+      return {
+        success: true,
+        message: `Connected to Ollama v${data.version || 'unknown'} at ${url}`,
+        version: data.version,
+      }
+    } catch (e: unknown) {
+      return {
+        success: false,
+        message: `Could not connect to Ollama at ${url}. ${e instanceof Error ? e.message : 'Connection refused'}`,
+      }
+    }
+  }
+
   async checkHealth(): Promise<boolean> {
     try {
       const res = await fetch(`${this.baseUrl}/api/version`, { signal: AbortSignal.timeout(2000) })
@@ -237,7 +269,11 @@ export function formatRelativeTime(dateString: string): string {
 }
 
 export const showModel = (name: string) => defaultOllama.showModel(name)
-export const pullModel = (name: string, onProgress: (p: PullProgress) => void, signal?: AbortSignal) => defaultOllama.pullModel(name, onProgress, signal)
+export const pullModel = (
+  name: string,
+  onProgress: (p: PullProgress) => void,
+  signal?: AbortSignal,
+) => defaultOllama.pullModel(name, onProgress, signal)
 export const createCustomModel = (opts: { name: string; modelfile: string }) => defaultOllama.createCustomModel(opts.name, opts.modelfile)
 export const loadModel = (name: string) => defaultOllama.loadModel(name)
 export const unloadModel = (name: string) => defaultOllama.unloadModel(name)

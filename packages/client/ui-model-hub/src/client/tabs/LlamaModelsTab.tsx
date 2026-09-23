@@ -101,7 +101,8 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
       {!isConnected && (
         <div className={css.offlineBanner}>
           <span>
-            ⚠️ <strong>llama.cpp unavailable.</strong> Make sure <code>llama-server</code> is running at <code>http://127.0.0.1:8080</code>.
+            ⚠️ <strong>llama.cpp unavailable.</strong> Make sure <code>llama-server</code>{' '}
+            is running at <code>{defaultLlama.getEndpoint()}</code>.
           </span>
           <button
             type="button"
@@ -140,7 +141,7 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
 
 
 
-          <select className={css.select} value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
+          <select className={css.select} value={sortBy} onChange={e => setSortBy(e.target.value as 'modified' | 'name' | 'size')}>
             <option value="modified">Recently Modified</option>
             <option value="name">Name (A-Z)</option>
             <option value="size">Size (Largest)</option>
@@ -155,7 +156,7 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
           <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
             <path d="M8 2a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5h-4.5v4.5a.75.75 0 0 1-1.5 0v-4.5h-4.5a.75.75 0 0 1 0-1.5h4.5v-4.5A.75.75 0 0 1 8 2z" />
           </svg>
-          + Add Llama Model
+          Add Llama Model
         </button>
       </div>
 
@@ -271,19 +272,22 @@ export function LlamaModelsTab({ storeState }: LlamaModelsTabProps) {
         </div>
       ) : (
         <div className={css.emptyState}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.35, marginBottom: 8 }}>
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+          </svg>
           <div className={css.emptyTitle}>
             {search ? 'No matching Llama GGUF models found' : 'No llama.cpp GGUF models registered'}
           </div>
-          <div>
+          <div style={{ fontSize: 13, color: 'var(--dsw-alias-label-secondary, #94a3b8)', maxWidth: 360, lineHeight: 1.5 }}>
             {search
-              ? 'Try a different search term or filter'
-              : 'Import a local GGUF file or download a compatible GGUF model from Hugging Face.'}
+              ? 'Try a different search query or clear the active filter.'
+              : 'Import a local GGUF file or register a model package to run with llama.cpp.'}
           </div>
           {!search && (
             <button
               type="button"
               className={css.addBtn}
-              style={{ marginTop: 8 }}
+              style={{ marginTop: 12 }}
               onClick={() => modelHubStore.setAddLlamaModelOpen(true)}
             >
               + Add Llama Model

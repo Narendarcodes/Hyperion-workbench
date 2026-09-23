@@ -9,10 +9,10 @@ export interface GpuMetrics {
   freeVramMB: number
   utilization: number
   temperature: number
-  vramTotalMB?: number
-  vramUsedMB?: number
-  temperatureC?: number
-  utilizationGPU?: number
+  vramTotalMB?: number | undefined
+  vramUsedMB?: number | undefined
+  temperatureC?: number | undefined
+  utilizationGPU?: number | undefined
 }
 
 export interface SystemResources {
@@ -21,7 +21,7 @@ export interface SystemResources {
     model: string
     cores: number
     usagePercent: number
-    loadPercent?: number
+    loadPercent?: number | undefined
   }
   ram: {
     totalGB: number
@@ -40,12 +40,12 @@ export interface SystemResources {
     total: number
     used: number
     free: number
-  }
+  } | undefined
   disk?: {
     drive: string
     total: number
     free: number
-  }
+  } | undefined
 }
 
 export interface OllamaReleaseUpdate {
@@ -58,39 +58,92 @@ export interface OllamaReleaseUpdate {
   htmlUrl?: string | undefined
 }
 
-function enrichResources(raw: any): SystemResources {
-  const gpu = raw.gpu
+function enrichResources(raw: {
+  gpu?: {
+    name?: string
+    totalVramMB?: number
+    usedVramMB?: number
+    freeVramMB?: number
+    utilization?: number
+    temperature?: number
+  } | null
+  cpu: {
+    model?: string
+    cores?: number
+    usagePercent?: number
+  }
+  ram: {
+    totalGB?: number
+    usedGB?: number
+    freeGB?: number
+    usagePercent?: number
+  }
+  storage: {
+    drive?: string
+    totalGB?: number
+    usedGB?: number
+    freeGB?: number
+    usagePercent?: number
+  }
+}): SystemResources {
+  const gpu: GpuMetrics | null = raw.gpu
     ? {
-      ...raw.gpu,
-      vramTotalMB: raw.gpu.totalVramMB,
-      vramUsedMB: raw.gpu.usedVramMB,
+      name: raw.gpu.name || 'Local GPU',
+      totalVramMB: raw.gpu.totalVramMB || 0,
+      usedVramMB: raw.gpu.usedVramMB || 0,
+      freeVramMB: raw.gpu.freeVramMB || 0,
+      utilization: raw.gpu.utilization || 0,
+      temperature: raw.gpu.temperature || 0,
+      vramTotalMB: raw.gpu.totalVramMB || 0,
+      vramUsedMB: raw.gpu.usedVramMB || 0,
       temperatureC: raw.gpu.temperature,
       utilizationGPU: raw.gpu.utilization,
     }
     : null
 
   const cpu = {
-    ...raw.cpu,
-    loadPercent: raw.cpu.usagePercent,
+    model: raw.cpu.model || 'Host Processor',
+    cores: raw.cpu.cores || 1,
+    usagePercent: raw.cpu.usagePercent || 0,
+    loadPercent: raw.cpu.usagePercent || 0,
   }
+
+  const ramTotal = raw.ram.totalGB || 0
+  const ramUsed = raw.ram.usedGB || 0
+  const ramFree = raw.ram.freeGB || 0
 
   const memory = {
-    total: raw.ram.totalGB * 1024 * 1024 * 1024,
-    used: raw.ram.usedGB * 1024 * 1024 * 1024,
-    free: raw.ram.freeGB * 1024 * 1024 * 1024,
+    total: ramTotal * 1024 * 1024 * 1024,
+    used: ramUsed * 1024 * 1024 * 1024,
+    free: ramFree * 1024 * 1024 * 1024,
   }
 
+  const storageTotal = raw.storage.totalGB || 0
+  const storageUsed = raw.storage.usedGB || 0
+  const storageFree = raw.storage.freeGB || 0
+
   const disk = {
-    drive: raw.storage.drive,
-    total: raw.storage.totalGB * 1024 * 1024 * 1024,
-    free: raw.storage.freeGB * 1024 * 1024 * 1024,
+    drive: raw.storage.drive || 'System',
+    total: storageTotal * 1024 * 1024 * 1024,
+    free: storageFree * 1024 * 1024 * 1024,
   }
 
   return {
     gpu,
     cpu,
-    ram: raw.ram,
-    storage: raw.storage,
+    ram: {
+      totalGB: ramTotal,
+      usedGB: ramUsed,
+      freeGB: ramFree,
+      usagePercent: raw.ram.usagePercent || (ramTotal > 0 ? Math.round((ramUsed / ramTotal) * 100) : 0),
+    },
+    storage: {
+      drive: raw.storage.drive || 'System',
+      totalGB: storageTotal,
+      usedGB: storageUsed,
+      freeGB: storageFree,
+      usagePercent: raw.storage.usagePercent || (storageTotal > 0 ? Math.round((storageUsed / storageTotal) * 100) : 0),
+    },
     memory,
     disk,
   }
@@ -106,34 +159,27 @@ export async function fetchSystemResources(): Promise<SystemResources> {
   } catch {
     // Fallback if host endpoint not reachable
   }
-
-  // Graceful fallback values for RTX 2050 environment
+  // Graceful empty fallback when host introspection is unavailable — never invent fake hardware metrics
+  const detectedCores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 1 : 1
   return enrichResources({
-    gpu: {
-      name: 'NVIDIA GeForce RTX 2050',
-      totalVramMB: 4096,
-      usedVramMB: 0,
-      freeVramMB: 4096,
-      utilization: 0,
-      temperature: 50,
-    },
+    gpu: null,
     cpu: {
-      model: 'Intel 12th Gen',
-      cores: typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 8 : 8,
-      usagePercent: 12,
+      model: 'Host Processor (Telemetry Unreachable)',
+      cores: detectedCores,
+      usagePercent: 0,
     },
     ram: {
-      totalGB: 16,
-      usedGB: 8.8,
-      freeGB: 7.2,
-      usagePercent: 55,
+      totalGB: 0,
+      usedGB: 0,
+      freeGB: 0,
+      usagePercent: 0,
     },
     storage: {
-      drive: 'E:',
-      totalGB: 150,
-      usedGB: 48,
-      freeGB: 102,
-      usagePercent: 32,
+      drive: 'Local',
+      totalGB: 0,
+      usedGB: 0,
+      freeGB: 0,
+      usagePercent: 0,
     },
   })
 }

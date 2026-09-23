@@ -21,10 +21,77 @@ import {
 
 export type ModelHubTab = 'models' | 'llama-models' | 'custom' | 'updates' | 'resources'
 
+export interface EndpointConfig {
+  host: string
+  port: number
+  protocol: 'http' | 'https'
+  baseUrl?: string
+}
+
+export interface RuntimeConfig {
+  ollama: EndpointConfig
+  llama: EndpointConfig
+}
+
+export const STORAGE_KEY_RUNTIME_CONFIG = 'hyperion_runtime_config'
+
+export const DEFAULT_RUNTIME_CONFIG: RuntimeConfig = {
+  ollama: {
+    host: '127.0.0.1',
+    port: 11434,
+    protocol: 'http',
+  },
+  llama: {
+    host: '127.0.0.1',
+    port: 8080,
+    protocol: 'http',
+  },
+}
+
+export function formatEndpointUrl(cfg: EndpointConfig): string {
+  if (cfg.baseUrl && cfg.baseUrl.trim()) {
+    return cfg.baseUrl.trim().replace(/\/+$/, '')
+  }
+  return `${cfg.protocol}://${cfg.host}:${cfg.port}`
+}
+
+export function loadRuntimeConfig(): RuntimeConfig {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY_RUNTIME_CONFIG) : null
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<RuntimeConfig>
+      return {
+        ollama: { ...DEFAULT_RUNTIME_CONFIG.ollama, ...parsed.ollama },
+        llama: { ...DEFAULT_RUNTIME_CONFIG.llama, ...parsed.llama },
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return { ...DEFAULT_RUNTIME_CONFIG }
+}
+
+export function saveRuntimeConfig(config: RuntimeConfig): void {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY_RUNTIME_CONFIG, JSON.stringify(config))
+    }
+  } catch {
+    // ignore
+  }
+}
+
+// Initial bootstrap of services from persisted configuration
+const initialRuntimeConfig = loadRuntimeConfig()
+defaultOllama.setBaseUrl(formatEndpointUrl(initialRuntimeConfig.ollama))
+defaultLlama.setEndpoint(formatEndpointUrl(initialRuntimeConfig.llama))
+
 export interface ModelHubState {
   isOpen: boolean
   isModelHubOpen: boolean
   activeTab: ModelHubTab
+  runtimeConfig: RuntimeConfig
+  isConfigModalOpen: boolean
   models: OllamaModel[]
   runningModels: OllamaRunningModel[]
   llamaModels: LlamaModel[]
@@ -51,6 +118,8 @@ const initialState: ModelHubState = {
   isOpen: false,
   isModelHubOpen: false,
   activeTab: 'models',
+  runtimeConfig: initialRuntimeConfig,
+  isConfigModalOpen: false,
   models: [],
   runningModels: [],
   llamaModels: [],
@@ -145,6 +214,22 @@ class ModelHubStore {
       isLlamaDetailsOpen: isOpen,
       selectedLlamaModel: isOpen ? this.state.selectedLlamaModel : null,
     })
+  }
+
+  setConfigModalOpen(isOpen: boolean): void {
+    this.setState({ isConfigModalOpen: isOpen })
+  }
+
+  getRuntimeConfig(): RuntimeConfig {
+    return this.state.runtimeConfig
+  }
+
+  updateRuntimeConfig(config: RuntimeConfig): void {
+    saveRuntimeConfig(config)
+    defaultOllama.setBaseUrl(formatEndpointUrl(config.ollama))
+    defaultLlama.setEndpoint(formatEndpointUrl(config.llama))
+    this.setState({ runtimeConfig: config })
+    void this.refreshAll()
   }
 
   setError(error: string | null): void {
@@ -254,6 +339,9 @@ export const setAddModelOpen = (isOpen: boolean) => modelHubStore.setAddModelOpe
 export const setAddLlamaModelOpen = (isOpen: boolean) => modelHubStore.setAddLlamaModelOpen(isOpen)
 export const setModelDetailsOpen = (isOpen: boolean) => modelHubStore.setModelDetailsOpen(isOpen)
 export const setLlamaDetailsOpen = (isOpen: boolean) => modelHubStore.setLlamaDetailsOpen(isOpen)
+export const setConfigModalOpen = (isOpen: boolean) => modelHubStore.setConfigModalOpen(isOpen)
+export const updateRuntimeConfig = (cfg: RuntimeConfig) => modelHubStore.updateRuntimeConfig(cfg)
+export const getRuntimeConfig = () => modelHubStore.getRuntimeConfig()
 export const refreshAll = () => modelHubStore.refreshAll()
 export const unloadModel = (name: string) => defaultOllama.unloadModel(name)
 export const unloadLlamaModel = (name: string) => defaultLlama.unloadModel(name)
@@ -414,11 +502,20 @@ export async function syncLlamaModelsToSettings(force = false): Promise<void> {
     if (!force && currentHash === lastLlamaModelsHash) return
     lastLlamaModelsHash = currentHash
 
+    const currentLlamaEndpoint = defaultLlama.getEndpoint()
+    let portLabel = 'Custom'
+    try {
+      const urlObj = new URL(currentLlamaEndpoint)
+      portLabel = urlObj.port ? `Port ${urlObj.port}` : urlObj.protocol
+    } catch {
+      // fallback
+    }
+
     await boundContext.remote.settings.mutate('llm-pi-ai', [
       {
         op: 'set',
         path: ['providers', 'llama', 'displayName'],
-        value: 'Llama.cpp Engine (Port 8080)',
+        value: `Llama.cpp Engine (${portLabel})`,
       },
       {
         op: 'set',
@@ -428,7 +525,7 @@ export async function syncLlamaModelsToSettings(force = false): Promise<void> {
       {
         op: 'set',
         path: ['providers', 'llama', 'baseURL'],
-        value: 'http://127.0.0.1:8080/v1',
+        value: `${currentLlamaEndpoint}/v1`,
       },
       {
         op: 'set',
@@ -441,7 +538,6 @@ export async function syncLlamaModelsToSettings(force = false): Promise<void> {
         value: modelEntries,
       },
     ])
-
     if (boundContext.modelDirectories?.catalog) {
       boundContext.modelDirectories.catalog.refresh()
     }

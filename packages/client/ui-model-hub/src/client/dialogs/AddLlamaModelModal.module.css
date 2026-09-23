@@ -199,14 +199,14 @@
   background: var(--dsw-alias-accent, #3b82f6);
   transition: width 0.2s ease;
 }
-
 .errorBanner {
-  padding: 10px 14px;
-  border-radius: 6px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
   font-size: 12px;
+  line-height: 1.4;
 }
 
 .modalFooter {

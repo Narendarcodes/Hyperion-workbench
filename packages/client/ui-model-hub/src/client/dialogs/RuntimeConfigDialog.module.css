@@ -1,0 +1,285 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--dsw-alias-bg-layer-1, #1e293b);
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.15));
+  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  color: var(--dsw-alias-label-primary, #f8fafc);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.08));
+}
+
+.modalTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dsw-alias-label-primary, #f8fafc);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--dsw-alias-label-secondary, #94a3b8);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.closeBtn:hover {
+  color: var(--dsw-alias-label-primary, #ffffff);
+  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.08));
+}
+
+.closeBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 1px;
+}
+
+.modalTabs {
+  display: flex;
+  border-bottom: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.08));
+  background: var(--dsw-alias-bg-layer-2, rgba(15, 23, 42, 0.5));
+}
+
+.tabBtn {
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dsw-alias-label-secondary, #94a3b8);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tabBtn:hover {
+  color: var(--dsw-alias-label-primary, #f8fafc);
+}
+
+.tabBtn.activeTab {
+  color: var(--dsw-alias-accent, #3b82f6);
+  border-bottom-color: var(--dsw-alias-accent, #3b82f6);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.tabBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: -2px;
+}
+
+.modalBody {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.formRow {
+  display: flex;
+  gap: 12px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.formLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dsw-alias-label-secondary, #94a3b8);
+}
+
+.input {
+  height: 36px;
+  padding: 0 12px;
+  background: var(--dsw-alias-bg-layer-2, rgba(30, 41, 59, 0.5));
+  border: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  color: var(--dsw-alias-label-primary, #f8fafc);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  border-color: var(--dsw-alias-accent, #3b82f6);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 1px;
+}
+
+.formHint {
+  font-size: 11px;
+  color: var(--dsw-alias-label-secondary, #94a3b8);
+}
+
+.testSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.08));
+}
+
+.testBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  background: var(--dsw-alias-bg-layer-2, rgba(30, 41, 59, 0.8));
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  color: var(--dsw-alias-label-primary, #f8fafc);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.testBtn:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.1));
+  border-color: var(--dsw-alias-border-l3, rgba(255, 255, 255, 0.2));
+}
+
+.testBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 1px;
+}
+
+.testBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.testSuccess {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.testError {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.08));
+  background: var(--dsw-alias-bg-layer-2, rgba(15, 23, 42, 0.5));
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resetBtn {
+  background: transparent;
+  border: none;
+  color: var(--dsw-alias-label-secondary, #94a3b8);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 8px;
+}
+
+.resetBtn:hover {
+  color: var(--dsw-alias-label-primary, #f8fafc);
+}
+
+.cancelBtn {
+  height: 34px;
+  padding: 0 16px;
+  background: transparent;
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  color: var(--dsw-alias-label-primary, #f8fafc);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cancelBtn:hover {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.08));
+}
+
+.saveBtn {
+  height: 34px;
+  padding: 0 18px;
+  background: var(--dsw-alias-accent, #3b82f6);
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.saveBtn:hover {
+  filter: brightness(1.1);
+}
+
+.saveBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 2px;
+}

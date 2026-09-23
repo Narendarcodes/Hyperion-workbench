@@ -38,7 +38,7 @@ export interface GgufHeaderMetadata {
   fileSize?: number
 }
 
-const DEFAULT_LLAMA_ENDPOINT = 'http://127.0.0.1:8080'
+export const DEFAULT_LLAMA_ENDPOINT = 'http://127.0.0.1:8080'
 
 export const DEFAULT_KNOWN_LLAMA_MODELS: LlamaModel[] = [
   {
@@ -116,6 +116,52 @@ export class LlamaService {
       return resModels ? resModels.ok : false
     } catch {
       return false
+    }
+  }
+
+  /** Test connection to a specific endpoint */
+  async testConnection(targetEndpoint?: string): Promise<{ success: boolean; message: string; version?: string | undefined }> {
+    const url = (targetEndpoint || this.endpoint).replace(/\/+$/, '')
+    try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 3000)
+
+      const res = await fetch(`${url}/health`, {
+        method: 'GET',
+        signal: controller.signal,
+      }).catch(() => null)
+
+      clearTimeout(timeout)
+      if (res && (res.ok || res.status === 200 || res.status === 503)) {
+        return {
+          success: true,
+          message: `Connected successfully to llama.cpp at ${url}`,
+          version: 'Active',
+        }
+      }
+
+      const resModels = await fetch(`${url}/v1/models`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(3000),
+      }).catch(() => null)
+
+      if (resModels && resModels.ok) {
+        return {
+          success: true,
+          message: `Connected to llama.cpp OpenAI-compatible API at ${url}`,
+          version: 'Active',
+        }
+      }
+
+      return {
+        success: false,
+        message: `llama.cpp server did not respond at ${url}. Make sure llama-server is running on this port.`,
+      }
+    } catch (e: unknown) {
+      return {
+        success: false,
+        message: `Connection failed: ${e instanceof Error ? e.message : 'Network error'}`,
+      }
     }
   }
 

@@ -120,7 +120,7 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
     <div className={css.root}>
       {!storeState.ollamaConnected && (
         <div className={css.offlineBanner}>
-          <span>⚠️ <strong>Ollama unavailable.</strong> Make sure Ollama is running at <code>http://127.0.0.1:11434</code>.</span>
+          <span>⚠️ <strong>Ollama unavailable.</strong> Make sure Ollama is running at <code>{defaultOllama.getBaseUrl()}</code>.</span>
           <button type="button" className={css.retryBtn} onClick={() => { void modelHubStore.refreshAll() }}>
             Retry
           </button>
@@ -151,7 +151,7 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
             <option value="multimodal">Multimodal</option>
           </select>
 
-          <select className={css.select} value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
+          <select className={css.select} value={sortBy} onChange={e => setSortBy(e.target.value as 'modified' | 'name' | 'size')}>
             <option value="modified">Recently Modified</option>
             <option value="name">Name (A-Z)</option>
             <option value="size">Size (Largest)</option>
@@ -276,19 +276,25 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
         </div>
       ) : (
         <div className={css.emptyState}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.35, marginBottom: 8 }}>
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+            <line x1="6" y1="6" x2="6.01" y2="6" />
+            <line x1="6" y1="18" x2="6.01" y2="18" />
+          </svg>
           <div className={css.emptyTitle}>
-            {search ? 'No matching models found' : 'No local Ollama models installed'}
+            {search ? 'No matching models found' : 'No local models yet'}
           </div>
-          <div>
+          <div style={{ fontSize: 13, color: 'var(--dsw-alias-label-secondary, #94a3b8)', maxWidth: 360, lineHeight: 1.5 }}>
             {search
-              ? 'Try a different search term or filter'
-              : 'Pull a model from the Ollama library or import an offline model package.'}
+              ? 'Try a different search query or clear the active filter.'
+              : 'Add an Ollama model from the library or import an offline GGUF model package to get started.'}
           </div>
           {!search && (
             <button
               type="button"
               className={css.addBtn}
-              style={{ marginTop: 8 }}
+              style={{ marginTop: 12 }}
               onClick={() => modelHubStore.setAddModelOpen(true)}
             >
               + Add Model
@@ -300,49 +306,34 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
       {/* Delete Confirmation Dialog */}
       {modelToDelete && (
         <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(15, 23, 42, 0.4)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 1100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          className={css.deleteOverlay}
+          onClick={() => setModelToDelete(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-model-title"
         >
-          <div
-            style={{
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: 12,
-              padding: 24,
-              maxWidth: 400,
-              width: '90%',
-              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
-            }}
-          >
-            <h3 style={{ margin: '0 0 12px', fontSize: 16, color: '#0f172a' }}>Delete Model?</h3>
-            <p style={{ margin: '0 0 20px', fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
-              Are you sure you want to delete <strong>{modelToDelete.name}</strong> ({formatBytes(modelToDelete.size)})?
-              This will remove the weights from your local disk.
+          <div className={css.deleteDialog} onClick={e => e.stopPropagation()}>
+            <h3 id="delete-model-title" className={css.deleteDialogTitle}>
+              Delete Model?
+            </h3>
+            <p className={css.deleteDialogBody}>
+              Are you sure you want to permanently delete <strong>{modelToDelete.name}</strong> ({formatBytes(modelToDelete.size)})?
+              The model weights will be removed from your local disk and cannot be recovered without re-downloading.
             </p>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <div className={css.deleteDialogActions}>
               <button
                 type="button"
-                className={css.actionBtn}
-                style={{ background: '#ffffff', border: '1px solid #cbd5e1', color: '#475569' }}
+                className={css.cancelDialogBtn}
                 onClick={() => setModelToDelete(null)}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className={`${css.actionBtn} ${css.deleteBtn}`}
-                style={{ background: '#dc2626', color: '#fff', border: 'none' }}
+                className={css.confirmDeleteBtn}
                 onClick={() => { void onDeleteConfirm() }}
               >
-                Delete
+                Delete Model
               </button>
             </div>
           </div>

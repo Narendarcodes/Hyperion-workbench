@@ -7,6 +7,7 @@ import {
   setAddLlamaModelOpen,
   setModelDetailsOpen,
   setLlamaDetailsOpen,
+  setConfigModalOpen,
 } from './store'
 import { ModelsTab } from './tabs/ModelsTab'
 import { LlamaModelsTab } from './tabs/LlamaModelsTab'
@@ -18,6 +19,7 @@ import { AddModelModal } from './dialogs/AddModelModal'
 import { AddLlamaModelModal } from './dialogs/AddLlamaModelModal'
 import { ModelDetailsModal } from './dialogs/ModelDetailsModal'
 import { LlamaModelDetailsModal } from './dialogs/LlamaModelDetailsModal'
+import { RuntimeConfigDialog } from './dialogs/RuntimeConfigDialog'
 import css from './ModelHubWorkspace.module.css'
 
 interface TabErrorBoundaryState {
@@ -80,6 +82,7 @@ export const ModelHubWorkspace: React.FC = () => {
     isAddLlamaModelOpen,
     isModelDetailsOpen,
     isLlamaDetailsOpen,
+    isConfigModalOpen,
     selectedModel,
     selectedLlamaModel,
   } = store
@@ -96,7 +99,8 @@ export const ModelHubWorkspace: React.FC = () => {
         !isAddModelOpen &&
         !isAddLlamaModelOpen &&
         !isModelDetailsOpen &&
-        !isLlamaDetailsOpen
+        !isLlamaDetailsOpen &&
+        !isConfigModalOpen
       ) {
         closeModelHub()
       }
@@ -146,9 +150,11 @@ export const ModelHubWorkspace: React.FC = () => {
         </div>
 
         {/* Central Tab Controls */}
-        <nav className={css.tabNavigation}>
+        <nav className={css.tabNavigation} role="tablist" aria-label="Model Hub Navigation">
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'models'}
             className={`${css.tabBtn} ${activeTab === 'models' ? css.active : ''}`}
             onClick={(e) => {
               e.preventDefault()
@@ -168,9 +174,10 @@ export const ModelHubWorkspace: React.FC = () => {
 
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'llama-models'}
             className={`${css.tabBtn} ${activeTab === 'llama-models' ? css.active : ''}`}
             onClick={(e) => {
-              e.preventDefault()
               e.stopPropagation()
               setActiveTab('llama-models')
             }}
@@ -184,9 +191,10 @@ export const ModelHubWorkspace: React.FC = () => {
 
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'custom'}
             className={`${css.tabBtn} ${activeTab === 'custom' ? css.active : ''}`}
             onClick={(e) => {
-              e.preventDefault()
               e.stopPropagation()
               setActiveTab('custom')
             }}
@@ -200,9 +208,10 @@ export const ModelHubWorkspace: React.FC = () => {
 
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'updates'}
             className={`${css.tabBtn} ${activeTab === 'updates' ? css.active : ''}`}
             onClick={(e) => {
-              e.preventDefault()
               e.stopPropagation()
               setActiveTab('updates')
             }}
@@ -217,9 +226,10 @@ export const ModelHubWorkspace: React.FC = () => {
 
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'resources'}
             className={`${css.tabBtn} ${activeTab === 'resources' ? css.active : ''}`}
             onClick={(e) => {
-              e.preventDefault()
               e.stopPropagation()
               setActiveTab('resources')
             }}
@@ -263,7 +273,7 @@ export const ModelHubWorkspace: React.FC = () => {
 
       {/* Main Content Area */}
       <main className={css.workspaceContent}>
-        <div className={css.mainPanel}>
+        <div className={css.mainPanel} role="tabpanel" aria-label={`${activeTab} panel`}>
           <TabErrorBoundary key={activeTab}>
             {activeTab === 'models' && <ModelsTab storeState={store} />}
             {activeTab === 'llama-models' && <LlamaModelsTab storeState={store} />}
@@ -294,6 +304,11 @@ export const ModelHubWorkspace: React.FC = () => {
       <LlamaModelDetailsModal
         modelName={selectedLlamaModel?.name ?? null}
         onClose={() => setLlamaDetailsOpen(false)}
+      />
+
+      <RuntimeConfigDialog
+        isOpen={isConfigModalOpen}
+        onClose={() => setConfigModalOpen(false)}
       />
     </div>
   )

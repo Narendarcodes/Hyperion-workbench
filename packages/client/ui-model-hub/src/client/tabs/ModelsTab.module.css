@@ -43,8 +43,10 @@
   transition: border-color 0.15s ease;
 }
 
-.searchInput:focus {
+.searchInput:focus-visible {
   border-color: var(--dsw-alias-accent, #3b82f6);
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 1px;
 }
 
 .searchIcon {
@@ -66,6 +68,12 @@
   font-size: 13px;
   outline: none;
   cursor: pointer;
+}
+
+.select:focus-visible {
+  border-color: var(--dsw-alias-accent, #3b82f6);
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 1px;
 }
 
 .select option {
@@ -93,16 +101,23 @@
   filter: brightness(1.1);
 }
 
+.addBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 2px;
+}
+
 .tableWrapper {
   border: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.08));
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
+  min-width: 0;
   background: var(--dsw-alias-bg-layer-1, rgba(15, 23, 42, 0.7));
   box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.2);
 }
 
 .table {
   width: 100%;
+  min-width: 700px;
   border-collapse: collapse;
   text-align: left;
   font-size: 13px;
@@ -137,6 +152,8 @@
 .modelNameCol {
   font-weight: 600;
   color: var(--dsw-alias-label-primary, #f8fafc);
+  max-width: 240px;
+  word-break: break-word;
 }
 
 .modelTag {
@@ -214,6 +231,11 @@
   background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.08));
   border-color: var(--dsw-alias-border-l3, rgba(255, 255, 255, 0.2));
   color: var(--dsw-alias-label-primary, #ffffff);
+}
+
+.actionBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 1px;
 }
 
 .loadBtn {
@@ -300,8 +322,88 @@
   color: #dc2626;
   font-size: 12px;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 
 .retryBtn:hover {
   background: #fee2e2;
+}
+
+.retryBtn:focus-visible {
+  outline: 2px solid var(--dsw-alias-accent, #3b82f6);
+  outline-offset: 1px;
+}
+
+/* Dark-themed delete confirmation dialog */
+.deleteOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteDialog {
+  background: var(--dsw-alias-bg-layer-1, #1e293b);
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.15));
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  color: var(--dsw-alias-label-primary, #f8fafc);
+}
+
+.deleteDialogTitle {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dsw-alias-label-primary, #f8fafc);
+}
+
+.deleteDialogBody {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: var(--dsw-alias-label-secondary, #94a3b8);
+  line-height: 1.5;
+}
+
+.deleteDialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancelDialogBtn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  background: var(--dsw-alias-bg-layer-2, rgba(30, 41, 59, 0.6));
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.12));
+  color: var(--dsw-alias-label-primary, #f8fafc);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.cancelDialogBtn:hover {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.1));
+}
+
+.confirmDeleteBtn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  background: #dc2626;
+  border: none;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.confirmDeleteBtn:hover {
+  background: #b91c1c;
 }

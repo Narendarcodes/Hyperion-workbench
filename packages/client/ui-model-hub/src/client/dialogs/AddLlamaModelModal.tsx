@@ -47,7 +47,10 @@ export const AddLlamaModelModal: React.FC<AddLlamaModelModalProps> = ({ isOpen, 
           if (Array.isArray(items)) {
             setSuggestions(
               items
-                .map((i: any) => ({ id: i.id || i.modelId, downloads: i.downloads || 0 }))
+                .map((i: { id?: string; modelId?: string; downloads?: number }) => ({
+                  id: i.id || i.modelId || '',
+                  downloads: i.downloads || 0,
+                }))
                 .filter(i => Boolean(i.id)),
             )
           }
@@ -91,9 +94,9 @@ export const AddLlamaModelModal: React.FC<AddLlamaModelModalProps> = ({ isOpen, 
         setIsPulling(false)
         onClose()
       }, 1000)
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsPulling(false)
-      setPullError(err.message || 'Failed to download GGUF model')
+      setPullError(err instanceof Error ? err.message : 'Failed to download GGUF model')
     }
   }
 
@@ -127,9 +130,9 @@ export const AddLlamaModelModal: React.FC<AddLlamaModelModalProps> = ({ isOpen, 
         setIsImporting(false)
         onClose()
       }, 1000)
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsImporting(false)
-      setImportError(err.message || 'Failed to import local GGUF model')
+      setImportError(err instanceof Error ? err.message : 'Failed to import local GGUF model')
     }
   }
 
@@ -226,7 +229,7 @@ export const AddLlamaModelModal: React.FC<AddLlamaModelModalProps> = ({ isOpen, 
                   onChange={e => setQuantization(e.target.value)}
                   disabled={isPulling}
                 >
-                  <option value="Q4_K_M">Q4_K_M (Recommended for 8GB VRAM)</option>
+                  <option value="Q4_K_M">Q4_K_M (Balanced / Recommended)</option>
                   <option value="Q5_K_M">Q5_K_M (High accuracy)</option>
                   <option value="Q8_0">Q8_0 (Max precision)</option>
                   <option value="IQ3_M">IQ3_M (Ultra compact)</option>
@@ -234,7 +237,7 @@ export const AddLlamaModelModal: React.FC<AddLlamaModelModalProps> = ({ isOpen, 
               </div>
 
               <div className={css.formGroup}>
-                <label className={css.formLabel}>Recommended GGUF Models for RTX 2050 (8GB VRAM):</label>
+                <label className={css.formLabel}>Recommended GGUF Models:</label>
                 <div className={css.curatedPills}>
                   {RECOMMENDED_GGUF_MODELS.map(m => (
                     <button
