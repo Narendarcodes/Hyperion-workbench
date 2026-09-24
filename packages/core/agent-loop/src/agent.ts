@@ -69,6 +69,47 @@ function requestProposal(header: EpochHeader): LlmCallConfig {
   if (header.adapterDefaults.maxTokens === true) delete proposal.maxTokens
   return proposal
 }
+/** Tailor the system prompt to the specific model role and capability. */
+function specializeSystemPromptForModel(modelId: string, system: string): string {
+  let specialized = system.replace(/\bthe auto model\b/g, `the ${modelId} model`)
+  const idLower = modelId.toLowerCase()
+  let roleDirective = ''
+
+  if (idLower.includes('ocr') || idLower.includes('vision')) {
+    roleDirective = [
+      '### Industrial Role Directive: Blueprint & Document OCR Specialist',
+      '- You are the dedicated OCR and document extraction engine for the Hyperion Industrial Workbench.',
+      '- Priority: Extract verbatim text, tables, dimensional tolerances, coordinate annotations, and part specifications from technical drawings and scans.',
+      '- Fidelity: Preserve numbers, units (mm, psi, bar, RPM, kW), and table structures exactly. Never hallucinate or approximate values.',
+    ].join('\n')
+  } else if (idLower.includes('qwen') || idLower.includes('coder') || idLower.includes('script')) {
+    roleDirective = [
+      '### Industrial Role Directive: Local Automation & Scripting Specialist',
+      '- You are the local deterministic code and telemetry automation engine for Hyperion.',
+      '- Priority: Write clean, bounded Python scripts, Modbus/SCADA register parsers, CSV/data handlers, and tool workflows.',
+      '- Safety: Ensure scripts handle missing inputs and error boundaries gracefully.',
+    ].join('\n')
+  } else if (idLower.includes('high') || idLower.includes('reason') || idLower.includes('r1')) {
+    roleDirective = [
+      '### Industrial Role Directive: Sovereign Industrial Engineering Specialist',
+      '- You are the senior industrial analysis and multi-step reasoning engine for Hyperion.',
+      '- Priority: Perform rigorous root-cause analysis, mechanical/electrical failure diagnosis, stress/fatigue calculations, and deliverable verification.',
+      '- Rigor: Explicitly state assumptions, calculate engineering safety margins, and ground conclusions in provided evidence.',
+    ].join('\n')
+  } else if (idLower.includes('free') || idLower.includes('chat') || idLower.includes('mini')) {
+    roleDirective = [
+      '### Industrial Role Directive: Responsive Workbench Assistant',
+      '- You are the conversational assistant for the Hyperion Industrial Workbench.',
+      '- Priority: Provide fast, concise, helpful, and direct responses for greetings, status checks, and general inquiries.',
+    ].join('\n')
+  }
+
+  if (roleDirective) {
+    specialized = `${roleDirective}\n\n${specialized}`
+  }
+
+  return specialized
+}
 
 /** Drives one session through turn and step boundaries. */
 export class ReactLoopAgent implements Agent {
@@ -533,26 +574,61 @@ export class ReactLoopAgent implements Agent {
     let config: LlmCallConfig
     let preparedCall: PreparedLlmCall | undefined
     try {
-      const lastUser = boundaryMessages.filter(m => m.role === 'user').pop()
+      const lastUser = boundaryMessages
+        .filter(m => m.role === 'user' && (m.source as { kind?: string }).kind === 'user')
+        .pop() ?? boundaryMessages.filter(m => m.role === 'user').pop()
       const promptText = lastUser?.content.map((b: { type?: string; text?: string }) => b.type === 'text' ? (b.text || '') : '').join('') || ''
-      const decision = await router.route(promptText)
+      const isAuto = proposedConfig.provider === 'auto' || proposedConfig.model === 'auto'
+      if (isAuto) {
+        // Query dynamically registered models in the harness
+        const candidateIds: string[] = []
+        const providers = this.loopCtx.llm.listProviders()
+        for (const prov of providers) {
+          if (prov.id === 'deepseek-official') continue
+          try {
+            const models = await this.loopCtx.llm.listModels(prov.id)
+            for (const m of models) {
+              candidateIds.push(m.id)
+            }
+          } catch {
+            // Provider catalog temporarily unreachable
+          }
+        }
 
+        const decision = await router.route(
+          promptText,
+          candidateIds.length > 0 ? { candidates: candidateIds } : undefined,
+        )
+        config = {
+          ...proposedConfig,
+          model: decision.selectedModel.id,
+          provider: decision.selectedModel.provider,
+        }
+      } else {
+        config = proposedConfig
+      }
+    } catch {
+      const providers = this.loopCtx.llm.listProviders().filter(p => p.id !== 'deepseek-official')
+      const fallbackProvider = providers[0]?.id ?? 'omniroute'
+      let fallbackModel = 'antigravity/gemini-3.7-flash-medium'
+      try {
+        const models = await this.loopCtx.llm.listModels(fallbackProvider)
+        if (models[0]?.id) fallbackModel = models[0].id
+      } catch {}
       config = {
         ...proposedConfig,
-        model: decision.selectedModel.id,
-        provider: decision.selectedModel.provider,
+        provider: fallbackProvider,
+        model: fallbackModel,
       }
-    } catch (error: unknown) {
-      // Middleware may serve an unregistered route; terminal dispatch still requires an adapter.
-      if (!(error instanceof LlmError) || error.code !== 'NO_ADAPTER') throw error
-      config = proposedConfig
     }
     signal.throwIfAborted()
+
+    const effectiveSystem = system ? specializeSystemPromptForModel(config.model, system) : system
 
     const header = canonicalHeader({
       config,
       ...preparedCall === undefined ? {} : { adapterDefaults: preparedCall.adapterDefaults },
-      ...system ? { system } : {},
+      ...effectiveSystem ? { system: effectiveSystem } : {},
       ...tools.length > 0 ? { tools } : {},
     })
     const baseline = this.session.requestHeader()

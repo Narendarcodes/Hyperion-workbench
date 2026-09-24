@@ -1,17 +1,40 @@
-import { UniversalModelRouter } from '../src/router'
+import { UniversalModelRouter } from '../src/router.ts'
 
 async function main() {
   const router = new UniversalModelRouter()
-  console.log('Starting routing benchmark...')
+  console.log('Starting HYPERION Industrial Routing Benchmark...')
 
   const tasks = [
-    { name: 'Simple QA', prompt: 'What is the capital of France?' },
-    { name: 'Summarization', prompt: 'Summarize this 10 page document: [long text omitted]' },
-    { name: 'Coding', prompt: 'Write a python script that implements a red-black tree with insertion and deletion.' },
-    { name: 'Debugging', prompt: 'Why is my React component re-rendering infinitely? useEffect(() => setX(x + 1), [x])' },
-    { name: 'Mathematics', prompt: 'Prove that the sum of the first n odd numbers is n squared.' },
-    { name: 'Creative Writing', prompt: 'Draft a polite but firm email to a vendor about late delivery.' },
-    { name: 'Tool-oriented', prompt: 'Search the web for the latest Laya release notes and summarize them.' },
+    {
+      name: 'Conversational Greeting',
+      prompt: 'hi, are you ready to assist?',
+      expectedRole: 'Free / Local Conversational Tier',
+    },
+    {
+      name: 'Blueprint & OCR Extraction',
+      prompt: 'Perform OCR on this scanned mechanical blueprint and extract the dimensional tolerance table.',
+      expectedRole: 'GLM-OCR Specialist',
+    },
+    {
+      name: 'Local Script Automation',
+      prompt: 'Write a python script to read Modbus RTU temperature sensor registers over serial port and log to CSV.',
+      expectedRole: 'Qwen 3.5 4B (Local Automation)',
+    },
+    {
+      name: 'Industrial Failure Diagnosis',
+      prompt: 'Diagnose the cause of harmonic vibration in the centrifugal pump based on these FFT spectrum peaks.',
+      expectedRole: 'Gemma 4 / Gemini Medium (Engineering Reasoning)',
+    },
+    {
+      name: 'Mission-Critical Engineering Calculation',
+      prompt: 'Perform multi-axial fatigue stress tensor analysis and calculate safety factor for a gas turbine rotor under cyclic thermal load.',
+      expectedRole: 'Gemini 3.7 Flash High (Deep Reasoning)',
+    },
+    {
+      name: 'Engineering Deliverable Report',
+      prompt: 'Draft a formal Standard Operating Procedure (SOP) deliverable for cryogenic valve pressure testing.',
+      expectedRole: 'Gemma 4 / Gemini Medium (Technical Report)',
+    },
   ]
 
   let passed = 0
@@ -21,10 +44,13 @@ async function main() {
       const decision = await router.route(t.prompt)
       const elapsed = Date.now() - start
 
-      console.log(`\nTask: ${t.name}`)
-      console.log(`Prompt: ${t.prompt}`)
-      console.log(`Selected Model: ${decision.selectedModel.id} (Provider: ${decision.selectedModel.provider})`)
-      console.log(`Requirements: Type=${decision.taskRequirements?.type}, Complexity=${decision.taskRequirements?.complexity}`)
+      console.log('\n========================================')
+      console.log(`Task: [${t.name}]`)
+      console.log(`Prompt: '${t.prompt}'`)
+      console.log(`Selected Model: ${decision.selectedModel.id} (${decision.selectedModel.name})`)
+      console.log(`Provider: ${decision.selectedModel.provider} | Cost Tier: ${decision.selectedModel.costTier}`)
+      console.log(`Task Requirements: Type=${decision.taskRequirements?.task_type}, Complexity=${decision.taskRequirements?.complexity}`)
+      console.log(`Expected Role: ${t.expectedRole}`)
       console.log(`Latency: ${elapsed}ms`)
       passed++
     } catch (e) {
@@ -33,7 +59,8 @@ async function main() {
     }
   }
 
-  console.log(`\nBenchmark completed. ${passed}/${tasks.length} successful.`)
+  console.log('\n========================================')
+  console.log(`Benchmark completed. ${passed}/${tasks.length} successful.`)
   router.shutdown()
   process.exit(0)
 }

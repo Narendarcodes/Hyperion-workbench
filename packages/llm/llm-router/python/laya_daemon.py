@@ -1,4 +1,5 @@
 import sys
+import os
 import json
 import logging
 
@@ -10,12 +11,27 @@ try:
 except ImportError:
     print(json.dumps({"error": "laya package not found. Please install laya: pip install laya"}), flush=True)
     sys.exit(1)
+def find_local_snapshot():
+    hub_dir = os.path.expanduser("~/.cache/huggingface/hub/models--convaiinnovations--laya/snapshots")
+    if os.path.isdir(hub_dir):
+        try:
+            entries = sorted(os.listdir(hub_dir), key=lambda d: os.path.getmtime(os.path.join(hub_dir, d)), reverse=True)
+            for e in entries:
+                snap = os.path.join(hub_dir, e)
+                if os.path.isfile(os.path.join(snap, "model.safetensors")):
+                    return snap
+        except Exception:
+            pass
+    return None
 
 def main():
-    # Preload to ensure fast routing (<35ms) and keep checkpoints in memory
     try:
-        router = Router(preload=True)
-        # Emit a ready signal so the client knows it can start sending requests
+        local_snap = find_local_snapshot()
+        if local_snap:
+            router = Router(models={"english": local_snap}, standalone_repos=True, preload=False)
+        else:
+            router = Router(preload=False)
+        router.preload(["english"])
         print(json.dumps({"ready": True}), flush=True)
     except Exception as e:
         print(json.dumps({"error": str(e)}), flush=True)
@@ -25,8 +41,15 @@ def main():
         line = line.strip()
         if not line:
             continue
+
+        req_id = None
         try:
             req = json.loads(line)
+        except json.JSONDecodeError as e:
+            print(json.dumps({"error": f"Invalid JSON: {e}"}), flush=True)
+            continue
+
+        try:
             req_id = req.get("id")
             text = req.get("text", "")
             req_questions = req.get("questions")
@@ -49,8 +72,8 @@ def main():
             }
             print(json.dumps(out), flush=True)
         except Exception as e:
-            # Output error but keep daemon alive for next request
-            print(json.dumps({"error": str(e)}), flush=True)
+            # Output error with id so the TS client can resolve the pending promise
+            print(json.dumps({"id": req_id, "error": str(e)}), flush=True)
 
 if __name__ == "__main__":
     main()

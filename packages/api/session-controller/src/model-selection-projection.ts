@@ -49,6 +49,9 @@ function applyModelSelectionProjection(
       ? {}
       : { reasoningEffort: String(event.data.header.config.reasoningEffort) }),
   }
+  if (state.pending?.provider === 'auto' || state.pending?.model === 'auto') {
+    return { lastUsed, pending: state.pending }
+  }
   const pending = sameSelection(state.pending, lastUsed) ? null : state.pending
   return sameSelection(state.lastUsed, lastUsed) && pending === state.pending
     ? state

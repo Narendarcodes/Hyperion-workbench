@@ -12,15 +12,18 @@ export interface LayaQuestionScore {
 
 export type LayaQuestion = LayaQuestionChoice | LayaQuestionScore
 
-export type MatchCondition = Record<string, unknown | { $eq?: unknown; $gt?: number; $lt?: number }>
+export type MatchOperator = { $eq?: unknown; $gt?: number; $lt?: number; $gte?: number; $lte?: number }
+
+export type MatchCondition = Record<string, string | number | boolean | MatchOperator>
 
 export interface RoutingRule {
   match?: MatchCondition | MatchCondition[] // If array, OR. If object, properties are AND.
   scoreCapabilities?: {
-    coding?: number
-    reasoning?: number
-    creative?: number
-    qa?: number
+    ocr_document?: number
+    code_automation?: number
+    engineering_reasoning?: number
+    deliverable_report?: number
+    conversational?: number
   }
   scoreCostTier?: {
     low?: number
@@ -38,49 +41,64 @@ export const DEFAULT_ROUTING_CONFIG: RoutingEngineConfig = {
   layaQuestions: {
     task_type: {
       type: 'choice',
-      instructions: 'What type of task is this?',
+      instructions: 'What type of industrial engineering operation is requested?',
       criteria: {
-        coding: 'writing, debugging or modifying code',
-        reasoning: 'complex logic, planning, math or deep analysis',
-        qa: 'simple question answering, information extraction, summarization',
-        creative: 'writing stories, drafting emails, brainstorming',
-        other: 'everything else',
+        ocr_document: 'OCR, extract text, extract table, scanned blueprint, engineering drawing, technical schematic, image or document reading',
+        code_automation: 'writing code, Python script, programming, software development, debugging code, algorithm implementation',
+        engineering_reasoning: 'root cause analysis, mechanical or electrical calculations, failure diagnosis, physics math analysis',
+        deliverable_report: 'drafting formal engineering reports, SOPs, summary documentation, technical writing',
+        conversational: 'greetings (hi, hello, hey), brief acknowledgments, UI navigation, casual conversation',
       },
     },
     complexity: {
       type: 'score',
-      instructions: 'How complex is this request?',
-      criteria: ['simple', 'moderate', 'highly complex'],
+      instructions: 'How complex is this industrial engineering request?',
+      criteria: ['trivial or greeting', 'standard engineering task', 'mission-critical multi-step analysis'],
     },
   },
   rules: [
+    // 1. OCR / Blueprint / Document inspection -> Strongly prioritize OCR specialist (GLM-OCR)
     {
-      match: { task_type: 'coding' },
-      scoreCapabilities: { coding: 10 },
+      match: { task_type: 'ocr_document' },
+      scoreCapabilities: { ocr_document: 25 },
     },
+    // 2. Conversational greetings (hi, hello) or very low complexity -> Heavily favor low-cost / free local tier, penalize expensive models
     {
-      match: { task_type: 'coding', complexity: { $gt: 0.5 } },
-      scoreCapabilities: { reasoning: 5 },
+      match: [{ task_type: 'conversational' }, { complexity: { $lt: 0.25 } }],
+      scoreCapabilities: { conversational: 15 },
+      scoreCostTier: { high: -20, medium: -10, low: 10 },
     },
+    // 3. Code & Automation tasks -> Favor local automation & scripting models (Qwen 3.5 4B)
     {
-      match: { task_type: 'reasoning' },
-      scoreCapabilities: { reasoning: 10 },
+      match: { task_type: 'code_automation' },
+      scoreCapabilities: { code_automation: 12 },
     },
+    // 4. Highly complex code & automation -> Escalate to top-tier reasoning models
     {
-      match: { task_type: 'creative' },
-      scoreCapabilities: { creative: 10 },
+      match: { task_type: 'code_automation', complexity: { $gte: 0.75 } },
+      scoreCapabilities: { engineering_reasoning: 8 },
+      scoreCostTier: { high: 5, medium: 2 },
     },
+    // 5. Engineering reasoning & Root cause diagnosis -> Favor deep reasoning models
     {
-      match: [{ task_type: 'qa' }, { task_type: 'other' }],
-      scoreCapabilities: { qa: 10 },
+      match: { task_type: 'engineering_reasoning' },
+      scoreCapabilities: { engineering_reasoning: 15 },
     },
+    // 6. Highly complex engineering calculations -> Prefer high compute models
     {
-      match: { complexity: { $lt: 0.3 } },
-      scoreCostTier: { high: -5, low: 2 },
+      match: { task_type: 'engineering_reasoning', complexity: { $gte: 0.75 } },
+      scoreCapabilities: { engineering_reasoning: 10 },
+      scoreCostTier: { high: 8 },
     },
+    // 7. Deliverable report generation -> Favor synthesis and technical writing
     {
-      match: { complexity: { $gt: 0.8 } },
-      scoreCapabilities: { reasoning: 2, coding: 2 },
+      match: { task_type: 'deliverable_report' },
+      scoreCapabilities: { deliverable_report: 12 },
+    },
+    // 8. General moderate complexity -> Keep on low-cost local models if possible
+    {
+      match: { complexity: { $lt: 0.70 } },
+      scoreCostTier: { high: -15, low: 5 },
     },
   ],
 }

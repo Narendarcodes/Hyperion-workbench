@@ -1,7 +1,8 @@
-import { StaticModelRegistry, ModelProfile } from './registry'
-import { LayaClient } from './laya-client'
-import { RoutingPolicy, RoutingConstraint } from './policy'
-import { RoutingEngineConfig, DEFAULT_ROUTING_CONFIG } from './config'
+import { StaticModelRegistry, inferModelProfile } from './registry.ts'
+import type { ModelProfile } from './registry.ts'
+import { LayaClient } from './laya-client.ts'
+import { RoutingPolicy, RoutingConstraint, flattenLayaAnswers } from './policy.ts'
+import { RoutingEngineConfig, DEFAULT_ROUTING_CONFIG } from './config.ts'
 
 export interface RoutingDecision {
   selectedModel: ModelProfile
@@ -14,11 +15,14 @@ export class UniversalModelRouter {
   private policy: RoutingPolicy
   private config: RoutingEngineConfig
 
-  constructor(config?: RoutingEngineConfig) {
-    this.registry = new StaticModelRegistry()
-    this.laya = new LayaClient()
+  constructor(config?: RoutingEngineConfig, models?: ModelProfile[], laya?: LayaClient) {
+    this.registry = new StaticModelRegistry(models)
+    this.laya = laya ?? new LayaClient()
     this.policy = new RoutingPolicy(this.registry)
-    this.config = config || DEFAULT_ROUTING_CONFIG
+    this.config = config ?? DEFAULT_ROUTING_CONFIG
+  }
+  getRegistry(): StaticModelRegistry {
+    return this.registry
   }
 
   async route(promptText: string, constraints?: RoutingConstraint): Promise<RoutingDecision> {
@@ -30,32 +34,22 @@ export class UniversalModelRouter {
         throw new Error('No eligible model found for routing constraints.')
       }
 
-      // Flatten answers for taskRequirements
-      const reqs: Record<string, unknown> = {}
-      for (const [k, v] of Object.entries(taskChar.answers || {})) {
-        if (v && typeof v === 'object') {
-          if (v.choice !== undefined) reqs[k] = v.choice
-          else if (v.score !== undefined) reqs[k] = v.score
-          else reqs[k] = v
-        } else {
-          reqs[k] = v
-        }
-      }
-
       return {
         selectedModel,
-        taskRequirements: reqs,
+        taskRequirements: flattenLayaAnswers(taskChar.answers),
       }
     } catch (e) {
       console.warn('[UniversalModelRouter] Laya routing failed, falling back to default model.', e)
-      // Fallback behavior
-      const defaultModel = this.registry.getModel('gpt-4o-mini')
-      if (!defaultModel) throw new Error('Fallback default model not found in registry')
+      const fallbackModel = (constraints?.candidates && constraints.candidates.length > 0)
+        ? (typeof constraints.candidates[0] === 'string'
+          ? (this.registry.getModel(constraints.candidates[0]) ?? inferModelProfile(constraints.candidates[0]))
+          : constraints.candidates[0])
+        : (this.registry.getModel('antigravity/gemini-3.7-flash-medium') ?? this.registry.getModels()[0])
+      if (!fallbackModel) throw new Error('Fallback default model not found in registry')
 
-      return { selectedModel: defaultModel }
+      return { selectedModel: fallbackModel }
     }
   }
-
   shutdown() {
     this.laya.shutdown()
   }

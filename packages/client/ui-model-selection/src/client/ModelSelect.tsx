@@ -63,7 +63,23 @@ export function ModelSelect(
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const id = useId()
 
-  const choices = useMemo(() => state.groups.flatMap(group =>
+  const isAuto = state.current?.provider === 'auto' || state.current?.model === 'auto'
+
+  const allGroups = useMemo(() => [
+    {
+      id: 'auto',
+      name: 'Smart Router',
+      models: [
+        {
+          id: 'auto',
+          name: 'Auto (Smart Router)',
+        },
+      ],
+    },
+    ...state.groups,
+  ], [state.groups])
+
+  const choices = useMemo(() => allGroups.flatMap(group =>
     group.models.map(model => ({
       group,
       model,
@@ -74,7 +90,7 @@ export function ModelSelect(
           ? {}
           : { reasoningEffort: model.reasoning.defaultEffort },
       } satisfies ModelSelection,
-    }))), [state.groups])
+    }))), [allGroups])
   const selectedIndex = state.current === null
     ? -1
     : choices.findIndex(c => c.selection.provider === state.current?.provider && c.selection.model === state.current.model)
@@ -193,10 +209,12 @@ export function ModelSelect(
   }
 
   const waiting = state.current === null && state.status === 'loading'
-  const modelLabel = waiting
-    ? t('trigger.loading')
-    : currentChoice?.model.name
-      ?? (state.current === null ? t('trigger.fallback') : `${state.current.provider}/${state.current.model}`)
+  const modelLabel = isAuto
+    ? 'Auto'
+    : waiting
+      ? t('trigger.loading')
+      : currentChoice?.model.name
+        ?? (state.current === null ? t('trigger.fallback') : `${state.current.provider}/${state.current.model}`)
   const triggerLabel = effortLabel === undefined ? modelLabel : `${modelLabel} · ${effortLabel}`
   const triggerAria = waiting
     ? t('trigger.loading')
@@ -280,7 +298,7 @@ export function ModelSelect(
                 </div>
               ))}
               <div className={clsx(css.groups, 'scrollable')}>
-                {state.groups.map((group) => {
+                {allGroups.map((group) => {
                   const headingId = `${id}-${group.id}`
                   return (
                     <section role="group" aria-labelledby={headingId} className={css.group} key={group.id}>

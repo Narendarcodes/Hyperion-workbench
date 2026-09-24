@@ -305,6 +305,7 @@ export class ApiSessionAgentController {
         picked = next
       },
       consume(provider: string, model: string, reasoningEffort: string | undefined): boolean {
+        if (picked?.provider === 'auto' || picked?.model === 'auto') return false
         if (picked?.provider !== provider
           || picked.model !== model
           || picked.reasoningEffort !== reasoningEffort) return false

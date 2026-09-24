@@ -27,6 +27,10 @@ export const AssistantNodeView = memo(function AssistantNodeView({
     && turnProcess.spec.inlineReasoning
     && !turnProcess.open
   const revealProcess = useCallback(() => { turnProcess?.setOpen(true) }, [turnProcess])
+  const route = tail?.tokenUsage?.routes?.[0]
+  const provenance = data.finalNode?.provenance as { model?: string; provider?: string } | undefined
+  const routedModel = route?.model ?? provenance?.model ?? data.finalNode?.requestConfig?.model
+  const routedProvider = route?.provider ?? provenance?.provider ?? data.finalNode?.requestConfig?.provider
   return (
     <>
       <AssistantMarkdown
@@ -39,7 +43,9 @@ export const AssistantNodeView = memo(function AssistantNodeView({
         mentions={mentions}
         t={t}
       />
-      <RouterIndicator modelId="gpt-4o-mini" route="default-chat" />
+      {routedModel && (
+        <RouterIndicator modelId={routedModel} provider={routedProvider} />
+      )}
     </>
   )
 })

@@ -14,8 +14,9 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "build": "tsdown",
     "test": "vitest run",
-    "bench": "ts-node scripts/benchmark.ts"
+    "bench": "tsx scripts/benchmark.ts"
   },
   "dependencies": {
     "@deepseek-ai/dsh-llm": "workspace:*"

@@ -49,10 +49,10 @@ These responsibilities, if needed, should be handled by orchestrators upstream o
 
 Run the unit tests via `vitest`:
 ```bash
-pnpm vitest run tests/router.test.ts
+pnpm vitest run tests/router.spec.ts
 ```
 
 Run the benchmark dataset to evaluate routing decisions:
 ```bash
-pnpm ts-node scripts/benchmark.ts
+pnpm tsx scripts/benchmark.ts
 ```
