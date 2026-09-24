@@ -59,7 +59,7 @@ export async function buildModelCatalog(
   }))
   return {
     default: { ...defaultSelection },
-    routableProviders: providers.map(provider => provider.id),
+    routableProviders: ['auto', ...providers.map(provider => provider.id)],
     groups: catalog.flatMap(item => item.kind === 'group' ? [item.group] : [])
       .filter(group => group.models.length > 0),
     failures: catalog.flatMap(item => item.kind === 'failure' ? [item.failure] : []),

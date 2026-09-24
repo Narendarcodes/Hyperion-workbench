@@ -126,19 +126,25 @@ export class SessionCommandController {
     const agent = await this.resolveAgent(request.sessionId)
     return this.agents.serializeImageAdmission(agent, async () => {
       try {
-        const resolved = await this.ctx.llm.resolveCallConfig({
-          provider: request.provider,
-          model: request.model,
-          ...(request.reasoningEffort === undefined
-            ? {}
-            : { reasoningEffort: ReasoningEffortId(request.reasoningEffort) }),
-        })
-        const selected: AgentModelSelection = {
-          provider: resolved.provider,
-          model: resolved.model,
-          ...(resolved.reasoningEffort === undefined
-            ? {}
-            : { reasoningEffort: resolved.reasoningEffort }),
+        const isAuto = request.provider === 'auto' || request.model === 'auto'
+        let selected: AgentModelSelection
+        if (isAuto) {
+          selected = { provider: 'auto', model: 'auto' }
+        } else {
+          const resolved = await this.ctx.llm.resolveCallConfig({
+            provider: request.provider,
+            model: request.model,
+            ...request.reasoningEffort === undefined
+              ? {}
+              : { reasoningEffort: ReasoningEffortId(request.reasoningEffort) },
+          })
+          selected = {
+            provider: resolved.provider,
+            model: resolved.model,
+            ...resolved.reasoningEffort === undefined
+              ? {}
+              : { reasoningEffort: resolved.reasoningEffort },
+          }
         }
         this.agents.selectForNextRequest(agent, selected)
         try {
@@ -322,13 +328,15 @@ export class SessionCommandController {
       try {
         if (hasImage) {
           const current = this.agents.selectionFor(agent).current
-          const model = await this.ctx.llm.resolveModelInfo(current.provider, current.model)
-          if (model.inputModalities !== undefined && !model.inputModalities.includes('image')) {
-            throw new RemoteError(
-              'session/attachment-invalid',
-              `Model "${current.model}" does not support image input.`,
-              { reason: 'MODEL_DOES_NOT_SUPPORT_IMAGES' },
-            )
+          if (current.provider !== 'auto') {
+            const model = await this.ctx.llm.resolveModelInfo(current.provider, current.model)
+            if (model.inputModalities !== undefined && !model.inputModalities.includes('image')) {
+              throw new RemoteError(
+                'session/attachment-invalid',
+                `Model "${current.model}" does not support image input.`,
+                { reason: 'MODEL_DOES_NOT_SUPPORT_IMAGES' },
+              )
+            }
           }
         }
         const admission = resolvePromptFileReceipts(
@@ -628,5 +636,6 @@ function referencedImage(
 }
 
 function routeServed(ctx: Context, provider: string): boolean {
+  if (provider === 'auto') return true
   return ctx.llm.listProviders().some(entry => entry.id === provider)
 }
