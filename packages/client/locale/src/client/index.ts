@@ -18,9 +18,9 @@ import {
   LOCALE_ID_PATTERN, LOCALE_IDS, LOCALE_PREFERENCE_FIELD, LOCALE_SETTINGS_NAMESPACE,
   type BuiltInLocaleId, type LocaleId, type LocaleSettings,
 } from '../locale-settings.ts'
-import { en, type CommonKey } from '../locales/index.ts'
+import { en, hi, te, type CommonKey } from '../locales/index.ts'
 import {
-  en as settingsEn, type SettingsLocaleKey,
+  en as settingsEn, hi as settingsHi, te as settingsTe, type SettingsLocaleKey,
 } from '../locales/settings.ts'
 import type { LanguageRowInjected } from './LanguageRow.tsx'
 import { LanguageRow } from './LanguageRow.tsx'
@@ -99,8 +99,7 @@ declare module '@deepseek-ai/cordis' {
  * English is both the locale the UI opens in when the browser names no registered
  * language (and for non-browser runs), and the dictionary consulted after the
  * active locale misses a key. One constant serves both because English is the
- * only shipped locale and therefore the terminal language of every fallback
- * chain a language-pack contribution declares.
+ * terminal language of every fallback chain a language-pack contribution declares.
  */
 export const FALLBACK_LOCALE: BuiltInLocaleId = 'en'
 
@@ -110,13 +109,32 @@ export const COMMON_NS = 'common'
 /** Namespace owning this feature's settings-row copy. */
 export const SETTINGS_NS = 'settings.locale'
 
-/** The locale and dictionary shipped by this package. */
+/** The locale and dictionaries shipped by this package. */
 const BUILT_IN_LOCALE_METADATA = {
   en: { label: 'English' },
+  hi: { label: 'हिन्दी' },
+  te: { label: 'తెలుగు' },
 } as const satisfies Record<BuiltInLocaleId, Omit<LocaleDefinition, 'id'>>
 const BUILT_IN_LOCALES: readonly LocaleDefinition[] = Object.freeze(
   LOCALE_IDS.map(id => Object.freeze({ id, ...BUILT_IN_LOCALE_METADATA[id] })),
 )
+
+/**
+ * Indic language catalog offered in the Language row alongside the built-in
+ * English, Hindi, and Telugu. These entries have no dictionaries yet, so per-key
+ * lookup falls back to English until their translations land. Every entry
+ * terminates at English, keeping the fallback chains the registry requires.
+ */
+const INDIC_LANGUAGES = [
+  { id: 'bn', label: 'বাংলা' },
+  { id: 'mr', label: 'मराठी' },
+  { id: 'ta', label: 'தமிழ்' },
+  { id: 'gu', label: 'ગુજરાતી' },
+  { id: 'kn', label: 'ಕನ್ನಡ' },
+  { id: 'ml', label: 'മലയാളം' },
+  { id: 'pa', label: 'ਪੰਜਾਬੀ' },
+  { id: 'or', label: 'ଓଡ଼ିଆ' },
+] as const
 
 /** Case-insensitive key for BCP 47-style ids. */
 function localeKey(value: string): string {
@@ -536,8 +554,15 @@ export const inject = ['slots', 'remote', 'settingsScope']
 export function apply(ctx: ClientContext): void {
   const host = ctx.settingsScope.bind<LocaleSettings>({ namespace: LOCALE_SETTINGS_NAMESPACE })
   const locale = new LocaleRuntime(ctx, host)
-  locale.register(COMMON_NS, { en })
-  locale.register(SETTINGS_NS, { en: settingsEn })
+  locale.register(COMMON_NS, { en, hi, te })
+  locale.register(SETTINGS_NS, { en: settingsEn, hi: settingsHi, te: settingsTe })
+  for (const language of INDIC_LANGUAGES) {
+    const { id, label } = language
+    ctx.effect(
+      () => locale.addLanguage({ id, label, fallback: FALLBACK_LOCALE }),
+      `locale: ${id} language`,
+    )
+  }
   ctx.provide('locale', locale)
   // The service IS the LocaleFace (bind + getSnapshot/subscribe): install it
   // so the render machinery can synthesize the `t` standard seat.

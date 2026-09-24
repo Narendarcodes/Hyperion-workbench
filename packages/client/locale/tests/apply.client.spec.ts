@@ -7,7 +7,7 @@ import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
 import { apply as settingsApply, inject as settingsInject } from '@deepseek-ai/dsh-client-ui-settings/client'
 import { TestRemote } from '@deepseek-ai/dsh-client-test-runtime'
 import {
-  apply, inject, SETTINGS_NS,
+  apply, COMMON_NS, inject, SETTINGS_NS,
 } from '@deepseek-ai/dsh-client-locale/client'
 import type { LanguageRowInjected, LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
 import { LOCALE_SETTINGS_NAMESPACE, LocaleSettingsSchema } from '../src/locale-settings.ts'
@@ -81,6 +81,7 @@ describe('locale apply', () => {
     const locale = before.ctx.get('locale') as LocaleRuntime
     // Base dictionaries are registered: the (ns, locale) seat is occupied.
     expect(() => locale.register('common', 'en', {})).toThrow('already has locale')
+    expect(() => locale.register('common', 'hi', {})).toThrow('already has locale')
     // The lane has no jsdom `window`, so detection never runs and a fresh
     // service opens on FALLBACK_LOCALE (en); read the shipped copy directly.
     expect(locale.bind(SETTINGS_NS)('language.title')).toBe('Language')
@@ -107,7 +108,9 @@ describe('locale apply', () => {
     const { entry, instance, face } = faceOf(b.slots)
     // The inject-time re-sync sealed the init window: the mirror is current.
     expect(instance.getSnapshot().active).toBe('en')
-    expect(instance.getSnapshot().options.map(o => o.id)).toEqual(['en'])
+    expect(instance.getSnapshot().options.map(o => o.id)).toEqual([
+      'en', 'hi', 'te', 'bn', 'mr', 'ta', 'gu', 'kn', 'ml', 'pa', 'or',
+    ])
     // Copy rides the standard locale seat: the entry declares the namespace.
     expect(entry.locale).toBe(SETTINGS_NS)
     expect(locale.bind(SETTINGS_NS)('language.title')).toBe('Language')
@@ -116,7 +119,7 @@ describe('locale apply', () => {
     face.setLocale('ja')
     expect(locale.getLocale().active).toBe('ja')
     expect(instance.getSnapshot().active).toBe('ja')
-    // The settings namespace ships English only; ja falls back to it.
+    // The settings namespace ships no Japanese dictionary; ja falls back to English.
     expect(locale.bind(SETTINGS_NS)('language.title')).toBe('Language')
     await vi.waitFor(() => { expect(b.mutate).toHaveBeenCalledTimes(2) })
   })
@@ -137,11 +140,67 @@ describe('locale apply', () => {
     await languagePack.await()
     expect(instance.getSnapshot().options).toEqual([
       { id: 'en', label: 'English' },
+      { id: 'hi', label: 'हिन्दी' },
+      { id: 'te', label: 'తెలుగు' },
+      { id: 'bn', label: 'বাংলা' },
+      { id: 'mr', label: 'मराठी' },
+      { id: 'ta', label: 'தமிழ்' },
+      { id: 'gu', label: 'ગુજરાતી' },
+      { id: 'kn', label: 'ಕನ್ನಡ' },
+      { id: 'ml', label: 'മലയാളം' },
+      { id: 'pa', label: 'ਪੰਜਾਬੀ' },
+      { id: 'or', label: 'ଓଡ଼ିଆ' },
       { id: 'ja', label: '日本語' },
     ])
 
     await languagePack.dispose()
-    expect(instance.getSnapshot().options.map(option => option.id)).toEqual(['en'])
+    expect(instance.getSnapshot().options.map(option => option.id)).toEqual([
+      'en', 'hi', 'te', 'bn', 'mr', 'ta', 'gu', 'kn', 'ml', 'pa', 'or',
+    ])
+  })
+
+  it('serves Hindi copy where translated and English elsewhere', async () => {
+    const b = await bench()
+    declareItems(b.slots)
+    await b.ctx.plugin({ inject: [...inject], apply }).await()
+    const locale = b.ctx.get('locale') as LocaleRuntime
+
+    locale.setLocale('hi')
+    expect(locale.getLocale().active).toBe('hi')
+    expect(locale.bind(SETTINGS_NS)('language.title')).toBe('भाषा')
+    expect(locale.bind(COMMON_NS)('cancel')).toBe('रद्द करें')
+    // A namespace with only an English dictionary resolves English for Hindi readers.
+    locale.register('ns', 'en', { onlyEn: 'English only' })
+    expect(locale.bind('ns')('onlyEn')).toBe('English only')
+  })
+
+  it('serves Telugu copy where translated and English elsewhere', async () => {
+    const b = await bench()
+    declareItems(b.slots)
+    await b.ctx.plugin({ inject: [...inject], apply }).await()
+    const locale = b.ctx.get('locale') as LocaleRuntime
+
+    locale.setLocale('te')
+    expect(locale.getLocale().active).toBe('te')
+    expect(locale.bind(SETTINGS_NS)('language.title')).toBe('భాష')
+    expect(locale.bind(COMMON_NS)('cancel')).toBe('రద్దు చేయండి')
+    // A namespace with only an English dictionary resolves English for Telugu readers.
+    locale.register('ns-te', 'en', { onlyEn: 'English only' })
+    expect(locale.bind('ns-te')('onlyEn')).toBe('English only')
+  })
+
+  it('falls back to English for catalogued languages without dictionaries', async () => {
+    const b = await bench()
+    declareItems(b.slots)
+    await b.ctx.plugin({ inject: [...inject], apply }).await()
+    const locale = b.ctx.get('locale') as LocaleRuntime
+
+    locale.setLocale('bn')
+    expect(locale.getLocale().active).toBe('bn')
+    expect(locale.bind(SETTINGS_NS)('language.title')).toBe('Language')
+    expect(locale.bind(COMMON_NS)('cancel')).toBe('Cancel')
+    expect(locale.bind('unregistered-ns')('cancel')).toBe('Cancel')
+    await vi.waitFor(() => { expect(b.mutate).toHaveBeenCalledTimes(1) })
   })
 
   it('loads and refreshes the explicit Host preference after nonblocking activation', async () => {

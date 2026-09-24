@@ -69,6 +69,14 @@
         iconTimeoutMs: 10000
         launchWatchMs: 1000
 
+    # Hyperion bridge: plain HTTP routes (health, state, registry, skills,
+    # telemetry, chat, turn) projecting live sessions for the external Studio
+    # office. Same trust fence as every browser route (connection rejection).
+    - id: hyperion-bridge
+      name: '@deepseek-ai/dsh-host-hyperion-bridge'
+      config:
+        maxBodyBytes: 65536
+
     - id: ui-open-in-app
       name: '@deepseek-ai/dsh-client-ui-open-in-app'
 
@@ -301,6 +309,10 @@
     - id: ui-model-selection
       name: '@deepseek-ai/dsh-client-ui-model-selection'
 
+    # Model Hub: Local Ollama model management, real-time hardware telemetry, and custom models
+    - id: ui-model-hub
+      name: '@deepseek-ai/dsh-client-ui-model-hub'
+
     - id: ui-permission
       name: '@deepseek-ai/dsh-client-ui-permission-presets'
 
@@ -320,6 +332,9 @@
 
     - id: ui-user-questions
       name: '@deepseek-ai/dsh-client-ui-user-questions'
+
+    - id: ui-mission
+      name: '@deepseek-ai/dsh-client-ui-mission'
 
     - id: ui-trajectory
       name: '@deepseek-ai/dsh-client-ui-trajectory'

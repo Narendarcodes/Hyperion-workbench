@@ -10,3 +10,19 @@ export const en = {
   'toggle.open': 'Open sidebar',
   'toggle.collapse': 'Collapse sidebar',
 }
+
+/** Hindi dictionary (mirrors the en key set). */
+export const hi = {
+  'session.new': 'नया सत्र',
+  'session.new.label': 'नया सत्र',
+  'toggle.open': 'साइडबार खोलें',
+  'toggle.collapse': 'साइडबार समेटें',
+}
+
+/** Telugu dictionary (mirrors the en key set). */
+export const te = {
+  'session.new': 'కొత్త సెషన్',
+  'session.new.label': 'కొత్త సెషన్',
+  'toggle.open': 'సైడ్‌బార్ తెరవండి',
+  'toggle.collapse': 'సైడ్‌బార్ కుదించండి',
+}
