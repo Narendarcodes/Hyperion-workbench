@@ -49,6 +49,15 @@ export async function runCli(): Promise<void> {
       runDumpConfig(invocation.profile, invocation.defaultOnly, invocation.patches)
       break
     }
+    case 'desktop': {
+      const { runDesktop } = await import('./desktop-boot.ts')
+      await runDesktop({
+        profile: invocation.profile,
+        patchFiles: invocation.patches,
+        args: invocation.args,
+      })
+      break
+    }
     default:
       invocation satisfies never
       throw new Error(`dsh: unhandled invocation mode ${JSON.stringify(invocation)}`)
