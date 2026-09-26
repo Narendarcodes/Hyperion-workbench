@@ -34,13 +34,107 @@
   background: var(--dsw-alias-interactive-bg-hover);
 }
 
+.workbenchNav {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 4px 12px;
+  overflow-y: auto;
+}
+
+.navSection {
+  min-width: 0;
+}
+
+.navGroupLabel {
+  display: block;
+  margin: 0 0 4px;
+  padding: 0 8px;
+  color: var(--dsw-alias-label-caption);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 14px;
+  text-transform: uppercase;
+}
+
+.navItems {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--dsw-alias-label-secondary);
+  flex-shrink: 0;
+}
+
+.navItem:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.navItem[aria-current='page'] {
+  background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 10%, transparent);
+  color: var(--dsw-alias-state-business-primary);
+  font-weight: 600;
+}
+
+.navItem[aria-current='page'] .navIcon {
+  color: var(--dsw-alias-state-business-primary);
+}
+.navItem:disabled {
+  color: var(--dsw-alias-label-tertiary);
+  cursor: default;
+}
+
+.navItem:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 2px;
+}
+
+.historyPanel {
+  min-width: 0;
+  padding-top: 6px;
+}
+
+.historyPanel .list,
+.historyPanel .listArea {
+  overflow: visible;
+}
+
 /* Section header: title, an inline search control, and the two trailing
    actions. Expanding search collapses the action cluster and takes its room. */
 .sectionHeader {
   flex: none;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 4px;
   height: 36px;
   padding-left: 4px;
@@ -51,35 +145,23 @@
   color: var(--dsw-alias-label-tertiary);
 }
 
-.root:not(.rail) .sectionHeader {
-  margin-top: 2px;
-  margin-right: -4px;
-}
-
 .sectionLabel {
-  flex: none;
-  max-width: 45%;
-  min-width: 0;
-  overflow: hidden;
+  flex: 1;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dsw-alias-label-secondary);
   white-space: nowrap;
-  line-height: 20px;
-  opacity: 1;
-  visibility: visible;
-  transition:
-    max-width 180ms var(--ds-ease-in-out),
-    margin-right 180ms var(--ds-ease-in-out),
-    opacity 120ms var(--ds-ease-in-out),
-    transform 180ms var(--ds-ease-in-out),
-    visibility 0s linear;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sectionLabelHidden {
-  max-width: 0;
+  display: none;
+}
+
+.root:not(.rail) .sectionHeader {
+  margin-top: 2px;
   margin-right: -4px;
-  opacity: 0;
-  transform: translateX(-4px);
-  visibility: hidden;
-  transition-delay: 0s, 0s, 0s, 0s, 180ms;
 }
 
 .searchSlot {

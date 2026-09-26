@@ -200,6 +200,27 @@ describe('ModelSelect reasoning effort', () => {
     expect(screen.queryByRole('button', { name: 'Reload' })).toBeNull()
   })
 
+  it('marks automatic routing with an intelligence glyph and a routing tooltip', () => {
+    const directory = createSnapshotStore(state({
+      current: { provider: 'auto', model: 'auto' },
+      groups: [],
+    }))
+    render(<ModelSelect
+      locked={false}
+      available
+      directory={directory}
+      load={vi.fn()}
+      select={vi.fn().mockResolvedValue(true)}
+      t={t}
+    />)
+
+    const trigger = screen.getByRole('button', { name: 'Select model, current Auto' })
+    expect(trigger.getAttribute('title')).toBe('Automatically select the appropriate model for this task.')
+    expect(trigger.querySelector('svg')).not.toBeNull()
+    expect(trigger.querySelector('svg')?.getAttribute('viewBox')).toBe('0 0 24 24')
+    expect(trigger.textContent).not.toContain('Model')
+  })
+
   it('renders no Agent-bound control for an addressed subagent session', () => {
     const load = vi.fn()
     render(<ModelSelect

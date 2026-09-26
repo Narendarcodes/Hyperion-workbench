@@ -203,10 +203,29 @@
   cursor: pointer;
 }
 
-/* Hero (centered empty-state) keeps the 2-line floor (figma min-h 52 = ~2 × 24
-   line + 4pt); the docked composer collapses to the content height. */
+/* Hero (centered empty-state) keeps a generous floor so the card reads as
+   the primary surface; the docked composer collapses to the content height. */
 .hero .input {
-  min-height: 52px;
+  min-height: 76px;
+}
+
+.hero .primary {
+  width: 40px;
+  height: 40px;
+  transform: none;
+}
+
+.hero .row {
+  gap: 8px;
+}
+
+.hero .tools {
+  gap: 10px;
+}
+
+.hero .modes,
+.hero .trailing {
+  gap: 8px;
 }
 
 /* Toolbar: attach + Plan + Read-only on the left; model + send on the right
@@ -279,6 +298,32 @@
 }
 
 .add:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  height: 28px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-specific-selector);
+  color: var(--dsw-alias-label-primary);
+  font-size: 13px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.chip:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover-solid);
+}
+
+.chip:disabled {
   opacity: 0.5;
   cursor: default;
 }
@@ -463,4 +508,15 @@
   color: inherit;
   font-size: 12px;
   cursor: pointer;
+}
+
+@media (max-width: 460px) {
+  .hero .tools,
+  .hero .modes {
+    gap: 4px;
+  }
+
+  .hero .chip {
+    padding-inline: 6px;
+  }
 }

@@ -42,6 +42,11 @@
   cursor: default;
 }
 
+.triggerIcon {
+  flex: none;
+  color: var(--dsw-alias-label-secondary);
+}
+
 .triggerLabel {
   min-width: 0;
   overflow: hidden;

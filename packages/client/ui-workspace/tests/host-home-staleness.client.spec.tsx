@@ -25,6 +25,11 @@ function SidebarFrame({ renderSlot }: FrameProps) {
   return <>{renderSlot('sidebar.workspaces', { wide: true, expandSidebar: () => {} })}</>
 }
 
+function openConversations(): void {
+  const row = screen.getByRole('button', { name: 'Conversations' })
+  if (row.getAttribute('aria-expanded') !== 'true') fireEvent.click(row)
+}
+
 /** The assembled sidebar over one Workspace inside the POSIX home the Host reports. */
 async function bench() {
   const runtime = await SlotTestRuntime.create()
@@ -71,6 +76,7 @@ describe('Host home in the assembled browsing region', () => {
     const { runtime, remote } = await bench()
     remote.$host = { home: undefined, isLoopback: true }
     runtime.renderRoot()
+    openConversations()
     vi.useFakeTimers()
     try {
       openHoverCard()

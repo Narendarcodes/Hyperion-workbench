@@ -125,10 +125,7 @@ describe('the preset list', () => {
   it('leads with the two ways a preset is created', () => {
     renderSection()
 
-    // The page has no create button: the intro is what tells a first-time
-    // reader that copying an existing preset — or drafting one in Creator
-    // mode — IS the way to make one.
-    expect(screen.getByText(new RegExp('Creator mode'))).toBeTruthy()
+    expect(screen.getByText(en.sectionIntro)).toBeTruthy()
   })
 
   it('picks a preset by clicking its card, and the one in use is inert', () => {
@@ -167,7 +164,7 @@ describe('the preset list', () => {
   it('disables duplication when nothing is writable, and says why', () => {
     renderSection({ authorable: false })
 
-    const duplicate = within(rowFor('standard')).getByRole('button', { name: `${en.duplicate}: ${en.presetStandardName}` })
+    const duplicate = within(rowFor('standard')).getByRole('button', { name: new RegExp(`^${en.duplicate}: ${en.presetStandardName}`) })
     expect(duplicate).toHaveProperty('disabled', true)
     expect(duplicate.getAttribute('data-tip')).toBe(en.duplicateUnavailable)
   })
@@ -204,7 +201,7 @@ describe('the preset list', () => {
     expect(actions.makeDefault).not.toHaveBeenCalled()
     // Copying a broken preset would only mint another broken one; deleting
     // and the location remain — the files are where it gets fixed.
-    const duplicate = within(ghost).getByRole('button', { name: `${en.duplicate}: 幽灵预设` })
+    const duplicate = within(ghost).getByRole('button', { name: new RegExp(`^${en.duplicate}: 幽灵预设`) })
     expect(duplicate).toHaveProperty('disabled', true)
     expect(duplicate.getAttribute('data-tip')).toBe(en.brokenNoCopy)
     expect(within(ghost).getByRole('button', { name: `${en.delete}: 幽灵预设` })).toBeTruthy()
@@ -245,7 +242,7 @@ describe('the preset list', () => {
     // The card body is the control that picks a preset.
     fireEvent.click(within(rowFor('mine')).getByRole('button', { name: `${en.setDefault}: mine` }))
     fireEvent.click(within(rowFor('mine')).getByRole('button', { name: `${en.openLocation}: mine` }))
-    fireEvent.click(within(rowFor('mine')).getByRole('button', { name: `${en.duplicate}: mine` }))
+    fireEvent.click(within(rowFor('mine')).getByRole('button', { name: new RegExp(`^${en.duplicate}: mine`) }))
     fireEvent.click(within(rowFor('standard')).getByRole('button', { name: `${en.view}: ${en.presetStandardName}` }))
 
     expect(actions.makeDefault).toHaveBeenCalledWith('mine')

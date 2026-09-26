@@ -73,8 +73,9 @@ describe('session rename through the assembled browser', () => {
       SidebarFrame as never,
     )
     await runtime.mount({ inject: [...inject], apply })
-    const view = runtime.renderRoot()
-
+    const view = runtime.renderRoot()
+    fireEvent.click(view.getByRole('button', { name: 'Conversations' }))
+
     // The current session's group auto-expands; open the row's action menu.
     const row = (await view.findByText('旧标题')).closest('[role="treeitem"]')!
     fireEvent.click(within(row as HTMLElement).getByLabelText('Session actions for 旧标题'))
@@ -120,9 +121,10 @@ describe('session rename through the assembled browser', () => {
       SidebarFrame as never,
     )
     await runtime.mount({ inject: [...inject], apply })
-    const view = runtime.renderRoot()
-    await runtime.flush()
-
+    const view = runtime.renderRoot()
+    await runtime.flush()
+    fireEvent.click(view.getByRole('button', { name: 'Conversations' }))
+
     const row = (await view.findByText('旧标题')).closest('[role="treeitem"]')!
     fireEvent.click(within(row as HTMLElement).getByLabelText('Session actions for 旧标题'))
     fireEvent.click(view.getByRole('menuitem', { name: 'Rename', hidden: true }))

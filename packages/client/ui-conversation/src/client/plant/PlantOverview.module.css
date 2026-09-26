@@ -1,0 +1,24 @@
+.overviewRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .overviewRoot {
+    padding: 18px 20px 36px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .overviewRoot {
+    padding: 14px 14px 28px;
+    gap: 16px;
+  }
+}
