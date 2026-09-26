@@ -43,10 +43,16 @@ interface PluginInvocation {
   /** Raw pnpm arguments, verbatim. */
   args: string[]
 }
+/** Boot the desktop application. */
+interface DesktopInvocation {
+  mode: 'desktop'
+  profile: string
+  patches: string[]
+  args: string[]
+}
 
 /** The resolved `dsh` invocation. Help, version, and errors exit inside {@link parseDshArgs}. */
-export type DshInvocation = ProfileInvocation | DumpConfigInvocation | PluginInvocation
-
+export type DshInvocation = ProfileInvocation | DumpConfigInvocation | PluginInvocation | DesktopInvocation
 /** Launcher flags shared by the default command and the `web` alias. */
 interface BootOptions {
   patch?: string[]
@@ -70,13 +76,14 @@ function rejectElectronProfile(program: Command, profile: string): void {
 const HELP_EXAMPLES = `
 Examples:
   dsh --profile web                          boot the web profile (same as: dsh web)
+  dsh desktop                                boot the desktop application
+  dsh desktop --profile user1                boot the desktop application with a custom profile
   dsh --profile headless "run the tests"     answer one task, print the result, and exit
   dsh --profile tui --patch ./extra.yml      boot a custom profile with one extra overlay
   dsh --profile tui --resume <session>       arguments after the launcher flags reach the app
   dsh --profile web --help                   the web app's own flags and help
   dsh plugin --profile tui add <package>     install a plugin into the tui profile
 `
-
 /**
  * Resolve a boot or dump invocation from the launcher flags and the leftover
  * inner arguments.
@@ -173,6 +180,22 @@ export function parseDshArgs(argv: readonly string[], version: string): DshInvoc
     .action((args: string[], options: BootOptions) => {
       rejectParentOptions('web')
       resolved = resolveBoot(web, 'web', options, args)
+    })
+
+  const desktop = program.command('desktop').description('boot the desktop application; the desktop app\'s own flags follow')
+  desktop
+    .helpOption(false)
+    .allowUnknownOption()
+    .passThroughOptions()
+    .enablePositionalOptions()
+    .argument('[args...]', 'arguments for the desktop app (see: dsh desktop --help)')
+    .option('--profile <name>', 'the profile under $DSH_HOME/profiles to boot with the desktop app', 'desktop')
+    .option('--patch <path>', 'extra patch-list overlay applied after the profile layer (repeatable)', collect)
+    .action((args: string[], options: BootOptions & { profile?: string }) => {
+      rejectParentOptions('desktop')
+      const profile = options.profile === '' ? '' : (options.profile ?? 'desktop')
+      if (profile === '') desktop.error('error: --profile needs a name')
+      resolved = { mode: 'desktop', profile, patches: options.patch ?? [], args }
     })
 
   const plugin = program.command('plugin').description('manage a profile\'s plugins by forwarding the remaining arguments to pnpm in the profile directory')
