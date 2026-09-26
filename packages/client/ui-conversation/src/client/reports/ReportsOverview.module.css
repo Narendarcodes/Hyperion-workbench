@@ -894,8 +894,8 @@
   background-color: #3182ce;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 10px;
+  border-radius: 9999px;
+  padding: 10px 16px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -907,10 +907,10 @@
   justify-content: center;
   gap: 8px;
   background-color: #fff;
-  color: #3182ce;
+  color: #1a202c;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 10px;
+  border-radius: 9999px;
+  padding: 10px 16px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
