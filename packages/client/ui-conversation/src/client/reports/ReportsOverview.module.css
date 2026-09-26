@@ -239,15 +239,28 @@
   padding: 16px 20px 8px;
 }
 
-.libSearchInput {
-  width: 100%;
+.libSearchBox {
+  display: flex;
+  align-items: center;
   background-color: #f7fafc;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   padding: 8px 12px;
+}
+
+.libSearchIcon {
+  color: #a0aec0;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.libSearchInput {
+  background: transparent;
+  border: none;
+  width: 100%;
   color: #1a202c;
+  outline: none;
   font-size: 13px;
-  box-sizing: border-box;
 }
 
 .libraryFilterRow {
@@ -396,6 +409,10 @@
   margin-bottom: 16px;
 }
 
+.metaType {
+  color: #4a5568;
+}
+
 .metaSep::before {
   content: '•';
   margin: 0 8px;
@@ -460,6 +477,7 @@
   padding: 48px;
   border-radius: 4px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-bottom: 8px solid #e2e8f0;
   max-width: 800px;
   margin: 0 auto;
 }
@@ -494,6 +512,12 @@
 .docConfidentialSub {
   font-size: 12px;
   font-weight: 400;
+}
+
+.docTitleSection {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 
 .docReportTitle {
@@ -540,7 +564,7 @@
   background-color: #1a202c;
   color: #fff;
   border: none;
-  border-radius: 20px;
+  border-radius: 9999px;
   padding: 10px;
   font-size: 13px;
   font-weight: 500;
@@ -551,7 +575,7 @@
   background-color: #fff;
   color: #1a202c;
   border: 1px solid #e2e8f0;
-  border-radius: 20px;
+  border-radius: 9999px;
   padding: 10px;
   font-size: 13px;
   font-weight: 500;
