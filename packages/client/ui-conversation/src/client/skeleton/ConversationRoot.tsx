@@ -7,7 +7,9 @@ import clsx from 'clsx'
 import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types'
 import type { ConversationSlotProps, InputZone } from '../contract/slots.ts'
 import { conversationPhase } from '../contract/snapshot.ts'
-import { HeroShell, WorkspaceChip, workspaceLabel } from './EmptyHero.tsx'
+import { HeroShell, HomeSections, defaultHomeSuggestions, workspaceLabel, WorkspaceChip } from './EmptyHero.tsx'
+import { useWorkbenchView } from '../plant/workbench-view.ts'
+import { PlantOverview } from '../plant/PlantOverview.tsx'
 import css from './ConversationRoot.module.css'
 
 /** Full props composed from the slot contract. */
@@ -131,8 +133,9 @@ function WidthHandle(props: {
 export function ConversationRoot({
   sessionId, useSession, useSessions, useSessionPendingInteraction,
   useWorkspaces, useConversation, useInput, useComposerBlock,
-  renderSlot, renderSlotChain, selectWorkspace, t,
+  renderSlot, renderSlotChain, selectWorkspace, setDraft, openSession, t,
 }: ConversationRootProps) {
+  const workbenchView = useWorkbenchView()
   const session = useSession(s => s)
   const pendingInteraction = useSessionPendingInteraction(snapshot =>
     sessionId === undefined ? undefined : snapshot.get(sessionId))
@@ -144,7 +147,24 @@ export function ConversationRoot({
   const inputState = useInput(s => s)
   const cwd = useSessions(s => sessionId === undefined ? undefined : s.byId[sessionId]?.cwd)
   const summaryBlank = useSessions(s => sessionId === undefined ? undefined : s.byId[sessionId]?.blank)
+  const recentWork = useSessions(s => s.ids
+    .flatMap((id) => {
+      const item = s.byId[id]
+      return item === undefined || item.blank ? [] : [item]
+    })
+    .sort((left, right) => right.updatedAt - left.updatedAt)
+    .slice(0, 3)
+    .map(item => ({
+      sessionId: item.id,
+      title: item.displayTitle,
+      updatedAt: item.updatedAt,
+    })))
   const workspaces = useWorkspaces(s => s)
+  const localState = workspaces.phase !== 'ready' || workspaces.state === 'loading'
+    ? undefined
+    : workspaces.state === 'error' || workspaces.error !== null
+      ? 'unavailable'
+      : 'available'
   // A plugin this package cannot import (ui-model-selection) says this session cannot
   // send; its reason is already localized by whoever raised it.
   const composerBlock = useComposerBlock(block => block)
@@ -343,17 +363,27 @@ export function ConversationRoot({
         : hero ? { placeholder: t('placeholder.hero') } : {}),
   })
 
-  const composerBar = (
+  const isPlant = workbenchView === 'plant' && hero
+  const composerBar = isPlant ? null : (
     <div className={clsx(css.composerStack, hero && css.composerHero)}>
-      {hero && <HeroShell t={t} renderSlot={renderSlot} />}
+      {hero && <HeroShell t={t} localState={localState} />}
       {hero && heroWorkspaceRow}
       {zone !== undefined && renderSlot('conversation.input.dock', zone)}
       {inputBar}
+      {hero && (
+        <HomeSections
+          t={t}
+          suggestions={defaultHomeSuggestions(t)}
+          recentWork={recentWork}
+          onSuggestion={(suggestion) => { setDraft(`${suggestion.label} `) }}
+          onOpenRecent={(id) => { openSession(id) }}
+        />
+      )}
     </div>
   )
 
   const phase = settling ? 'settling' : hero ? 'hero' : 'active'
-  const composer = renderSlotChain(
+  const composer = isPlant ? null : renderSlotChain(
     'conversation.composer',
     { sessionId, session, pendingInteraction },
     { fallback: composerBar, fallbackOnly: sessionId === undefined, overlay: true },
@@ -363,7 +393,7 @@ export function ConversationRoot({
   // only `.composerStack`: overlay:true renders those as siblings, and sticky
   // on the fallback alone would leave a business-owned takeover at the content
   // end off-screen when the user is not pinned to the floor.
-  const composerSeat = (
+  const composerSeat = isPlant ? null : (
     <div ref={seatResizeRef} className={css.composerSeat} data-composer-seat="">
       {composer}
     </div>
@@ -371,10 +401,21 @@ export function ConversationRoot({
 
   return (
     <div ref={rootResizeRef} className={css.root} data-phase={phase}>
-      {sessionId === undefined ? null : renderSlot('conversation.session.header', {})}
+      {sessionId === undefined || isPlant ? null : renderSlot('conversation.session.header', {})}
       <div className={css.body}>
         <div className={css.scrollBody} data-conversation-scroll="">
-          {sessionId === undefined ? null : renderSlot('conversation.session', {})}
+          {isPlant && (
+            <PlantOverview
+              localState={localState}
+              onOpenPid={() => {
+                setDraft('Analyze P&ID diagrams for MRPL Refinery ')
+              }}
+              onStartInvestigation={(unit) => {
+                setDraft(`Start equipment investigation for ${unit.name} (${unit.code}) `)
+              }}
+            />
+          )}
+          {sessionId === undefined || isPlant ? null : renderSlot('conversation.session', {})}
           {composerSeat}
         </div>
         {/* Width handles only while a transcript is on screen; the hero has no

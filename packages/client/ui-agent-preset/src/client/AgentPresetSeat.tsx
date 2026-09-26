@@ -192,6 +192,7 @@ export function AgentPresetSeat({ load, select, introduced, useAgentPresetSeat, 
             onClick={() => { setOpen(value => !value) }}
           >
             <IconAgentPresetOutline16 className={introducing ? `${css.seatIcon} ${css.introIcon}` : css.seatIcon} />
+            <span className={css.seatKind}>{t('agentPreset')}</span>
             {shownLabel}
             <IconChevronDownOutline14 className={css.chevron} />
           </button>

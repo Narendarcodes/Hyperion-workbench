@@ -21,17 +21,41 @@
      live width as --dsh-conversation-column-width (px, via ResizeObserver —
      container-type would re-anchor the subtree's portal-free position:fixed
      descendants) and the clamp keeps a 680px floor (a step under the figma
-     748px — the full-width reading felt wide on every screen), takes 64% of
-     wider columns, and caps at 920px for line-length
+      748px — the full-width reading felt wide on every screen), takes 80% of
+      wider columns, and caps at 1040px for line-length
      readability. A dragged user preference (--dsh-chat-user-width, published
      by the width handles) replaces the adaptive term wholesale. */
   --dsh-chat-content-width: var(
     --dsh-chat-user-width,
-    clamp(680px, calc(var(--dsh-conversation-column-width, 0px) * 0.64), 920px)
+    clamp(680px, calc(var(--dsh-conversation-column-width, 0px) * 0.8), 1040px)
   );
   --dsh-composer-card-max-width: calc(var(--dsh-chat-content-width) + 32px);
   --dsh-composer-side-clearance: 16px;
   --dsh-composer-dock-inset: 8px;
+}
+
+.root[data-phase='hero']:not(:has([data-hide-composer]))::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: min(520px, 34vw);
+  background: url('/refinery.png') right top / 100% auto no-repeat;
+  filter: saturate(0.55) contrast(0.86) brightness(1.06);
+  opacity: 0.13;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, transparent 12%, #000 34%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, transparent 12%, #000 34%, #000 84%, transparent 100%);
+}
+
+body[data-ds-dark-theme] .root[data-phase='hero']::before {
+  opacity: 0.07;
+}
+
+.root[data-phase='hero'] .body {
+  z-index: 1;
 }
 
 .header {
@@ -429,7 +453,9 @@
      8 above the card (its margin-top restores 12 under the hero chrome). */
   gap: 8px;
   /* Foot inside the centered box floats the stack a bit above true center. */
-  padding-bottom: 32px;
+  padding-bottom: 16px;
+  margin-top: auto;
+  margin-bottom: auto;
   /* Card cap + both clearances: the hero input card lands at exactly the same
      width as the docked composer at every viewport. */
   width: min(calc(var(--dsh-composer-card-max-width) + 2 * var(--dsh-composer-side-clearance)), 100%);
@@ -438,19 +464,20 @@
 
 .heroWorkspaceRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
   min-width: 0;
   margin-top: 4px;
-  /* figma drew px 8; nudged +12 so the chip's folder glyph lines up closer to
-     the card's inner controls below. */
-  padding-left: 20px;
+  padding: 0 var(--dsh-composer-side-clearance);
+  box-sizing: border-box;
 }
 
-/* Hero: the composer sits inside the session scroll body; center there so
-   the tree seat matches active (sticky footer) without a Root remount. */
+/* Hero: the composer sits inside the session scroll body; the stack's own
+   auto margins center it when it fits and top-anchor it when it overflows,
+   so a tall Home never clips its head the way a centered flex box would. */
 .root[data-phase='hero'] .scrollBody {
-  justify-content: center;
+  justify-content: flex-start;
   overflow-y: auto;
 }
 

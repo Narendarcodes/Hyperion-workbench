@@ -22,8 +22,7 @@ import { en } from '../src/client/locales.ts'
 import { ConversationRoot } from '../src/client/skeleton/ConversationRoot.tsx'
 import { ConversationSession, ConversationSessionHeader } from '../src/client/skeleton/ConversationSession.tsx'
 import { conversationPhase } from '../src/client/contract/snapshot.ts'
-import { HeroShell } from '../src/client/skeleton/EmptyHero.tsx'
-import type { HeroShellProps } from '../src/client/skeleton/EmptyHero.tsx'
+import { HeroShell, HomeSections, defaultHomeSuggestions } from '../src/client/skeleton/EmptyHero.tsx'
 import { InputBar } from '../src/client/skeleton/InputBar.tsx'
 import type { InputBarProps } from '../src/client/skeleton/InputBar.tsx'
 import type {
@@ -300,6 +299,8 @@ function mount(
     renderSlot,
     renderSlotChain,
     selectWorkspace: retargetWorkspace,
+    setDraft: vi.fn(),
+    openSession: vi.fn(),
     t,
   }
   const view = render(<ConversationRoot {...props} />)
@@ -311,21 +312,46 @@ function mount(
 }
 
 describe('Hero chrome', () => {
-  it('renders the English preview badge through the hero locale seat', () => {
-    const renderSlot = vi.fn<HeroShellProps['renderSlot']>(() => null)
-    const view = render(<HeroShell t={makeTranslate(en, commonEn)} renderSlot={renderSlot} />)
-    expect(view.getByText('HYPERION')).toBeTruthy()
-    expect(view.getByText('Preview')).toBeTruthy()
-    expect(view.getByText('Sovereign Intelligence for Industrial Work')).toBeTruthy()
-    expect(renderSlot).toHaveBeenCalledOnce()
-    expect(renderSlot.mock.calls[0]?.[0]).toBe('conversation.hero.brand.mark')
-    const brandMarkOwner = renderSlot.mock.calls[0]?.[1]
-    if (brandMarkOwner === undefined || !('size' in brandMarkOwner) || !('className' in brandMarkOwner)) {
-      throw new Error('hero brand-mark owner must provide size and className')
-    }
-    expect(brandMarkOwner.size).toBe(34)
-    expect(brandMarkOwner.className).toBeTypeOf('string')
-    expect(renderSlot.mock.calls[0]?.[2]?.fallback).toBeTruthy()
+  it('keeps the sidebar-owned brand out of the Home workspace', () => {
+    const view = render(<HeroShell t={makeTranslate(en, commonEn)} />)
+    expect(view.queryByText('HYPERION')).toBeNull()
+    expect(view.getByRole('heading', { name: 'What are you analyzing?' })).toBeTruthy()
+    expect(view.getByText('Ask Hyperion about your plant, equipment, documents or engineering work.')).toBeTruthy()
+    expect(view.getByRole('button', { name: 'Theme' })).toBeTruthy()
+    expect(view.getByRole('button', { name: 'Notifications' })).toBeTruthy()
+    expect(view.getByRole('button', { name: 'User menu' })).toBeTruthy()
+    expect(view.getByText('N')).toBeTruthy()
+  })
+
+  it('reports the workspace registry load through the local-state pill', () => {
+    const t = makeTranslate(en, commonEn)
+    const view = render(<HeroShell t={t} localState="available" />)
+    expect(view.getByText('Local state available')).toBeTruthy()
+    view.rerender(<HeroShell t={t} localState="unavailable" />)
+    expect(view.getByText('Local state unavailable')).toBeTruthy()
+    view.rerender(<HeroShell t={t} />)
+    expect(view.queryByText('Local state available')).toBeNull()
+    expect(view.queryByText('Local state unavailable')).toBeNull()
+  })
+
+  it('renders task starters with supporting copy and opens real recent sessions', () => {
+    const t = makeTranslate(en, commonEn)
+    const onSuggestion = vi.fn()
+    const onOpenRecent = vi.fn()
+    const view = render(<HomeSections
+      t={t}
+      suggestions={defaultHomeSuggestions(t)}
+      recentWork={[{ sessionId: sid('recent-1'), title: 'Pump P-204 vibration', updatedAt: Date.now() }]}
+      onSuggestion={onSuggestion}
+      onOpenRecent={onOpenRecent}
+    />)
+    expect(view.getByText('Troubleshoot faults, review history, suggest actions.')).toBeTruthy()
+    expect(view.getByText('Pump P-204 vibration')).toBeTruthy()
+    expect(view.getByText('Open conversations →')).toBeTruthy()
+    fireEvent.click(view.getByText('Analyze a P&ID'))
+    expect(onSuggestion).toHaveBeenCalledTimes(1)
+    fireEvent.click(view.getByText('Pump P-204 vibration'))
+    expect(onOpenRecent).toHaveBeenCalledWith(sid('recent-1'))
   })
 })
 
@@ -461,8 +487,9 @@ describe('ConversationRoot resident composer', () => {
     const header = b.view.container.querySelector('header')
     expect(host).not.toBeNull()
     expect(header?.getAttribute('aria-hidden')).toBe('true')
-    expect(b.view.getByText('HYPERION')).toBeTruthy()
-    expect(b.view.getByText('Preview')).toBeTruthy()
+    expect(b.view.queryByText('HYPERION')).toBeNull()
+    expect(b.view.getByText('What are you analyzing?')).toBeTruthy()
+    expect(b.view.getByText('Local state available')).toBeTruthy()
     expect(b.view.queryByTestId('view-chat')).toBeNull()
     // The same machine-backed textarea is live in the hero, and the
     // persistence mirror stays bound (ConversationSession mounts chrome-hidden
@@ -526,7 +553,7 @@ describe('ConversationRoot resident composer', () => {
     // blank the column for the history round-trip.
     const root = b.view.container.querySelector('[data-phase]')
     expect(root?.getAttribute('data-phase')).toBe('hero')
-    expect(b.view.getByText('HYPERION')).toBeTruthy()
+    expect(b.view.queryByText('HYPERION')).toBeNull()
     expect(b.view.getByRole('textbox')).toBeTruthy()
   })
 

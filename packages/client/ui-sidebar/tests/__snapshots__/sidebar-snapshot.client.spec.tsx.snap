@@ -6,111 +6,14 @@ exports[`sidebar shell snapshots > renders the collapsed rail after the crossfad
   style="display: contents;"
 >
   <div
-    class="root collapsed railIn quietBars"
-    style=""
-  >
-    <div
-      class="logoRow"
-    >
-      <button
-        aria-label="Open sidebar"
-        class="iconButton toggle"
-        type="button"
-      >
-        <span
-          aria-hidden="true"
-          class="railMark"
-        >
-          <div
-            data-slot="sidebar.brand.mark"
-            style="display: contents;"
-          >
-            <span
-              aria-hidden="true"
-              style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: rgb(11, 18, 32); overflow: hidden; flex: 0 0 auto;"
-            >
-              <img
-                alt=""
-                draggable="false"
-                height="19"
-                src="/hyperion.svg"
-                style="display: block;"
-                width="19"
-              />
-            </span>
-          </div>
-        </span>
-        <svg
-          class="panelIcon"
-          data-content="35f95b0c"
-          fill="none"
-          height="18"
-          viewBox="0 0 16 16"
-          width="18"
-          xmlns="http://www.w3.org/2000/svg"
-        />
-      </button>
-    </div>
-    <button
-      aria-label="New session"
-      class="newSession"
-      type="button"
-    >
-      <svg
-        data-content="c0ce4dcc"
-        fill="none"
-        height="18"
-        viewBox="0 0 16 16"
-        width="18"
-        xmlns="http://www.w3.org/2000/svg"
-      />
-    </button>
-    <div
-      class="regionArea"
-    >
-      <div
-        data-slot="sidebar.workspaces"
-        style="display: contents;"
-      />
-    </div>
-    <div
-      class="footArea"
-    >
-      <div
-        class="footerActions"
-      >
-        <div
-          data-slot="sidebar.footer.action"
-          style="display: contents;"
-        />
-      </div>
-      <div
-        class="settingsArea"
-      >
-        <div
-          data-slot="sidebar.settings"
-          style="display: contents;"
-        />
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsule, empty holes) 1`] = `
-<div
-  data-slot="sidebar"
-  style="display: contents;"
->
-  <div
-    class="root quietBars"
+    class="root fading quietBars"
     style="width: 300px;"
   >
     <div
       class="logoRow"
     >
       <button
-        aria-label="New session"
+        aria-label="Go to Home"
         class="brand wide"
         type="button"
       >
@@ -148,20 +51,157 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
               style="display: contents;"
             >
               <span
-                class="localBuildBrand"
+                class="fallbackBrandName"
               >
-                <span
-                  class="localBuildTitle"
-                >
-                  HYPERION
-                </span>
-                <span
-                  class="buildVersion"
-                >
-                  1.2.3-rc.4-abc1234-dirty
-                </span>
+                HYPERION
               </span>
             </div>
+            <span
+              class="brandTagline"
+            >
+              Industrial Engineering Workbench
+            </span>
+            <span
+              class="buildVersion"
+            >
+              1.2.3-rc.4-abc1234-dirty
+            </span>
+          </span>
+        </span>
+      </button>
+      <button
+        aria-label="Open sidebar"
+        class="iconButton toggle"
+        type="button"
+      >
+        <svg
+          class="panelIcon"
+          data-content="35f95b0c"
+          fill="none"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        />
+      </button>
+    </div>
+    <button
+      aria-label="Start new work"
+      class="newSession"
+      type="button"
+    >
+      <svg
+        data-content="c0ce4dcc"
+        fill="none"
+        height="14"
+        viewBox="0 0 16 16"
+        width="14"
+        xmlns="http://www.w3.org/2000/svg"
+      />
+      <span
+        class="newSessionLabel wide"
+      >
+        New work
+      </span>
+    </button>
+    <div
+      class="regionArea"
+    >
+      <div
+        data-slot="sidebar.workspaces"
+        style="display: contents;"
+      />
+    </div>
+    <div
+      class="footArea"
+    >
+      <div
+        class="footerActions"
+      >
+        <div
+          data-slot="sidebar.footer.action"
+          style="display: contents;"
+        />
+      </div>
+      <div
+        class="settingsArea"
+      >
+        <div
+          data-slot="sidebar.settings"
+          style="display: contents;"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`sidebar shell snapshots > renders the expanded column (brand shortcut, secondary action, empty holes) 1`] = `
+<div
+  data-slot="sidebar"
+  style="display: contents;"
+>
+  <div
+    class="root quietBars"
+    style="width: 300px;"
+  >
+    <div
+      class="logoRow"
+    >
+      <button
+        aria-label="Go to Home"
+        class="brand wide"
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+          class="brandIdentity"
+        >
+          <span
+            class="brandMark"
+          >
+            <div
+              data-slot="sidebar.brand.mark"
+              style="display: contents;"
+            >
+              <span
+                aria-hidden="true"
+                style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: rgb(11, 18, 32); overflow: hidden; flex: 0 0 auto;"
+              >
+                <img
+                  alt=""
+                  draggable="false"
+                  height="19"
+                  src="/hyperion.svg"
+                  style="display: block;"
+                  width="19"
+                />
+              </span>
+            </div>
+          </span>
+          <span
+            class="brandName"
+          >
+            <div
+              data-slot="sidebar.brand.name"
+              style="display: contents;"
+            >
+              <span
+                class="fallbackBrandName"
+              >
+                HYPERION
+              </span>
+            </div>
+            <span
+              class="brandTagline"
+            >
+              Industrial Engineering Workbench
+            </span>
+            <span
+              class="buildVersion"
+            >
+              1.2.3-rc.4-abc1234-dirty
+            </span>
           </span>
         </span>
       </button>
@@ -182,7 +222,7 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
       </button>
     </div>
     <button
-      aria-label="New session"
+      aria-label="Start new work"
       class="newSession"
       type="button"
     >
@@ -197,7 +237,7 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
       <span
         class="newSessionLabel wide"
       >
-        New Session
+        New work
       </span>
     </button>
     <div
@@ -245,7 +285,7 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
       class="logoRow"
     >
       <button
-        aria-label="New session"
+        aria-label="Go to Home"
         class="brand wide"
         type="button"
       >
@@ -283,20 +323,21 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
               style="display: contents;"
             >
               <span
-                class="localBuildBrand"
+                class="fallbackBrandName"
               >
-                <span
-                  class="localBuildTitle"
-                >
-                  HYPERION
-                </span>
-                <span
-                  class="buildVersion"
-                >
-                  1.2.3-rc.4-abc1234-dirty
-                </span>
+                HYPERION
               </span>
             </div>
+            <span
+              class="brandTagline"
+            >
+              Industrial Engineering Workbench
+            </span>
+            <span
+              class="buildVersion"
+            >
+              1.2.3-rc.4-abc1234-dirty
+            </span>
           </span>
         </span>
       </button>
@@ -317,7 +358,7 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
       </button>
     </div>
     <button
-      aria-label="New session"
+      aria-label="Start new work"
       class="newSession"
       type="button"
     >
@@ -332,7 +373,7 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
       <span
         class="newSessionLabel wide"
       >
-        New Session
+        New work
       </span>
     </button>
     <div

@@ -28,6 +28,7 @@ import { createWorkspaceViewStore } from './stores.ts'
 import { WorkspaceBrowser } from './rows/WorkspaceBrowser.tsx'
 import { WorkspacePicker } from './WorkspacePicker.tsx'
 import { en, hi, te, type WorkspaceKey } from './locales.ts'
+export { useWorkbenchView, setWorkbenchView, getWorkbenchView, type WorkbenchView } from './workbench-view.ts'
 
 export type { UiWorkspace } from './navigation.ts'
 export type {

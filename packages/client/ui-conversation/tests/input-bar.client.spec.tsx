@@ -1354,6 +1354,20 @@ describe('command launcher chrome and control seats', () => {
     expect(launcher.getAttribute('aria-expanded')).toBe('true')
   })
 
+  it('offers Context and Skill trigger chips only in the hero variant', async () => {
+    const hero = bench({ variant: 'hero' })
+    fireEvent.click(hero.view.getByRole('button', { name: 'Context' }))
+    await vi.waitFor(() => { expect(hero.shell.snapshot.draft).toBe('@') })
+    fireEvent.click(hero.view.getByRole('button', { name: 'Skill' }))
+    await vi.waitFor(() => { expect(hero.shell.snapshot.draft).toBe('@/') })
+    hero.view.unmount()
+    const composer = bench({})
+    expect(composer.props.variant).toBe('composer')
+    expect(composer.view.container.querySelectorAll('button').length).toBeGreaterThan(0)
+    expect(composer.view.queryByRole('button', { name: 'Context' })).toBeNull()
+    expect(composer.view.queryByRole('button', { name: 'Skill' })).toBeNull()
+  })
+
   it('the Access chip renders the projection value and submits a non-Full-access pick directly', async () => {
     const command = vi.fn(() => Promise.resolve(true))
     const permissions = {

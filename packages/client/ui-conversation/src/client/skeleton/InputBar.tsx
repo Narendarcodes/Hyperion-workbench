@@ -17,8 +17,9 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from 'react'
 import clsx from 'clsx'
 import {
-  IconCloseOutline16, IconLoadingOutline16, IconPaperclipOutline16, IconPlusOutline16,
-  IconSendOutline16, IconStopFill16, IconWarningOutline16, Toast, Tooltip,
+  IconCloseOutline16, IconContextInjectionOutline16, IconLoadingOutline16, IconPaperclipOutline16,
+  IconPlusOutline16, IconSendOutline16, IconSkillOutline16, IconStopFill16, IconWarningOutline16,
+  Toast, Tooltip,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 // Type-only: the `plan` projection key merge (the TodoDock posture — the
 // composer reads a host-computed value; the domain owns the key).
@@ -413,6 +414,13 @@ export const InputBar = memo(function InputBar({
     if (keyboard !== undefined) toggleCommandMenu?.(keyboard.caretSpan())
   }
 
+  // Hero-only trigger chips: inserting `@` or `/` rides the existing
+  // reference/skill trigger pipeline — no parallel composer path.
+  const insertTrigger = (text: '@' | '/'): void => {
+    if (!editable || keyboard === undefined) return
+    keyboard.paste(text)
+  }
+
   // The no-session Workspace trigger: the resident editable div acts as the
   // picker trigger for keyboard users (no editor is bound in this state).
   const onWorkspaceKeyDown = (e: KeyboardEvent<HTMLDivElement>): void => {
@@ -611,6 +619,36 @@ export const InputBar = memo(function InputBar({
                   hidden
                   onChange={onPickFiles}
                 />
+                {variant === 'hero' && (
+                  <>
+                    <Tooltip label={t('input.context')} side="top" delayMs={500}>
+                      <button
+                        type="button"
+                        className={css.chip}
+                        aria-label={t('input.context')}
+                        disabled={!editable || keyboard === undefined}
+                        onMouseDown={keepFocus}
+                        onClick={() => { insertTrigger('@') }}
+                      >
+                        <IconContextInjectionOutline16 size={14} />
+                        <span>{t('input.context')}</span>
+                      </button>
+                    </Tooltip>
+                    <Tooltip label={t('input.skill')} side="top" delayMs={500}>
+                      <button
+                        type="button"
+                        className={css.chip}
+                        aria-label={t('input.skill')}
+                        disabled={!editable || keyboard === undefined}
+                        onMouseDown={keepFocus}
+                        onClick={() => { insertTrigger('/') }}
+                      >
+                        <IconSkillOutline16 size={14} />
+                        <span>{t('input.skill')}</span>
+                      </button>
+                    </Tooltip>
+                  </>
+                )}
                 <div className={css.modes}>
                   {accessSelect}
                   {sessionId === undefined ? null : renderSlot('conversation.input.plan', { locked })}

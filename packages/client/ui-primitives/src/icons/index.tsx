@@ -515,6 +515,48 @@ export const IconUserOutline16 = ({ size = 16, className }: IconProps) => (
   </svg>
 )
 
+/** Bell outline icon. */
+export const IconBellOutline16 = ({ size = 16, className }: IconProps) => (
+  <svg
+    aria-hidden="true"
+    width={size}
+    height={size}
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+    <path d="M10 21h4" />
+  </svg>
+)
+
+/** Brain outline icon. */
+export const IconBrainOutline16 = ({ size = 16, className }: IconProps) => (
+  <svg
+    aria-hidden="true"
+    width={size}
+    height={size}
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M9.5 4.5A3 3 0 0 0 4 6.5a3 3 0 0 0 .5 5.8A3.5 3.5 0 0 0 8 18h1.5V5.5A3 3 0 0 0 9.5 4.5Z" />
+    <path d="M14.5 4.5A3 3 0 0 1 20 6.5a3 3 0 0 1-.5 5.8A3.5 3.5 0 0 1 16 18h-1.5V5.5A3 3 0 0 1 14.5 4.5Z" />
+    <path d="M9.5 9.5H7a2 2 0 0 0 0 4h2.5M14.5 9.5H17a2 2 0 0 1 0 4h-2.5" />
+    <path d="M9.5 4.5V18M14.5 4.5V18" />
+  </svg>
+)
+
 /** ic_ds_send_outline_16 */
 export const IconSendOutline16 = ({ size = 16, className }: IconProps) => (
   <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

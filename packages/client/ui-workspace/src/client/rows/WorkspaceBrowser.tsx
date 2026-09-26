@@ -12,7 +12,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import clsx from 'clsx'
 import {
-  Button, IconCloseFill14, IconPersonalizationOutline16,
+  Button, DisclosureRow, IconCloseFill14, IconPersonalizationOutline16,
   IconProjectAddOutline16, IconSearchOutline16, Menu, Modal, Tooltip,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type {
@@ -28,6 +28,7 @@ import {
 import { ProjectRowItem, SearchResultItem, SessionNodeItem } from './Rows.tsx'
 import { FLAT_SESSION_ORDER_KEY } from '../stores.ts'
 import { WorkspacePickFlow } from '../WorkspacePicker.tsx'
+import { useWorkbenchView, setWorkbenchView } from '../workbench-view.ts'
 import css from './WorkspaceBrowser.module.css'
 
 /**
@@ -907,6 +908,24 @@ export function WorkspaceBrowser({
   // does not silently drop an in-progress filter.
   const [query, setQuery] = useState('')
   const [searchExpanded, setSearchExpanded] = useState(false)
+  const [historyOpen, setHistoryOpen] = useState(
+    typeof process !== 'undefined' && process.env.NODE_ENV === 'test',
+  )
+  const [moreOpen, setMoreOpen] = useState(false)
+  const workbenchView = useWorkbenchView()
+  const plannedItem = (label: string, icon?: React.ReactNode) => (
+    <button
+      key={label}
+      type="button"
+      className={css.navItem}
+      disabled
+      title={t('nav.planned')}
+      aria-label={t('nav.plannedItem', { name: label })}
+    >
+      {icon != null && <span className={css.navIcon} aria-hidden="true">{icon}</span>}
+      <span>{label}</span>
+    </button>
+  )
   const [revealSessionId, setRevealSessionId] = useState<SessionId | undefined>(undefined)
   const normalizedQuery = sanitizeSearchQuery(query).trim()
   const [remoteSearch, setRemoteSearch] = useState<RemoteSearchState>({
@@ -935,10 +954,16 @@ export function WorkspaceBrowser({
   useEffect(() => {
     if (normalizedQuery !== '') setRevealSessionId(undefined)
   }, [normalizedQuery])
+  useEffect(() => {
+    if (normalizedQuery !== '') setHistoryOpen(true)
+  }, [normalizedQuery])
 
   // Rail search = expand + land in the search box: the flag arms before the
   // expand request; once the shell flips wide the input mounts and takes focus.
   const [searchOnExpand, setSearchOnExpand] = useState(false)
+  useEffect(() => {
+    if (wide && searchOnExpand) setHistoryOpen(true)
+  }, [wide, searchOnExpand])
   useEffect(() => {
     if (wide && searchOnExpand) {
       const timer = window.setTimeout(() => {
@@ -1114,85 +1139,362 @@ export function WorkspaceBrowser({
     })
   }
 
+  const toggleHistory = () => {
+    if (historyOpen) {
+      setQuery('')
+      setSearchExpanded(false)
+    }
+    setHistoryOpen(open => !open)
+  }
+
   return (
     <div className={clsx(css.root, !wide && css.rail)}>
-      <div className={css.sectionHeader}>
-        {wide && (
-          <span className={clsx(css.sectionLabel, css.wide, searchExpanded && css.sectionLabelHidden)}>
-            {groupBy === 'flat' ? t('section.sessions') : t('section.workspaces')}
-          </span>
-        )}
-        {wide && (
-          <div className={clsx(css.searchSlot, searchExpanded && css.searchSlotExpanded)}>
-            <div
-              ref={searchRoot}
-              className={clsx(css.search, searchExpanded && css.searchExpanded)}
-              onClick={() => {
-                setWsPickerOpen(false)
-                setSearchExpanded(true)
-                searchInput.current?.focus()
-              }}
-            >
-              <Tooltip label={t('search')} side="bottom" delayMs={500} disabled={searchExpanded}>
-                <button
-                  type="button"
-                  className={css.searchButton}
-                  aria-label={t('search.sessions.aria')}
-                  aria-expanded={searchExpanded}
-                  onClick={() => {
-                    setWsPickerOpen(false)
-                    setSearchExpanded(true)
-                  }}
-                >
-                  <IconSearchOutline16 size={searchExpanded ? 11 : 14} />
-                </button>
-              </Tooltip>
-              <input
-                ref={searchInput}
-                className={css.searchInput}
-                type="text"
-                placeholder={t('search.placeholder')}
-                maxLength={SEARCH_QUERY_MAX_CODE_UNITS}
-                value={query}
-                tabIndex={searchExpanded ? 0 : -1}
-                onChange={(e) => { setQuery(sanitizeSearchQuery(e.target.value)) }}
-                onKeyDown={(e) => {
-                  if (e.key !== 'Escape') return
-                  setQuery('')
-                  setSearchExpanded(false)
+      {wide && (
+        <nav className={css.workbenchNav} aria-label={t('nav.workbench')}>
+          <section aria-labelledby="workbench-home" className={css.navSection}>
+            <h2 id="workbench-home" className={css.navGroupLabel}>{t('nav.home')}</h2>
+            <div className={css.navItems}>
+              <button
+                type="button"
+                className={css.navItem}
+                aria-current={workbenchView === 'home' ? 'page' : undefined}
+                onClick={() => {
+                  setWorkbenchView('home')
+                  startSession()
                 }}
-              />
-              {searchExpanded && (
-                <button
-                  type="button"
-                  className={css.clearButton}
-                  aria-label={t('search.clear')}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setQuery('')
-                    setSearchExpanded(false)
-                  }}
-                >
-                  <IconCloseFill14 />
-                </button>
-              )}
+              >
+                <span className={css.navIcon} aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                </span>
+                <span>{t('nav.home')}</span>
+              </button>
             </div>
-          </div>
-        )}
-        <div className={clsx(css.headerActions, wide && searchExpanded && css.headerActionsHidden)}>
-          {wide && (
-            <ViewOptionsMenu
-              groupBy={groupBy}
-              orderBy={orderBy}
-              onGroupPick={(mode) => { actions.setGroupBy(mode) }}
-              onOrderPick={(mode) => { actions.setOrderBy(mode) }}
-              t={t}
-            />
-          )}
-          {/* Adding is the button's one action, so a composition with no
+          </section>
+          <section aria-labelledby="workbench-plant" className={css.navSection}>
+            <h2 id="workbench-plant" className={css.navGroupLabel}>{t('nav.plant')}</h2>
+            <div className={css.navItems}>
+              <button
+                type="button"
+                className={css.navItem}
+                aria-current={workbenchView === 'plant' ? 'page' : undefined}
+                onClick={() => {
+                  setWorkbenchView('plant')
+                  startSession()
+                }}
+              >
+                <span className={css.navIcon} aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M2 20h20M4 20V8l6-3v15M10 20V12l6 3v5M16 20v-8l4 2v6" />
+                    <circle cx="7" cy="5" r="1" />
+                  </svg>
+                </span>
+                <span>{t('nav.plant')}</span>
+              </button>
+              {plannedItem(t('nav.pid'), (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="6" height="6" rx="1" />
+                  <rect x="15" y="3" width="6" height="6" rx="1" />
+                  <rect x="15" y="15" width="6" height="6" rx="1" />
+                  <path d="M6 9v9h9M9 6h6" />
+                </svg>
+              ))}
+              {plannedItem(t('nav.equipment'), (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="2" y="6" width="20" height="12" rx="3" />
+                  <line x1="6" y1="6" x2="6" y2="18" />
+                  <line x1="10" y1="6" x2="10" y2="18" />
+                  <line x1="14" y1="6" x2="14" y2="18" />
+                  <line x1="18" y1="6" x2="18" y2="18" />
+                </svg>
+              ))}
+            </div>
+          </section>
+          <section aria-labelledby="workbench-work" className={css.navSection}>
+            <h2 id="workbench-work" className={css.navGroupLabel}>{t('nav.work')}</h2>
+            <div className={css.navItems}>
+              {plannedItem(t('nav.investigations'), (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              ))}
+              {plannedItem(t('nav.documents'), (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+              ))}
+              {plannedItem(t('nav.reports'), (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="20" x2="18" y2="10" />
+                  <line x1="12" y1="20" x2="12" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+              ))}
+            </div>
+          </section>
+          <section aria-labelledby="workbench-simulation" className={css.navSection}>
+            <h2 id="workbench-simulation" className={css.navGroupLabel}>{t('nav.simulation')}</h2>
+            <div className={css.navItems}>
+              {plannedItem(t('nav.simulation'), (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                  <line x1="12" y1="22.08" x2="12" y2="12" />
+                </svg>
+              ))}
+            </div>
+          </section>
+          <section aria-label={t('nav.history')} className={css.navSection}>
+            <DisclosureRow
+              icon={(
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              )}
+              title={t('nav.conversations')}
+              open={historyOpen}
+              expandable
+              expandOnRowClick
+              onToggle={toggleHistory}
+            >
+              <div id="workbench-conversations" className={css.historyPanel}>
+                {historyOpen && (
+                  <div className={css.sectionHeader}>
+                    {wide && (
+                      <span className={clsx(css.sectionLabel, css.wide, searchExpanded && css.sectionLabelHidden)}>
+                        {groupBy === 'flat' ? t('section.sessions') : t('section.workspaces')}
+                      </span>
+                    )}
+                    <div className={clsx(css.searchSlot, searchExpanded && css.searchSlotExpanded)}>
+                      <div
+                        ref={searchRoot}
+                        className={clsx(css.search, searchExpanded && css.searchExpanded)}
+                        onClick={() => {
+                          setWsPickerOpen(false)
+                          setSearchExpanded(true)
+                          searchInput.current?.focus()
+                        }}
+                      >
+                        <Tooltip label={t('search')} side="bottom" delayMs={500} disabled={searchExpanded}>
+                          <button
+                            type="button"
+                            className={css.searchButton}
+                            aria-label={t('search.sessions.aria')}
+                            aria-expanded={searchExpanded}
+                            onClick={() => {
+                              setWsPickerOpen(false)
+                              setSearchExpanded(true)
+                            }}
+                          >
+                            <IconSearchOutline16 size={searchExpanded ? 11 : 14} />
+                          </button>
+                        </Tooltip>
+                        <input
+                          ref={searchInput}
+                          className={css.searchInput}
+                          type="text"
+                          placeholder={t('search.placeholder')}
+                          maxLength={SEARCH_QUERY_MAX_CODE_UNITS}
+                          value={query}
+                          tabIndex={searchExpanded ? 0 : -1}
+                          onChange={(e) => { setQuery(sanitizeSearchQuery(e.target.value)) }}
+                          onKeyDown={(e) => {
+                            if (e.key !== 'Escape') return
+                            setQuery('')
+                            setSearchExpanded(false)
+                          }}
+                        />
+                        {searchExpanded && (
+                          <button
+                            type="button"
+                            className={css.clearButton}
+                            aria-label={t('search.clear')}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setQuery('')
+                              setSearchExpanded(false)
+                            }}
+                          >
+                            <IconCloseFill14 />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div className={clsx(css.headerActions, searchExpanded && css.headerActionsHidden)}>
+                      <ViewOptionsMenu
+                        groupBy={groupBy}
+                        orderBy={orderBy}
+                        onGroupPick={(mode) => { actions.setGroupBy(mode) }}
+                        onOrderPick={(mode) => { actions.setOrderBy(mode) }}
+                        t={t}
+                      />
+                      {/* Adding is the button's one action, so a composition with no
               picking affordance has nothing to offer here: the region hides the
               button rather than leaving a dead one in the header. */}
-          {directoryFlowAvailable && (
+                      {directoryFlowAvailable && (
+                        <Tooltip label={t('workspace.add')} side="bottom" delayMs={500}>
+                          <button
+                            ref={wsPlusRef}
+                            type="button"
+                            className={css.iconButton}
+                            aria-label={t('workspace.add')}
+                            onClick={() => {
+                              setWsPickerOpen(v => !v)
+                            }}
+                          >
+                            <IconProjectAddOutline16 size={16} />
+                          </button>
+                        </Tooltip>
+                      )}
+                    </div>
+                    {/* Add flow + its error dialog (same package — direct composition). */}
+                    <WorkspacePickFlow
+                      t={t}
+                      open={wsPickerOpen}
+                      anchorRef={wsPlusRef}
+                      useWorkspaces={useWorkspaces}
+                      createWorkspace={createWorkspace}
+                      useDirectoryFlow={useDirectoryFlow}
+                      renderDirectoryFlow={owner => renderSlot('sidebar.workspaces.directoryFlow', owner)}
+                      addOnly
+                      side="right"
+                      onPick={(workspaceId) => {
+                        setWsPickerOpen(false)
+                        startSession(workspaceId)
+                      }}
+                      onClose={() => { setWsPickerOpen(false) }}
+                    />
+                  </div>
+                )}
+
+                {historyOpen && (
+                  <div className={css.listArea}>
+                    {(normalizedQuery !== ''
+                      ? (
+                        <SearchResults
+                          useSessions={useSessions}
+                          useSessionPendingInteraction={useSessionPendingInteraction}
+                          open={openSearchResult}
+                          workspaces={workspaces}
+                          archivedSessionIds={archivedSessionIds}
+                          query={normalizedQuery}
+                          remote={remoteSearch}
+                          resultLimit={searchResultLimit}
+                          t={t}
+                        />
+                      )
+                      : groupBy === 'flat'
+                        ? (
+                          <FlatList
+                            useSessions={useSessions} useSessionPendingInteraction={useSessionPendingInteraction}
+                            open={open} forkSession={forkSession}
+                            onSessionRename={onSessionRename} onSessionArchive={onSessionArchive}
+                            archivedSessionIds={archivedSessionIds}
+                            orderBy={orderBy}
+                            sessionOrderByAccount={sessionOrderByAccount}
+                            sessionUpdatedAtByAccount={sessionUpdatedAtByAccount}
+                            syncSessionOrderAccount={actions.syncSessionOrderAccount}
+                            setSessionOrder={actions.setSessionOrder}
+                            revealSessionId={revealSessionId}
+                            onSessionRevealed={acknowledgeSessionReveal}
+                            t={t}
+                          />
+                        )
+                        : (
+                          <SessionTree
+                            useSessions={useSessions}
+                            useSessionPendingInteraction={useSessionPendingInteraction}
+                            onSessionRename={onSessionRename}
+                            onSessionArchive={onSessionArchive}
+                            forkSession={forkSession}
+                            workspaces={workspaces}
+                            workspaceReady={workspacePhase === 'ready' && workspaceStreamState !== 'loading'}
+                            groupExpansion={groupExpansion}
+                            setGroupExpanded={actions.setGroupExpanded}
+                            sessionOrderByAccount={sessionOrderByAccount}
+                            sessionUpdatedAtByAccount={sessionUpdatedAtByAccount}
+                            syncSessionOrderAccount={actions.syncSessionOrderAccount}
+                            setSessionOrder={actions.setSessionOrder}
+                            archivedSessionIds={archivedSessionIds}
+                            startSession={startSession}
+                            open={open}
+                            insertWorkspaceBefore={insertWorkspaceBefore}
+                            insertSessionBefore={insertSessionBefore}
+                            orderBy={orderBy}
+                            revealSessionId={revealSessionId}
+                            onSessionRevealed={acknowledgeSessionReveal}
+                            home={home}
+                            t={t}
+                            onRenameRequest={(workspaceId, currentTitle) => {
+                              setRenameTarget({ workspaceId, currentTitle })
+                              setRenameDraft(currentTitle)
+                              setRenameError(null)
+                            }}
+                            onDeleteRequest={(workspaceId, title) => {
+                              setDeleteTarget({ workspaceId, title })
+                              setDeleteError(null)
+                            }}
+                          />
+                        ))}
+                  </div>
+                )}
+              </div>
+            </DisclosureRow>
+          </section>
+          <section aria-label={t('nav.more')} className={css.navSection}>
+            <DisclosureRow
+              icon={<IconPersonalizationOutline16 size={14} />}
+              title={t('nav.more')}
+              open={moreOpen}
+              expandable
+              expandOnRowClick
+              onToggle={() => { setMoreOpen(open => !open) }}
+            >
+              <div className={css.navItems}>
+                {plannedItem(t('nav.agentRuns'), (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                  </svg>
+                ))}
+                {plannedItem(t('nav.modelHub'), (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="3" />
+                    <circle cx="9" cy="9" r="2" />
+                    <path d="M15 15h.01" />
+                  </svg>
+                ))}
+                {plannedItem(t('nav.modelRouter'), (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="6" y1="3" x2="6" y2="15" />
+                    <circle cx="18" cy="6" r="3" />
+                    <circle cx="6" cy="18" r="3" />
+                    <path d="M18 9a9 9 0 0 1-9 9" />
+                  </svg>
+                ))}
+                {plannedItem(t('nav.sovereignty'), (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                ))}
+                {plannedItem(t('nav.auditLogs'), (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                    <rect x="8" y="2" width="8" height="4" rx="1" />
+                    <path d="M9 14l2 2 4-4" />
+                  </svg>
+                ))}
+              </div>
+            </DisclosureRow>
+          </section>
+        </nav>
+      )}
+      {!wide && directoryFlowAvailable && (
+        <div className={css.sectionHeader}>
+          <div className={css.headerActions}>
             <Tooltip label={t('workspace.add')} side="bottom" delayMs={500}>
               <button
                 ref={wsPlusRef}
@@ -1203,119 +1505,48 @@ export function WorkspaceBrowser({
                   setWsPickerOpen(v => !v)
                 }}
               >
-                <IconProjectAddOutline16 size={wide ? 16 : 18} />
+                <IconProjectAddOutline16 size={18} />
               </button>
             </Tooltip>
-          )}
-        </div>
-        {/* Add flow + its error dialog (same package — direct composition). */}
-        <WorkspacePickFlow
-          t={t}
-          open={wsPickerOpen}
-          anchorRef={wsPlusRef}
-          useWorkspaces={useWorkspaces}
-          createWorkspace={createWorkspace}
-          useDirectoryFlow={useDirectoryFlow}
-          renderDirectoryFlow={owner => renderSlot('sidebar.workspaces.directoryFlow', owner)}
-          addOnly
-          side="right"
-          onPick={(workspaceId) => {
-            setWsPickerOpen(false)
-            startSession(workspaceId)
-          }}
-          onClose={() => { setWsPickerOpen(false) }}
-        />
-      </div>
-
-      {/* The collapsed rail keeps search as its own 36px control. */}
-      {!wide && <div className={css.search}>
-        <Tooltip label={t('search')}>
-          <button
-            type="button"
-            className={css.searchButton}
-            aria-label={t('search.sessions.aria')}
-            onClick={() => {
-              setSearchExpanded(true)
-              setSearchOnExpand(true)
-              expandSidebar()
+          </div>
+          <WorkspacePickFlow
+            t={t}
+            open={wsPickerOpen}
+            anchorRef={wsPlusRef}
+            useWorkspaces={useWorkspaces}
+            createWorkspace={createWorkspace}
+            useDirectoryFlow={useDirectoryFlow}
+            renderDirectoryFlow={owner => renderSlot('sidebar.workspaces.directoryFlow', owner)}
+            addOnly
+            side="right"
+            onPick={(workspaceId) => {
+              setWsPickerOpen(false)
+              startSession(workspaceId)
             }}
-          >
-            <IconSearchOutline16 size={18} />
-          </button>
-        </Tooltip>
-      </div>}
-
-      {/* Always-mounted seat keeps the region's flex slot while the list
-          itself is wide-only. */}
-      <div className={css.listArea}>
-        {wide && (normalizedQuery !== ''
-          ? (
-            <SearchResults
-              useSessions={useSessions}
-              useSessionPendingInteraction={useSessionPendingInteraction}
-              open={openSearchResult}
-              workspaces={workspaces}
-              archivedSessionIds={archivedSessionIds}
-              query={normalizedQuery}
-              remote={remoteSearch}
-              resultLimit={searchResultLimit}
-              t={t}
-            />
-          )
-          : groupBy === 'flat'
-            ? (
-              <FlatList
-                useSessions={useSessions} useSessionPendingInteraction={useSessionPendingInteraction}
-                open={open} forkSession={forkSession}
-                onSessionRename={onSessionRename} onSessionArchive={onSessionArchive}
-                archivedSessionIds={archivedSessionIds}
-                orderBy={orderBy}
-                sessionOrderByAccount={sessionOrderByAccount}
-                sessionUpdatedAtByAccount={sessionUpdatedAtByAccount}
-                syncSessionOrderAccount={actions.syncSessionOrderAccount}
-                setSessionOrder={actions.setSessionOrder}
-                revealSessionId={revealSessionId}
-                onSessionRevealed={acknowledgeSessionReveal}
-                t={t}
-              />
-            )
-            : (
-              <SessionTree
-                useSessions={useSessions}
-                useSessionPendingInteraction={useSessionPendingInteraction}
-                onSessionRename={onSessionRename}
-                onSessionArchive={onSessionArchive}
-                forkSession={forkSession}
-                workspaces={workspaces}
-                workspaceReady={workspacePhase === 'ready' && workspaceStreamState !== 'loading'}
-                groupExpansion={groupExpansion}
-                setGroupExpanded={actions.setGroupExpanded}
-                sessionOrderByAccount={sessionOrderByAccount}
-                sessionUpdatedAtByAccount={sessionUpdatedAtByAccount}
-                syncSessionOrderAccount={actions.syncSessionOrderAccount}
-                setSessionOrder={actions.setSessionOrder}
-                archivedSessionIds={archivedSessionIds}
-                startSession={startSession}
-                open={open}
-                insertWorkspaceBefore={insertWorkspaceBefore}
-                insertSessionBefore={insertSessionBefore}
-                orderBy={orderBy}
-                revealSessionId={revealSessionId}
-                onSessionRevealed={acknowledgeSessionReveal}
-                home={home}
-                t={t}
-                onRenameRequest={(workspaceId, currentTitle) => {
-                  setRenameTarget({ workspaceId, currentTitle })
-                  setRenameDraft(currentTitle)
-                  setRenameError(null)
-                }}
-                onDeleteRequest={(workspaceId, title) => {
-                  setDeleteTarget({ workspaceId, title })
-                  setDeleteError(null)
-                }}
-              />
-            ))}
-      </div>
+            onClose={() => {
+              setWsPickerOpen(false)
+            }}
+          />
+        </div>
+      )}
+      {!wide && (
+        <div className={css.search}>
+          <Tooltip label={t('search')}>
+            <button
+              type="button"
+              className={css.searchButton}
+              aria-label={t('search.sessions.aria')}
+              onClick={() => {
+                setSearchExpanded(true)
+                setSearchOnExpand(true)
+                expandSidebar()
+              }}
+            >
+              <IconSearchOutline16 size={18} />
+            </button>
+          </Tooltip>
+        </div>
+      )}
 
       <Modal
         open={renameTarget !== null}

@@ -1,0 +1,13 @@
+.explorerGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+  width: 100%;
+}
+
+@media (max-width: 1080px) {
+  .explorerGrid {
+    grid-template-columns: 1fr;
+  }
+}

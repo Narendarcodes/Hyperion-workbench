@@ -10,9 +10,7 @@ import { OfficialBrandMark, OfficialBrandName } from './Brand.tsx'
 export const inject = ['slots', 'locale']
 
 /**
- * Fill the sidebar brand slots as one declaration-aware registration set. The
- * conversation hero stays on its declaring package's Hyperion fallback,
- * so the official build registers nothing there.
+ * Fill the sidebar brand slots as one declaration-aware registration set.
  * @param ctx - Client root context.
  */
 export function apply(ctx: ClientContext): void {

@@ -74,6 +74,7 @@ interface CopyDialogProps {
 }
 
 function CopyDialog({ state, t, actions }: CopyDialogProps): ReactNode {
+  const idErrorId = 'agent-preset-copy-id-error'
   const draft = state.copy
   const blocker = draft === null ? undefined : draftBlocker(draft, state.rows)
   const message = draft === null ? null : draft.error ?? (blocker === undefined ? null : t(blocker))
@@ -116,6 +117,8 @@ function CopyDialog({ state, t, actions }: CopyDialogProps): ReactNode {
                 value={draft.id}
                 autoFocus
                 spellCheck={false}
+                aria-invalid={blocker !== undefined}
+                aria-describedby={blocker === undefined ? undefined : idErrorId}
                 placeholder={t('presetIdPlaceholder')}
                 onChange={(event) => { actions.setCopyId(event.target.value) }}
               />
@@ -130,7 +133,9 @@ function CopyDialog({ state, t, actions }: CopyDialogProps): ReactNode {
                 onChange={(event) => { actions.setCopyName(event.target.value) }}
               />
             </label>
-            {message === null ? null : <p className={css.error} role="alert">{message}</p>}
+            {message === null
+              ? null
+              : <p id={idErrorId} className={css.error} role="alert">{message}</p>}
           </div>
         )}
     </Modal>
@@ -144,7 +149,7 @@ function CopyDialog({ state, t, actions }: CopyDialogProps): ReactNode {
  * @param props.text - the description as rendered, already localized.
  * @returns the description element, tooltip-anchored while it overflows.
  */
-function CardDescription({ text }: { text: string }): ReactNode {
+function CardDescription({ text, id }: { text: string; id: string }): ReactNode {
   const ref = useRef<HTMLSpanElement | null>(null)
   const [truncated, setTruncated] = useState(false)
   useLayoutEffect(() => {
@@ -165,7 +170,7 @@ function CardDescription({ text }: { text: string }): ReactNode {
     <Tooltip label={text} side="bottom" delayMs={400} disabled={!truncated} maxWidth={360}>
       {/* The empty title stops the card body's native tooltip from climbing to
         this span: a cut-off description answers with one bubble, not two. */}
-      <span ref={ref} className={css.cardDesc} title="">{text}</span>
+      <span id={id} ref={ref} className={css.cardDesc} title="">{text}</span>
     </Tooltip>
   )
 }
@@ -270,9 +275,8 @@ export function AgentPresetSection(props: AgentPresetSectionProps): ReactNode {
                       // the only way anyone without a pointer reaches it.
                       disabled={row.isDefault}
                       aria-disabled={row.broken !== undefined}
-                      // Without this the name is the whole card read aloud —
-                      // title, badge, description, id.
                       aria-label={`${row.broken !== undefined ? t('brokenBadge') : row.isDefault ? t('inUse') : t('setDefault')}: ${text.name}`}
+                      aria-describedby={`preset-description-${row.id}`}
                       // The reason rides the badge, not the whole card: two
                       // tooltips over one target would race, and the card's
                       // own label answers what clicking it would do.
@@ -301,7 +305,10 @@ export function AgentPresetSection(props: AgentPresetSectionProps): ReactNode {
                         </Tag>
                         {row.isDefault ? <Tag tone="solid" className={css.inUse}>{t('inUse')}</Tag> : null}
                       </span>
-                      <CardDescription text={text.description ?? t('noDescription')} />
+                      <CardDescription
+                        id={`preset-description-${row.id}`}
+                        text={text.description ?? t('noDescription')}
+                      />
                       {/* Visually hidden, deliberately: the pointer path is the
                         badge's tooltip, and a disabled card body is out of the
                         tab order, so this is the only reading a screen reader
@@ -351,7 +358,9 @@ export function AgentPresetSection(props: AgentPresetSectionProps): ReactNode {
                         data-tip={row.broken !== undefined
                           ? t('brokenNoCopy')
                           : state.authorable ? t('duplicate') : t('duplicateUnavailable')}
-                        aria-label={`${t('duplicate')}: ${text.name}`}
+                        aria-label={`${t('duplicate')}: ${text.name}${row.broken !== undefined
+                          ? `. ${t('brokenNoCopy')}`
+                          : state.authorable ? '' : `. ${t('duplicateUnavailable')}`}`}
                         onClick={() => { props.beginCopy(row.id) }}
                       >
                         <IconCopyOutline16 />

@@ -9,7 +9,7 @@ English
 
 ## Summary
 
-This package fills the sidebar brand slots — `sidebar.brand.mark` and `sidebar.brand.name` — with the Hyperion mark and name. It registers these occupants only when the client bundle builds with the `official` profile; every other build loads the plugin but registers nothing, so the shell fallbacks stay visible. The conversation hero slot (`conversation.hero.brand.mark`) stays unoccupied in every build: its declaring package renders the Hyperion mark as the fallback. Choose this package when the deployed identity is Hyperion's own; a deployment with its own brand composes a different package into the same slots instead. It retains no runtime state and contributes nothing to model r…
+This package fills the sidebar brand slots — `sidebar.brand.mark` and `sidebar.brand.name` — with the Hyperion mark and name. It registers these occupants only when the client bundle builds with the `official` profile; every other build loads the plugin but registers nothing, so the shell fallbacks stay visible. Home carries no brand slot: the sidebar owns the single product identity. Choose this package when the deployed identity is Hyperion's own; a deployment with its own brand composes a different package into the same slots instead. It retains no runtime state and contributes nothing to model r…
 
 ## Table of Contents
 
@@ -29,11 +29,11 @@ Mount this plugin in the browser roster of a deployment whose identity is Hyperi
 
 ### Choosing the profile
 
-`DSH_CLIENT_BUILD_PROFILE` selects which brand renders. An `official` build shows the Hyperion mark and name in the sidebar; any other value leaves the shell fallbacks — the Hyperion mark and the product label — in place. The conversation hero shows the Hyperion mark from `dsh-client-ui-conversation` regardless of profile, because that fallback is already the product mark. The plugin still loads and validates in both cases; only the registration is profile-gated.
+`DSH_CLIENT_BUILD_PROFILE` selects which brand renders. An `official` build shows the Hyperion mark and name in the sidebar; any other value leaves the shell fallbacks — the Hyperion mark and the product label — in place. The plugin still loads and validates in both cases; only the registration is profile-gated.
 
 ### Replacing the brand
 
-A deployment with its own identity leaves this package out and composes another package that occupies the sidebar slots — and the hero slot, which this package leaves on its fallback. Occupying a slot is the only composition route; there is no brand configuration surface here.
+A deployment with its own identity leaves this package out and composes another package that occupies the sidebar slots. Occupying a slot is the only composition route; there is no brand configuration surface here.
 
 -----
 
@@ -55,7 +55,7 @@ The two occupants install as one declaration-aware registration set: nested `ctx
 Read these pages when the brand surface is not enough. They move from the slots this package occupies to the shell that renders them.
 
 - [ui-sidebar](../ui-sidebar/README.md) — declares `sidebar.brand.mark` and `sidebar.brand.name` and renders their fallbacks.
-- [ui-conversation](../ui-conversation/README.md) — declares `conversation.hero.brand.mark` in the hero.
+- [ui-conversation](../ui-conversation/README.md) — owns the Home hero and composer without a brand slot.
 - [Web client architecture](../../../.agents/notes/implemented/architecture/2026-07-19-gui-web-client-architecture.md) — how browser plugin rows load and register slots.
 
 -----

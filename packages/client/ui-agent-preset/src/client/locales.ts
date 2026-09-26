@@ -2,7 +2,7 @@
 
 /** Locale keys these surfaces render. */
 export type AgentPresetSettingsKey =
-  | 'error' | 'userTrust' | 'seatHint' | 'headerHint'
+  | 'error' | 'userTrust' | 'agentPreset' | 'seatHint' | 'headerHint'
   | 'nav' | 'sectionIntro' | 'builtIn' | 'setDefault' | 'view'
   | 'presetStandardName' | 'presetStandardDescription'
   | 'presetPtcName' | 'presetPtcDescription'
@@ -22,35 +22,36 @@ export type AgentPresetSettingsKey =
 export const en: Record<AgentPresetSettingsKey, string> = {
   error: 'Could not load agent presets.',
   userTrust: 'Custom',
+  agentPreset: 'Agent preset',
   seatHint: 'Agent preset for the session you are about to start',
-  headerHint: 'The agent preset this session runs, fixed when it started',
+  headerHint: 'Agent preset for this session; it cannot change after the session starts',
   nav: 'Agent presets',
   sectionIntro:
-    'A preset is the plugin composition one session\'s agent runs — its tools, prompt, and capabilities. '
-    + 'Duplicate an existing one and make it yours, or let the agent draft one for you in Creator mode.',
+    'Agent presets control how Hyperion works on a task — including its tools, capabilities, and workflow behavior. '
+    + 'Choose a preset for new sessions; a running session keeps the preset it started with.',
   builtIn: 'Built-in',
-  setDefault: 'Set as default',
-  view: 'View',
+  setDefault: 'Make active',
+  view: 'View configuration',
   presetStandardName: 'Standard mode',
   presetStandardDescription:
-    'Full coding agent with file editing, shell, file and web search, skills, planning, goals, subagents, and workflows.',
+    'Full-featured agent with file editing, shell, file and web search, skills, planning, goals, subagents, and workflows.',
   presetPtcName: 'PTC mode',
   presetPtcDescription:
-    'Full coding agent without the workflow tool; other tools are exposed through the PTC mode SDK so the model can combine multi-step operations in one TypeScript program.',
+    'Full-featured agent for multi-step tool operations without the workflow layer.',
   presetMinimalName: 'Minimal mode',
   presetMinimalDescription:
-    'Two-tool coding agent with persistent bash and str_replace_editor.',
+    'Lightweight agent for focused tasks with a small two-tool set.',
   presetCordisName: 'Creator mode',
   presetCordisDescription:
-    'Built for creating custom agent presets, with all Standard mode capabilities plus runtime inspection, plugin experiments, and preset-authoring guidance.',
-  duplicate: 'Duplicate',
+    'Advanced preset for creating and testing custom agent configurations, with runtime inspection and authoring guidance.',
+  duplicate: 'Duplicate preset',
   duplicateUnavailable: 'This deployment has no writable preset directory',
   delete: 'Delete',
   presetId: 'Identifier',
   presetIdPlaceholder: 'my-agent',
   displayName: 'Name',
   displayNamePlaceholder: 'Shown in the picker; defaults to the identifier',
-  inUse: 'In use',
+  inUse: 'Active',
   builtInGroup: 'Built-in',
   customGroup: 'Custom',
   noDescription: 'No description.',
@@ -86,27 +87,28 @@ export const en: Record<AgentPresetSettingsKey, string> = {
 export const hi: Record<AgentPresetSettingsKey, string> = {
   error: 'एजेंट प्रीसेट लोड नहीं हो सके।',
   userTrust: 'कस्टम',
+  agentPreset: 'एजेंट प्रीसेट',
   seatHint: 'जो सत्र आप आरंभ करने वाले हैं उसके लिए एजेंट प्रीसेट',
-  headerHint: 'वह एजेंट प्रीसेट जिस पर यह सत्र चलता है, आरंभ पर स्थिर',
+  headerHint: 'इस सत्र का एजेंट प्रीसेट; सत्र शुरू होने के बाद यह नहीं बदलता',
   nav: 'एजेंट प्रीसेट',
   sectionIntro:
-    'प्रीसेट वह प्लगिन संयोजन है जिस पर एक सत्र का एजेंट चलता है — उसके उपकरण, प्रॉम्प्ट और क्षमताएँ। '
-    + 'मौजूदा प्रीसेट की प्रतिलिपि बनाकर उसे अपना बनाएँ, या क्रिएटर मोड में एजेंट से मसौदा बनवाएँ।',
+    'एजेंट प्रीसेट तय करते हैं कि Hyperion किसी कार्य को कैसे करता है — उपकरण, क्षमताएँ और वर्कफ़्लो व्यवहार सहित। '
+    + 'नए सत्रों के लिए प्रीसेट चुनें; चलता सत्र उसी प्रीसेट के साथ जारी रहता है जिससे शुरू हुआ था।',
   builtIn: 'अंतर्निर्मित',
-  setDefault: 'डिफ़ॉल्ट बनाएँ',
-  view: 'देखें',
+  setDefault: 'सक्रिय बनाएँ',
+  view: 'कॉन्फ़िगरेशन देखें',
   presetStandardName: 'मानक मोड',
   presetStandardDescription:
-    'फ़ाइल संपादन, शेल, फ़ाइल व वेब खोज, कौशल, योजना, लक्ष्य, उप-एजेंट और वर्कफ़्लो सहित पूर्ण कोडिंग एजेंट।',
+    'फ़ाइल संपादन, शेल, फ़ाइल और वेब खोज, कौशल, योजना, लक्ष्य, उप-एजेंट और वर्कफ़्लो सहित पूर्ण सुविधाओं वाला एजेंट।',
   presetPtcName: 'पीटीसी मोड',
   presetPtcDescription:
-    'वर्कफ़्लो उपकरण रहित पूर्ण कोडिंग एजेंट; अन्य उपकरण पीटीसी मोड एसडीके से उजागर होते हैं ताकि मॉडल एक टाइपस्क्रिप्ट प्रोग्राम में बहु-चरण संचालन जोड़ सके।',
+    'बहु-चरण टूल संचालन के लिए पूर्ण सुविधाओं वाला एजेंट, लेकिन वर्कफ़्लो परत के बिना।',
   presetMinimalName: 'न्यूनतम मोड',
   presetMinimalDescription:
-    'स्थायी बैश और str_replace_editor सहित दो-उपकरण कोडिंग एजेंट।',
+    'केंद्रित कार्यों के लिए छोटे टूल-सेट वाला हल्का एजेंट।',
   presetCordisName: 'क्रिएटर मोड',
   presetCordisDescription:
-    'कस्टम एजेंट प्रीसेट बनाने हेतु निर्मित, मानक मोड की सभी क्षमताओं सहित रनटाइम निरीक्षण, प्लगिन प्रयोग और प्रीसेट-लेखन मार्गदर्शन।',
+    'कस्टम एजेंट कॉन्फ़िगरेशन बनाने और जाँचने के लिए उन्नत प्रीसेट, जिसमें रनटाइम निरीक्षण और लेखन-मार्गदर्शन शामिल है।',
   duplicate: 'प्रतिलिपि बनाएँ',
   duplicateUnavailable: 'इस परिनियोजन में कोई लेखन योग्य प्रीसेट निर्देशिका नहीं',
   delete: 'हटाएँ',
@@ -114,7 +116,7 @@ export const hi: Record<AgentPresetSettingsKey, string> = {
   presetIdPlaceholder: 'my-agent',
   displayName: 'नाम',
   displayNamePlaceholder: 'चयनकर्ता में दिखता है; डिफ़ॉल्ट पहचानकर्ता होता है',
-  inUse: 'प्रयोग में',
+  inUse: 'सक्रिय',
   builtInGroup: 'अंतर्निर्मित',
   customGroup: 'कस्टम',
   noDescription: 'कोई विवरण नहीं।',
@@ -150,27 +152,28 @@ export const hi: Record<AgentPresetSettingsKey, string> = {
 export const te: Record<AgentPresetSettingsKey, string> = {
   error: 'ఏజెంట్ ప్రీసెట్‌లను లోడ్ చేయలేకపోయింది.',
   userTrust: 'కస్టమ్',
+  agentPreset: 'ఏజెంట్ ప్రీసెట్',
   seatHint: 'మీరు ప్రారంభించబోయే సెషన్ కోసం ఏజెంట్ ప్రీసెట్',
-  headerHint: 'ఈ సెషన్ నడుస్తున్న ఏజెంట్ ప్రీసెట్, ప్రారంభంలో స్థిరపరచబడింది',
+  headerHint: 'ఈ సెషన్ ఏజెంట్ ప్రీసెట్; సెషన్ ప్రారంభం తర్వాత మారదు',
   nav: 'ఏజెంట్ ప్రీసెట్లు',
   sectionIntro:
-    'ప్రీసెట్ అంటే ఒక సెషన్ ఏజెంట్ నడిచే ప్లగిన్ కూర్పు — దాని సాధనాలు, ప్రాంప్ట్ మరియు సామర్థ్యాలు. '
-    + 'ఉన్నదాన్ని నకలు చేసి మీదిగా చేసుకోండి, లేదా క్రియేటర్ మోడ్‌లో ఏజెంట్‌తో ముసాయిదా వేయించండి.',
+    'ఏజెంట్ ప్రీసెట్లు పనిపై Hyperion ఎలా పనిచేస్తుందో నిర్ణయిస్తాయి — దాని సాధనాలు, సామర్థ్యాలు, వర్క్‌ఫ్లో ప్రవర్తనతో సహా. '
+    + 'కొత్త సెషన్ల కోసం ఒక ప్రీసెట్ ఎంచుకోండి; పనిచేస్తున్న సెషన్ దాని ప్రారంభంలో ఉన్న ప్రీసెట్‌నే కొనసాగిస్తుంది.',
   builtIn: 'అంతర్నిర్మిత',
-  setDefault: 'డిఫాల్ట్‌గా అమర్చండి',
-  view: 'చూడండి',
+  setDefault: 'యాక్టివ్‌గా అమర్చండి',
+  view: 'కాన్ఫిగరేషన్ చూడండి',
   presetStandardName: 'ప్రామాణిక మోడ్',
   presetStandardDescription:
-    'ఫైల్ సవరణ, షెల్, ఫైల్ మరియు వెబ్ శోధన, నైపుణ్యాలు, ప్రణాళిక, లక్ష్యాలు, ఉప-ఏజెంట్లు మరియు వర్క్‌ఫ్లోలతో పూర్తి కోడింగ్ ఏజెంట్.',
+    'ఫైల్ సవరణ, షెల్, ఫైల్ మరియు వెబ్ శోధన, నైపుణ్యాలు, ప్రణాళిక, లక్ష్యాలు, ఉప-ఏజెంట్లు మరియు వర్క్‌ఫ్లోలతో పూర్తి సామర్థ్యాల ఏజెంట్.',
   presetPtcName: 'పీటీసీ మోడ్',
   presetPtcDescription:
-    'వర్క్‌ఫ్లో సాధనం లేని పూర్తి కోడింగ్ ఏజెంట్; మోడల్ ఒక టైప్‌స్క్రిప్ట్ ప్రోగ్రామ్‌లో బహుళ-దశల కార్యకలాపాలను కలపడానికి ఇతర సాధనాలు పీటీసీ మోడ్ SDK ద్వారా బహిర్గతమవుతాయి.',
+    'వర్క్‌ఫ్లో పొర లేకుండా బహుళ-దశల టూల్ కార్యకలాపాలకు పూర్తి సామర్థ్యాల ఏజెంట్.',
   presetMinimalName: 'కనిష్ఠ మోడ్',
   presetMinimalDescription:
-    'నిరంతర బాష్ మరియు str_replace_editor తో రెండు-సాధనాల కోడింగ్ ఏజెంట్.',
+    'ప్రతిపని పనుల కోసం చిన్న టూల్‌సెట్‌తో లైట్‌వెయిట్ ఏజెంట్.',
   presetCordisName: 'క్రియేటర్ మోడ్',
   presetCordisDescription:
-    'కస్టమ్ ఏజెంట్ ప్రీసెట్‌లను సృష్టించడానికి నిర్మించబడింది, ప్రామాణిక మోడ్ సామర్థ్యాలన్నీతో పాటు రన్‌టైమ్ పరిశీలన, ప్లగిన్ ప్రయోగాలు మరియు ప్రీసెట్-రచన మార్గదర్శకం.',
+    'కస్టమ్ ఏజెంట్ కాన్ఫిగరేషన్లను సృష్టించి పరీక్షించడానికి అడ్వాన్స్ ప్రీసెట్, రన్‌టైమ్ పరిశీలన మరియు రచన మార్గదర్శకంతో.',
   duplicate: 'నకలు సృష్టించండి',
   duplicateUnavailable: 'ఈ విస్తరణలో వ్రాయదగిన ప్రీసెట్ డైరెక్టరీ లేదు',
   delete: 'తొలగించండి',
@@ -178,7 +181,7 @@ export const te: Record<AgentPresetSettingsKey, string> = {
   presetIdPlaceholder: 'my-agent',
   displayName: 'పేరు',
   displayNamePlaceholder: 'ఎంపికలో చూపబడుతుంది; డిఫాల్ట్ గుర్తింపు అవుతుంది',
-  inUse: 'వాడుకలో ఉంది',
+  inUse: 'యాక్టివ్',
   builtInGroup: 'అంతర్నిర్మిత',
   customGroup: 'కస్టమ్',
   noDescription: 'వివరణ లేదు.',

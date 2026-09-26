@@ -1,0 +1,160 @@
+.contextSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dsw-alias-label-caption, #64748b);
+  margin: 0;
+  padding: 0 2px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 580px) {
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Metric Card */
+.metricCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--dsw-alias-bg-layer-1, #ffffff);
+  border: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.08));
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  text-align: left;
+  cursor: pointer;
+  transition: all 140ms ease;
+  width: 100%;
+}
+
+.metricCard:hover {
+  background: var(--dsw-alias-interactive-bg-hover, #fafafa);
+  border-color: var(--dsw-alias-border-l3, rgba(0, 0, 0, 0.12));
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+}
+
+.cardLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.iconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.iconBox[data-tone='blue'] {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.iconBox[data-tone='green'] {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.iconBox[data-tone='purple'] {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.iconBox[data-tone='amber'] {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+:global(body[data-ds-dark-theme]) .iconBox[data-tone='blue'] {
+  background: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
+}
+
+:global(body[data-ds-dark-theme]) .iconBox[data-tone='green'] {
+  background: rgba(22, 163, 74, 0.15);
+  color: #4ade80;
+}
+
+:global(body[data-ds-dark-theme]) .iconBox[data-tone='purple'] {
+  background: rgba(124, 58, 237, 0.15);
+  color: #c084fc;
+}
+
+:global(body[data-ds-dark-theme]) .iconBox[data-tone='amber'] {
+  background: rgba(217, 119, 6, 0.15);
+  color: #fbbf24;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.value {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  color: var(--dsw-alias-label-primary, #0f172a);
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 16px;
+  color: var(--dsw-alias-label-primary, #0f172a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.description {
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--dsw-alias-label-secondary, #64748b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  color: var(--dsw-alias-label-tertiary, #94a3b8);
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: transform 120ms ease;
+}
+
+.metricCard:hover .chevron {
+  transform: translateX(2px);
+  color: var(--dsw-alias-label-secondary, #64748b);
+}

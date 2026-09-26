@@ -1,145 +1,196 @@
-/* NEW SESSION hero (figma Input_Bottom 75:8208): fish + title, workspace chip
-   above the shared InputBar card. The input itself is InputBar — only stack
-   geometry and the chip live here. */
-
 .root {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  min-height: 0;
   min-width: 0;
-  padding: 0 24px;
+  padding: 16px 24px;
+  box-sizing: border-box;
+  color: var(--dsw-alias-label-primary);
 }
 
-/* Cap matches the InputBar card. Glow may paint past the sides. */
 .stack {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  /* figma 75:8208: 12 between title block / workspace / card. */
-  gap: 12px;
-  width: 100%;
-  max-width: var(--dsh-composer-card-max-width);
-  overflow: visible;
+  width: min(calc(var(--dsh-composer-card-max-width) + 2 * var(--dsh-composer-side-clearance)), 100%);
+  min-width: 0;
 }
 
-/* figma 34:10411: fish + title, gap 10, centered; 26/32 wt500. The preview
-   badge is a product addition outside that source: a mono superscript pill
-   riding the title's top-right. */
-.headline {
-  display: grid;
-  grid-template-columns: 34px auto auto;
-  column-gap: 10px;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  line-height: 32px;
-  font-weight: 500;
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 8px 0 18px;
+  padding: 0 var(--dsh-composer-side-clearance);
+  text-align: left;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--dsw-alias-label-caption);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 16px;
+  text-transform: uppercase;
+}
+
+.heroCopy h1 {
+  margin: 0;
   color: var(--dsw-alias-label-primary);
+  font-size: clamp(34px, 4vw, 56px);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-wrap: balance;
 }
 
-.headlineText {
-  grid-row: 1;
-  grid-column: 2;
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.previewBadge {
-  grid-row: 1;
-  grid-column: 3;
-  align-self: start;
-  margin-top: 2px;
-  margin-left: -3px;
-  padding: 1px 7px 0;
-  border: 0.5px solid var(--dsw-alias-interactive-bg-hover);
-  border-radius: 24px;
-  background: var(--dsw-alias-state-business-tertiary);
-  color: var(--dsw-alias-label-primary-bluish);
-  font-family: var(--ds-font-family-code);
+.heroPhrase {
+  display: inline-block;
+  min-width: 11ch;
+  min-height: 1.15em;
+  vertical-align: bottom;
+  animation: phrase-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  text-align: left;
+  color: var(--dsw-alias-state-business-primary);
+}
+
+.utilityRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  padding: 0 var(--dsh-composer-side-clearance);
+  box-sizing: border-box;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
   font-size: 12px;
   line-height: 18px;
-  font-weight: 500;
   white-space: nowrap;
 }
-.tagline {
-  margin: 8px 0 0;
-  text-align: center;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 14px;
-  line-height: 20px;
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dsw-alias-state-success-primary);
 }
 
-/* Keep hover detection on a stationary box while the mark moves within it;
-   hover rules target the hitbox so a slot-occupant mark swims too. */
-.fishHitbox {
-  grid-row: 1;
-  grid-column: 1;
+.statusDotUnavailable {
+  background: var(--dsw-alias-label-caption);
+}
+
+.headerAffordances {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.headerAffordance,
+.profileAffordance {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
 }
 
-/* The swim morph's curves poke slightly past the viewBox edges, so clipping
-   would slice the tail mid-wag. The hero mark stays in the same primary ink
-   as its headline. */
-.fish {
-  display: block;
-  overflow: visible;
-  transform-origin: 50% 60%;
-  color: var(--dsw-alias-label-primary);
+.headerAffordance {
+  width: 32px;
 }
 
-/* Hover swim: a slow continuous sway about the body center — the head
-   (left) lifts as the whale rises, then settles back with a small
-   counter-tilt, like treading water. Negative rotation = head up (the head
-   is the left half; origin 50% 60%). */
-@keyframes hero-fish-swim {
-  0%,
-  100% {
-    transform: none;
-  }
-
-  35% {
-    transform: rotate(-4deg) translate(-0.4px, -0.9px);
-  }
-
-  70% {
-    transform: rotate(1.6deg) translate(0.3px, 0.2px);
-  }
-}
-
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .fishHitbox:hover .fish {
-    animation: hero-fish-swim 1.6s ease-in-out infinite;
-  }
-}
-
-/* Workspace row sits 12px above the input card (figma y80 → y112). */
-.body {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-  overflow: visible;
-}
-
-.body > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* Must beat `.body > :not(.glow)` specificity so the open Menu (and its
-   right-hand submenu) paints above the InputBar card. */
-.body > .workspaceRow {
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  /* figma 75:8208 workspace row: px 8 above the card. */
+.profileAffordance {
+  gap: 2px;
+  height: 36px;
   padding-left: 8px;
 }
 
-/* Folder + label + chevron — transparent at rest; fill only on hover / open. */
+.headerAffordance:hover,
+.profileAffordance:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-primary);
+}
+
+.headerAffordance:focus-visible,
+.profileAffordance:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 2px;
+}
+
+.profileAvatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  corner-shape: round;
+  background: var(--dsw-alias-state-business-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.profileChevron {
+  color: var(--dsw-alias-label-caption);
+}
+
+@keyframes phrase-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tagline {
+  max-width: 620px;
+  margin: 0;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.body {
+  min-width: 0;
+}
+
 .workspace {
   display: inline-flex;
   align-items: center;
@@ -147,30 +198,23 @@
   max-width: min(100%, 360px);
   min-height: 28px;
   padding: 0 8px;
-  border: none;
-  border-radius: 16px;
+  border: 0;
+  border-radius: 14px;
   background: transparent;
   color: var(--dsw-alias-label-primary);
+  font: inherit;
   font-size: 13px;
-  line-height: 20px;
   font-weight: 500;
   cursor: pointer;
 }
 
-.workspace:not(:disabled):hover,
+.workspace:hover,
 .workspace[aria-expanded='true'] {
   background: var(--dsw-alias-interactive-bg-hover);
 }
 
-/* Locked form (bound guidance state): a static echo — no hover feedback, no
-   pointer affordance; label keeps full contrast. */
-.workspace:disabled {
-  cursor: default;
-}
-
 .folder {
   flex: none;
-  color: var(--dsw-alias-label-primary);
 }
 
 .workspaceLabel {
@@ -184,39 +228,283 @@
   color: var(--dsw-alias-label-caption);
 }
 
-/* Dialog field: 44 tall on the modal's 332 content column, r22, hairline
-   border, pad 14/7, 14/22 wt400 primary text, caption placeholder. Focus
-   keeps the resting border (design shows no focus ring). */
-.modalInput {
-  box-sizing: border-box;
+.homeSections {
+  display: grid;
+  gap: 24px;
   width: 100%;
-  height: 44px;
-  padding: 7px 14px;
-  border: 0.5px solid var(--dsw-alias-border-l4);
-  border-radius: 22px;
-  outline: none;
-  background: transparent;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 22px;
-  color: var(--dsw-alias-label-primary);
+  margin: 24px 0 0;
+  padding: 0 var(--dsh-composer-side-clearance);
+  box-sizing: border-box;
 }
 
-.modalInput::placeholder {
+.suggestionSection,
+.recentSection {
+  min-width: 0;
+}
+
+.sectionHeadingRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sectionHeading {
+  margin: 0 0 10px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 18px;
+  text-transform: uppercase;
+}
+
+.sectionHeadingRow .sectionHeading {
+  margin-bottom: 10px;
+}
+
+.sectionHint,
+.emptyRecent {
+  color: var(--dsw-alias-label-caption);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.suggestions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.suggestion,
+.recentItem {
+  border: 1px solid var(--dsw-alias-border-l2);
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms var(--ds-ease-in-out), background-color 160ms var(--ds-ease-in-out), transform 160ms var(--ds-ease-in-out);
+}
+
+.suggestion {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 12px;
+  grid-template-rows: auto 1fr;
+  column-gap: 8px;
+  row-gap: 4px;
+  align-items: start;
+  height: 100%;
+  min-height: 148px;
+  padding: 14px 12px 12px;
+  border-radius: 12px;
+  box-shadow: var(--dsw-elevation-soft);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.suggestionIcon {
+  grid-row: 1 / span 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.suggestionIcon[data-tone='equipment'] {
+  background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 12%, transparent);
+  color: var(--dsw-alias-state-business-primary);
+}
+
+.suggestionIcon[data-tone='pid'] {
+  background: color-mix(in srgb, var(--dsw-alias-state-success-primary) 12%, transparent);
+  color: var(--dsw-alias-state-success-primary);
+}
+
+.suggestionIcon[data-tone='safety'] {
+  background: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 14%, transparent);
+  color: var(--dsw-alias-state-warn-primary);
+}
+
+.suggestionIcon[data-tone='documents'] {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.suggestionText {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.suggestionTitle {
+  font-weight: 550;
+}
+
+.suggestionDescription {
+  color: var(--dsw-alias-label-caption);
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.suggestion:hover:not(:disabled),
+.recentItem:hover {
+  border-color: var(--dsw-alias-border-l4);
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.suggestion:active,
+.recentItem:active {
+  transform: translateY(1px);
+}
+
+.suggestion:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.suggestionArrow {
+  grid-column: 3;
+  grid-row: 1;
+  color: var(--dsw-alias-label-caption);
+  font-size: 15px;
+  transition: transform 160ms var(--ds-ease-in-out), opacity 160ms var(--ds-ease-in-out);
+}
+
+.suggestion:hover:not(:disabled) .suggestionArrow {
+  transform: translateX(2px);
+}
+
+.recentList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.recentItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: var(--dsw-elevation-soft);
+}
+
+.recentIcon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.recentText {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.recentOverflow {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
   color: var(--dsw-alias-label-caption);
 }
 
-.modalInput:disabled {
-  color: var(--dsw-alias-label-dimmed);
+.recentTitle,
+.recentMeta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.modalAction {
-  min-width: 72px;
+.recentTitle {
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 18px;
 }
 
-.modalError {
-  margin-top: 8px;
+.recentMeta {
+  color: var(--dsw-alias-label-caption);
   font-size: 12px;
   line-height: 18px;
-  color: var(--dsw-alias-state-error-primary);
+}
+
+.emptyRecent {
+  margin: 0;
+}
+
+.suggestion:focus-visible,
+.recentItem:focus-visible,
+.workspace:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 2px;
+}
+
+@media (min-width: 901px) and (max-width: 1100px) {
+  .heroCopy {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  .homeSections {
+    margin-top: 8px;
+  }
+
+  .suggestion {
+    grid-template-columns: 24px minmax(0, 1fr) 10px;
+    column-gap: 5px;
+    padding: 10px;
+  }
+
+  .suggestionIcon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .suggestionDescription {
+    font-size: 11px;
+    line-height: 15px;
+  }
+}
+
+@media (max-width: 900px) {
+  .root {
+    justify-content: flex-start;
+    padding: 20px 16px 32px;
+  }
+
+  .suggestions,
+  .recentList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 460px) {
+  .suggestions,
+  .recentList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggestion,
+  .recentItem,
+  .heroPhrase,
+  .suggestionArrow {
+    transition: none;
+    animation: none;
+  }
 }

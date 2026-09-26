@@ -46,16 +46,14 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
-  /* Every row the same height, so a short description does not make its card
-     shorter than the one beside it. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   grid-auto-rows: 1fr;
   gap: 12px;
 }
 
 .card {
-  border: 0.5px solid var(--dsw-alias-border-l4);
-  border-radius: 20px;
+  border: 0.5px solid var(--dsw-alias-border-l2);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   background: transparent;
@@ -71,8 +69,9 @@
    platform fill + the bluish-400 border (static token — the bluish-400 step
    has no alias-layer name). */
 .cardActive {
-  background: var(--dsw-alias-bg-module-platform);
-  border-color: var(--dsw-static-neutral-bluish-400);
+  background: var(--dsw-alias-bg-layer-1);
+  border-color: var(--dsw-alias-state-business-primary);
+  box-shadow: inset 0 0 0 1px var(--dsw-alias-state-business-primary);
 }
 
 /* A broken preset reads as damaged before anything else: the card cannot be
@@ -137,7 +136,7 @@
 }
 
 .cardMain:focus-visible {
-  outline: 2px solid var(--dsw-alias-brand-primary);
+  outline: 2px solid var(--dsw-alias-state-business-primary);
   outline-offset: -2px;
 }
 
@@ -168,8 +167,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 14px 16px 12px;
-  border-radius: 12px 12px 0 0;
+  padding: 16px 16px 14px;
+  border-radius: 15px 15px 0 0;
 }
 
 .cardMain:disabled {
@@ -235,7 +234,7 @@
   justify-content: flex-end;
   gap: 2px;
   padding: 6px 10px;
-  border-top: 0.5px solid var(--dsw-alias-border-l2);
+  border-top: 0.5px solid var(--dsw-alias-border-l1);
 }
 
 /* Icon-only actions: the label rides `title` so the row stays quiet until
@@ -244,10 +243,10 @@
   position: relative;
   appearance: none;
   border: 0;
-  border-radius: 7px;
-  padding: 6px;
+  border-radius: 8px;
+  padding: 7px;
   background: none;
-  color: var(--dsw-alias-label-tertiary);
+  color: var(--dsw-alias-label-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -264,7 +263,7 @@
 }
 
 .iconButton:focus-visible {
-  outline: 2px solid var(--dsw-alias-brand-primary);
+  outline: 2px solid var(--dsw-alias-state-business-primary);
   outline-offset: -1px;
 }
 
@@ -364,8 +363,9 @@
 }
 
 .input:focus {
-  outline: none;
-  border-color: var(--dsw-alias-brand-primary);
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: -1px;
+  border-color: var(--dsw-alias-state-business-primary);
 }
 
 .input::placeholder {
@@ -443,6 +443,12 @@
 
 .creatorButton:hover:not(:disabled) {
   background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.secondaryButton:focus-visible,
+.creatorButton:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 2px;
 }
 
 .creatorButton:disabled {
