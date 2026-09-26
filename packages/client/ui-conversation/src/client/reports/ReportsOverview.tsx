@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { TagTone } from '@deepseek-ai/dsh-client-ui-primitives'
 import {
   Button,
   IconSearchOutline16,
@@ -24,106 +25,52 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
   const [previewTab, setPreviewTab] = useState('Preview')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const renderIcon = (type: string) => {
-    switch (type) {
-      case 'Sparkle':
-        return (
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
-          </svg>
-        )
-      case 'Clock':
-        return (
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-        )
-      case 'Users':
-        return (
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-        )
-      case 'Analytics':
-        return (
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 20V10M12 20V4M6 20v-6" />
-          </svg>
-        )
-      case 'Document':
-      default:
-        return (
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-          </svg>
-        )
-    }
-  }
-
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): TagTone => {
     switch (status) {
       case 'Completed':
-        return 'green'
+        return 'success'
       case 'In Review':
-        return 'orange'
+        return 'warning'
       case 'Draft':
         return 'neutral'
       case 'Rejected':
-        return 'red'
+        return 'danger'
       default:
         return 'neutral'
     }
   }
+
+  const getTypeBadgeColor = (type: string): TagTone => {
+    switch (type) {
+      case 'Analysis':
+        return 'info'
+      case 'RCA':
+        return 'solid'
+      case 'Recommendation':
+        return 'success'
+      case 'Inspection':
+        return 'warning'
+      case 'Health':
+        return 'success'
+      case 'P&ID':
+        return 'info'
+      case 'Compliance':
+        return 'neutral'
+      case 'Simulation':
+        return 'solid'
+      case 'Safety':
+        return 'danger'
+      default:
+        return 'neutral'
+    }
+  }
+
+  const docIcon = (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+    </svg>
+  )
 
   return (
     <div
@@ -132,18 +79,13 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
       role="region"
       aria-label="Reports Overview"
     >
-      {/* BACKGROUND ILLUSTRATION */}
-      <div className={css.backgroundIllustration} aria-hidden="true" />
-
       {/* HEADER */}
       <header className={css.header}>
         <div className={css.headerLeft}>
           <div className={css.breadcrumb}>Reports / All Reports</div>
           <h1 className={css.title}>Reports</h1>
           <div className={css.subtitle}>
-            Engineering reports, analysis summaries and AI-generated
-            deliverables
-            <br />• MRPL Refinery
+            Engineering reports, analysis summaries and AI-generated deliverables • MRPL Refinery
           </div>
         </div>
         <div className={css.headerRight}>
@@ -177,20 +119,13 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
           { icon: 'Analytics', label: 'This Month', value: '14' },
         ].map((card, idx) => (
           <div key={idx} className={css.summaryCard}>
-            <div className={css.cardIconBox}>{renderIcon(card.icon)}</div>
+            <div className={css.cardIconBox}>{renderCardIcon(card.icon)}</div>
             <div className={css.cardContent}>
               <div className={css.cardLabel}>{card.label}</div>
               <div className={css.cardValue}>{card.value}</div>
             </div>
             <div className={css.cardChevron}>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </div>
@@ -205,36 +140,22 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
           <div className={css.panelHeader}>
             <h2>Report Library</h2>
             <div className={css.toggleGroup}>
-              <button className={css.toggleBtnActive} aria-label="List view">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <line x1="8" y1="6" x2="21" y2="6"></line>
-                  <line x1="8" y1="12" x2="21" y2="12"></line>
-                  <line x1="8" y1="18" x2="21" y2="18"></line>
-                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              <button className={css.toggleBtnActive} aria-label="Grid view">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
                 </svg>
               </button>
-              <button className={css.toggleBtn} aria-label="Grid view">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
+              <button className={css.toggleBtn} aria-label="List view">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="8" y1="6" x2="21" y2="6" />
+                  <line x1="8" y1="12" x2="21" y2="12" />
+                  <line x1="8" y1="18" x2="21" y2="18" />
+                  <line x1="3" y1="6" x2="3.01" y2="6" />
+                  <line x1="3" y1="12" x2="3.01" y2="12" />
+                  <line x1="3" y1="18" x2="3.01" y2="18" />
                 </svg>
               </button>
             </div>
@@ -248,7 +169,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
             ].map(tab => (
               <button
                 key={tab}
-                className={clsx(
+                className={join(
                   css.libTab,
                   activeTab === tab.split(' ')[0] && css.libTabActive,
                 )}
@@ -269,68 +190,67 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
             {['Report Type', 'Unit', 'Equipment', 'Date Range'].map(f => (
               <span key={f} className={css.libFilterPill}>
                 {f}{' '}
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <polyline points="6 9 12 15 18 9"></polyline>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9" />
                 </svg>
               </span>
             ))}
           </div>
 
+          {/* Table header */}
+          <div className={css.tableHeader}>
+            <span>Title</span>
+            <span>Type</span>
+            <span>Unit / Equip</span>
+            <span>Date</span>
+            <span>Status</span>
+          </div>
+
+          {/* Report rows */}
           <div className={css.reportList}>
             {FIXTURE_REPORTS.map(report => (
               <div
                 key={report.id}
-                className={clsx(
+                className={join(
                   css.reportRow,
                   selectedReport?.id === report.id && css.reportRowSelected,
                 )}
                 onClick={() => setSelectedReport(report)}
               >
-                <div className={css.rowIcon}>{renderIcon('Document')}</div>
                 <div className={css.rowMain}>
-                  <div className={css.rowTitle}>{report.title}</div>
-                  <div className={css.rowContext}>
-                    <Tag tone="neutral" className={css.rowBadge}>
-                      {report.type}
-                    </Tag>
-                    <span className={css.rowUnit}>
-                      {report.unit !== '-' ? report.unit : ''}{' '}
-                      {report.equipment !== '-' ? report.equipment : ''}
-                    </span>
+                  <div className={css.rowTitle}>
+                    <span className={css.rowIcon}>{docIcon}</span>
+                    {report.title}
                   </div>
                 </div>
-                <div className={css.rowMeta}>
-                  <div className={css.rowDate}>{report.date}</div>
-                  <Tag
-                    tone={getStatusColor(report.status) as unknown as 'green' | 'blue' | 'red' | 'neutral' | 'orange' | 'purple' | undefined}
-                    className={css.rowStatusBadge}
-                  >
-                    {report.status}
-                  </Tag>
+                <div>
+                  <Tag tone={getTypeBadgeColor(report.type)} className={css.rowBadge}>{report.type}</Tag>
                 </div>
-                <button className={css.rowMenuBtn}>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <circle cx="12" cy="12" r="1"></circle>
-                    <circle cx="19" cy="12" r="1"></circle>
-                    <circle cx="5" cy="12" r="1"></circle>
-                  </svg>
-                </button>
+                <div className={css.rowUnit}>
+                  {report.unit !== '-' ? report.unit : ''}{report.equipment !== '-' ? ` ${report.equipment}` : ''}
+                </div>
+                <div className={css.rowDate}>{report.date}</div>
+                <div>
+                  <Tag tone={getStatusColor(report.status)} className={css.rowStatusBadge}>{report.status}</Tag>
+                </div>
               </div>
             ))}
+          </div>
+
+          {/* Pagination */}
+          <div className={css.paginationRow}>
+            <button className={css.pageBtn}>&lt;</button>
+            <button className={join(css.pageBtn, css.pageBtnActive)}>1</button>
+            <button className={css.pageBtn}>2</button>
+            <button className={css.pageBtn}>3</button>
+            <button className={css.pageBtn}>4</button>
+            <button className={css.pageBtn}>5</button>
+            <span>...</span>
+            <button className={css.pageBtn}>10</button>
+            <button className={css.pageBtn}>&gt;</button>
+            <span style={{ marginLeft: 8 }}>10 per page</span>
+            <span style={{ marginLeft: 8, color: '#718096' }}>Go to</span>
+            <span style={{ marginLeft: 4, color: '#718096' }}>1</span>
           </div>
         </div>
 
@@ -341,42 +261,25 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
               <div className={css.viewerHeader}>
                 <div className={css.viewerHeaderMain}>
                   <h2 className={css.viewerTitle}>
-                    {selectedReport.title} -{' '}
-                    {selectedReport.equipment !== '-'
-                      ? selectedReport.equipment
-                      : selectedReport.unit}
+                    {selectedReport.title} - {selectedReport.equipment !== '-' ? selectedReport.equipment : selectedReport.unit}
                   </h2>
-                  <Tag tone={getStatusColor(selectedReport.status) as unknown as 'green' | 'blue' | 'red' | 'neutral' | 'orange' | 'purple' | undefined}>
-                    {selectedReport.status}
-                  </Tag>
+                  <Tag tone={getStatusColor(selectedReport.status)}>{selectedReport.status}</Tag>
                 </div>
                 <div className={css.viewerMetaRow}>
-                  <span>
-                    {selectedReport.unit !== '-'
-                      ? selectedReport.unit
-                      : 'MRPL Refinery'}
-                  </span>
-                  {selectedReport.equipment !== '-' && (
-                    <span> • {selectedReport.equipment}</span>
-                  )}
-                  <span> • Generated on {selectedReport.date}</span>
-                  <span> • 12 pages</span>
+                  <Tag tone="info" className={css.rowBadge}>{selectedReport.type}</Tag>
+                  <span>{selectedReport.unit !== '-' ? selectedReport.unit : 'MRPL Refinery'}</span>
+                  {selectedReport.equipment !== '-' && <span>• {selectedReport.equipment}</span>}
+                  <span>• Generated on {selectedReport.date}</span>
+                  <span>• 12 pages</span>
                 </div>
                 <div className={css.viewerActions}>
                   <Button variant="ghost">Share</Button>
                   <Button variant="ghost">Download</Button>
                   <Button variant="ghost" className={css.iconOnlyBtn}>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <circle cx="12" cy="12" r="1"></circle>
-                      <circle cx="19" cy="12" r="1"></circle>
-                      <circle cx="5" cy="12" r="1"></circle>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="1" />
+                      <circle cx="19" cy="12" r="1" />
+                      <circle cx="5" cy="12" r="1" />
                     </svg>
                   </Button>
                 </div>
@@ -393,7 +296,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
                 ].map(tab => (
                   <button
                     key={tab}
-                    className={clsx(
+                    className={join(
                       css.viewerTab,
                       previewTab === tab && css.viewerTabActive,
                     )}
@@ -410,19 +313,16 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
                     <div className={css.docHeader}>
                       <div className={css.docBrand}>
                         HYPERION
-                        <br />
                         <span>Industrial Engineering Workbench</span>
                       </div>
                       <div className={css.docConfidential}>
                         CONFIDENTIAL
-                        <br />
                         <span>For Internal Use Only</span>
                       </div>
                     </div>
 
                     <h1 className={css.docTitle}>
                       {selectedReport.title}
-                      <br />
                       <span>
                         {selectedReport.equipment !== '-'
                           ? selectedReport.equipment
@@ -473,14 +373,13 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
                     <div className={css.docSection}>
                       <h2>1. Executive Summary</h2>
                       <p>
-                        This report details the findings of the recent vibration
-                        analysis conducted on{' '}
+                        This report presents the vibration analysis of{' '}
                         {selectedReport.equipment !== '-'
                           ? selectedReport.equipment
-                          : selectedReport.unit}
-                        . The analysis indicates abnormal vibration levels on
-                        the outboard bearing housing. Prompt attention is
-                        recommended to prevent potential failure.
+                          : selectedReport.unit}{' '}
+                        (Crude Feed Pump) based on data collected over the past 7 days.
+                        The analysis indicates an increasing vibration trend,
+                        with the highest levels observed in the radial direction.
                       </p>
 
                       <div className={css.metricCards}>
@@ -494,20 +393,13 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
                         </div>
                         <div className={css.metricCard}>
                           <div className={css.metricValue}>48.5 Hz</div>
-                          <div className={css.metricLabel}>
-                            Dominant Frequency
-                          </div>
+                          <div className={css.metricLabel}>Dominant Frequency</div>
                         </div>
                         <div className={css.metricCard}>
                           <div className={css.metricValueHigh}>High</div>
                           <div className={css.metricLabel}>Severity Level</div>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Placeholder for report image */}
-                    <div className={css.docImagePlaceholder}>
-                      [ Pump Equipment Image ]
                     </div>
                   </div>
                 )}
@@ -589,9 +481,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
             <div className={css.relatedList}>
               {FIXTURE_RELATED_ITEMS.map(item => (
                 <div key={item.id} className={css.relatedItem}>
-                  <div className={css.relatedIcon}>
-                    {renderIcon('Document')}
-                  </div>
+                  <div className={css.relatedIcon}>{docIcon}</div>
                   <div className={css.relatedContent}>
                     <div className={css.relatedTitle}>{item.id}</div>
                     <div className={css.relatedSubtitle}>{item.title}</div>
@@ -599,18 +489,6 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
                   <Tag tone="neutral" className={css.relatedBadge}>
                     {item.type}
                   </Tag>
-                  <div className={css.relatedChevron}>
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                  </div>
                 </div>
               ))}
             </div>
@@ -621,6 +499,47 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
   )
 }
 
-function clsx(...args: unknown[]) {
+function join(...args: unknown[]) {
   return args.filter(Boolean).join(' ')
+}
+
+function renderCardIcon(type: string) {
+  switch (type) {
+    case 'Sparkle':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+        </svg>
+      )
+    case 'Clock':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      )
+    case 'Users':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      )
+    case 'Analytics':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 20V10M12 20V4M6 20v-6" />
+        </svg>
+      )
+    case 'Document':
+    default:
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      )
+  }
 }
