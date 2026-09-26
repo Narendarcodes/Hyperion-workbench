@@ -1,28 +1,15 @@
-/* ================================================================
-   Reports Overview — Light-theme layout matching the reference image.
-   Forces its own light palette so the reports view always renders
-   the same way regardless of the host app's dark/light mode.
-   ================================================================ */
-
 .root {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 24px 32px;
+  padding: 24px;
   box-sizing: border-box;
-  background-color: #f0f4f8;
+  background-color: #f7f9fc;
   color: #1a202c;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  position: relative;
   overflow-y: auto;
 }
-
-.backgroundIllustration {
-  display: none;
-}
-
-/* ── HEADER ─────────────────────────────────────────────────── */
 
 .header {
   display: flex;
@@ -40,8 +27,6 @@
 .breadcrumb {
   font-size: 13px;
   color: #718096;
-  letter-spacing: 0;
-  text-transform: none;
 }
 
 .title {
@@ -54,7 +39,6 @@
 .subtitle {
   font-size: 14px;
   color: #718096;
-  line-height: 1.5;
 }
 
 .headerRight {
@@ -68,15 +52,14 @@
   align-items: center;
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 8px 14px;
-  width: 300px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: 320px;
 }
 
 .searchIcon {
   color: #a0aec0;
   margin-right: 8px;
-  flex-shrink: 0;
 }
 
 .searchInput {
@@ -84,7 +67,7 @@
   border: none;
   color: #1a202c;
   outline: none;
-  font-size: 14px;
+  font-size: 13px;
   width: 100%;
 }
 
@@ -96,9 +79,9 @@
   background-color: #fff;
   color: #4a5568;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px 16px;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -109,14 +92,12 @@
   background-color: #3b82f6;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 8px 20px;
-  font-size: 14px;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
-
-/* ── SUMMARY CARDS ──────────────────────────────────────────── */
 
 .summaryCardsRow {
   display: grid;
@@ -128,24 +109,20 @@
 .summaryCard {
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 16px;
   display: flex;
   align-items: flex-start;
   gap: 12px;
   position: relative;
-  transition: box-shadow 0.15s;
-}
-
-.summaryCard:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .cardIconBox {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background-color: #ebf5ff;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #f0f7ff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,17 +133,16 @@
 .cardContent {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .cardLabel {
-  font-size: 12px;
+  font-size: 13px;
   color: #718096;
-  font-weight: 500;
 }
 
 .cardValue {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: #1a202c;
 }
@@ -175,28 +151,26 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  color: #a0aec0;
+  color: #cbd5e0;
 }
-
-/* ── MAIN 3-COLUMN WORKSPACE ──────────────────────────────── */
 
 .mainWorkspace {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   flex: 1;
   min-height: 0;
 }
 
-/* ── LEFT: REPORT LIBRARY (table) ─────────────────────────── */
-
+/* LEFT PANEL */
 .libraryPanel {
-  flex: 0 0 420px;
+  flex: 0 0 380px;
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .panelHeader {
@@ -210,14 +184,13 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #1a202c;
 }
 
 .toggleGroup {
   display: flex;
   background-color: #f7fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 2px;
 }
 
@@ -225,29 +198,25 @@
 .toggleBtnActive {
   background: transparent;
   border: none;
-  padding: 4px 8px;
+  padding: 4px 6px;
   border-radius: 4px;
   color: #a0aec0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .toggleBtnActive {
   background-color: #fff;
   color: #3b82f6;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Tabs below header */
 .libraryTabs {
   display: flex;
-  overflow-x: auto;
-  padding: 0 20px;
   border-bottom: 1px solid #e2e8f0;
-  gap: 0;
-}
-
-.libraryTabs::-webkit-scrollbar {
-  display: none;
+  padding: 0 20px;
+  gap: 16px;
 }
 
 .libTab {
@@ -255,49 +224,36 @@
   border: none;
   border-bottom: 2px solid transparent;
   color: #718096;
-  padding: 10px 14px;
+  padding: 12px 0;
   font-size: 13px;
   cursor: pointer;
-  white-space: nowrap;
-  font-weight: 500;
 }
 
 .libTabActive {
   color: #3b82f6;
   border-bottom-color: #3b82f6;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-/* Search row */
 .librarySearchRow {
-  padding: 12px 20px 8px;
+  padding: 16px 20px 8px;
 }
 
 .libSearchInput {
   width: 100%;
   background-color: #f7fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px 12px;
   color: #1a202c;
   font-size: 13px;
   box-sizing: border-box;
 }
 
-.libSearchInput::placeholder {
-  color: #a0aec0;
-}
-
-/* Filter pills */
 .libraryFilterRow {
-  padding: 4px 20px 12px;
+  padding: 8px 20px 16px;
   display: flex;
   gap: 8px;
-  overflow-x: auto;
-}
-
-.libraryFilterRow::-webkit-scrollbar {
-  display: none;
 }
 
 .libFilterPill {
@@ -306,32 +262,21 @@
   gap: 4px;
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 4px 10px;
+  border-radius: 4px;
+  padding: 4px 8px;
   font-size: 12px;
   color: #4a5568;
-  white-space: nowrap;
-  cursor: pointer;
-  font-weight: 500;
 }
 
-.libFilterPill:hover {
-  background-color: #f7fafc;
-}
-
-/* ── Table header row ── */
 .tableHeader {
   display: grid;
-  grid-template-columns: 1fr 100px 100px 100px 90px;
+  grid-template-columns: 2fr 3fr 2fr 2fr 1fr;
   padding: 8px 20px;
   border-bottom: 1px solid #e2e8f0;
   font-size: 12px;
   color: #a0aec0;
-  font-weight: 500;
-  gap: 8px;
 }
 
-/* ── Report rows ── */
 .reportList {
   flex: 1;
   overflow-y: auto;
@@ -339,80 +284,34 @@
 
 .reportRow {
   display: grid;
-  grid-template-columns: 1fr 100px 100px 100px 90px;
+  grid-template-columns: 2fr 3fr 2fr 2fr 1fr;
   align-items: center;
   padding: 12px 20px;
-  border-bottom: 1px solid #f0f4f8;
-  cursor: pointer;
-  transition: background-color 0.15s;
-  gap: 8px;
+  border-bottom: 1px solid #f7fafc;
   font-size: 13px;
-}
-
-.reportRow:hover {
-  background-color: #f7fafc;
+  color: #4a5568;
 }
 
 .reportRowSelected {
-  background-color: #ebf5ff;
+  background-color: #f0f7ff;
   border-left: 3px solid #3b82f6;
   padding-left: 17px;
 }
 
-.rowIcon {
-  color: #3b82f6;
-  margin-right: 8px;
-  display: inline-flex;
-  vertical-align: middle;
-}
-
-.rowMain {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
 .rowTitle {
-  font-size: 13px;
-  font-weight: 600;
   color: #1a202c;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 0;
-}
-
-.rowContext {
-  display: none;
-}
-
-.rowUnit {
-  font-size: 12px;
-  color: #718096;
-}
-
-.rowMeta {
-  display: contents;
+  font-weight: 500;
 }
 
 .rowDate {
-  font-size: 12px;
-  color: #718096;
+  font-weight: 500;
 }
 
-.rowStatusBadge {
-  font-size: 11px;
+.rowStatus {
+  color: #1a202c;
+  font-weight: 600;
 }
 
-.rowBadge {
-  font-size: 11px;
-}
-
-.rowMenuBtn {
-  display: none;
-}
-
-/* Pagination row */
 .paginationRow {
   display: flex;
   align-items: center;
@@ -428,14 +327,9 @@
   background: transparent;
   border: 1px solid #e2e8f0;
   border-radius: 4px;
-  padding: 4px 10px;
+  padding: 4px 8px;
   font-size: 12px;
   color: #4a5568;
-  cursor: pointer;
-}
-
-.pageBtn:hover {
-  background-color: #f7fafc;
 }
 
 .pageBtnActive {
@@ -444,60 +338,98 @@
   border-color: #3b82f6;
 }
 
-/* ── CENTER: REPORT VIEWER ─────────────────────────────────── */
+.paginationEllipsis {
+  padding: 0 4px;
+}
 
+.paginationMeta,
+.paginationGoto {
+  margin-left: 8px;
+}
+
+.paginationGotoValue {
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+/* CENTER PANEL */
 .viewerPanel {
   flex: 1;
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .viewerHeader {
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 20px 24px;
 }
 
 .viewerHeaderMain {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .viewerTitle {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: #1a202c;
 }
 
-.viewerMetaRow {
+.statusText {
   font-size: 12px;
-  color: #718096;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.viewerMetaRow {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
+  font-size: 13px;
+  color: #718096;
+  margin-bottom: 16px;
+}
+
+.metaSep::before {
+  content: '•';
+  margin: 0 8px;
+  color: #cbd5e0;
+}
+
+.metaDateHighlight {
+  background-color: #3b82f6;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+  font-weight: 500;
 }
 
 .viewerActions {
   display: flex;
-  gap: 8px;
+  gap: 16px;
 }
 
-.iconOnlyBtn {
-  padding: 0 8px;
+.actionLink {
+  background: transparent;
+  border: none;
+  color: #1a202c;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
 }
 
 .viewerTabs {
   display: flex;
   border-bottom: 1px solid #e2e8f0;
   padding: 0 24px;
-  gap: 0;
+  gap: 24px;
 }
 
 .viewerTab {
@@ -505,320 +437,140 @@
   border: none;
   border-bottom: 2px solid transparent;
   color: #718096;
-  padding: 12px 16px;
-  font-size: 13px;
+  padding: 12px 0;
+  font-size: 14px;
   cursor: pointer;
-  font-weight: 500;
 }
 
 .viewerTabActive {
   color: #3b82f6;
   border-bottom-color: #3b82f6;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .viewerContent {
   flex: 1;
+  background-color: #f8fafc;
+  padding: 32px;
   overflow-y: auto;
-  padding: 24px;
-  background-color: #f7fafc;
 }
-
-.noSelection {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #a0aec0;
-  font-size: 15px;
-}
-
-.tabPlaceholder {
-  color: #a0aec0;
-  text-align: center;
-  padding-top: 40px;
-}
-
-/* ── DOCUMENT PREVIEW ──────────────────────────────────────── */
 
 .reportDocument {
   background-color: #fff;
-  color: #1a202c;
-  border-radius: 8px;
-  padding: 40px;
-  max-width: 780px;
+  padding: 48px;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  max-width: 800px;
   margin: 0 auto;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
 }
 
 .docHeader {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 36px;
+  border-bottom: 1px solid #e2e8f0;
   padding-bottom: 24px;
-  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 32px;
 }
 
-.docBrand {
-  font-size: 22px;
+.docBrandName {
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: 1px;
   color: #1a202c;
 }
 
-.docBrand span {
-  font-size: 11px;
-  font-weight: 400;
+.docBrandSub {
+  font-size: 12px;
   color: #718096;
-  letter-spacing: 0;
-  display: block;
 }
 
 .docConfidential {
   text-align: right;
-  font-size: 14px;
-  font-weight: 700;
   color: #e53e3e;
-}
-
-.docConfidential span {
-  font-size: 11px;
-  font-weight: 400;
-  color: #718096;
-  display: block;
-}
-
-.docTitle {
-  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 28px;
-  line-height: 1.3;
-  color: #1a202c;
-}
-
-.docTitle span {
-  font-size: 18px;
-  font-weight: 400;
-  color: #4a5568;
-  display: block;
-  margin-top: 4px;
-}
-
-.docMetaGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  font-size: 13px;
-  color: #4a5568;
-  margin-bottom: 32px;
-}
-
-.docMetaGrid strong {
-  color: #1a202c;
-}
-
-.docDivider {
-  height: 1px;
-  background-color: #e2e8f0;
-  margin-bottom: 28px;
-}
-
-.docSection h2 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: #1a202c;
-}
-
-.docSection p {
-  font-size: 14px;
-  line-height: 1.7;
-  color: #4a5568;
-  margin-bottom: 20px;
-}
-
-.metricCards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.metricCard {
-  background-color: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 16px;
-  text-align: center;
-}
-
-.metricValue {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
-  color: #1a202c;
-}
-
-.metricValueHigh {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
-  color: #e53e3e;
-  background-color: #fed7d7;
-  border-radius: 6px;
-  padding: 4px 12px;
-  display: inline-block;
-}
-
-.metricLabel {
-  font-size: 11px;
-  color: #718096;
-  font-weight: 500;
-}
-
-.docImagePlaceholder {
-  background-color: #f7fafc;
-  border: 1px dashed #cbd5e0;
-  border-radius: 8px;
-  height: 240px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #a0aec0;
   font-size: 14px;
 }
 
-/* ── RIGHT: DETAILS PANEL ──────────────────────────────────── */
+.docConfidentialSub {
+  font-size: 12px;
+  font-weight: 400;
+}
 
+.docReportTitle {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #1a202c;
+}
+
+.docReportSubtitle {
+  font-size: 18px;
+  color: #4a5568;
+}
+
+/* RIGHT PANEL */
 .detailsPanel {
   flex: 0 0 260px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-y: auto;
 }
 
 .detailsSection {
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 16px 20px;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .detailsSection h3 {
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   font-size: 14px;
   font-weight: 600;
-  color: #1a202c;
 }
 
 .actionList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.actionBtnFull {
-  width: 100%;
-  justify-content: center;
+.btnBlack {
+  background-color: #1a202c;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px;
   font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btnWhite {
+  background-color: #fff;
+  color: #1a202c;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
 }
 
 .infoGrid {
   display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 8px;
+  grid-template-columns: 80px 1fr;
+  gap: 12px 8px;
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .infoGrid dt {
   color: #718096;
-  font-weight: 500;
 }
 
 .infoGrid dd {
   margin: 0;
   color: #1a202c;
-  word-break: break-word;
-}
-
-.relatedHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.relatedHeader h3 {
-  margin: 0;
-}
-
-.viewAllLink {
-  font-size: 12px;
-  color: #3b82f6;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.relatedList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.relatedItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px;
-  background-color: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-.relatedItem:hover {
-  background-color: #ebf5ff;
-}
-
-.relatedIcon {
-  color: #3b82f6;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.relatedContent {
-  flex: 1;
-  min-width: 0;
-}
-
-.relatedTitle {
-  font-size: 12px;
-  font-weight: 600;
-  color: #1a202c;
-  margin-bottom: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.relatedSubtitle {
-  font-size: 11px;
-  color: #718096;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.relatedBadge {
-  font-size: 10px;
-  flex-shrink: 0;
-}
-
-.relatedChevron {
-  color: #a0aec0;
-  margin-top: 4px;
-  flex-shrink: 0;
 }
