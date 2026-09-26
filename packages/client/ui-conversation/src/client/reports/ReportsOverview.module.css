@@ -618,15 +618,17 @@
 .viewerMetaRow {
   display: flex;
   align-items: center;
-  font-size: 12px;
+  font-size: 11px;
   color: #718096;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .metaItem {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .viewerActions {
@@ -634,10 +636,12 @@
   align-items: center;
   gap: 12px;
   margin-left: auto;
+  flex-wrap: wrap;
 }
 
 .actionLink {
   background: none;
+  white-space: nowrap;
   border: 1px solid transparent;
   color: #3182ce;
   font-size: 13px;
