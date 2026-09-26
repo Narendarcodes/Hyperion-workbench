@@ -1227,13 +1227,24 @@ export function WorkspaceBrowser({
                   <polyline points="14 2 14 8 20 8" />
                 </svg>
               ))}
-              {plannedItem(t('nav.reports'), (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="20" x2="18" y2="10" />
-                  <line x1="12" y1="20" x2="12" y2="4" />
-                  <line x1="6" y1="20" x2="6" y2="14" />
-                </svg>
-              ))}
+              <button
+                type="button"
+                className={css.navItem}
+                aria-current={workbenchView === 'reports' ? 'page' : undefined}
+                onClick={() => {
+                  setWorkbenchView('reports')
+                  startSession()
+                }}
+              >
+                <span className={css.navIcon} aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                  </svg>
+                </span>
+                <span>{t('nav.reports')}</span>
+              </button>
             </div>
           </section>
           <section aria-labelledby="workbench-simulation" className={css.navSection}>
