@@ -891,7 +891,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: #3182ce;
+  background-color: #3b82f6;
   color: #fff;
   border: none;
   border-radius: 9999px;
@@ -899,6 +899,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
 }
 
 .btnOutline {
