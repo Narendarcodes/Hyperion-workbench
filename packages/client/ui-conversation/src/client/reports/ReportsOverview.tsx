@@ -209,65 +209,72 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
             </button>
           </div>
 
-          <div className={css.tableHeader}>
-            <span className={css.thTitle}>
-              Title
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </span>
-            <span>Type</span>
-            <span>Unit / Equipment</span>
-            <span>Date</span>
-            <span>Status</span>
-          </div>
+          <div className={css.tableWrapper}>
+            <div className={css.tableHeader}>
+              <span className={css.thTitle}>
+                Title
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+              <span>Type</span>
+              <span>Unit / Equipment</span>
+              <span>Date</span>
+              <span>Status</span>
+            </div>
 
-          <div className={css.reportList}>
-            {FIXTURE_REPORTS.map((report, i) => (
-              <div
-                key={report.id}
-                className={join(
-                  css.reportRow,
-                  i === 0 && css.reportRowSelected,
-                )}
-              >
-                <div className={css.rowTitleCol}>
-                  <div className={css.rowIcon} data-color={report.iconColor}>
-                    {renderIcon('Document', 16)}
+            <div className={css.reportList}>
+              {FIXTURE_REPORTS.map((report, i) => (
+                <div
+                  key={report.id}
+                  className={join(
+                    css.reportRow,
+                    i === 0 && css.reportRowSelected,
+                  )}
+                >
+                  <div className={css.rowTitleCol}>
+                    <div className={css.rowIcon} data-color={report.iconColor}>
+                      {renderIcon('Document', 16)}
+                    </div>
+                    <div>
+                      <div className={css.rowTitleText}>{report.title}</div>
+                      <div className={css.rowSubtitleText}>
+                        {report.subtitle}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div className={css.rowTitleText}>{report.title}</div>
-                    <div className={css.rowSubtitleText}>{report.subtitle}</div>
+                  <div className={css.rowTypeCol}>
+                    <span className={css.typePill} data-type={report.type}>
+                      {report.type}
+                    </span>
+                  </div>
+                  <div className={css.rowUnitCol}>
+                    <div className={css.rowUnitText}>{report.unit}</div>
+                    <div className={css.rowEquipText}>{report.equipment}</div>
+                  </div>
+                  <div className={css.rowDateCol}>{report.date}</div>
+                  <div className={css.rowStatusCol}>
+                    <span
+                      className={css.statusPill}
+                      data-status={report.status}
+                    >
+                      <span className={css.statusDot} />
+                      {report.status}
+                    </span>
+                  </div>
+                  <div className={css.rowMoreCol}>
+                    <button className={css.moreBtn}>⋮</button>
                   </div>
                 </div>
-                <div className={css.rowTypeCol}>
-                  <span className={css.typePill} data-type={report.type}>
-                    {report.type}
-                  </span>
-                </div>
-                <div className={css.rowUnitCol}>
-                  <div className={css.rowUnitText}>{report.unit}</div>
-                  <div className={css.rowEquipText}>{report.equipment}</div>
-                </div>
-                <div className={css.rowDateCol}>{report.date}</div>
-                <div className={css.rowStatusCol}>
-                  <span className={css.statusPill} data-status={report.status}>
-                    <span className={css.statusDot} />
-                    {report.status}
-                  </span>
-                </div>
-                <div className={css.rowMoreCol}>
-                  <button className={css.moreBtn}>⋮</button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           <div className={css.paginationRow}>

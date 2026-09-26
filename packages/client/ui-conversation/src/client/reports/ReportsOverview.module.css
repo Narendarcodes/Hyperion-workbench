@@ -342,9 +342,15 @@
   cursor: pointer;
 }
 
+.tableWrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
 .tableHeader {
   display: grid;
-  grid-template-columns: 2.5fr 1.2fr 1.5fr 1.2fr 1.2fr 30px;
+  grid-template-columns: minmax(180px, 3fr) 90px 100px 90px 100px 30px;
+  gap: 12px;
   padding: 8px 20px;
   border-bottom: 1px solid #e2e8f0;
   font-size: 11px;
@@ -367,7 +373,8 @@
 
 .reportRow {
   display: grid;
-  grid-template-columns: 2.5fr 1.2fr 1.5fr 1.2fr 1.2fr 30px;
+  grid-template-columns: minmax(180px, 3fr) 90px 100px 90px 100px 30px;
+  gap: 12px;
   padding: 12px 20px;
   border-bottom: 1px solid #edf2f7;
   align-items: center;
@@ -431,6 +438,7 @@
   border-radius: 12px;
   font-size: 11px;
   font-weight: 500;
+  white-space: nowrap;
 }
 .typePill[data-type="Inspection"],
 .typePill[data-type="Safety"] {
@@ -444,14 +452,17 @@
 }
 .rowUnitText {
   color: #4a5568;
+  white-space: nowrap;
 }
 .rowEquipText {
   color: #a0aec0;
   font-size: 11px;
+  white-space: nowrap;
 }
 
 .rowDateCol {
   color: #4a5568;
+  white-space: nowrap;
 }
 
 .statusPill {
@@ -462,6 +473,7 @@
   border-radius: 12px;
   font-size: 11px;
   font-weight: 500;
+  white-space: nowrap;
 }
 .statusPill[data-status="Completed"] {
   background-color: #f0fff4;
