@@ -10,6 +10,7 @@ import { conversationPhase } from '../contract/snapshot.ts'
 import { HeroShell, HomeSections, defaultHomeSuggestions, workspaceLabel, WorkspaceChip } from './EmptyHero.tsx'
 import { useWorkbenchView } from '../plant/workbench-view.ts'
 import { PlantOverview } from '../plant/PlantOverview.tsx'
+import { DocumentsOverview } from '../documents/DocumentsOverview.tsx'
 import css from './ConversationRoot.module.css'
 
 /** Full props composed from the slot contract. */
@@ -364,7 +365,10 @@ export function ConversationRoot({
   })
 
   const isPlant = workbenchView === 'plant' && hero
-  const composerBar = isPlant ? null : (
+  const isDocuments = workbenchView === 'documents' && hero
+  const isDedicatedScreen = isPlant || isDocuments
+
+  const composerBar = isDedicatedScreen ? null : (
     <div className={clsx(css.composerStack, hero && css.composerHero)}>
       {hero && <HeroShell t={t} localState={localState} />}
       {hero && heroWorkspaceRow}
@@ -383,7 +387,7 @@ export function ConversationRoot({
   )
 
   const phase = settling ? 'settling' : hero ? 'hero' : 'active'
-  const composer = isPlant ? null : renderSlotChain(
+  const composer = isDedicatedScreen ? null : renderSlotChain(
     'conversation.composer',
     { sessionId, session, pendingInteraction },
     { fallback: composerBar, fallbackOnly: sessionId === undefined, overlay: true },
@@ -393,7 +397,7 @@ export function ConversationRoot({
   // only `.composerStack`: overlay:true renders those as siblings, and sticky
   // on the fallback alone would leave a business-owned takeover at the content
   // end off-screen when the user is not pinned to the floor.
-  const composerSeat = isPlant ? null : (
+  const composerSeat = isDedicatedScreen ? null : (
     <div ref={seatResizeRef} className={css.composerSeat} data-composer-seat="">
       {composer}
     </div>
@@ -401,7 +405,7 @@ export function ConversationRoot({
 
   return (
     <div ref={rootResizeRef} className={css.root} data-phase={phase}>
-      {sessionId === undefined || isPlant ? null : renderSlot('conversation.session.header', {})}
+      {sessionId === undefined || isDedicatedScreen ? null : renderSlot('conversation.session.header', {})}
       <div className={css.body}>
         <div className={css.scrollBody} data-conversation-scroll="">
           {isPlant && (
@@ -415,7 +419,21 @@ export function ConversationRoot({
               }}
             />
           )}
-          {sessionId === undefined || isPlant ? null : renderSlot('conversation.session', {})}
+          {isDocuments && (
+            <DocumentsOverview
+              localState={localState}
+              onOpenPid={(doc) => {
+                setDraft(`Open P&ID diagram in fullscreen for ${doc.name} (${doc.unit}) `)
+              }}
+              onAddToInvestigation={(doc) => {
+                setDraft(`Add document ${doc.name} to investigation `)
+              }}
+              onAskCopilot={(q) => {
+                setDraft(`${q} `)
+              }}
+            />
+          )}
+          {sessionId === undefined || isDedicatedScreen ? null : renderSlot('conversation.session', {})}
           {composerSeat}
         </div>
         {/* Width handles only while a transcript is on screen; the hero has no

@@ -8,7 +8,7 @@
 
 import { useSyncExternalStore } from 'react'
 
-export type WorkbenchView = 'home' | 'plant'
+export type WorkbenchView = 'home' | 'plant' | 'documents'
 
 const STORAGE_KEY = 'dsh.workbench.view'
 const EVENT_NAME = 'dsh:workbench:view'
@@ -19,7 +19,7 @@ function readStorage(): WorkbenchView {
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored === 'home' || stored === 'plant') {
+      if (stored === 'home' || stored === 'plant' || stored === 'documents') {
         return stored
       }
     } catch {}
@@ -59,13 +59,13 @@ export function subscribeWorkbenchView(listener: (view: WorkbenchView) => void):
 
   const handleCustomEvent = (e: Event) => {
     const custom = e as CustomEvent<WorkbenchView>
-    if (custom.detail === 'home' || custom.detail === 'plant') {
+    if (custom.detail === 'home' || custom.detail === 'plant' || custom.detail === 'documents') {
       notify(custom.detail)
     }
   }
 
   const handleStorage = (e: StorageEvent) => {
-    if (e.key === STORAGE_KEY && (e.newValue === 'home' || e.newValue === 'plant')) {
+    if (e.key === STORAGE_KEY && (e.newValue === 'home' || e.newValue === 'plant' || e.newValue === 'documents')) {
       notify(e.newValue)
     }
   }
