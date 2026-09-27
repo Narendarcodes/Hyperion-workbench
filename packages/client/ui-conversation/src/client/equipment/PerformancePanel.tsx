@@ -4,10 +4,10 @@
  * @module @deepseek-ai/dsh-client-ui-conversation/client/equipment/PerformancePanel
  */
 import {
-  IconArrowDownOutline14,
-  IconArrowUpOutline14,
+  IconChevronDownOutline14,
+  IconChevronUpOutline14,
   IconSearchOutline16,
-  IconTrendUp14,
+  IconRightUpOutline14,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import css from './PerformancePanel.module.css'
 export interface PerformancePanelProps {
@@ -60,7 +60,7 @@ export const PerformancePanel: React.FC<PerformancePanelProps> = ({
           <div className={css.headerActions}>
             {onMaximize && (
               <button className={css.iconBtn} onClick={onMaximize} aria-label="Maximize">
-                <IconTrendUp14 />
+                <IconRightUpOutline14 />
               </button>
             )}
           </div>
@@ -89,7 +89,7 @@ export const PerformancePanel: React.FC<PerformancePanelProps> = ({
         <div className={css.headerActions}>
           {onMaximize && (
             <button className={css.iconBtn} onClick={onMaximize} aria-label="Maximize">
-              <IconTrendUp14 />
+              <IconRightUpOutline14 />
             </button>
           )}
         </div>
@@ -122,9 +122,9 @@ export const PerformancePanel: React.FC<PerformancePanelProps> = ({
               </svg>
               <div className={css.sparklineTrend}>
                 {metric.trend > 0 ? (
-                  <IconArrowUpOutline14 className={css.trendUp} aria-hidden="true" />
+                  <IconChevronUpOutline14 className={css.trendUp} aria-hidden="true" />
                 ) : metric.trend < 0 ? (
-                  <IconArrowDownOutline14 className={css.trendDown} aria-hidden="true" />
+                  <IconChevronDownOutline14 className={css.trendDown} aria-hidden="true" />
                 ) : (
                   <IconSearchOutline16 className={css.trendNeutral} aria-hidden="true" />
                 )}
