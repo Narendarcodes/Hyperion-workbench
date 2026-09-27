@@ -11,8 +11,6 @@ import { useState } from 'react'
 import { EquipmentHeader } from './EquipmentHeader.tsx'
 import { EquipmentBrowser } from './EquipmentBrowser.tsx'
 import { EquipmentDetail } from './EquipmentDetail.tsx'
-import { PerformancePanel } from './PerformancePanel.tsx'
-import { ConnectedDocuments } from './ConnectedDocuments.tsx'
 import { RecentEquipmentActivity } from './RecentEquipmentActivity.tsx'
 import { AskHyperionPanel } from './AskHyperionPanel.tsx'
 import { DEFAULT_EQUIPMENT_DATA } from './mockData.ts'
@@ -165,10 +163,6 @@ export function EquipmentPage({
             onTabChange={handleTabChange}
           />
 
-          <PerformancePanel
-            data={data.performanceMetrics}
-            timeRange={data.performanceRange}
-          />
         </section>
 
         {/* Lower Band: Documents (left) + Activity (center) + Ask Hyperion (right) */}
