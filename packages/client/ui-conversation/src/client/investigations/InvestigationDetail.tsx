@@ -56,8 +56,8 @@ function TelemetryLineChart({ data }: { data: readonly number[] }) {
   // Smooth curve string
   let linePath = `M ${points[0]?.[0]} ${points[0]?.[1]}`
   for (let i = 0; i < points.length - 1; i++) {
-    const curr = points[i]
-    const next = points[i + 1]
+    const curr = points[i] as readonly [number, number]
+    const next = points[i + 1] as readonly [number, number]
     const midX = (curr[0] + next[0]) / 2
     linePath += ` C ${midX} ${curr[1]}, ${midX} ${next[1]}, ${next[0]} ${next[1]}`
   }
