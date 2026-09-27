@@ -35,17 +35,17 @@ const buildSparklinePath = (points: [number, number][], width: number, height: n
   if (points.length < 2) return ''
   const scaleX = width / (points.length - 1)
   const scaleY = height / Math.max(...points.map(p => p[1]))
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  let linePath = `M ${points[0][0] * scaleX} ${points[0][1] * scaleY}`
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const firstPoint = points[0]
+  if (!firstPoint) return ''
+  let linePath = `M ${firstPoint[0] * scaleX} ${firstPoint[1] * scaleY}`
   for (let i = 0; i < points.length - 1; i++) {
-    const [currX, currY] = points[i]
-    const [nextX, nextY] = points[i + 1]
-    const x1 = currX * scaleX
-    const y1 = currY * scaleY
-    const x2 = nextX * scaleX
-    const y2 = nextY * scaleY
+    const curr = points[i]
+    const next = points[i + 1]
+    if (!curr || !next) continue
+    const x1 = curr[0] * scaleX
+    const y1 = curr[1] * scaleY
+    const x2 = next[0] * scaleX
+    const y2 = next[1] * scaleY
     const midX = (x1 + x2) / 2
     linePath += ` C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`
   }
