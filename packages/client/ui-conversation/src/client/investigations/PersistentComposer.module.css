@@ -1,0 +1,189 @@
+.composerWrapper {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.composerCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  background: var(--dsw-alias-surface-raised, #ffffff);
+  border: 1px solid var(--dsw-alias-border-subtle, #cbd5e1);
+  border-radius: 10px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: border-color 140ms ease-out;
+}
+
+.composerCard:focus-within {
+  border-color: var(--dsw-alias-state-business-primary, #2563eb);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+:global([data-ds-dark-theme="true"]) .composerCard,
+:global(.dark) .composerCard {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.composerInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 12.5px;
+  color: var(--dsw-alias-label-primary, #0f172a);
+  width: 100%;
+  padding: 2px 0 4px;
+}
+
+:global([data-ds-dark-theme="true"]) .composerInput,
+:global(.dark) .composerInput {
+  color: #f8fafc;
+}
+
+.composerInput::placeholder {
+  color: var(--dsw-alias-label-tertiary, #94a3b8);
+}
+
+.controlsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.leftToolsGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary, #64748b);
+  cursor: pointer;
+  transition: all 120ms ease-out;
+}
+
+.iconBtn:hover {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, 0.05));
+  color: var(--dsw-alias-label-primary, #0f172a);
+}
+
+:global([data-ds-dark-theme="true"]) .iconBtn:hover,
+:global(.dark) .iconBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.chipBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--dsw-alias-border-subtle, #e2e8f0);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--dsw-alias-label-secondary, #475569);
+  cursor: pointer;
+  transition: all 120ms ease-out;
+}
+
+.chipBtn:hover {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, 0.03));
+  border-color: #cbd5e1;
+}
+
+:global([data-ds-dark-theme="true"]) .chipBtn,
+:global(.dark) .chipBtn {
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+:global([data-ds-dark-theme="true"]) .chipBtn:hover,
+:global(.dark) .chipBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chipActive {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+:global([data-ds-dark-theme="true"]) .chipActive,
+:global(.dark) .chipActive {
+  background: rgba(37, 99, 235, 0.2) !important;
+  border-color: rgba(37, 99, 235, 0.4) !important;
+  color: #93c5fd !important;
+}
+
+.rightToolsGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.autoRoutePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--dsw-alias-border-subtle, #e2e8f0);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--dsw-alias-label-primary, #0f172a);
+  cursor: pointer;
+}
+
+.autoRoutePill:hover {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, 0.03));
+}
+
+:global([data-ds-dark-theme="true"]) .autoRoutePill,
+:global(.dark) .autoRoutePill {
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+.autoChevron {
+  color: var(--dsw-alias-label-tertiary, #94a3b8);
+}
+
+.sendBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--dsw-alias-state-business-primary, #2563eb);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 120ms ease-out;
+  flex-shrink: 0;
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.sendBtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
