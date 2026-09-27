@@ -1,0 +1,174 @@
+.sidebarNav {
+  width: 220px;
+  min-width: 220px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  user-select: none;
+  height: fit-content;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.navHeader {
+  padding: 0 6px 8px 6px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.navHeaderTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #64748B;
+  text-transform: uppercase;
+}
+
+.treeList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.treeNode {
+  display: flex;
+  flex-direction: column;
+}
+
+.accordionHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #0F172A;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.accordionHeader:hover {
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+}
+
+.accordionHeader.activeRuntime {
+  background: #E0F2FE;
+  border-color: #BAE6FD;
+  color: #0284C7;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arrowIcon {
+  font-size: 10px;
+  color: #64748B;
+  width: 10px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.accordionHeader.activeRuntime .arrowIcon {
+  color: #0284C7;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.statusDot.online {
+  background: #22C55E;
+}
+
+.statusDot.offline {
+  background: #EF4444;
+}
+
+.runtimeName {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.totalBadge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  background: #F1F5F9;
+  color: #475569;
+}
+
+.accordionHeader.activeRuntime .totalBadge {
+  background: #0284C7;
+  color: #FFFFFF;
+}
+
+.categoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 20px;
+  margin-top: 4px;
+}
+
+.categoryItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.categoryItem:hover {
+  color: #0F172A;
+  background: #F1F5F9;
+}
+
+.categoryItem.selectedCat {
+  color: #FFFFFF;
+  background: #0284C7;
+  border-color: #0284C7;
+  font-weight: 700;
+}
+
+.catLabel {
+  font-size: 12px;
+}
+
+.catCount {
+  font-size: 11px;
+  color: #64748B;
+  font-family: monospace;
+}
+
+.catCount.hasModels {
+  color: #0284C7;
+}
+
+.categoryItem.selectedCat .catCount {
+  color: #E0F2FE;
+}

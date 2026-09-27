@@ -1,82 +1,188 @@
 import { useState, useMemo } from 'react'
+import { defaultOllama } from '../services/ollama.ts'
+import { defaultLlama } from '../services/llama.ts'
 import {
-  defaultOllama,
-  formatBytes,
-  formatRelativeTime,
-  type OllamaModel,
-} from '../services/ollama.ts'
-import { modelHubStore, selectModelForActiveSession, type ModelHubState } from '../store.ts'
+  modelHubStore,
+  selectModelForActiveSession,
+  getNormalizedModels,
+  setSelectedNormalizedModel,
+  type ModelHubState,
+} from '../store.ts'
+import type { NormalizedModel } from '../services/normalization.ts'
+import { ModelCard } from '../components/ModelCard.tsx'
+import { RuntimeSidebarNav, type RuntimeCategoryCount } from '../components/RuntimeSidebarNav.tsx'
 import css from './ModelsTab.module.css'
 
 export interface ModelsTabProps {
   storeState: ModelHubState
+  search?: string
+  setSearch?: (q: string) => void
+  runtimeFilter?: string
+  setRuntimeFilter?: (r: string) => void
+  typeFilter?: string
+  setTypeFilter?: (t: string) => void
+  statusFilter?: string
+  setStatusFilter?: (s: string) => void
+  selectedModelId?: string | null
 }
 
-export function ModelsTab({ storeState }: ModelsTabProps) {
-  const [search, setSearch] = useState('')
-  const [filterType, setFilterType] = useState('all')
-  const [sortBy, setSortBy] = useState<'modified' | 'name' | 'size'>('modified')
+export function ModelsTab({
+  storeState,
+  search: externalSearch,
+  setSearch: externalSetSearch,
+  runtimeFilter: externalRuntimeFilter,
+  setRuntimeFilter: externalSetRuntimeFilter,
+  typeFilter: externalTypeFilter,
+  setTypeFilter: externalSetTypeFilter,
+  statusFilter: externalStatusFilter,
+  setStatusFilter: externalSetStatusFilter,
+  selectedModelId,
+}: ModelsTabProps) {
+  const [internalSearch, setInternalSearch] = useState('')
+  const [internalStatusFilter, setInternalStatusFilter] = useState('all')
+
+  const search = externalSearch !== undefined ? externalSearch : internalSearch
+  const setSearch = externalSetSearch || setInternalSearch
+
+  const statusFilter = externalStatusFilter !== undefined ? externalStatusFilter : internalStatusFilter
+  const setStatusFilter = externalSetStatusFilter || setInternalStatusFilter
+
+  // Level 1 Active Runtime & Level 2 Active Category state for local accordion nav in "All Models" view
+  const [activeRuntimeId, setActiveRuntimeId] = useState<string>('ollama')
+  const [activeCategory, setActiveCategory] = useState<string>('all')
+
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [modelToDelete, setModelToDelete] = useState<OllamaModel | null>(null)
+  const [modelToDelete, setModelToDelete] = useState<NormalizedModel | null>(null)
 
-  const runningMap = useMemo(() => {
-    const map = new Set<string>()
-    for (const m of storeState.runningModels) {
-      map.add(m.name)
-      map.add(m.model)
-    }
-    return map
-  }, [storeState.runningModels])
+  // Determine if we are on the "All Models" tab (State 1) vs a Global Category Tab (State 2)
+  const isAllModelsTab = externalTypeFilter === undefined || externalTypeFilter === 'all'
 
-  const filteredModels = useMemo(() => {
-    let list = Array.isArray(storeState.models) ? [...storeState.models] : []
+  // Determine effective runtime and category filters
+  // In State 2 (Global Category Tabs), runtime filtering is disabled so ALL runtimes are included!
+  const effectiveRuntime = isAllModelsTab
+    ? (externalRuntimeFilter && externalRuntimeFilter !== 'all' ? externalRuntimeFilter : activeRuntimeId)
+    : 'all'
 
-    // Search filter
-    if (search.trim()) {
-      const q = search.toLowerCase()
-      list = list.filter(m =>
-        (m.name || '').toLowerCase().includes(q)
-        || (m.details?.family && m.details.family.toLowerCase().includes(q))
-        || (m.details?.parameter_size && m.details.parameter_size.toLowerCase().includes(q)),
-      )
-    }
+  const effectiveCategory = !isAllModelsTab
+    ? (externalTypeFilter || 'all')
+    : activeCategory
 
-    // Type filter
-    if (filterType !== 'all') {
-      list = list.filter((m) => {
-        const caps = Array.isArray(m.capabilities) ? m.capabilities : []
-        if (filterType === 'vision') return caps.includes('vision') || (m.details?.family || '').toLowerCase().includes('vision')
-        if (filterType === 'tools') return caps.includes('tools')
-        if (filterType === 'thinking') return caps.includes('thinking') || (m.name || '').toLowerCase().includes('r1')
-        return true
-      })
-    }
+  // Get all normalized models
+  const allNormalizedModels = useMemo(() => {
+    return getNormalizedModels(storeState)
+  }, [storeState])
 
-    // Sort
-    list.sort((a, b) => {
-      if (sortBy === 'modified') {
-        const tA = a.modified_at ? new Date(a.modified_at).getTime() : 0
-        const tB = b.modified_at ? new Date(b.modified_at).getTime() : 0
-        return tB - tA
+  // Calculate live dynamic counts per runtime for the left sidebar tree in State 1
+  const runtimeNavData: RuntimeCategoryCount[] = useMemo(() => {
+    const runtimes: Array<{ id: string; name: string; connected: boolean; endpoint: string; version: string }> = [
+      {
+        id: 'ollama',
+        name: 'Ollama',
+        connected: storeState.ollamaConnected,
+        endpoint: defaultOllama.getBaseUrl(),
+        version: storeState.ollamaVersion,
+      },
+      {
+        id: 'llama.cpp',
+        name: 'llama.cpp',
+        connected: Boolean(storeState.llamaStatus?.connected),
+        endpoint: storeState.llamaStatus?.endpoint || defaultLlama.getEndpoint(),
+        version: storeState.llamaStatus?.version || 'llama.cpp',
+      },
+      {
+        id: 'custom',
+        name: 'Custom',
+        connected: storeState.ollamaConnected,
+        endpoint: defaultOllama.getBaseUrl(),
+        version: storeState.ollamaVersion,
+      },
+    ]
+
+    return runtimes.map((r) => {
+      const runtimeModels = allNormalizedModels.filter(m => m.runtime === r.id)
+
+      const llmCount = runtimeModels.filter(m => m.modelTypes.includes('LLM')).length
+      const visionCount = runtimeModels.filter(m =>
+        m.modelTypes.includes('Vision') || m.modelTypes.includes('Multimodal')
+      ).length
+      const embedCount = runtimeModels.filter(m => m.modelTypes.includes('Embedding')).length
+      const ocrCount = runtimeModels.filter(m => m.modelTypes.includes('OCR')).length
+
+      return {
+        runtimeId: r.id,
+        displayName: r.name,
+        connected: r.connected,
+        endpoint: r.endpoint,
+        version: r.version,
+        totalModels: runtimeModels.length,
+        allCount: runtimeModels.length,
+        llmCount,
+        visionCount,
+        embedCount,
+        ocrCount: ocrCount > 0 ? ocrCount : undefined,
       }
-      if (sortBy === 'name') {
-        return (a.name || '').localeCompare(b.name || '')
-      }
-      if (sortBy === 'size') {
-        return (b.size || 0) - (a.size || 0)
-      }
-      return 0
     })
+  }, [allNormalizedModels, storeState])
 
-    return list
-  }, [storeState.models, search, filterType, sortBy])
+  const handleSelectRuntimeCategory = (runtimeId: string, category: string) => {
+    setActiveRuntimeId(runtimeId)
+    setActiveCategory(category)
+  }
 
-  const onLoad = async (model: OllamaModel) => {
-    setActionLoading(model.name)
+  // Filter models strictly for center grid across all active runtimes or per selected runtime
+  const filteredModels = useMemo(() => {
+    return allNormalizedModels.filter((m) => {
+      // 1. Runtime filter (if 'all', include models from all runtimes)
+      if (effectiveRuntime !== 'all' && m.runtime !== effectiveRuntime) {
+        return false
+      }
+
+      // 2. Category / Type filter across runtimes
+      const cat = effectiveCategory.toLowerCase()
+      if (cat !== 'all') {
+        if (cat === 'llm' && !m.modelTypes.includes('LLM')) return false
+        if (cat === 'vision' && !m.modelTypes.includes('Vision') && !m.modelTypes.includes('Multimodal')) return false
+        if (cat === 'embedding' && !m.modelTypes.includes('Embedding')) return false
+        if (cat === 'ocr' && !m.modelTypes.includes('OCR')) return false
+        if (cat === 'code' && !m.modelTypes.includes('Code')) return false
+        if (cat === 'reasoning' && !m.modelTypes.includes('Reasoning')) return false
+        if (cat === 'tools' && !m.modelTypes.includes('Tools')) return false
+      }
+
+      // 3. Search filter
+      if (search.trim()) {
+        const q = search.toLowerCase()
+        const matchName = m.name.toLowerCase().includes(q)
+        const matchArch = m.architecture.toLowerCase().includes(q)
+        const matchRuntime = m.runtimeDisplayName.toLowerCase().includes(q)
+        const matchCaps = m.capabilities.some(c => c.toLowerCase().includes(q))
+        const matchTypes = m.modelTypes.some(t => t.toLowerCase().includes(q))
+        if (!matchName && !matchArch && !matchRuntime && !matchCaps && !matchTypes) {
+          return false
+        }
+      }
+
+      // 4. Status filter
+      if (statusFilter === 'loaded' && !m.loaded) return false
+      if (statusFilter === 'installed' && m.loaded) return false
+
+      return true
+    })
+  }, [allNormalizedModels, effectiveRuntime, effectiveCategory, search, statusFilter])
+
+  const handleLoad = async (m: NormalizedModel, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setActionLoading(m.id)
     try {
-      await defaultOllama.loadModel(model.name)
-      await modelHubStore.refreshAll()
-      await selectModelForActiveSession(model.name)
+      if (m.runtime === 'llama.cpp') {
+        await defaultLlama.loadModel(m.rawName)
+        await modelHubStore.refreshAll()
+        await selectModelForActiveSession(m.rawName, 'llama')
+      } else {
+        await defaultOllama.loadModel(m.rawName)
+        await modelHubStore.refreshAll()
+        await selectModelForActiveSession(m.rawName)
+      }
     } catch (err) {
       alert(`Failed to load model: ${err instanceof Error ? err.message : String(err)}`)
     } finally {
@@ -84,10 +190,15 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
     }
   }
 
-  const onUnload = async (model: OllamaModel) => {
-    setActionLoading(model.name)
+  const handleUnload = async (m: NormalizedModel, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setActionLoading(m.id)
     try {
-      await defaultOllama.unloadModel(model.name)
+      if (m.runtime === 'llama.cpp') {
+        await defaultLlama.unloadModel(m.rawName)
+      } else {
+        await defaultOllama.unloadModel(m.rawName)
+      }
       await modelHubStore.refreshAll()
     } catch (err) {
       alert(`Failed to unload model: ${err instanceof Error ? err.message : String(err)}`)
@@ -96,13 +207,30 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
     }
   }
 
-  const onDeleteConfirm = async () => {
+  const handleUse = async (m: NormalizedModel, e: React.MouseEvent) => {
+    e.stopPropagation()
+    modelHubStore.setOpen(false)
+    const provider = m.runtime === 'llama.cpp' ? 'llama' : 'local'
+    await selectModelForActiveSession(m.rawName, provider)
+  }
+
+  const handleSelect = (m: NormalizedModel) => {
+    setSelectedNormalizedModel(m)
+  }
+
+  const handleDeletePrompt = (m: NormalizedModel, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setModelToDelete(m)
+  }
+
+  const confirmDelete = async () => {
     if (!modelToDelete) return
-    const name = modelToDelete.name
-    setActionLoading(name)
+    const target = modelToDelete
+    setActionLoading(target.id)
     try {
-      await defaultOllama.deleteModel(name)
+      await defaultOllama.deleteModel(target.rawName)
       setModelToDelete(null)
+      setSelectedNormalizedModel(null)
       await modelHubStore.refreshAll()
     } catch (err) {
       alert(`Failed to delete model: ${err instanceof Error ? err.message : String(err)}`)
@@ -111,214 +239,158 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
     }
   }
 
-  const onUseInHyperion = async (model: OllamaModel) => {
-    modelHubStore.setOpen(false)
-    await selectModelForActiveSession(model.name)
-  }
+  // Active runtime display text for breadcrumb
+  const displayRuntimeName = effectiveRuntime === 'all'
+    ? 'All Runtimes'
+    : (runtimeNavData.find(r => r.runtimeId === effectiveRuntime)?.displayName || effectiveRuntime)
+
+  const displayCategoryName = effectiveCategory === 'all'
+    ? 'All Models'
+    : effectiveCategory.toUpperCase()
 
   return (
     <div className={css.root}>
       {!storeState.ollamaConnected && (
         <div className={css.offlineBanner}>
-          <span>⚠️ <strong>Ollama unavailable.</strong> Make sure Ollama is running at <code>{defaultOllama.getBaseUrl()}</code>.</span>
-          <button type="button" className={css.retryBtn} onClick={() => { void modelHubStore.refreshAll() }}>
-            Retry
+          <span>
+            ⚠️ <strong>Ollama Local Engine unavailable.</strong> Ensure Ollama service is running at{' '}
+            <code>{defaultOllama.getBaseUrl()}</code>.
+          </span>
+          <button
+            type="button"
+            className={css.retryBtn}
+            onClick={() => {
+              void modelHubStore.refreshAll()
+            }}
+          >
+            Retry Connection
           </button>
         </div>
       )}
 
-      {/* Toolbar */}
-      <div className={css.toolbar}>
-        <div className={css.searchFilterGroup}>
-          <div className={css.searchInputWrapper}>
-            <svg className={css.searchIcon} viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-            </svg>
-            <input
-              type="text"
-              className={css.searchInput}
-              placeholder="Search models..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+      {/* RENDER CONTRACT:
+          STATE 1 (isAllModelsTab === true): Split View with Left Navigation Tree + Center Models Content Area
+          STATE 2 (isAllModelsTab === false): RuntimeSidebarNav is COMPLETELY REMOVED from the layout.
+      */}
+      <div className={isAllModelsTab ? css.splitLayout : css.fullWidthLayout}>
+        {/* Render RuntimeSidebarNav ONLY in State 1 ("All Models" tab) */}
+        {isAllModelsTab && (
+          <RuntimeSidebarNav
+            runtimes={runtimeNavData}
+            activeRuntimeId={effectiveRuntime === 'all' ? activeRuntimeId : effectiveRuntime}
+            activeCategory={effectiveCategory}
+            onSelectRuntimeCategory={handleSelectRuntimeCategory}
+          />
+        )}
+
+        {/* Center Content Area */}
+        <div className={css.mainContentArea}>
+          {/* Dynamic Breadcrumb & Context Header */}
+          <div className={css.breadcrumbHeader}>
+            <div className={css.breadcrumbTitle}>
+              <span className={css.runtimeBreadcrumb}>
+                {displayRuntimeName}
+              </span>
+              <span className={css.separator}>→</span>
+              <span className={css.categoryBreadcrumb}>
+                {displayCategoryName}
+              </span>
+            </div>
+
+            <div className={css.breadcrumbMeta}>
+              <span>{filteredModels.length} models displayed</span>
+            </div>
           </div>
 
-          <select className={css.select} value={filterType} onChange={e => setFilterType(e.target.value)}>
-            <option value="all">All Types</option>
-            <option value="vision">Vision / OCR</option>
-            <option value="tools">Tools Capable</option>
-            <option value="thinking">Reasoning / Thinking</option>
-            <option value="multimodal">Multimodal</option>
-          </select>
+          {/* Embedded Toolbar: Search, Filters, Add Model */}
+          <div className={css.toolbar}>
+            <div className={css.searchFilterGroup}>
+              <div className={css.searchInputWrapper}>
+                <svg className={css.searchIcon} viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+                <input
+                  type="text"
+                  className={css.searchInput}
+                  placeholder={`Search ${displayRuntimeName} (${displayCategoryName})...`}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+              </div>
 
-          <select className={css.select} value={sortBy} onChange={e => setSortBy(e.target.value as 'modified' | 'name' | 'size')}>
-            <option value="modified">Recently Modified</option>
-            <option value="name">Name (A-Z)</option>
-            <option value="size">Size (Largest)</option>
-          </select>
-        </div>
+              <select className={css.select} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+                <option value="all">All Statuses</option>
+                <option value="installed">Installed</option>
+                <option value="loaded">Loaded in VRAM</option>
+              </select>
+            </div>
 
-        <button
-          type="button"
-          className={css.addBtn}
-          onClick={() => modelHubStore.setAddModelOpen(true)}
-        >
-          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
-            <path d="M8 2a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5h-4.5v4.5a.75.75 0 0 1-1.5 0v-4.5h-4.5a.75.75 0 0 1 0-1.5h4.5v-4.5A.75.75 0 0 1 8 2z" />
-          </svg>
-          Add Model
-        </button>
-      </div>
-
-      {/* Model Table */}
-      {filteredModels.length > 0 ? (
-        <div className={css.tableWrapper}>
-          <table className={css.table}>
-            <thead>
-              <tr>
-                <th>Model</th>
-                <th>Status</th>
-                <th>Capabilities</th>
-                <th>Size</th>
-                <th>Parameters</th>
-                <th>Modified</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredModels.map((m) => {
-                const isLoaded = runningMap.has(m.name) || runningMap.has(m.model)
-                const isLoadingThis = actionLoading === m.name
-                const caps = m.capabilities || ['completion', 'chat']
-
-                return (
-                  <tr key={m.name}>
-                    <td className={css.modelNameCol}>
-                      <div>{m.name}</div>
-                      <div className={css.modelTag}>
-                        {m.details?.family || 'llm'} · {m.details?.quantization_level || 'GGUF'}
-                      </div>
-                    </td>
-                    <td>
-                      {isLoaded ? (
-                        <span className={css.statusLoaded}>
-                          <span className={css.statusDot} /> Loaded
-                        </span>
-                      ) : (
-                        <span className={css.statusInstalled}>
-                          <span className={css.statusDot} /> Installed
-                        </span>
-                      )}
-                    </td>
-                    <td>
-                      <div className={css.capabilities}>
-                        {caps.slice(0, 3).map(c => (
-                          <span key={c} className={css.capBadge}>{c}</span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>{formatBytes(m.size)}</td>
-                    <td>{m.details?.parameter_size || 'N/A'}</td>
-                    <td>{formatRelativeTime(m.modified_at)}</td>
-                    <td>
-                      <div className={css.actionsCol} style={{ justifyContent: 'flex-end' }}>
-                        {isLoaded ? (
-                          <button
-                            type="button"
-                            className={`${css.actionBtn} ${css.unloadBtn}`}
-                            disabled={isLoadingThis}
-                            onClick={() => { void onUnload(m) }}
-                            title="Unload from GPU/RAM"
-                          >
-                            {isLoadingThis ? '...' : 'Unload'}
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            className={`${css.actionBtn} ${css.loadBtn}`}
-                            disabled={isLoadingThis}
-                            onClick={() => { void onLoad(m) }}
-                            title="Preload into VRAM"
-                          >
-                            {isLoadingThis ? '...' : 'Load'}
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          className={`${css.actionBtn} ${css.useBtn}`}
-                          onClick={() => onUseInHyperion(m)}
-                          title="Use as active chat model"
-                        >
-                          Use
-                        </button>
-                        <button
-                          type="button"
-                          className={css.actionBtn}
-                          onClick={() => modelHubStore.setSelectedModel(m, true)}
-                        >
-                          Details
-                        </button>
-                        <button
-                          type="button"
-                          className={`${css.actionBtn} ${css.deleteBtn}`}
-                          onClick={() => setModelToDelete(m)}
-                          title="Delete model"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className={css.emptyState}>
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.35, marginBottom: 8 }}>
-            <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
-            <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
-            <line x1="6" y1="6" x2="6.01" y2="6" />
-            <line x1="6" y1="18" x2="6.01" y2="18" />
-          </svg>
-          <div className={css.emptyTitle}>
-            {search ? 'No matching models found' : 'No local models yet'}
-          </div>
-          <div style={{ fontSize: 13, color: 'var(--dsw-alias-label-secondary, #94a3b8)', maxWidth: 360, lineHeight: 1.5 }}>
-            {search
-              ? 'Try a different search query or clear the active filter.'
-              : 'Add an Ollama model from the library or import an offline GGUF model package to get started.'}
-          </div>
-          {!search && (
             <button
               type="button"
               className={css.addBtn}
-              style={{ marginTop: 12 }}
               onClick={() => modelHubStore.setAddModelOpen(true)}
             >
               + Add Model
             </button>
+          </div>
+
+          {/* Unified Center Models Cards Grid */}
+          {filteredModels.length > 0 ? (
+            <div className={isAllModelsTab ? css.cardsGrid2Cols : css.cardsGrid3Cols}>
+              {filteredModels.map(model => (
+
+                <ModelCard
+                  key={model.id}
+                  model={model}
+                  isSelected={selectedModelId === model.id}
+                  actionLoading={actionLoading === model.id}
+                  onLoad={handleLoad}
+                  onUnload={handleUnload}
+                  onUse={handleUse}
+                  onSelect={handleSelect}
+                  onDelete={handleDeletePrompt}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className={css.emptyState}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.35 }}>
+                <rect x="2" y="2" width="20" height="8" rx="2" />
+                <rect x="2" y="14" width="20" height="8" rx="2" />
+              </svg>
+              <div className={css.emptyTitle}>
+                {search
+                  ? `No matching models found under ${displayRuntimeName} → ${displayCategoryName}`
+                  : `No ${displayCategoryName} models found across ${displayRuntimeName}`}
+              </div>
+              <div style={{ fontSize: 13, color: '#94a3b8', maxWidth: 400, lineHeight: 1.5 }}>
+                {search
+                  ? 'Try clearing or adjusting your search terms.'
+                  : `Download a model using Ollama CLI or import GGUF files.`}
+              </div>
+              {!search && (
+                <button
+                  type="button"
+                  className={css.addBtn}
+                  style={{ marginTop: 8 }}
+                  onClick={() => modelHubStore.setAddModelOpen(true)}
+                >
+                  + Add Model to HYPERION
+                </button>
+              )}
+            </div>
           )}
         </div>
-      )}
+      </div>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation Modal */}
       {modelToDelete && (
-        <div
-          className={css.deleteOverlay}
-          onClick={() => setModelToDelete(null)}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-model-title"
-        >
+        <div className={css.deleteOverlay} onClick={() => setModelToDelete(null)}>
           <div className={css.deleteDialog} onClick={e => e.stopPropagation()}>
-            <h3 id="delete-model-title" className={css.deleteDialogTitle}>
-              Delete Model?
-            </h3>
+            <h3 className={css.deleteDialogTitle}>Delete Model Weights?</h3>
             <p className={css.deleteDialogBody}>
-              Are you sure you want to permanently delete <strong>{modelToDelete.name}</strong> ({formatBytes(modelToDelete.size)})?
-              The model weights will be removed from your local disk and cannot be recovered without re-downloading.
+              Are you sure you want to delete <strong>{modelToDelete.name}</strong> ({modelToDelete.parameterSize})?
+              Model weights will be removed from disk and cannot be recovered without downloading again.
             </p>
             <div className={css.deleteDialogActions}>
               <button
@@ -331,7 +403,7 @@ export function ModelsTab({ storeState }: ModelsTabProps) {
               <button
                 type="button"
                 className={css.confirmDeleteBtn}
-                onClick={() => { void onDeleteConfirm() }}
+                onClick={() => { void confirmDelete() }}
               >
                 Delete Model
               </button>

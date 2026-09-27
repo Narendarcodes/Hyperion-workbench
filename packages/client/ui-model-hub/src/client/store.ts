@@ -18,6 +18,13 @@ import {
   fetchSystemResources,
   type SystemResources,
 } from './services/telemetry.ts'
+import {
+  normalizeOllamaModel,
+  normalizeLlamaModel,
+  groupModelsByRuntimeAndType,
+  type NormalizedModel,
+  type RuntimeGroup,
+} from './services/normalization.ts'
 
 export type ModelHubTab = 'models' | 'llama-models' | 'custom' | 'updates' | 'resources'
 
@@ -104,6 +111,7 @@ export interface ModelHubState {
   isLlamaConnected: boolean
   selectedModel: OllamaModel | null
   selectedLlamaModel: LlamaModel | null
+  selectedNormalizedModel: NormalizedModel | null
   isAddModelOpen: boolean
   isAddLlamaModelOpen: boolean
   isModelDetailsOpen: boolean
@@ -132,6 +140,7 @@ const initialState: ModelHubState = {
   isLlamaConnected: false,
   selectedModel: null,
   selectedLlamaModel: null,
+  selectedNormalizedModel: null,
   isAddModelOpen: false,
   isAddLlamaModelOpen: false,
   isModelDetailsOpen: false,
@@ -195,6 +204,10 @@ class ModelHubStore {
 
   setSelectedLlamaModel(model: LlamaModel | null, openDetails = false): void {
     this.setState({ selectedLlamaModel: model, isLlamaDetailsOpen: openDetails })
+  }
+
+  setSelectedNormalizedModel(model: NormalizedModel | null): void {
+    this.setState({ selectedNormalizedModel: model })
   }
 
   setAddModelOpen(isOpen: boolean): void {
@@ -339,12 +352,47 @@ export const setAddModelOpen = (isOpen: boolean) => modelHubStore.setAddModelOpe
 export const setAddLlamaModelOpen = (isOpen: boolean) => modelHubStore.setAddLlamaModelOpen(isOpen)
 export const setModelDetailsOpen = (isOpen: boolean) => modelHubStore.setModelDetailsOpen(isOpen)
 export const setLlamaDetailsOpen = (isOpen: boolean) => modelHubStore.setLlamaDetailsOpen(isOpen)
+export const setSelectedNormalizedModel = (model: NormalizedModel | null) =>
+  modelHubStore.setSelectedNormalizedModel(model)
 export const setConfigModalOpen = (isOpen: boolean) => modelHubStore.setConfigModalOpen(isOpen)
 export const updateRuntimeConfig = (cfg: RuntimeConfig) => modelHubStore.updateRuntimeConfig(cfg)
 export const getRuntimeConfig = () => modelHubStore.getRuntimeConfig()
 export const refreshAll = () => modelHubStore.refreshAll()
 export const unloadModel = (name: string) => defaultOllama.unloadModel(name)
 export const unloadLlamaModel = (name: string) => defaultLlama.unloadModel(name)
+
+export function getNormalizedModels(state: ModelHubState): NormalizedModel[] {
+  const runningMap = new Map<string, { size_vram?: number }>()
+  for (const rm of state.runningModels) {
+    runningMap.set(rm.name, rm)
+    runningMap.set(rm.model, rm)
+  }
+
+  const loadedLlamaSet = new Set(state.llamaStatus?.loadedModels || [])
+
+  const normalizedOllama = (state.models || []).map(m => normalizeOllamaModel(m, runningMap))
+  const normalizedLlama = (state.llamaModels || []).map(m => normalizeLlamaModel(m, loadedLlamaSet))
+
+  return [...normalizedOllama, ...normalizedLlama]
+}
+
+export function getGroupedRuntimeModels(state: ModelHubState): RuntimeGroup[] {
+  const models = getNormalizedModels(state)
+  return groupModelsByRuntimeAndType(models, {
+    ollama: {
+      connected: state.ollamaConnected,
+      endpoint: defaultOllama.getBaseUrl(),
+      version: state.ollamaVersion,
+    },
+    llama: {
+      connected: Boolean(state.llamaStatus?.connected),
+      endpoint: state.llamaStatus?.endpoint || defaultLlama.getEndpoint(),
+      version: state.llamaStatus?.version || 'llama.cpp',
+      mode: state.llamaStatus?.mode,
+      backend: state.llamaStatus?.backend,
+    },
+  })
+}
 
 export function startTelemetryPolling(intervalMs = 4000): () => void {
   void modelHubStore.refreshAll()
