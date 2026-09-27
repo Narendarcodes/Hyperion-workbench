@@ -29,7 +29,7 @@ const INITIAL_MODELS: ModelCardData[] = [
     contextWindow: '128K',
     status: 'Loaded',
     description: 'Premier reasoning model specialized in complex industrial physics, root-cause analysis, and PID verification.',
-    initials: 'DS'
+    initials: 'DS',
   },
   {
     id: 'qwen-25-coder-32b',
@@ -42,7 +42,7 @@ const INITIAL_MODELS: ModelCardData[] = [
     contextWindow: '64K',
     status: 'Loaded',
     description: 'High-speed code synthesis model for OPC-UA bindings, PLC automation logic, and SVG/P&ID parsing.',
-    initials: 'QW'
+    initials: 'QW',
   },
   {
     id: 'llama-33-70b',
@@ -55,7 +55,7 @@ const INITIAL_MODELS: ModelCardData[] = [
     contextWindow: '128K',
     status: 'Standby',
     description: 'General purpose enterprise foundation model for compliance audit generation and engineering documentation.',
-    initials: 'LL'
+    initials: 'LL',
   },
   {
     id: 'gemma-2-27b',
@@ -68,7 +68,7 @@ const INITIAL_MODELS: ModelCardData[] = [
     contextWindow: '8K',
     status: 'Standby',
     description: 'Lightweight high-efficiency model for real-time sensor anomaly summaries and unit alarm evaluation.',
-    initials: 'GM'
+    initials: 'GM',
   },
   {
     id: 'glm-4-9b',
@@ -81,7 +81,7 @@ const INITIAL_MODELS: ModelCardData[] = [
     contextWindow: '128K',
     status: 'Standby',
     description: 'Bilingual engineering translation and multi-turn technical dialogue processing.',
-    initials: 'GL'
+    initials: 'GL',
   },
   {
     id: 'whisper-large-v3',
@@ -94,7 +94,7 @@ const INITIAL_MODELS: ModelCardData[] = [
     contextWindow: '30s',
     status: 'Loaded',
     description: 'Speech-to-text audio transcription for operator site voice notes and control room logs.',
-    initials: 'WH'
+    initials: 'WH',
   },
   {
     id: 'bge-m3-multilingual',
@@ -107,7 +107,7 @@ const INITIAL_MODELS: ModelCardData[] = [
     contextWindow: '8K',
     status: 'Loaded',
     description: 'High-density multi-vector embedding model powering instant RAG search over P&ID schematics and PDF manuals.',
-    initials: 'BG'
+    initials: 'BG',
   },
   {
     id: 'nomic-embed-text-v15',
@@ -120,8 +120,8 @@ const INITIAL_MODELS: ModelCardData[] = [
     contextWindow: '8K',
     status: 'Standby',
     description: 'Ultra-fast semantic vector indexer for real-time equipment tag matching.',
-    initials: 'NM'
-  }
+    initials: 'NM',
+  },
 ]
 
 const CATEGORIES = ['All Models', 'LLMs', 'Vision', 'OCR', 'Embedding', 'Code', 'Reasoning']
@@ -139,7 +139,7 @@ export const ModelHubWorkspace: React.FC = () => {
 
   const handleToggleLoad = (id: string) => {
     setModels(prev =>
-      prev.map(m => {
+      prev.map((m) => {
         if (m.id === id) {
           const nextStatus = m.status === 'Loaded' ? 'Standby' : 'Loaded'
           if (nextStatus === 'Loaded') {
@@ -150,7 +150,7 @@ export const ModelHubWorkspace: React.FC = () => {
           return { ...m, status: nextStatus }
         }
         return m
-      })
+      }),
     )
   }
 
@@ -162,7 +162,7 @@ export const ModelHubWorkspace: React.FC = () => {
     toastStore.success(`Initiated Download: ${modelName}`, 'Pulling model weights from local repository')
   }
 
-  const filteredModels = models.filter(m => {
+  const filteredModels = models.filter((m) => {
     const matchesCategory =
       activeModelHubCategory === 'All Models' || m.category === activeModelHubCategory
     const matchesSearch =

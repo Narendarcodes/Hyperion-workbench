@@ -11,8 +11,8 @@ import {
   getNormalizedModels,
   setSelectedNormalizedModel,
 } from './store.ts'
-import type { NormalizedModel } from './services/normalization.ts'
-import { defaultOllama, formatBytes } from './services/ollama.ts'
+import type { ModelHubTab } from './store.ts'
+import { defaultOllama } from './services/ollama.ts'
 import { defaultLlama } from './services/llama.ts'
 import { ModelsTab } from './tabs/ModelsTab.tsx'
 import { CustomModelsTab } from './tabs/CustomModelsTab.tsx'
@@ -86,10 +86,7 @@ export const ModelHubWorkspace: React.FC = () => {
     isConfigModalOpen,
     selectedModel,
     selectedLlamaModel,
-    selectedNormalizedModel,
     systemResources,
-    ollamaConnected,
-    llamaStatus,
   } = store
 
   const isOpen = Boolean(store.isOpen || store.isModelHubOpen)
@@ -181,7 +178,7 @@ export const ModelHubWorkspace: React.FC = () => {
 
   const handleSelectCategory = (cat: string) => {
     if (cat === 'resources' || cat === 'updates' || cat === 'custom') {
-      setActiveTab(cat as any)
+      setActiveTab(cat as ModelHubTab)
       return
     }
     setActiveTab('models')
@@ -313,7 +310,7 @@ export const ModelHubWorkspace: React.FC = () => {
           <div className={css.summaryCard}>
             <div className={css.summaryCardTitle}>Embedding / RAG</div>
             <div className={css.summaryCardValue} style={{ fontSize: 14 }}>
-              {embeddingModel ? 'Configured' : 'Configured'}
+              {embeddingModel ? 'Configured' : 'Not Configured'}
             </div>
             <div className={css.summaryCardSub}>
               {embeddingModel ? embeddingModel.name : 'Vector Index Active'}
@@ -458,7 +455,7 @@ export const ModelHubWorkspace: React.FC = () => {
               }
               void store.refreshAll()
             }}
-            onUse={(m) => {
+            onUse={() => {
               closeModelHub()
             }}
           />

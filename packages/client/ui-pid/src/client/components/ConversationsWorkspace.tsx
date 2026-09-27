@@ -1,6 +1,5 @@
 import React from 'react'
 import { pidStore } from '../pidStore'
-import { toastStore } from '../toastStore'
 import css from './ConversationsWorkspace.module.css'
 
 export const ConversationsWorkspace: React.FC = () => {

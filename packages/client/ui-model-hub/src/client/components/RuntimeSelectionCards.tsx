@@ -46,8 +46,8 @@ export function RuntimeSelectionCards({
           const defaultDescription = isOllama
             ? 'Local REST server, Modelfiles & registry model engine'
             : isLlama
-            ? 'In-process native GGUF architecture backend'
-            : 'Local Modelfile packages & customized domain parameters'
+              ? 'In-process native GGUF architecture backend'
+              : 'Local Modelfile packages & customized domain parameters'
 
           return (
             <div

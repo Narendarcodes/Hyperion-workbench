@@ -90,7 +90,7 @@ export const BottomCards: React.FC = () => {
         </div>
         <div className={css.cardBody}>
           <div className={css.docList}>
-            {documents.slice(0, 5).map((doc) => (
+            {documents.slice(0, 5).map(doc => (
               <div
                 key={doc.id}
                 className={css.docItem}

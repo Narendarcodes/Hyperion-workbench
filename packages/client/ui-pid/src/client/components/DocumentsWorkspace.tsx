@@ -7,7 +7,7 @@ import css from './DocumentsWorkspace.module.css'
 export const DocumentsWorkspace: React.FC = () => {
   const { documents, activeFilters } = useWorkbenchStore()
 
-  const filtered = documents.filter(doc => {
+  const filtered = documents.filter((doc) => {
     if (activeFilters.unit && activeFilters.unit !== 'All Units' && doc.unit !== activeFilters.unit) return false
     if (activeFilters.type && activeFilters.type !== 'All Types' && doc.type !== activeFilters.type) return false
     return true

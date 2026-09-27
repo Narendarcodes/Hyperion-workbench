@@ -315,7 +315,7 @@ class WorkbenchStore {
     this.setState({ activeFilters: filters, isFilterOpen: false })
     this.logAudit(
       this.state.filterDomain === 'pid' ? 'P&ID' : 'Equipment',
-      `Applied filters for ${this.state.filterDomain}`
+      `Applied filters for ${this.state.filterDomain}`,
     )
   }
 

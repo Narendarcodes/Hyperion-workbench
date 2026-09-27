@@ -6,8 +6,6 @@ import {
   loadRuntimeConfig,
   saveRuntimeConfig,
   DEFAULT_RUNTIME_CONFIG,
-  getNormalizedModels,
-  getGroupedRuntimeModels,
   type RuntimeConfig,
 } from '../src/client/store.ts'
 import { OllamaClient } from '../src/client/services/ollama.ts'

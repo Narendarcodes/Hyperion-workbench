@@ -4,7 +4,6 @@ import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
 import { PIDWorkspace } from './PIDWorkspace.tsx'
-import { pidStore } from './pidStore.ts'
 
 export { PIDWorkspace } from './PIDWorkspace.tsx'
 export { pidStore, usePIDStore, openPIDWorkspace, closePIDWorkspace } from './pidStore.ts'

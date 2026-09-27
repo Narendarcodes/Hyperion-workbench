@@ -73,7 +73,7 @@ Context: Diagram ${selectedPID} · Equipment ${eqTag} (Centrifugal Crude Feed Pu
             placeholder={aiChatQuery || 'Ask Hyperion about process flow, equipment, or failure modes...'}
             value={inputText}
             onChange={e => setInputText(e.target.value)}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter') handleSend()
             }}
           />

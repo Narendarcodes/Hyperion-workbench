@@ -161,7 +161,7 @@ class PIDStore {
 
   openAIChat(query = ''): void {
     const selected = this.state.selectedEquipment
-    const defaultQuery = query || (selected ? `Explain the operation and failure modes of ${selected.tag} (${selected.name})` : `Analyze P&ID CDU-03-001 control loops and process flow.`)
+    const defaultQuery = query || (selected ? `Explain the operation and failure modes of ${selected.tag} (${selected.name})` : 'Analyze P&ID CDU-03-001 control loops and process flow.')
     this.setState({ isAIChatOpen: true, aiChatQuery: defaultQuery })
   }
 

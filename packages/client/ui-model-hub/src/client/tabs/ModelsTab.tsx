@@ -31,9 +31,9 @@ export function ModelsTab({
   search: externalSearch,
   setSearch: externalSetSearch,
   runtimeFilter: externalRuntimeFilter,
-  setRuntimeFilter: externalSetRuntimeFilter,
+  setRuntimeFilter: _externalSetRuntimeFilter,
   typeFilter: externalTypeFilter,
-  setTypeFilter: externalSetTypeFilter,
+  setTypeFilter: _externalSetTypeFilter,
   statusFilter: externalStatusFilter,
   setStatusFilter: externalSetStatusFilter,
   selectedModelId,
@@ -103,7 +103,7 @@ export function ModelsTab({
 
       const llmCount = runtimeModels.filter(m => m.modelTypes.includes('LLM')).length
       const visionCount = runtimeModels.filter(m =>
-        m.modelTypes.includes('Vision') || m.modelTypes.includes('Multimodal')
+        m.modelTypes.includes('Vision') || m.modelTypes.includes('Multimodal'),
       ).length
       const embedCount = runtimeModels.filter(m => m.modelTypes.includes('Embedding')).length
       const ocrCount = runtimeModels.filter(m => m.modelTypes.includes('OCR')).length
@@ -366,7 +366,7 @@ export function ModelsTab({
               <div style={{ fontSize: 13, color: '#94a3b8', maxWidth: 400, lineHeight: 1.5 }}>
                 {search
                   ? 'Try clearing or adjusting your search terms.'
-                  : `Download a model using Ollama CLI or import GGUF files.`}
+                  : 'Download a model using Ollama CLI or import GGUF files.'}
               </div>
               {!search && (
                 <button

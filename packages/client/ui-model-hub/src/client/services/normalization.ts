@@ -423,7 +423,7 @@ export function groupModelsByRuntimeAndType(
         if (!typeGroupsMap.has(t)) {
           typeGroupsMap.set(t, [])
         }
-        typeGroupsMap.get(t)!.push(m)
+        typeGroupsMap.get(t)?.push(m)
       }
     }
 

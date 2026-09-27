@@ -7,7 +7,7 @@ export const InvestigationsWorkspace: React.FC = () => {
   const { investigations, activeFilters } = useWorkbenchStore()
   const [selectedInvId, setSelectedInvId] = useState(investigations[0]?.id || '')
 
-  const filtered = investigations.filter(inv => {
+  const filtered = investigations.filter((inv) => {
     if (activeFilters.status && activeFilters.status !== 'All Statuses' && inv.status !== activeFilters.status) return false
     if (activeFilters.priority && activeFilters.priority !== 'All Priorities' && inv.priority !== activeFilters.priority) return false
     return true

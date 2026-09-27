@@ -34,14 +34,14 @@ export const ModelCard: React.FC<ModelCardProps> = ({
   const runtimeBadgeText = model.runtime === 'llama.cpp'
     ? 'LLAMA.CPP INFERENCE'
     : model.runtime === 'custom'
-    ? 'CUSTOM INFERENCE'
-    : 'OLLAMA INFERENCE'
+      ? 'CUSTOM INFERENCE'
+      : 'OLLAMA INFERENCE'
 
   const runtimeStyleClass = model.runtime === 'llama.cpp'
     ? css.llamacpp
     : model.runtime === 'custom'
-    ? css.custom
-    : css.ollama
+      ? css.custom
+      : css.ollama
 
   return (
     <div

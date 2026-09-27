@@ -6,7 +6,7 @@ import css from './NotificationPopover.module.css'
 export const NotificationPopover: React.FC = () => {
   const { notifications } = useWorkbenchStore()
 
-  const handleNotificationClick = (id: string, route?: string, entityId?: string) => {
+  const handleNotificationClick = (id: string, route?: string, _entityId?: string) => {
     workbenchStore.markNotificationRead(id)
     workbenchStore.toggleNotification()
     if (route) {

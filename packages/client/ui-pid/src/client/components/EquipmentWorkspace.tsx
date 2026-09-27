@@ -8,7 +8,7 @@ export const EquipmentWorkspace: React.FC = () => {
   const { equipments, activeFilters } = useWorkbenchStore()
   const [selectedEqId, setSelectedEqId] = useState(equipments[0]?.id || '')
 
-  const filteredEquipments = equipments.filter(eq => {
+  const filteredEquipments = equipments.filter((eq) => {
     if (activeFilters.unit && activeFilters.unit !== 'All Units' && eq.unit !== activeFilters.unit) return false
     if (activeFilters.status && activeFilters.status !== 'All Statuses' && eq.status !== activeFilters.status) return false
     if (activeFilters.area && activeFilters.area !== 'All Areas' && eq.area !== activeFilters.area) return false
