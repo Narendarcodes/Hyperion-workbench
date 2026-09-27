@@ -73,8 +73,8 @@ function VibrationMultiTrendChart({
   const makePath = (accessor: (p: VibrationTrendPoint) => number) => {
     let d = `M ${toX(0)} ${toY(accessor(points[0]))}`
     for (let i = 0; i < points.length - 1; i++) {
-      const p1 = points[i]
-      const p2 = points[i + 1]
+      const p1 = points[i] as VibrationTrendPoint
+      const p2 = points[i + 1] as VibrationTrendPoint
       const x1 = toX(i)
       const y1 = toY(accessor(p1))
       const x2 = toX(i + 1)

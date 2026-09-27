@@ -150,7 +150,7 @@ export function InvestigationsPage({
           investigation={selectedInvestigation}
           onOpenStatus={() => {
             const item = data.investigations.find(i => i.id === selectedId) || data.investigations[0]
-            onOpenInvestigation?.(item)
+            void (item && onOpenInvestigation?.(item))
           }}
           onEditSummary={() => {
             console.info('[Hyperion] Editing investigation summary')

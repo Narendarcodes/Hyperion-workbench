@@ -166,8 +166,8 @@ export function EquipmentPage({
           />
 
           <PerformancePanel
-            metrics={data.performanceMetrics}
-            selectedRange={data.performanceRange}
+            data={data.performanceMetrics}
+            timeRange={data.performanceRange}
           />
         </section>
 
