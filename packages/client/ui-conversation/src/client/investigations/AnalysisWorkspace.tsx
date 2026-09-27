@@ -72,7 +72,7 @@ function VibrationMultiTrendChart({
   // Build line path
   const makePath = (accessor: (p: VibrationTrendPoint) => number) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    let d = `M ${toX(0)} ${toY(accessor(points[0] ?? { x:0,y:0 }))}`
+    let d = `M ${toX(0)} ${toY(accessor(points[0] ?? points[0]!))}`
     for (let i = 0; i < points.length - 1; i++) {
       const p1 = points[i] as VibrationTrendPoint
       const p2 = points[i + 1] as VibrationTrendPoint
