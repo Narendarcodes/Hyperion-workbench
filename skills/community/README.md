@@ -15,20 +15,13 @@ clone gets them through the `bundled` discovery source — no per-machine
 
 ## Curation tiers (sovereign industrial workbench)
 
-Kept skills are local-only and brand-aligned: document intake and evidence
-(`pdf`, `docx`, `xlsx`, `powerpoint`, `nano-pdf`, `ocr-and-documents`,
-`document-to-action-items`, `grounded-citations`, `meeting-action-items`),
-engineering rigor (`diagnose`, `systematic-debugging`, `code-review`,
-`requesting-code-review`, `simplify-code`, `sdlc-review`,
-`merge-reconciler`, `dogfood`, `session-librarian`,
-`agents-towards-production`), planning and deliverables (`plan`, `spike`,
-`prototype`, `to-issues`, `to-prd`, `handoff`), coding pillars
-(`tdd`, `codebase-inspection`, `*-patterns`, `database-optimizer`,
-debuggers, security reviewers and scanners, performance/observability),
-knowledge structuring (`llm-wiki`, `graphify`), technical writing
-(`humanizer`, `grill-me`, `grill-with-docs`), engineering diagrams
-(`excalidraw`, `architecture-diagram`, `ui-ux-specialist`), and
-`write-a-skill` for team authorship.
+Slimmed 2026-09-28 for the MRPL demo: only document intake and evidence
+skills remain (`pdf`, `docx`, `xlsx`, `powerpoint`, `nano-pdf`,
+`ocr-and-documents`, `grounded-citations`). Everything else (code review/quality, security scanners,
+API/architecture, process/meta, UI/misc — 44 dirs) was deleted: none of it
+loads in the web composition, and every entry taxes each step of every
+session on small local models. Restore from source control if a use case
+needs one back.
 
 Deliberately excluded: networked/external-service skills (reach, cloud
 drives, inboxes, social, video, maps, package registries), OS-vendor-locked
@@ -44,6 +37,6 @@ pass or drop unattributed entries.
 
 ## Context cost
 
-54 entries ride the per-session skill catalog (name + capped description;
+7 entries ride the per-session skill catalog (name + capped description;
 bodies load on demand via the `skill` tool). Keep the allowlist tight —
 every entry taxes each step of every session on small local models.

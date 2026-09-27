@@ -409,6 +409,7 @@
       "@deepseek-ai/dsh-tool-goal": ["./packages/goal/tool-goal/src"],
       "@deepseek-ai/dsh-tool-jobs": ["./packages/jobs/tool-jobs/src"],
       "@deepseek-ai/dsh-tool-lsp": ["./packages/lsp/tool-lsp/src"],
+      "@deepseek-ai/dsh-tool-mrpl-spec-check": ["./packages/tool/tool-mrpl-spec-check/src"],
       "@deepseek-ai/dsh-tool-pwsh-persistent": ["./packages/shell/tool-pwsh-persistent/src"],
       "@deepseek-ai/dsh-tool-ralph": ["./packages/workflow/tool-ralph/src"],
       "@deepseek-ai/dsh-tool-session-query": ["./packages/session-query/tool-session-query/src"],

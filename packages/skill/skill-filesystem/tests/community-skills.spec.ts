@@ -16,7 +16,7 @@ describe('vendored community skills', () => {
       .filter(e => e.isDirectory())
       .map(e => e.name)
       .sort()
-    expect(dirs.length).toBeGreaterThan(50)
+    expect(dirs.length).toBeGreaterThan(0) // slimmed set: doc intake + graphify only
     const ctx = new Context()
     await ctx.plugin(SkillRegistry)
     await ctx.plugin(SkillFileSystem, {

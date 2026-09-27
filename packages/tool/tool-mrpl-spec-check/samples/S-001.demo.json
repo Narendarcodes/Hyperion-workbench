@@ -1,0 +1,15 @@
+{
+  "sample_id": "S-001",
+  "season": "summer",
+  "params": [
+    {"name": "ron", "value": 93.0, "unit": "number"},
+    {"name": "mon", "value": 84.0, "unit": "number"},
+    {"name": "density", "value": 745, "unit": "kg/m3"},
+    {"name": "sulphur", "value": 55, "unit": "mg/kg"},
+    {"name": "benzene", "value": 0.6, "unit": "vol%"},
+    {"name": "rvp", "value": 55, "unit": "kPa"},
+    {"name": "e70", "value": 30, "unit": "vol%"},
+    {"name": "olefins", "value": 10, "unit": "vol%"},
+    {"name": "aromatics", "value": 30, "unit": "vol%"}
+  ]
+}
