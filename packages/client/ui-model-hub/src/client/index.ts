@@ -6,7 +6,13 @@ import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
 import { ModelHubSidebarButton } from './ModelHubSidebarButton'
 import { ModelHubWorkspace } from './ModelHubWorkspace'
+import { ModelHubView } from './ModelHubView'
 import { startTelemetryPolling, bindCordisContext } from './store'
+
+export { ModelHubView, ModelHubSidebarButton, ModelHubWorkspace }
+export * from './ModelHubHeader'
+export * from './ModelsTabView'
+export * from './RuntimeTabView'
 
 export const inject = ['slots', 'sessions', 'modelDirectories', 'remote', 'remote.settings']
 
@@ -22,16 +28,7 @@ export function apply(ctx: Context): void {
     }
   }, 'ui-model-hub: telemetry polling')
 
-  // Register the sidebar footer button (stacks above Settings in sidebar footArea)
-  ctx.slots.inject('sidebar.footer.action', () =>
-    ctx.slots.register(
-      {
-        name: 'sidebar.footer.action',
-        id: 'model-hub-sidebar-button',
-      },
-      ModelHubSidebarButton,
-    ),
-  )
+  // Model Hub is accessed exclusively via the More navigation section in the workbench sidebar.
 
   // Register the Model Hub full workspace overlay in shell.overlay
   ctx.slots.inject('shell.overlay', () =>

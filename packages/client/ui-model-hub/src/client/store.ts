@@ -19,7 +19,7 @@ import {
   type SystemResources,
 } from './services/telemetry.ts'
 
-export type ModelHubTab = 'models' | 'llama-models' | 'custom' | 'updates' | 'resources'
+export type ModelHubTab = 'models' | 'runtime' | 'llama-models' | 'custom' | 'updates' | 'resources'
 
 export interface EndpointConfig {
   host: string
@@ -100,6 +100,7 @@ export interface ModelHubState {
   systemResources: SystemResources | null
   ollamaVersion: string
   ollamaConnected: boolean
+  ollamaConnectedTime: Date | null
   isOllamaConnected: boolean
   isLlamaConnected: boolean
   selectedModel: OllamaModel | null
@@ -128,6 +129,7 @@ const initialState: ModelHubState = {
   systemResources: null,
   ollamaVersion: '...',
   ollamaConnected: false,
+  ollamaConnectedTime: null,
   isOllamaConnected: false,
   isLlamaConnected: false,
   selectedModel: null,
@@ -270,8 +272,11 @@ class ModelHubStore {
       void syncOllamaModelsToSettings()
       void syncLlamaModelsToSettings()
 
+      // Track connection time for uptime calculation
+      const ollamaConnectedTime = ollamaConnected ? new Date() : (this.state.ollamaConnected ? this.state.ollamaConnectedTime : null)
       this.setState({
         ollamaConnected,
+        ollamaConnectedTime,
         llamaStatus,
         telemetry,
         ollamaVersion,
@@ -327,9 +332,57 @@ export function useStoreSnapshot(): ModelHubState {
   return useSyncExternalStore(modelHubStore.subscribe, modelHubStore.getSnapshot)
 }
 
-export const openModelHub = () => modelHubStore.setOpen(true)
-export const closeModelHub = () => modelHubStore.setOpen(false)
-export const toggleModelHub = () => modelHubStore.setOpen(!modelHubStore.getSnapshot().isOpen)
+export const openModelHub = () => {
+  modelHubStore.setOpen(true)
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('dsh.workbench.view', 'model-hub')
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('dsh:workbench:view', { detail: 'model-hub' }))
+    }
+  } catch {}
+}
+
+export const closeModelHub = () => {
+  modelHubStore.setOpen(false)
+  try {
+    const prev = typeof localStorage !== 'undefined' ? localStorage.getItem('dsh.workbench.view') : null
+    if (prev === 'model-hub') {
+      localStorage.setItem('dsh.workbench.view', 'home')
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('dsh:workbench:view', { detail: 'home' }))
+      }
+    }
+  } catch {}
+}
+
+export const toggleModelHub = () => {
+  if (modelHubStore.getSnapshot().isOpen) {
+    closeModelHub()
+  } else {
+    openModelHub()
+  }
+}
+
+if (typeof window !== 'undefined') {
+  try {
+    if (localStorage.getItem('dsh.workbench.view') === 'model-hub') {
+      modelHubStore.setOpen(true)
+    }
+  } catch {}
+
+  window.addEventListener('dsh:workbench:view', (e: Event) => {
+    const custom = e as CustomEvent<string>
+    if (custom.detail === 'model-hub') {
+      if (!modelHubStore.getSnapshot().isOpen) {
+        modelHubStore.setOpen(true)
+      }
+    } else if (modelHubStore.getSnapshot().isOpen) {
+      modelHubStore.setOpen(false)
+    }
+  })
+}
 export const setActiveTab = (tab: ModelHubTab) => modelHubStore.setActiveTab(tab)
 export const setSelectedModel = (model: OllamaModel | null, openDetails = false) =>
   modelHubStore.setSelectedModel(model, openDetails)
