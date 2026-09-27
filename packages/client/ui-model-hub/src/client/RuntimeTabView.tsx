@@ -54,7 +54,7 @@ const SAMPLE_LOGS = [
 
 export const RuntimeTabView: React.FC<RuntimeTabViewProps> = ({
   storeState,
-  _onOpenConfigDialog,
+  onOpenConfigDialog: _onOpenConfigDialog,
 }) => {
   const [selectedEngine, setSelectedEngine] = useState<EngineType | null>('ollama')
   const [drawerTab, setDrawerTab] = useState<DrawerTab>('details')

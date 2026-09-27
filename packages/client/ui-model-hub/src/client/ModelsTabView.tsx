@@ -210,7 +210,7 @@ export const ModelsTabView: React.FC<ModelsTabViewProps> = ({
   // Select first model for drawer if none selected yet
   React.useEffect(() => {
     if (allInstalledModels.length > 0 && selectedDrawerModel === null) {
-      setSelectedDrawerModel(allInstalledModels[0])
+      setSelectedDrawerModel(allInstalledModels[0] ?? null)
     }
   }, [allInstalledModels, selectedDrawerModel])
 
@@ -295,7 +295,8 @@ export const ModelsTabView: React.FC<ModelsTabViewProps> = ({
       if (model.source === 'Ollama') {
         await defaultOllama.deleteModel(model.name)
       } else {
-        await defaultLlama.deleteModel(model.id)
+        // llama.cpp does not support model deletion
+        throw new Error('Model deletion not supported for llama.cpp')
       }
       await modelHubStore.refreshAll()
       if (selectedDrawerModel?.id === model.id) {
@@ -498,8 +499,7 @@ export const ModelsTabView: React.FC<ModelsTabViewProps> = ({
                   >
                     {/* Card Header */}
                     <div className={css.cardTopRow}>
-                      <ModelLogo name={model.name} family={model.rawOllama?.details?.family || undefined} />
-
+                      <ModelLogo name={model.name} {...(model.rawOllama?.details?.family && { family: model.rawOllama.details.family })} />
                       <div className={css.cardNameAndSource}>
                         <span className={css.modelCardName}>{model.name}</span>
                         <span className={css.modelCardSource}>{model.source}</span>
@@ -610,7 +610,11 @@ export const ModelsTabView: React.FC<ModelsTabViewProps> = ({
           {/* Drawer Header */}
           <div className={css.drawerHeader}>
             <div className={css.drawerTopRow}>
-              <ModelLogo name={selectedDrawerModel.name} family={selectedDrawerModel.rawOllama?.details?.family || undefined} size={32} />
+              <ModelLogo
+                name={selectedDrawerModel.name}
+                size={32}
+                {...(selectedDrawerModel.rawOllama?.details?.family && { family: selectedDrawerModel.rawOllama.details.family })}
+              />
               <div className={css.drawerTitleGroup}>
                 <div className={css.drawerNameAndStatus}>
                   <h3 className={css.drawerTitle}>{selectedDrawerModel.name}</h3>

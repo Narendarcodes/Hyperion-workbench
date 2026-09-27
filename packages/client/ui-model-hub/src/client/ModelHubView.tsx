@@ -25,7 +25,7 @@ export interface ModelHubViewProps {
 export const ModelHubView: React.FC<ModelHubViewProps> = ({
   localState = 'available',
   initialTab = 'models',
-  _onClose,
+  onClose: _onClose,
 }) => {
   const storeState = useStoreSnapshot()
   const [activeTab, setActiveTab] = useState<'models' | 'runtime'>(initialTab)
