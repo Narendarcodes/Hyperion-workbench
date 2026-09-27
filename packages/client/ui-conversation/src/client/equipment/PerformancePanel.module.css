@@ -1,0 +1,232 @@
+.performanceRoot {
+  display: flex;
+  flex-direction: column;
+  width: 270px;
+  flex-shrink: 0;
+  background: var(--dsw-alias-surface-raised, #ffffff);
+  border: 1px solid var(--dsw-alias-border-subtle, #e2e8f0);
+  border-radius: 10px;
+  padding: 12px;
+  box-sizing: border-box;
+  height: 460px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+:global([data-ds-dark-theme="true"]) .performanceRoot,
+:global(.dark) .performanceRoot {
+  background: var(--dsw-alias-surface-raised, #1e293b);
+  border-color: var(--dsw-alias-border-subtle, #334155);
+}
+
+.performanceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.performanceTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--dsw-alias-label-primary, #0f172a);
+  margin: 0;
+}
+
+:global([data-ds-dark-theme="true"]) .performanceTitle,
+:global(.dark) .performanceTitle {
+  color: #f8fafc;
+}
+
+.rangeSelectBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: var(--dsw-alias-surface-raised, #ffffff);
+  border: 1px solid var(--dsw-alias-border-subtle, #e2e8f0);
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: var(--dsw-alias-label-secondary, #475569);
+  cursor: pointer;
+  transition: all 120ms ease-out;
+}
+
+.rangeSelectBtn:hover {
+  background: var(--dsw-alias-interactive-bg-hover, #f8fafc);
+  border-color: #cbd5e1;
+}
+
+:global([data-ds-dark-theme="true"]) .rangeSelectBtn,
+:global(.dark) .rangeSelectBtn {
+  background: #0f172a;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+:global([data-ds-dark-theme="true"]) .rangeSelectBtn:hover,
+:global(.dark) .rangeSelectBtn:hover {
+  background: #1e293b;
+  border-color: #475569;
+}
+
+.rangeChevron {
+  color: var(--dsw-alias-label-tertiary, #94a3b8);
+}
+
+/* Metrics List */
+.metricsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.metricCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--dsw-alias-surface-sunken, #f8fafc);
+  border: 1px solid var(--dsw-alias-border-subtle, #f1f5f9);
+  border-radius: 8px;
+  transition: all 120ms ease-out;
+}
+
+.metricCard:hover {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+:global([data-ds-dark-theme="true"]) .metricCard,
+:global(.dark) .metricCard {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+:global([data-ds-dark-theme="true"]) .metricCard:hover,
+:global(.dark) .metricCard:hover {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.metricMain {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 120px;
+}
+
+.metricIconBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.metricTone_blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.metricTone_green {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.metricTone_purple {
+  background: #faf5ff;
+  color: #9333ea;
+}
+
+.metricTone_amber {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.metricTone_red {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+:global([data-ds-dark-theme="true"]) .metricTone_blue, :global(.dark) .metricTone_blue { background: rgba(37, 99, 235, 0.2); color: #60a5fa; }
+:global([data-ds-dark-theme="true"]) .metricTone_green, :global(.dark) .metricTone_green { background: rgba(22, 163, 74, 0.2); color: #4ade80; }
+:global([data-ds-dark-theme="true"]) .metricTone_purple, :global(.dark) .metricTone_purple { background: rgba(147, 51, 234, 0.2); color: #c084fc; }
+:global([data-ds-dark-theme="true"]) .metricTone_amber, :global(.dark) .metricTone_amber { background: rgba(217, 119, 6, 0.2); color: #fbbf24; }
+:global([data-ds-dark-theme="true"]) .metricTone_red, :global(.dark) .metricTone_red { background: rgba(220, 38, 38, 0.2); color: #f87171; }
+
+.metricDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.metricName {
+  font-size: 11px;
+  color: var(--dsw-alias-label-secondary, #64748b);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+:global([data-ds-dark-theme="true"]) .metricName,
+:global(.dark) .metricName {
+  color: #94a3b8;
+}
+
+.metricValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dsw-alias-label-primary, #0f172a);
+  line-height: 1.2;
+}
+
+:global([data-ds-dark-theme="true"]) .metricValue,
+:global(.dark) .metricValue {
+  color: #f8fafc;
+}
+
+/* Sparkline */
+.sparklineWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  max-width: 110px;
+}
+
+.sparklineSvg {
+  overflow: visible;
+}
+
+/* Line Strokes */
+.sparklineStroke_blue { stroke: #2563eb; }
+.sparklineStroke_green { stroke: #16a34a; }
+.sparklineStroke_purple { stroke: #9333ea; }
+.sparklineStroke_amber { stroke: #d97706; }
+.sparklineStroke_red { stroke: #dc2626; }
+
+:global([data-ds-dark-theme="true"]) .sparklineStroke_blue, :global(.dark) .sparklineStroke_blue { stroke: #60a5fa; }
+:global([data-ds-dark-theme="true"]) .sparklineStroke_green, :global(.dark) .sparklineStroke_green { stroke: #4ade80; }
+:global([data-ds-dark-theme="true"]) .sparklineStroke_purple, :global(.dark) .sparklineStroke_purple { stroke: #c084fc; }
+:global([data-ds-dark-theme="true"]) .sparklineStroke_amber, :global(.dark) .sparklineStroke_amber { stroke: #fbbf24; }
+:global([data-ds-dark-theme="true"]) .sparklineStroke_red, :global(.dark) .sparklineStroke_red { stroke: #f87171; }
+
+/* Gradient Fill Stops */
+.areaStopStart_blue { stop-color: #3b82f6; stop-opacity: 0.6; }
+.areaStopEnd_blue { stop-color: #3b82f6; stop-opacity: 0; }
+
+.areaStopStart_green { stop-color: #22c55e; stop-opacity: 0.6; }
+.areaStopEnd_green { stop-color: #22c55e; stop-opacity: 0; }
+
+.areaStopStart_purple { stop-color: #a855f7; stop-opacity: 0.6; }
+.areaStopEnd_purple { stop-color: #a855f7; stop-opacity: 0; }
+
+.areaStopStart_amber { stop-color: #f59e0b; stop-opacity: 0.6; }
+.areaStopEnd_amber { stop-color: #f59e0b; stop-opacity: 0; }
+
+.areaStopStart_red { stop-color: #ef4444; stop-opacity: 0.6; }
+.areaStopEnd_red { stop-color: #ef4444; stop-opacity: 0; }

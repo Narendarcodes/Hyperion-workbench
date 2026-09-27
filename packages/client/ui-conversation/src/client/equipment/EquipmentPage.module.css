@@ -1,0 +1,55 @@
+.pageRoot {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 14px 20px 32px;
+  box-sizing: border-box;
+}
+
+.workspaceMain {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Upper Band: Browser (left) + Detail (center) + Performance (right) */
+.upperSection {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* Lower Band: Documents (left) + Activity (center) + Ask Hyperion (right) */
+.lowerSection {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1320px) {
+  .pageRoot {
+    padding: 12px 16px 24px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .lowerSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageRoot {
+    padding: 10px 12px 20px;
+  }
+  .upperSection {
+    flex-direction: column;
+  }
+}
