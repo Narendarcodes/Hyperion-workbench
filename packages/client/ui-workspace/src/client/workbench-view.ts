@@ -1,5 +1,5 @@
 /**
- * Shared observable state for the active Hyperion workbench view ('home' | 'plant').
+ * Shared observable state for the active Hyperion workbench view.
  * Defaults to 'plant' for browser runtime per Hyperion Screen 2 specifications,
  * and preserves 'home' default for test suites unless explicitly switched.
  * Synchronizes across client plugins using DOM CustomEvent and localStorage.
@@ -8,7 +8,7 @@
 
 import { useSyncExternalStore } from 'react'
 
-export type WorkbenchView = 'home' | 'plant'
+export type WorkbenchView = 'home' | 'plant' | 'equipment' | 'investigations' | 'investigation-detail' | 'model-hub'
 
 const STORAGE_KEY = 'dsh.workbench.view'
 const EVENT_NAME = 'dsh:workbench:view'
@@ -19,7 +19,7 @@ function readStorage(): WorkbenchView {
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored === 'home' || stored === 'plant') {
+      if (stored === 'home' || stored === 'plant' || stored === 'equipment' || stored === 'investigations' || stored === 'investigation-detail' || stored === 'model-hub') {
         return stored
       }
     } catch {}
@@ -59,13 +59,13 @@ export function subscribeWorkbenchView(listener: (view: WorkbenchView) => void):
 
   const handleCustomEvent = (e: Event) => {
     const custom = e as CustomEvent<WorkbenchView>
-    if (custom.detail === 'home' || custom.detail === 'plant') {
+    if (custom.detail === 'home' || custom.detail === 'plant' || custom.detail === 'equipment' || custom.detail === 'investigations' || custom.detail === 'investigation-detail' || custom.detail === 'model-hub') {
       notify(custom.detail)
     }
   }
 
   const handleStorage = (e: StorageEvent) => {
-    if (e.key === STORAGE_KEY && (e.newValue === 'home' || e.newValue === 'plant')) {
+    if (e.key === STORAGE_KEY && (e.newValue === 'home' || e.newValue === 'plant' || e.newValue === 'equipment' || e.newValue === 'investigations' || e.newValue === 'investigation-detail' || e.newValue === 'model-hub')) {
       notify(e.newValue)
     }
   }

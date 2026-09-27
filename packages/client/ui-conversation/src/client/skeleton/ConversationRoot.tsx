@@ -8,8 +8,11 @@ import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types'
 import type { ConversationSlotProps, InputZone } from '../contract/slots.ts'
 import { conversationPhase } from '../contract/snapshot.ts'
 import { HeroShell, HomeSections, defaultHomeSuggestions, workspaceLabel, WorkspaceChip } from './EmptyHero.tsx'
-import { useWorkbenchView } from '../plant/workbench-view.ts'
+import { useWorkbenchView, setWorkbenchView } from '../plant/workbench-view.ts'
 import { PlantOverview } from '../plant/PlantOverview.tsx'
+import { EquipmentPage } from '../equipment/EquipmentPage.tsx'
+import { InvestigationsPage } from '../investigations/InvestigationsPage.tsx'
+import { InvestigationDetailView } from '../investigations/InvestigationDetailView.tsx'
 import css from './ConversationRoot.module.css'
 
 /** Full props composed from the slot contract. */
@@ -364,7 +367,11 @@ export function ConversationRoot({
   })
 
   const isPlant = workbenchView === 'plant' && hero
-  const composerBar = isPlant ? null : (
+  const isEquipment = workbenchView === 'equipment' && hero
+  const isInvestigations = workbenchView === 'investigations' && hero
+  const isInvestigationDetail = workbenchView === 'investigation-detail' && hero
+  const isWorkbenchSurface = (isPlant || isEquipment || isInvestigations || isInvestigationDetail)
+  const composerBar = isWorkbenchSurface ? null : (
     <div className={clsx(css.composerStack, hero && css.composerHero)}>
       {hero && <HeroShell t={t} localState={localState} />}
       {hero && heroWorkspaceRow}
@@ -383,7 +390,7 @@ export function ConversationRoot({
   )
 
   const phase = settling ? 'settling' : hero ? 'hero' : 'active'
-  const composer = isPlant ? null : renderSlotChain(
+  const composer = isWorkbenchSurface ? null : renderSlotChain(
     'conversation.composer',
     { sessionId, session, pendingInteraction },
     { fallback: composerBar, fallbackOnly: sessionId === undefined, overlay: true },
@@ -393,7 +400,7 @@ export function ConversationRoot({
   // only `.composerStack`: overlay:true renders those as siblings, and sticky
   // on the fallback alone would leave a business-owned takeover at the content
   // end off-screen when the user is not pinned to the floor.
-  const composerSeat = isPlant ? null : (
+  const composerSeat = isWorkbenchSurface ? null : (
     <div ref={seatResizeRef} className={css.composerSeat} data-composer-seat="">
       {composer}
     </div>
@@ -401,7 +408,7 @@ export function ConversationRoot({
 
   return (
     <div ref={rootResizeRef} className={css.root} data-phase={phase}>
-      {sessionId === undefined || isPlant ? null : renderSlot('conversation.session.header', {})}
+      {sessionId === undefined || isWorkbenchSurface ? null : renderSlot('conversation.session.header', {})}
       <div className={css.body}>
         <div className={css.scrollBody} data-conversation-scroll="">
           {isPlant && (
@@ -415,7 +422,64 @@ export function ConversationRoot({
               }}
             />
           )}
-          {sessionId === undefined || isPlant ? null : renderSlot('conversation.session', {})}
+          {isEquipment && (
+            <EquipmentPage
+              localState={localState}
+              onOpenPid={() => {
+                setDraft('View P&ID CDU-03-001 for Crude Feed Pump P-101 A/B ')
+              }}
+              onOpenDocuments={() => {
+                setDraft('List connected documents for P-101 A/B ')
+              }}
+              onNewInvestigation={() => {
+                setDraft('Start investigation for Crude Feed Pump P-101 A/B ')
+              }}
+              onAskEquipment={(query) => {
+                setDraft(`${query} `)
+              }}
+            />
+          )}
+          {isInvestigations && (
+            <InvestigationsPage
+              localState={localState}
+              onNewInvestigation={() => {
+                setDraft('Start new plant investigation ')
+              }}
+              onAskAI={(query) => {
+                setDraft(`${query} `)
+              }}
+              onOpenInvestigation={() => {
+                setWorkbenchView('investigation-detail')
+              }}
+            />
+          )}
+          {isInvestigationDetail && (
+            <InvestigationDetailView
+              localState={localState}
+              onNavigateBack={() => {
+                setWorkbenchView('investigations')
+              }}
+              onShare={() => {
+                setDraft('Share investigation INV-2024-001 ')
+              }}
+              onChangeStatus={() => {
+                setDraft('Change status of investigation INV-2024-001 ')
+              }}
+              onGenerateReport={() => {
+                setDraft('Generate comprehensive investigation report for INV-2024-001 ')
+              }}
+              onRerun={() => {
+                setDraft('Rerun vibration and root cause analysis for P-204 ')
+              }}
+              onSendQuery={(query) => {
+                setDraft(`${query} `)
+              }}
+              onViewEquipmentDetails={() => {
+                setWorkbenchView('equipment')
+              }}
+            />
+          )}
+          {sessionId === undefined || isWorkbenchSurface ? null : renderSlot('conversation.session', {})}
           {composerSeat}
         </div>
         {/* Width handles only while a transcript is on screen; the hero has no

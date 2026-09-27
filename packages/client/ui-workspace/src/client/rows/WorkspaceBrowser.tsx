@@ -1201,26 +1201,46 @@ export function WorkspaceBrowser({
                   <path d="M6 9v9h9M9 6h6" />
                 </svg>
               ))}
-              {plannedItem(t('nav.equipment'), (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="6" width="20" height="12" rx="3" />
-                  <line x1="6" y1="6" x2="6" y2="18" />
-                  <line x1="10" y1="6" x2="10" y2="18" />
-                  <line x1="14" y1="6" x2="14" y2="18" />
-                  <line x1="18" y1="6" x2="18" y2="18" />
-                </svg>
-              ))}
+              <button
+                type="button"
+                className={css.navItem}
+                aria-current={workbenchView === 'equipment' ? 'page' : undefined}
+                onClick={() => {
+                  setWorkbenchView('equipment')
+                  startSession()
+                }}
+              >
+                <span className={css.navIcon} aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 14C4 8.5 7.5 5 12 5s8 3.5 8 9H4z" />
+                    <circle cx="12" cy="10" r="1" />
+                    <path d="M12 14v4M8 18c2 2 6 2 8 0" />
+                  </svg>
+                </span>
+                <span>{t('nav.equipment')}</span>
+              </button>
             </div>
           </section>
           <section aria-labelledby="workbench-work" className={css.navSection}>
             <h2 id="workbench-work" className={css.navGroupLabel}>{t('nav.work')}</h2>
             <div className={css.navItems}>
-              {plannedItem(t('nav.investigations'), (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-              ))}
+              <button
+                type="button"
+                className={css.navItem}
+                aria-current={(workbenchView === 'investigations' || workbenchView === 'investigation-detail') ? 'page' : undefined}
+                onClick={() => {
+                  setWorkbenchView('investigations')
+                  startSession()
+                }}
+              >
+                <span className={css.navIcon} aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </span>
+                <span>{t('nav.investigations')}</span>
+              </button>
               {plannedItem(t('nav.documents'), (
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1232,18 +1252,6 @@ export function WorkspaceBrowser({
                   <line x1="18" y1="20" x2="18" y2="10" />
                   <line x1="12" y1="20" x2="12" y2="4" />
                   <line x1="6" y1="20" x2="6" y2="14" />
-                </svg>
-              ))}
-            </div>
-          </section>
-          <section aria-labelledby="workbench-simulation" className={css.navSection}>
-            <h2 id="workbench-simulation" className={css.navGroupLabel}>{t('nav.simulation')}</h2>
-            <div className={css.navItems}>
-              {plannedItem(t('nav.simulation'), (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                  <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
               ))}
             </div>
@@ -1460,13 +1468,24 @@ export function WorkspaceBrowser({
                     <polygon points="5 3 19 12 5 21 5 3" />
                   </svg>
                 ))}
-                {plannedItem(t('nav.modelHub'), (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="18" height="18" rx="3" />
-                    <circle cx="9" cy="9" r="2" />
-                    <path d="M15 15h.01" />
-                  </svg>
-                ))}
+                <button
+                  type="button"
+                  className={css.navItem}
+                  aria-current={workbenchView === 'model-hub' ? 'page' : undefined}
+                  onClick={() => {
+                    setWorkbenchView('model-hub')
+                    startSession()
+                  }}
+                >
+                  <span className={css.navIcon} aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <ellipse cx="12" cy="5" rx="9" ry="3" />
+                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                    </svg>
+                  </span>
+                  <span>{t('nav.modelHub')}</span>
+                </button>
                 {plannedItem(t('nav.modelRouter'), (
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <line x1="6" y1="3" x2="6" y2="15" />

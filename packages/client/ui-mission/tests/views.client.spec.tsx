@@ -54,7 +54,7 @@ describe('MissionView and Plugin Registration', () => {
     const labelVal = typeof missionEntry?.options.label === 'function'
       ? missionEntry.options.label()
       : missionEntry?.options.label
-    expect(labelVal).toBe('Mission')
+    expect(labelVal).toBe('Simulation')
   })
 
   it('renders MissionView with header, live office iframe, and bottom status counts', () => {
