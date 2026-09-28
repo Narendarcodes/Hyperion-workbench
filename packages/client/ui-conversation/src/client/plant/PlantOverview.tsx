@@ -16,7 +16,6 @@ import css from './PlantOverview.module.css'
 
 export interface PlantOverviewProps {
   readonly data?: PlantOverviewData
-  readonly localState?: 'available' | 'unavailable' | undefined
   readonly onOpenPid?: () => void
   readonly onOpenUnit?: (unit: UnitDetail) => void
   readonly onStartInvestigation?: (unit: UnitDetail) => void
@@ -24,7 +23,6 @@ export interface PlantOverviewProps {
 
 export function PlantOverview({
   data = DEFAULT_PLANT_OVERVIEW_DATA,
-  localState = 'available',
   onOpenPid,
   onOpenUnit,
   onStartInvestigation,
@@ -81,7 +79,6 @@ export function PlantOverview({
         title={data.name}
         subtitle={data.subtitle}
         breadcrumb={data.breadcrumb}
-        localState={localState}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onOpenPid={handleOpenPid}

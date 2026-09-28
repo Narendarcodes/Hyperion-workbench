@@ -66,7 +66,7 @@
   background: var(--dsw-alias-bg-layer-1, #ffffff);
   border: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.08));
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--dsw-elevation-panel);
   cursor: pointer;
   text-align: left;
   transition: all 140ms ease;

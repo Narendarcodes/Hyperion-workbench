@@ -297,6 +297,14 @@
   background: var(--dsw-alias-interactive-bg-hover-solid);
 }
 
+.add:focus-visible,
+.chip:focus-visible,
+.select:focus-visible,
+.primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--dsw-alias-border-l3);
+}
+
 .add:disabled {
   opacity: 0.5;
   cursor: default;

@@ -26,7 +26,6 @@ import css from './EquipmentPage.module.css'
 
 export interface EquipmentPageProps {
   readonly initialData?: EquipmentWorkspaceData
-  readonly localState?: 'available' | 'unavailable' | undefined
   readonly onOpenPid?: () => void
   readonly onOpenDocuments?: () => void
   readonly onNewInvestigation?: () => void
@@ -35,7 +34,6 @@ export interface EquipmentPageProps {
 
 export function EquipmentPage({
   initialData = DEFAULT_EQUIPMENT_DATA,
-  localState = 'available',
   onOpenPid,
   onOpenDocuments,
   onNewInvestigation,
@@ -131,7 +129,6 @@ export function EquipmentPage({
         title={data.title}
         subtitle={data.subtitle}
         breadcrumb={data.breadcrumb}
-        localState={localState}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onFilterClick={() => {
@@ -150,7 +147,7 @@ export function EquipmentPage({
               selectedUnitId={selectedUnitId}
               selectedCategoryId={selectedCategoryId}
               onSelectCategory={handleSelectCategory}
-              onCollapse={() => setBrowserCollapsed(true)}
+              onCollapse={() => { setBrowserCollapsed(true) }}
             />
           )}
 

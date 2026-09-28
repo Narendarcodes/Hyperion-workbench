@@ -965,3 +965,68 @@ export const IconArchiveOutline20 = ({ size = 20, className }: IconProps) => (
     <path d="M12.7962 12.5661V11.0832H7.20548V12.5661L12.7962 12.5661Z" fill="currentColor" />
   </svg>
 )
+
+/**
+ * Tabler Icons (MIT, https://tabler.io/icons) vendored path data for the
+ * Hyperion workbench nav set. All five share the Tabler 24-grid, 2px stroke,
+ * round caps/joins, currentColor system — one family, no mixed metaphors.
+ */
+
+/** tabler/route: automatic smart-routing seat (composer Auto). */
+export const IconRouteOutline = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M3 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+    <path d="M19 7a2 2 0 1 0 0 -4a2 2 0 0 0 0 4z" />
+    <path d="M11 19h5.5a3.5 3.5 0 0 0 0 -7h-8a3.5 3.5 0 0 1 0 -7h4.5" />
+  </svg>
+)
+
+/** tabler/file-plus: creation of a new engineering work item (New work). */
+export const IconFilePlusOutline = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+    <path d="M12 11l0 6" />
+    <path d="M9 14l6 0" />
+  </svg>
+)
+
+/** tabler/building-factory-2: refinery/plant context (Plant). */
+export const IconFactoryOutline = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M3 21h18" />
+    <path d="M5 21v-12l5 4v-4l5 4h4" />
+    <path d="M19 21v-8l-1.436 -9.574a.5 .5 0 0 0 -.495 -.426h-1.145a.5 .5 0 0 0 -.494 .418l-1.43 8.582" />
+    <path d="M9 17h1" />
+    <path d="M14 17h1" />
+  </svg>
+)
+
+/** tabler/schema: connected engineering schematic (P&ID). */
+export const IconSchemaOutline = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M5 2h5v4h-5z" />
+    <path d="M15 10h5v4h-5z" />
+    <path d="M5 18h5v4h-5z" />
+    <path d="M5 10h5v4h-5z" />
+    <path d="M10 12h5" />
+    <path d="M7.5 6v4" />
+    <path d="M7.5 14v4" />
+  </svg>
+)
+
+/** tabler/engine: industrial machinery asset (Equipment). */
+export const IconEngineOutline = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M3 10v6" />
+    <path d="M12 5v3" />
+    <path d="M10 5h4" />
+    <path d="M5 13h-2" />
+    <path d="M6 10h2l2 -2h3.382a1 1 0 0 1 .894 .553l1.448 2.894a1 1 0 0 0 .894 .553h1.382v-2h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2v-2h-3v2a1 1 0 0 1 -1 1h-3.465a1 1 0 0 1 -.832 -.445l-1.703 -2.555h-2v-6z" />
+  </svg>
+)

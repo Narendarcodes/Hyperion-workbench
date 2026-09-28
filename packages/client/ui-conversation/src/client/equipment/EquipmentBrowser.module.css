@@ -9,7 +9,7 @@
   padding: 12px;
   box-sizing: border-box;
   height: 460px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--dsw-elevation-panel);
 }
 
 :global([data-ds-dark-theme="true"]) .browserRoot,

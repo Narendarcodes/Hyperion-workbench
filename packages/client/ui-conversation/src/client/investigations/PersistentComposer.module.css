@@ -14,7 +14,7 @@
   border-radius: 10px;
   padding: 8px 12px;
   box-sizing: border-box;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--dsw-elevation-panel);
   transition: border-color 140ms ease-out;
 }
 

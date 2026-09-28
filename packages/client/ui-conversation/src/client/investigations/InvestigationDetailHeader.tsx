@@ -1,55 +1,30 @@
 /**
  * InvestigationDetailHeader: Header for HYPERION Screen 5 — Investigation Detail & Analysis.
  * Includes breadcrumb, investigation code, severity and status badges, title, equipment metadata,
- * action buttons (Share, Change Status, Generate Report), refinery backdrop, and top utility row.
+ * action buttons (Share, Change Status, Generate Report) and refinery backdrop.
+ * The top-right system controls live in the shared WorkbenchUtilityRow.
  * @module @deepseek-ai/dsh-client-ui-conversation/client/investigations/InvestigationDetailHeader
  */
 
-import {
-  IconBellOutline16,
-  IconChevronDownOutline14,
-  IconLightOutline16,
-  IconShareOutline16,
-} from '@deepseek-ai/dsh-client-ui-primitives'
+import { IconChevronDownOutline14, IconShareOutline16 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { InvestigationAnalysisDetailData } from './types.ts'
 import css from './InvestigationDetailHeader.module.css'
 
 export interface InvestigationDetailHeaderProps {
   readonly data: InvestigationAnalysisDetailData
-  readonly localState?: 'available' | 'unavailable' | undefined
   readonly onNavigateBack?: () => void
   readonly onShare?: () => void
   readonly onChangeStatus?: () => void
   readonly onGenerateReport?: () => void
-  readonly onToggleTheme?: () => void
-  readonly onNotificationsClick?: () => void
-  readonly onProfileClick?: () => void
 }
 
 export function InvestigationDetailHeader({
   data,
-  localState = 'available',
   onNavigateBack,
   onShare,
   onChangeStatus,
   onGenerateReport,
-  onToggleTheme,
-  onNotificationsClick,
-  onProfileClick,
 }: InvestigationDetailHeaderProps) {
-  const handleToggleTheme = () => {
-    if (onToggleTheme) {
-      onToggleTheme()
-      return
-    }
-    const isDark = document.body.hasAttribute('data-ds-dark-theme')
-    if (isDark) {
-      document.body.removeAttribute('data-ds-dark-theme')
-    } else {
-      document.body.setAttribute('data-ds-dark-theme', 'true')
-    }
-  }
-
   return (
     <header className={css.headerRoot}>
       {/* Background refinery line-art silhouette decoration */}
@@ -59,48 +34,6 @@ export function InvestigationDetailHeader({
           alt=""
           className={css.refineryImg}
         />
-      </div>
-
-      {/* Top utility row */}
-      <div className={css.utilityRow}>
-        <div className={css.headerAffordances} role="group" aria-label="System controls">
-          <button
-            type="button"
-            className={css.affordanceBtn}
-            aria-label="Toggle theme"
-            title="Toggle color theme"
-            onClick={handleToggleTheme}
-          >
-            <IconLightOutline16 size={15} />
-          </button>
-          <button
-            type="button"
-            className={css.affordanceBtn}
-            aria-label="Notifications"
-            title="Notifications"
-            onClick={onNotificationsClick}
-          >
-            <IconBellOutline16 size={15} />
-          </button>
-          <button
-            type="button"
-            className={css.profileBtn}
-            aria-label="User profile"
-            title="User Profile: N"
-            onClick={onProfileClick}
-          >
-            <span className={css.profileAvatar}>N</span>
-            <IconChevronDownOutline14 size={11} className={css.profileChevron} />
-          </button>
-        </div>
-
-        <span className={css.statusPill}>
-          <span
-            aria-hidden="true"
-            className={`${css.statusDot} ${localState === 'unavailable' ? css.statusDotUnavailable : ''}`}
-          />
-          {localState === 'available' ? 'Local state available' : 'Local state unavailable'}
-        </span>
       </div>
 
       {/* Main Header Content */}

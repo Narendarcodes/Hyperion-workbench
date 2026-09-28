@@ -10,7 +10,7 @@ export type WorkspaceKey = keyof typeof en
 /** English dictionary (the key-set source of truth). */
 export const en = {
   'group.ungrouped': 'Ungrouped',
-  'session.new': 'New Session',
+  'session.new': 'New work',
   'section.workspaces': 'Workspaces',
   'section.sessions': 'Sessions',
   'nav.workbench': 'Workbench',
@@ -18,6 +18,7 @@ export const en = {
   'nav.history': 'History',
   'nav.conversations': 'Conversations',
   'nav.more': 'More',
+  'nav.system': 'System',
   'nav.planned': 'Planned',
   'nav.plannedItem': '{name} (planned)',
   'nav.work': 'Work',
@@ -72,7 +73,7 @@ export const en = {
   'sessions.count.other': '{n} sessions',
   'actions.workspace.aria': 'Workspace actions for {name}',
   'actions.session.aria': 'Session actions for {name}',
-  'actions.newSession.aria': 'New session in {name}',
+  'actions.newSession.aria': 'New work in {name}',
   'status.running': 'Running',
   'status.subagentsRunning.one': '{n} subagent running',
   'status.subagentsRunning.other': '{n} subagents running',
@@ -97,7 +98,7 @@ export const en = {
 /** Hindi dictionary (mirrors the en key set). */
 export const hi = {
   'group.ungrouped': 'असमूहित',
-  'session.new': 'नया सत्र',
+  'session.new': 'नया कार्य',
   'section.workspaces': 'कार्यक्षेत्र',
   'section.sessions': 'सत्र',
   'nav.workbench': 'कार्यक्षेत्र',
@@ -105,6 +106,7 @@ export const hi = {
   'nav.history': 'इतिहास',
   'nav.conversations': 'बातचीत',
   'nav.more': 'अधिक',
+  'nav.system': 'सिस्टम',
   'nav.planned': 'नियोजित',
   'nav.plannedItem': '{name} (नियोजित)',
   'nav.work': 'कार्य',
@@ -159,7 +161,7 @@ export const hi = {
   'sessions.count.other': '{n} सत्र',
   'actions.workspace.aria': '{name} हेतु कार्यक्षेत्र क्रियाएँ',
   'actions.session.aria': '{name} हेतु सत्र क्रियाएँ',
-  'actions.newSession.aria': '{name} में नया सत्र',
+  'actions.newSession.aria': '{name} में नया कार्य',
   'status.running': 'चल रहा है',
   'status.subagentsRunning.one': '{n} उप-एजेंट चल रहा है',
   'status.subagentsRunning.other': '{n} उप-एजेंट चल रहे हैं',
@@ -184,7 +186,7 @@ export const hi = {
 /** Telugu dictionary (mirrors the en key set). */
 export const te = {
   'group.ungrouped': 'వర్గీకరించనివి',
-  'session.new': 'కొత్త సెషన్',
+  'session.new': 'కొత్త పని',
   'section.workspaces': 'వర్క్‌స్పేస్‌లు',
   'section.sessions': 'సెషన్లు',
   'nav.workbench': 'వర్క్‌బెంచ్',
@@ -192,6 +194,7 @@ export const te = {
   'nav.history': 'చరిత్ర',
   'nav.conversations': 'సంభాషణలు',
   'nav.more': 'మరిన్ని',
+  'nav.system': 'సిస్టమ్',
   'nav.planned': 'ప్రణాళికలో ఉంది',
   'nav.plannedItem': '{name} (ప్రణాళికలో ఉంది)',
   'nav.work': 'పని',
@@ -246,7 +249,7 @@ export const te = {
   'sessions.count.other': '{n} సెషన్లు',
   'actions.workspace.aria': '{name} కోసం వర్క్‌స్పేస్ చర్యలు',
   'actions.session.aria': '{name} కోసం సెషన్ చర్యలు',
-  'actions.newSession.aria': '{name} లో కొత్త సెషన్',
+  'actions.newSession.aria': '{name} లో కొత్త పని',
   'status.running': 'నడుస్తోంది',
   'status.subagentsRunning.one': '{n} ఉప-ఏజెంట్ నడుస్తోంది',
   'status.subagentsRunning.other': '{n} ఉప-ఏజెంట్లు నడుస్తున్నాయి',

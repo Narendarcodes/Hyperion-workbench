@@ -15,7 +15,7 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 140ms ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--dsw-elevation-panel);
   text-align: left;
   user-select: none;
 }

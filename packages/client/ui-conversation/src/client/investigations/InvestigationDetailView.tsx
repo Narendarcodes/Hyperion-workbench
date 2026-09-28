@@ -24,7 +24,6 @@ import css from './InvestigationDetailView.module.css'
 
 export interface InvestigationDetailViewProps {
   readonly initialData?: InvestigationAnalysisDetailData
-  readonly localState?: 'available' | 'unavailable' | undefined
   readonly onNavigateBack?: () => void
   readonly onShare?: () => void
   readonly onChangeStatus?: () => void
@@ -36,7 +35,6 @@ export interface InvestigationDetailViewProps {
 
 export function InvestigationDetailView({
   initialData = DEFAULT_ANALYSIS_DETAIL_DATA,
-  localState = 'available',
   onNavigateBack,
   onShare,
   onChangeStatus,
@@ -83,7 +81,6 @@ export function InvestigationDetailView({
       {/* 1. Header with Breadcrumb, Code, Title, Badges, Actions, Refinery Backdrop */}
       <InvestigationDetailHeader
         data={data}
-        localState={localState}
         {...(onNavigateBack && { onNavigateBack })}
         {...(onShare && { onShare })}
         {...(onChangeStatus && { onChangeStatus })}

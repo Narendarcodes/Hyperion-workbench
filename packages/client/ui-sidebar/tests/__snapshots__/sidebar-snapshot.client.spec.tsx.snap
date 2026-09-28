@@ -90,14 +90,23 @@ exports[`sidebar shell snapshots > renders the collapsed rail after the crossfad
       class="newSession"
       type="button"
     >
-      <svg
-        data-content="c0ce4dcc"
-        fill="none"
-        height="14"
-        viewBox="0 0 16 16"
-        width="14"
-        xmlns="http://www.w3.org/2000/svg"
-      />
+      <span
+        aria-hidden="true"
+        class="newSessionGlyph"
+      >
+        <svg
+          data-content="f6eea9ad"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
+        />
+      </span>
       <span
         class="newSessionLabel wide"
       >
@@ -226,14 +235,23 @@ exports[`sidebar shell snapshots > renders the expanded column (brand shortcut, 
       class="newSession"
       type="button"
     >
-      <svg
-        data-content="c0ce4dcc"
-        fill="none"
-        height="14"
-        viewBox="0 0 16 16"
-        width="14"
-        xmlns="http://www.w3.org/2000/svg"
-      />
+      <span
+        aria-hidden="true"
+        class="newSessionGlyph"
+      >
+        <svg
+          data-content="f6eea9ad"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
+        />
+      </span>
       <span
         class="newSessionLabel wide"
       >
@@ -362,14 +380,23 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
       class="newSession"
       type="button"
     >
-      <svg
-        data-content="c0ce4dcc"
-        fill="none"
-        height="14"
-        viewBox="0 0 16 16"
-        width="14"
-        xmlns="http://www.w3.org/2000/svg"
-      />
+      <span
+        aria-hidden="true"
+        class="newSessionGlyph"
+      >
+        <svg
+          data-content="f6eea9ad"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
+        />
+      </span>
       <span
         class="newSessionLabel wide"
       >

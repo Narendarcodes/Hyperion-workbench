@@ -15,6 +15,8 @@ import { InvestigationsPage } from '../investigations/InvestigationsPage.tsx'
 import { InvestigationDetailView } from '../investigations/InvestigationDetailView.tsx'
 import { ReportsOverview } from '../reports/ReportsOverview.tsx'
 import { DocumentsOverview } from '../documents/DocumentsOverview.tsx'
+import { PIDView } from '../pid/PIDView.tsx'
+import { WorkbenchUtilityRow } from './WorkbenchUtilityRow.tsx'
 import css from './ConversationRoot.module.css'
 
 /** Full props composed from the slot contract. */
@@ -448,7 +450,8 @@ export function ConversationRoot({
   const isInvestigationDetail = workbenchView === 'investigation-detail' && hero
   const isReports = workbenchView === 'reports' && hero
   const isDocuments = workbenchView === 'documents' && hero
-  const isWorkbenchSurface = (isPlant || isEquipment || isInvestigations || isInvestigationDetail || isReports || isDocuments)
+  const isPid = workbenchView === 'pid' && hero
+  const isWorkbenchSurface = (isPlant || isEquipment || isInvestigations || isInvestigationDetail || isReports || isDocuments || isPid)
   const composerBar = isWorkbenchSurface ? null : (
     <div className={clsx(css.composerStack, hero && css.composerHero)}>
       {hero && <HeroShell t={t} localState={localState} />}
@@ -493,11 +496,16 @@ export function ConversationRoot({
       {sessionId === undefined || isWorkbenchSurface ? null : renderSlot('conversation.session.header', {})}
       <div className={css.body}>
         <div className={css.scrollBody} data-conversation-scroll="">
+          {isWorkbenchSurface && (
+            <WorkbenchUtilityRow
+              state={localState ?? 'available'}
+              t={t}
+            />
+          )}
           {isPlant && (
             <PlantOverview
-              localState={localState}
               onOpenPid={() => {
-                setDraft('Analyze P&ID diagrams for MRPL Refinery ')
+                setWorkbenchView('pid')
               }}
               onStartInvestigation={(unit) => {
                 setDraft(
@@ -508,9 +516,8 @@ export function ConversationRoot({
           )}
           {isEquipment && (
             <EquipmentPage
-              localState={localState}
               onOpenPid={() => {
-                setDraft('View P&ID CDU-03-001 for Crude Feed Pump P-101 A/B ')
+                setWorkbenchView('pid')
               }}
               onOpenDocuments={() => {
                 setDraft('List connected documents for P-101 A/B ')
@@ -525,7 +532,6 @@ export function ConversationRoot({
           )}
           {isInvestigations && (
             <InvestigationsPage
-              localState={localState}
               onNewInvestigation={() => {
                 setDraft('Start new plant investigation ')
               }}
@@ -539,7 +545,6 @@ export function ConversationRoot({
           )}
           {isInvestigationDetail && (
             <InvestigationDetailView
-              localState={localState}
               onNavigateBack={() => {
                 setWorkbenchView('investigations')
               }}
@@ -563,18 +568,42 @@ export function ConversationRoot({
               }}
             />
           )}
-          {isReports && <ReportsOverview localState={localState} />}
+          {isReports && <ReportsOverview />}
           {isDocuments && (
             <DocumentsOverview
-              localState={localState}
-              onOpenPid={(doc) => {
-                setDraft(`Open P&ID diagram in fullscreen for ${doc.name} (${doc.unit}) `)
+              onOpenPid={(_doc) => {
+                setWorkbenchView('pid')
               }}
               onAddToInvestigation={(doc) => {
                 setDraft(`Add document ${doc.name} to investigation `)
               }}
               onAskCopilot={(q) => {
                 setDraft(`${q} `)
+              }}
+            />
+          )}
+          {isPid && (
+            <PIDView
+              onAskPid={(query) => {
+                setDraft(`${query} `)
+              }}
+              onViewEquipment={() => {
+                setWorkbenchView('equipment')
+              }}
+              onViewAllEquipment={() => {
+                setWorkbenchView('equipment')
+              }}
+              onViewDocuments={() => {
+                setWorkbenchView('documents')
+              }}
+              onViewAllDocuments={() => {
+                setWorkbenchView('documents')
+              }}
+              onOpenDocument={(doc) => {
+                setDraft(`Open document ${doc.fileName} (${doc.title}) `)
+              }}
+              onStartInvestigation={(tag) => {
+                setDraft(`Start equipment investigation for ${tag} `)
               }}
             />
           )}

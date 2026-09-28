@@ -19,25 +19,47 @@ import type { DocumentItem } from './types.ts'
 import css from './DocumentsOverview.module.css'
 
 export interface DocumentsOverviewProps {
-  readonly localState?: 'available' | 'unavailable' | undefined
   readonly onOpenPid?: (doc: DocumentItem) => void
   readonly onAddToInvestigation?: (doc: DocumentItem) => void
   readonly onAskCopilot?: (question: string) => void
 }
 
 export function DocumentsOverview({
-  localState = 'available',
   onOpenPid,
   onAddToInvestigation,
   onAskCopilot,
 }: DocumentsOverviewProps) {
-  const [selectedDoc, setSelectedDoc] = useState<DocumentItem>(() => {
-    const first = MOCK_DOCUMENTS[0]
-    if (first === undefined) throw new Error('DocumentsOverview: MOCK_DOCUMENTS is empty')
-    return first
-  })
+  const [selectedDoc, setSelectedDoc] = useState<DocumentItem | undefined>(() => MOCK_DOCUMENTS[0])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>('pid')
+
+  const openSource = (doc: DocumentItem): void => {
+    if (doc.sourceUrl !== undefined) window.open(doc.sourceUrl, '_blank', 'noopener')
+  }
+
+  if (selectedDoc === undefined) {
+    return (
+      <div
+        className={css.documentsRoot}
+        data-hide-composer=""
+        role="region"
+        aria-label="Documents"
+      >
+        <div className={css.contentWrapper}>
+          <DocumentsHeader
+            title="Documents"
+            subtitle="Engineering documents and reference material • Refinery corpus"
+            breadcrumb={['Documents', 'All Documents']}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onFilterClick={() => {}}
+            onUploadClick={() => {}}
+          />
+          <div role="status">No documents in the corpus catalog.</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -53,11 +75,10 @@ export function DocumentsOverview({
         {/* 1. Top Header */}
         <DocumentsHeader
           title="Documents"
-          subtitle="Engineering documents, drawings, reports and reference material • MRPL Refinery"
+          subtitle="Engineering documents and reference material • Refinery corpus"
           breadcrumb={['Documents', 'All Documents']}
-          localState={localState}
           searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchChange={(q) => { setSearchQuery(q) }}
           onFilterClick={() => {
             console.info('[Hyperion] Opening documents filter dialog...')
           }}
@@ -89,7 +110,7 @@ export function DocumentsOverview({
               console.info('[Hyperion] Closed document viewer')
             }}
             onDownload={() => {
-              console.info(`[Hyperion] Downloading ${selectedDoc.name}...`)
+              openSource(selectedDoc)
             }}
             onOpenFullscreen={() => {
               onOpenPid?.(selectedDoc)
@@ -103,7 +124,7 @@ export function DocumentsOverview({
               onOpenPid?.(selectedDoc)
             }}
             onDownload={() => {
-              console.info(`[Hyperion] Downloading ${selectedDoc.name}...`)
+              openSource(selectedDoc)
             }}
             onAddToInvestigation={onAddToInvestigation ?? (() => {})}
             onCompareVersion={(doc) => {

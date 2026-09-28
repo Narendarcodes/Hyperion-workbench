@@ -3,6 +3,7 @@ import {
   FIXTURE_SUMMARY_CARDS,
   FIXTURE_RELATED_ITEMS,
 } from './mockData.ts'
+import { GENERATED_DELIVERABLES } from './deliverables.ts'
 import { pumpBase64 } from './pumpImage.ts'
 import css from './ReportsOverview.module.css'
 
@@ -22,7 +23,9 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
       <header className={css.header}>
         <div className={css.headerLeft}>
           <div className={css.breadcrumb}>Reports / All Reports</div>
-          <h1 className={css.title}>Reports</h1>
+          <h1 className={css.title}>
+            Reports <span className={css.demoBadge} title="Illustrative generated records, not refinery documents">Demo dataset</span>
+          </h1>
           <div className={css.subtitle}>
             Engineering reports, analysis summaries and AI-generated
             deliverables • MRPL Refinery
@@ -45,6 +48,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
             <input
               type="text"
               placeholder="Search reports, investigations, equipment..."
+              aria-label="Search reports, investigations, equipment"
               className={css.searchInput}
             />
           </div>
@@ -74,6 +78,49 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
           <button className={css.generateBtn}>+ Generate Report</button>
         </div>
       </header>
+
+      {/* GENERATED DELIVERABLES — real files derived from corpus DOC-010 */}
+      <section className={css.deliverablesStrip} aria-label="Generated deliverables">
+        <div className={css.deliverablesHeader}>
+          <h2 className={css.deliverablesTitle}>Generated deliverables</h2>
+          <span className={css.deliverablesProvenance}>
+            Hyperion-generated from corpus DOC-010 (MRPL MG 91 spec) — not original MRPL records
+          </span>
+        </div>
+        <div className={css.deliverablesGrid}>
+          {GENERATED_DELIVERABLES.map(item => (
+            <div key={item.id} className={css.deliverableCard}>
+              <span className={css.formatBadge} data-format={item.format}>
+                {item.format}
+              </span>
+              <div className={css.deliverableBody}>
+                <div className={css.deliverableName}>{item.fileName}</div>
+                <div className={css.deliverableMeta}>
+                  {item.title} · {item.source} · {item.size}
+                </div>
+                <div className={css.deliverableClass}>{item.classification}</div>
+              </div>
+              <div className={css.deliverableActions}>
+                <a
+                  className={css.deliverableOpen}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {item.format === 'PDF' ? 'Preview' : 'Open'}
+                </a>
+                <a
+                  className={css.deliverableDownload}
+                  href={item.href}
+                  download={item.fileName}
+                >
+                  Download
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* SUMMARY CARDS */}
       <div className={css.summaryCardsRow}>
@@ -108,6 +155,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
         <div className={css.libraryPanel}>
           <div className={css.panelHeader}>
             <h2>Report Library</h2>
+            <span className={css.demoCaption}>Demo records — illustrative layout</span>
             <div className={css.toggleGroup}>
               <button className={css.toggleBtnActive} aria-label="Grid view">
                 <svg
@@ -170,6 +218,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
               <input
                 type="text"
                 placeholder="Search reports..."
+                aria-label="Search reports"
                 className={css.libSearchInput}
               />
             </div>
@@ -319,6 +368,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
                 <h2 className={css.viewerTitle}>
                   Vibration Analysis Report - P-204
                 </h2>
+                <span className={css.demoCaption}>Demo preview</span>
                 <span className={css.statusPill} data-status="Completed">
                   <span className={css.statusDot} /> Completed
                 </span>

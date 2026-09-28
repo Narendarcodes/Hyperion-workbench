@@ -29,9 +29,20 @@ export type DocumentTypeBadge =
   | 'Safety'
   | 'Catalog'
   | 'Drawing'
+  | 'Case Study'
+  | 'Safety Alert'
+  | 'Work Permit'
+  | 'Spec Sheet'
+  | 'Investigation'
+  | 'Reference'
+
+/** Provenance tier for corpus-backed catalog records. */
+export type DocumentAuthenticity = 'government' | 'company' | 'training'
 
 export interface DocumentItem {
   readonly id: string
+  /** Refinery-corpus document id (DOC-001…); absent for non-corpus records. */
+  readonly corpusId?: string | undefined
   readonly name: string
   readonly subtitle: string
   readonly type: DocumentTypeBadge
@@ -46,6 +57,11 @@ export interface DocumentItem {
   readonly uploadedBy: string
   readonly tags: readonly string[]
   readonly pageCount: number
+  readonly sourceOrg?: string | undefined
+  readonly sourceUrl?: string | undefined
+  readonly authenticity?: DocumentAuthenticity | undefined
+  /** Honest viewer limitation (scanned PDF, HTML capture, oversized report…). */
+  readonly viewerNote?: string | undefined
 }
 
 export type LibraryTab = 'all' | 'pids' | 'procedures' | 'reports'

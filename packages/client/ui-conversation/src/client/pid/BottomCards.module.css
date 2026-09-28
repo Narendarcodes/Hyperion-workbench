@@ -1,0 +1,195 @@
+.cardsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 16px 24px;
+  background: var(--dsw-alias-surface-sunken, #f8fafc);
+  border-top: 1px solid var(--dsw-alias-border-l2, #e2e8f0);
+}
+
+.card {
+  background: var(--dsw-alias-surface-raised, #ffffff);
+  border: 1px solid var(--dsw-alias-border-l2, #e2e8f0);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--dsw-elevation-panel);
+}
+
+.cardHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--dsw-alias-interactive-bg-hover, #f1f5f9);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--dsw-alias-surface-raised, #ffffff);
+}
+
+.cardTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dsw-alias-label-primary, #0f172a);
+}
+
+.viewAllLink {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dsw-alias-state-business-primary, #0284c7);
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.viewAllLink:hover {
+  text-decoration: underline;
+}
+
+.viewAllLink:focus-visible,
+.docItem:focus-visible,
+.trSelectable:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--dsw-alias-border-l3);
+}
+
+.cardBody {
+  padding: 8px 12px;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 180px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table th {
+  text-align: left;
+  padding: 6px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--dsw-alias-label-secondary, #64748b);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--dsw-alias-border-l2, #e2e8f0);
+}
+
+.table td {
+  padding: 6px 8px;
+  color: var(--dsw-alias-label-primary, #334155);
+  border-bottom: 1px solid var(--dsw-alias-interactive-bg-hover, #f1f5f9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trSelectable {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.trSelectable:hover {
+  background: var(--dsw-alias-interactive-bg-hover, #f0f9ff);
+}
+
+.trSelectable[data-selected] {
+  background: color-mix(in srgb, var(--dsw-alias-state-business-primary, #0284c7) 12%, transparent);
+}
+
+.tagCell {
+  font-weight: 700;
+  color: var(--dsw-alias-state-business-primary, #0284c7);
+}
+
+.statusDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 5px;
+  background: var(--dsw-alias-border-l2, #cbd5e1);
+}
+
+.statusInService {
+  background: var(--dsw-alias-state-success-primary, #16a34a);
+}
+
+.statusStandby {
+  background: var(--dsw-alias-border-l2, #cbd5e1);
+}
+
+.statusMaintenance {
+  background: var(--dsw-alias-state-warn-primary, #d97706);
+}
+
+.statusOffline {
+  background: var(--dsw-alias-state-error-primary, #dc2626);
+}
+
+.docList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.docItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.docItem:hover {
+  background: var(--dsw-alias-surface-sunken, #f8fafc);
+}
+
+.docInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.docIcon {
+  color: var(--dsw-alias-state-business-primary, #0284c7);
+  flex-shrink: 0;
+}
+
+.docName {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dsw-alias-label-primary, #0f172a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docMeta {
+  display: block;
+  font-size: 10px;
+  color: var(--dsw-alias-label-secondary, #64748b);
+}
+
+.actionIcons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--dsw-alias-label-tertiary, #94a3b8);
+}
+
+.actionIcons:hover {
+  color: var(--dsw-alias-label-primary, #0f172a);
+}

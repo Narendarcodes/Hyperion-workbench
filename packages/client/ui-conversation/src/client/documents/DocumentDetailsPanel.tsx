@@ -60,7 +60,7 @@ export function DocumentDetailsPanel({
           role="tab"
           aria-selected={activeTab === 'details'}
           className={`${css.tabItem} ${activeTab === 'details' ? css.tabItemActive : ''}`}
-          onClick={() => setActiveTab('details')}
+          onClick={() => {setActiveTab('details') }}
         >
           Details
         </button>
@@ -69,7 +69,7 @@ export function DocumentDetailsPanel({
           role="tab"
           aria-selected={activeTab === 'related'}
           className={`${css.tabItem} ${activeTab === 'related' ? css.tabItemActive : ''}`}
-          onClick={() => setActiveTab('related')}
+          onClick={() => {setActiveTab('related') }}
         >
           Related
         </button>
@@ -78,7 +78,7 @@ export function DocumentDetailsPanel({
           role="tab"
           aria-selected={activeTab === 'versions'}
           className={`${css.tabItem} ${activeTab === 'versions' ? css.tabItemActive : ''}`}
-          onClick={() => setActiveTab('versions')}
+          onClick={() => {setActiveTab('versions') }}
         >
           Versions
         </button>
@@ -87,7 +87,7 @@ export function DocumentDetailsPanel({
           role="tab"
           aria-selected={activeTab === 'activity'}
           className={`${css.tabItem} ${activeTab === 'activity' ? css.tabItemActive : ''}`}
-          onClick={() => setActiveTab('activity')}
+          onClick={() => {setActiveTab('activity') }}
         >
           Activity
         </button>
@@ -206,6 +206,25 @@ export function DocumentDetailsPanel({
             <span className={css.metaVal}>{document.uploadedBy}</span>
           </div>
 
+          {document.sourceUrl !== undefined && (
+            <div className={css.metaItem}>
+              <span className={css.metaKey}>
+                <span className={css.metaIcon}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                  </svg>
+                </span>
+                Source
+              </span>
+              <span className={css.metaVal}>
+                <a href={document.sourceUrl} target="_blank" rel="noreferrer">
+                  {document.sourceOrg ?? document.uploadedBy}
+                </a>
+              </span>
+            </div>
+          )}
+
           <div className={css.metaItem}>
             <span className={css.metaKey}>
               <span className={css.metaIcon}>
@@ -295,7 +314,7 @@ export function DocumentDetailsPanel({
               <button
                 type="button"
                 className={css.chipBtn}
-                onClick={() => handleChipClick('Summarize this P&ID')}
+                onClick={() => {handleChipClick('Summarize this P&ID') }}
               >
                 <svg className={css.chipIcon} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
@@ -308,7 +327,7 @@ export function DocumentDetailsPanel({
               <button
                 type="button"
                 className={css.chipBtn}
-                onClick={() => handleChipClick('Find P-101 details')}
+                onClick={() => {handleChipClick('Find P-101 details') }}
               >
                 <svg className={css.chipIcon} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" />
@@ -322,7 +341,7 @@ export function DocumentDetailsPanel({
               <button
                 type="button"
                 className={css.chipBtn}
-                onClick={() => handleChipClick('List all equipment')}
+                onClick={() => {handleChipClick('List all equipment') }}
               >
                 <svg className={css.chipIcon} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="8" y1="6" x2="21" y2="6" />
@@ -338,7 +357,7 @@ export function DocumentDetailsPanel({
               <button
                 type="button"
                 className={css.chipBtn}
-                onClick={() => handleChipClick('Show related documents')}
+                onClick={() => {handleChipClick('Show related documents') }}
               >
                 <svg className={css.chipIcon} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -355,8 +374,9 @@ export function DocumentDetailsPanel({
               type="text"
               className={css.copilotInput}
               placeholder="Ask a question about this document..."
+              aria-label="Ask a question about this document"
               value={question}
-              onChange={e => setQuestion(e.target.value)}
+              onChange={(e) => { setQuestion(e.target.value) }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleSend()
               }}

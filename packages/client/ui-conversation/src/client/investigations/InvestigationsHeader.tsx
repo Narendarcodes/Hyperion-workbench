@@ -1,15 +1,12 @@
 /**
  * InvestigationsHeader: Header for HYPERION Screen 4 — Investigations Workspace.
- * Includes breadcrumb, page title, subtitle, search field, filter, and "+ New Investigation" CTA,
- * plus the top utility row with theme toggle, notifications, user avatar, and local state.
+ * Includes breadcrumb, page title, subtitle, search field, filter, and "+ New Investigation" CTA.
+ * The top-right system controls live in the shared WorkbenchUtilityRow.
  * @module @deepseek-ai/dsh-client-ui-conversation/client/investigations/InvestigationsHeader
  */
 
 import { useState } from 'react'
 import {
-  IconBellOutline16,
-  IconChevronDownOutline14,
-  IconLightOutline16,
   IconPlusOutline16,
   IconSearchOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
@@ -19,47 +16,26 @@ export interface InvestigationsHeaderProps {
   readonly title?: string
   readonly subtitle?: string
   readonly breadcrumb?: readonly string[]
-  readonly localState?: 'available' | 'unavailable' | undefined
   readonly searchQuery?: string
   readonly onSearchChange?: (query: string) => void
   readonly onFilterClick?: () => void
   readonly onNewInvestigation?: () => void
-  readonly onToggleTheme?: () => void
-  readonly onNotificationsClick?: () => void
-  readonly onProfileClick?: () => void
 }
 
 export function InvestigationsHeader({
   title = 'Investigations',
   subtitle = 'Track, analyze and resolve plant issues with AI assistance.',
   breadcrumb = ['Investigations', 'All Investigations'],
-  localState = 'available',
   searchQuery = '',
   onSearchChange,
   onFilterClick,
   onNewInvestigation,
-  onToggleTheme,
-  onNotificationsClick,
-  onProfileClick,
 }: InvestigationsHeaderProps) {
   const [internalQuery, setInternalQuery] = useState(searchQuery)
 
   const handleSearch = (val: string) => {
     setInternalQuery(val)
     onSearchChange?.(val)
-  }
-
-  const handleToggleTheme = () => {
-    if (onToggleTheme) {
-      onToggleTheme()
-      return
-    }
-    const isDark = document.body.hasAttribute('data-ds-dark-theme')
-    if (isDark) {
-      document.body.removeAttribute('data-ds-dark-theme')
-    } else {
-      document.body.setAttribute('data-ds-dark-theme', 'true')
-    }
   }
 
   return (
@@ -71,48 +47,6 @@ export function InvestigationsHeader({
           alt=""
           className={css.refineryImg}
         />
-      </div>
-
-      {/* Top utility row */}
-      <div className={css.utilityRow}>
-        <div className={css.headerAffordances} role="group" aria-label="System controls">
-          <button
-            type="button"
-            className={css.affordanceBtn}
-            aria-label="Toggle theme"
-            title="Toggle color theme"
-            onClick={handleToggleTheme}
-          >
-            <IconLightOutline16 size={15} />
-          </button>
-          <button
-            type="button"
-            className={css.affordanceBtn}
-            aria-label="Notifications"
-            title="Notifications"
-            onClick={onNotificationsClick}
-          >
-            <IconBellOutline16 size={15} />
-          </button>
-          <button
-            type="button"
-            className={css.profileBtn}
-            aria-label="User profile"
-            title="User Profile: N"
-            onClick={onProfileClick}
-          >
-            <span className={css.profileAvatar}>N</span>
-            <IconChevronDownOutline14 size={11} className={css.profileChevron} />
-          </button>
-        </div>
-
-        <span className={css.statusPill}>
-          <span
-            aria-hidden="true"
-            className={`${css.statusDot} ${localState === 'unavailable' ? css.statusDotUnavailable : ''}`}
-          />
-          {localState === 'available' ? 'Local state available' : 'Local state unavailable'}
-        </span>
       </div>
 
       {/* Main Header Row: Title & Actions */}
@@ -140,7 +74,7 @@ export function InvestigationsHeader({
               className={css.searchInput}
               placeholder="Search investigations, equipment, unit, or tag..."
               value={internalQuery}
-              onChange={e => handleSearch(e.target.value)}
+              onChange={(e) => { handleSearch(e.target.value) }}
               aria-label="Search investigations"
             />
           </div>

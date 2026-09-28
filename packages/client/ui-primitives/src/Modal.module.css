@@ -76,6 +76,11 @@
   background: var(--dsw-alias-interactive-bg-hover);
 }
 
+.close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--dsw-alias-border-l3);
+}
+
 /* Description and body share the 332px content column (24px side pads). */
 .description {
   margin: 0;

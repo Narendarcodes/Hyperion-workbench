@@ -59,10 +59,29 @@ export function DocumentLibraryPanel({
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
   const [page, setPage] = useState(1)
 
+  const PAGE_SIZE = 10
+
+  const tabCount = (tab: LibraryTab): number => {
+    if (tab === 'pids') return documents.filter(doc => doc.type === 'P&ID').length
+    if (tab === 'procedures') {
+      return documents.filter(doc => doc.type === 'Procedure' || doc.type === 'Manual'
+        || doc.type === 'Guide' || doc.type === 'Work Permit' || doc.type === 'Safety Alert').length
+    }
+    if (tab === 'reports') {
+      return documents.filter(doc => doc.type === 'Inspection' || doc.type === 'Case Study'
+        || doc.type === 'Investigation').length
+    }
+    return documents.length
+  }
+
   const filteredDocs = documents.filter((doc) => {
     if (activeTab === 'pids' && doc.type !== 'P&ID') return false
-    if (activeTab === 'procedures' && doc.type !== 'Procedure' && doc.type !== 'Manual' && doc.type !== 'Guide') return false
-    if (activeTab === 'reports' && doc.type !== 'Inspection') return false
+    if (activeTab === 'procedures'
+      && doc.type !== 'Procedure' && doc.type !== 'Manual' && doc.type !== 'Guide'
+      && doc.type !== 'Work Permit' && doc.type !== 'Safety Alert') return false
+    if (activeTab === 'reports'
+      && doc.type !== 'Inspection' && doc.type !== 'Case Study'
+      && doc.type !== 'Investigation') return false
 
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase()
@@ -76,6 +95,10 @@ export function DocumentLibraryPanel({
     return true
   })
 
+  const totalPages = Math.max(1, Math.ceil(filteredDocs.length / PAGE_SIZE))
+  const safePage = Math.min(Math.max(page, 1), totalPages)
+  const visibleDocs = filteredDocs.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+
   return (
     <section className={css.panelRoot} aria-label="Document Library">
       {/* 1. Header with View Toggles */}
@@ -87,7 +110,7 @@ export function DocumentLibraryPanel({
             className={`${css.viewModeBtn} ${viewMode === 'grid' ? css.viewModeBtnActive : ''}`}
             aria-label="Grid view"
             title="Grid view"
-            onClick={() => setViewMode('grid')}
+            onClick={() => {setViewMode('grid') }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -101,7 +124,7 @@ export function DocumentLibraryPanel({
             className={`${css.viewModeBtn} ${viewMode === 'list' ? css.viewModeBtnActive : ''}`}
             aria-label="List view"
             title="List view"
-            onClick={() => setViewMode('list')}
+            onClick={() => {setViewMode('list') }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="8" y1="6" x2="21" y2="6" />
@@ -122,36 +145,36 @@ export function DocumentLibraryPanel({
           role="tab"
           aria-selected={activeTab === 'all'}
           className={`${css.tabItem} ${activeTab === 'all' ? css.tabItemActive : ''}`}
-          onClick={() => setActiveTab('all')}
+          onClick={() => { setActiveTab('all') }}
         >
-          All (2,362)
+          All ({tabCount('all')})
         </button>
         <button
           type="button"
           role="tab"
           aria-selected={activeTab === 'pids'}
           className={`${css.tabItem} ${activeTab === 'pids' ? css.tabItemActive : ''}`}
-          onClick={() => setActiveTab('pids')}
+          onClick={() => { setActiveTab('pids') }}
         >
-          P&IDs (428)
+          P&IDs ({tabCount('pids')})
         </button>
         <button
           type="button"
           role="tab"
           aria-selected={activeTab === 'procedures'}
           className={`${css.tabItem} ${activeTab === 'procedures' ? css.tabItemActive : ''}`}
-          onClick={() => setActiveTab('procedures')}
+          onClick={() => { setActiveTab('procedures') }}
         >
-          Procedures (312)
+          Procedures ({tabCount('procedures')})
         </button>
         <button
           type="button"
           role="tab"
           aria-selected={activeTab === 'reports'}
           className={`${css.tabItem} ${activeTab === 'reports' ? css.tabItemActive : ''}`}
-          onClick={() => setActiveTab('reports')}
+          onClick={() => { setActiveTab('reports') }}
         >
-          Reports (98)
+          Reports ({tabCount('reports')})
         </button>
       </div>
 
@@ -167,7 +190,7 @@ export function DocumentLibraryPanel({
             className={css.searchInput}
             placeholder="Search documents..."
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={(e) => { setSearchQuery(e.target.value) }}
             aria-label="Filter documents table"
           />
         </div>
@@ -233,13 +256,13 @@ export function DocumentLibraryPanel({
             </tr>
           </thead>
           <tbody>
-            {filteredDocs.map((doc) => {
+            {visibleDocs.map((doc) => {
               const isSelected = selectedDocId === doc.id
               return (
                 <tr
                   key={doc.id}
                   className={`${css.tableRow} ${isSelected ? css.tableRowSelected : ''}`}
-                  onClick={() => onSelectDocument(doc)}
+                  onClick={() => {onSelectDocument(doc) }}
                   aria-selected={isSelected}
                 >
                   <td className={css.tableTd}>
@@ -290,30 +313,28 @@ export function DocumentLibraryPanel({
             type="button"
             className={css.pageBtn}
             aria-label="Previous page"
-            disabled={page === 1}
-            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={safePage === 1}
+            onClick={() => {setPage(p => Math.max(1, p - 1)) }}
           >
             ‹
           </button>
-          {[1, 2, 3, 4, 5].map(pNum => (
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(pNum => (
             <button
               key={pNum}
               type="button"
-              className={`${css.pageBtn} ${page === pNum ? css.pageBtnActive : ''}`}
-              onClick={() => setPage(pNum)}
+              className={`${css.pageBtn} ${safePage === pNum ? css.pageBtnActive : ''}`}
+              aria-current={safePage === pNum ? 'page' : undefined}
+              onClick={() => {setPage(pNum) }}
             >
               {pNum}
             </button>
           ))}
-          <span className={css.ellipsis}>...</span>
-          <button type="button" className={css.pageBtn} onClick={() => setPage(237)}>
-            237
-          </button>
           <button
             type="button"
             className={css.pageBtn}
             aria-label="Next page"
-            onClick={() => setPage(p => p + 1)}
+            disabled={safePage === totalPages}
+            onClick={() => {setPage(p => Math.min(totalPages, p + 1)) }}
           >
             ›
           </button>

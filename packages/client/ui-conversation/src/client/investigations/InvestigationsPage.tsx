@@ -25,7 +25,6 @@ import css from './InvestigationsPage.module.css'
 
 export interface InvestigationsPageProps {
   readonly initialData?: InvestigationsWorkspaceData
-  readonly localState?: 'available' | 'unavailable' | undefined
   readonly onNewInvestigation?: () => void
   readonly onAskAI?: (query: string) => void
   readonly onOpenInvestigation?: (item: InvestigationListItem) => void
@@ -33,7 +32,6 @@ export interface InvestigationsPageProps {
 
 export function InvestigationsPage({
   initialData = DEFAULT_INVESTIGATIONS_DATA,
-  localState = 'available',
   onNewInvestigation,
   onAskAI,
   onOpenInvestigation,
@@ -118,7 +116,6 @@ export function InvestigationsPage({
         title={data.title}
         subtitle={data.subtitle}
         breadcrumb={data.breadcrumb}
-        localState={localState}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onFilterClick={() => {
