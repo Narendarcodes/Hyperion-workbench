@@ -21,7 +21,7 @@ function PdfFileIcon({ color }: { color: string }) {
     orange: { bg: '#ffedd5', stroke: '#ea580c' },
     teal: { bg: '#ccfbf1', stroke: '#0d9488' },
   }
-  const config = fillMap[color] ?? fillMap.blue
+  const config = fillMap[color] ?? { bg: '#e0f2fe', stroke: '#0284c7' }
 
   return (
     <svg width="22" height="26" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">

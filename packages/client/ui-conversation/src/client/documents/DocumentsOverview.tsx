@@ -31,7 +31,11 @@ export function DocumentsOverview({
   onAddToInvestigation,
   onAskCopilot,
 }: DocumentsOverviewProps) {
-  const [selectedDoc, setSelectedDoc] = useState<DocumentItem>(MOCK_DOCUMENTS[0])
+  const [selectedDoc, setSelectedDoc] = useState<DocumentItem>(() => {
+    const first = MOCK_DOCUMENTS[0]
+    if (first === undefined) throw new Error('DocumentsOverview: MOCK_DOCUMENTS is empty')
+    return first
+  })
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>('pid')
 
@@ -101,11 +105,11 @@ export function DocumentsOverview({
             onDownload={() => {
               console.info(`[Hyperion] Downloading ${selectedDoc.name}...`)
             }}
-            onAddToInvestigation={onAddToInvestigation}
+            onAddToInvestigation={onAddToInvestigation ?? (() => {})}
             onCompareVersion={(doc) => {
               console.info(`[Hyperion] Comparing versions for ${doc.name}...`)
             }}
-            onAskCopilot={onAskCopilot}
+            onAskCopilot={onAskCopilot ?? (() => {})}
           />
         </div>
       </div>
