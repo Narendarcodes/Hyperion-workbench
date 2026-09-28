@@ -14,6 +14,7 @@ import { EquipmentPage } from '../equipment/EquipmentPage.tsx'
 import { InvestigationsPage } from '../investigations/InvestigationsPage.tsx'
 import { InvestigationDetailView } from '../investigations/InvestigationDetailView.tsx'
 import { ReportsOverview } from '../reports/ReportsOverview.tsx'
+import { DocumentsOverview } from '../documents/DocumentsOverview.tsx'
 import css from './ConversationRoot.module.css'
 
 /** Full props composed from the slot contract. */
@@ -446,7 +447,8 @@ export function ConversationRoot({
   const isInvestigations = workbenchView === 'investigations' && hero
   const isInvestigationDetail = workbenchView === 'investigation-detail' && hero
   const isReports = workbenchView === 'reports' && hero
-  const isWorkbenchSurface = (isPlant || isEquipment || isInvestigations || isInvestigationDetail || isReports)
+  const isDocuments = workbenchView === 'documents' && hero
+  const isWorkbenchSurface = (isPlant || isEquipment || isInvestigations || isInvestigationDetail || isReports || isDocuments)
   const composerBar = isWorkbenchSurface ? null : (
     <div className={clsx(css.composerStack, hero && css.composerHero)}>
       {hero && <HeroShell t={t} localState={localState} />}
@@ -562,6 +564,20 @@ export function ConversationRoot({
             />
           )}
           {isReports && <ReportsOverview localState={localState} />}
+          {isDocuments && (
+            <DocumentsOverview
+              localState={localState}
+              onOpenPid={(doc) => {
+                setDraft(`Open P&ID diagram in fullscreen for ${doc.name} (${doc.unit}) `)
+              }}
+              onAddToInvestigation={(doc) => {
+                setDraft(`Add document ${doc.name} to investigation `)
+              }}
+              onAskCopilot={(q) => {
+                setDraft(`${q} `)
+              }}
+            />
+          )}
           {sessionId === undefined || isWorkbenchSurface ? null : renderSlot('conversation.session', {})}
           {composerSeat}
         </div>

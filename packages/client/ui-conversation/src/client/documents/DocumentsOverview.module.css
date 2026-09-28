@@ -1,0 +1,73 @@
+.documentsRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Faint industrial refinery background watermark matching reference screenshot */
+.backgroundWatermark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 380px;
+  background-image: url('/refinery.png');
+  background-size: cover;
+  background-position: center top;
+  opacity: 0.045;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* 3-Column Split Layout */
+.columnsContainer {
+  display: grid;
+  grid-template-columns: minmax(340px, 32fr) minmax(420px, 43fr) minmax(300px, 25fr);
+  gap: 16px;
+  width: 100%;
+  align-items: stretch;
+  min-height: 720px;
+}
+
+@media (max-width: 1400px) {
+  .columnsContainer {
+    grid-template-columns: minmax(320px, 1fr) minmax(380px, 1.2fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .documentsRoot {
+    padding: 18px 20px 36px;
+    gap: 18px;
+  }
+
+  .columnsContainer {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .documentsRoot {
+    padding: 14px 14px 28px;
+    gap: 14px;
+  }
+}
