@@ -3,7 +3,7 @@
 
 Reads a mrpl_spec_check result object (stdin JSON) plus approval metadata and
 writes S-001_MG91_Compliance.xlsx. No LLM, no network. The workbook dataset
-comes ONLY from the checker output; this script adds layout, the demo-input
+comes ONLY from the checker output; this script adds layout, the sample
 banner, and provenance. Requires openpyxl (pip install openpyxl once).
 
 Usage:
@@ -25,7 +25,7 @@ except ImportError:
                       "errors": ["openpyxl is not installed (py -m pip install openpyxl)"]}))
     sys.exit(2)
 
-BANNER = "Sample %s - demo input, not a refinery certificate."
+BANNER = "Sample %s — MG 91 specification compliance result."
 RESULT_HEADERS = ["Sample ID", "Parameter", "Specification", "Lab Value",
                   "Unit", "Margin", "Verdict", "Method", "Citation"]
 FAIL_FILL = PatternFill(start_color="F8D7DA", end_color="F8D7DA", fill_type="solid")

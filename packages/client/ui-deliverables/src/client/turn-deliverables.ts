@@ -53,6 +53,8 @@ function mutationPath(name: string, argsRaw: string): string | null {
       return validEditArgs(args) ? pathValue(args.file_path) : null
     case 'str_replace_editor':
       return editorMutationPath(args)
+    case 'mrpl_generate_report':
+      return pathValue(args.out_path)
     default:
       return null
   }
@@ -105,10 +107,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 /**
  * Files produced by one Turn data value.
  *
- * The source is the arguments of successful `write`, `edit`, and mutating
- * `str_replace_editor` calls, not the closing prose: a produced file must be
- * listed whether or not the model remembered to name it. Reads, unsupported
- * tools, malformed calls, and failed results contribute nothing. Paths keep
+ * The source is the arguments of successful `write`, `edit`, mutating
+ * `str_replace_editor`, and `mrpl_generate_report` calls, not the closing
+ * prose: a produced file must be listed whether or not the model remembered
+ * to name it. Reads, unsupported tools, malformed calls, and failed results
+ * contribute nothing. Paths keep
  * first-seen order and appear once, so a file written and then edited in the
  * same turn is one entry.
  *

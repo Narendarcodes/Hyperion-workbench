@@ -17,6 +17,9 @@
  */
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
+import { readFile } from 'node:fs/promises'
+import { homedir } from 'node:os'
+import { join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-host-webserver'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
@@ -27,6 +30,7 @@ import { foldHyperionEnvelope } from './envelope.ts'
 import type { HyperionSourceEvent } from './shared.ts'
 import {
   HYPERION_CHAT_ROUTE,
+  HYPERION_FILES_ROUTE,
   HYPERION_HEALTH_ROUTE,
   HYPERION_REGISTRY_ROUTE,
   HYPERION_SKILLS_ROUTE,
@@ -165,6 +169,31 @@ async function readBoundedBody(req: IncomingMessage, ceiling: number): Promise<s
 
 const textOf = (value: unknown): string | null =>
   typeof value === 'string' && value.trim().length > 0 ? value : null
+
+/** Demo report-artifact directory; tests point it at a fixture dir via env. */
+function uploadsDir(): string {
+  const override = process.env.HYPERION_UPLOADS_DIR
+  if (override !== undefined && override.length > 0) return override
+  return join(homedir(), '.hermes', 'hermes3d', 'uploads')
+}
+
+/** Demo-scoped artifact names: plain basenames ending in .xlsx (no traversal). */
+const ARTIFACT_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]*\.xlsx$/
+
+/** Artifact name after the files prefix; null when absent or undecodable. */
+function fileNameOf(req: IncomingMessage): string | null {
+  const pathname = new URL(String(req.url), 'http://localhost').pathname
+  if (pathname === HYPERION_FILES_ROUTE) return null
+  // Prefix routing guarantees the route prefix here; anything else decodes
+  // to a remainder the artifact pattern rejects below.
+  const rest = pathname.slice(HYPERION_FILES_ROUTE.length + 1)
+  if (rest.length === 0) return null
+  try {
+    return decodeURIComponent(rest)
+  } catch {
+    return null
+  }
+}
 
 /** Normalize one raw durable session event into the envelope fold input. */
 function normalizeEvent(seq: number, type: string, data: unknown): HyperionSourceEvent {
@@ -527,4 +556,35 @@ export function apply(ctx: Context, config: Config): void {
       })
     },
   }), `hyperion-bridge: GET ${HYPERION_TURN_ROUTE}`)
+
+  ctx.effect(() => ctx.webServer.register({
+    kind: 'prefix',
+    path: HYPERION_FILES_ROUTE,
+    handler: async (req, res) => {
+      if (rejected(req, res)) return
+      if (req.method !== 'GET') {
+        sendMethodNotAllowed(res, 'GET')
+        return
+      }
+      const name = fileNameOf(req)
+      if (name === null || !ARTIFACT_PATTERN.test(name)) {
+        res.statusCode = 404
+        res.end()
+        return
+      }
+      let body: Buffer
+      try {
+        body = await readFile(join(uploadsDir(), name))
+      } catch {
+        res.statusCode = 404
+        res.end()
+        return
+      }
+      res.statusCode = 200
+      res.setHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+      res.setHeader('content-length', String(body.byteLength))
+      res.setHeader('cache-control', 'no-store')
+      res.end(body)
+    },
+  }), `hyperion-bridge: GET ${HYPERION_FILES_ROUTE}/<name>`)
 }

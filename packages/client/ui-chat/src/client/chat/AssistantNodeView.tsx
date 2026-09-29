@@ -1,6 +1,7 @@
 import { memo, useCallback, useMemo } from 'react'
 import type { ChatNodeViewProps, TurnTailOwnerProps } from '../contract/slots.ts'
 import { AssistantMarkdown } from './AssistantMarkdown.tsx'
+import { MrplEvidencePanel } from './MrplEvidenceCard.tsx'
 import { RouterIndicator } from './RouterIndicator.tsx'
 
 /** Streaming, settled, and interrupted Assistant states share one keyed renderer instance. */
@@ -43,6 +44,7 @@ export const AssistantNodeView = memo(function AssistantNodeView({
         mentions={mentions}
         t={t}
       />
+      <MrplEvidencePanel blocks={data.blocks} t={t} />
       {routedModel && (
         <RouterIndicator modelId={routedModel} provider={routedProvider} />
       )}

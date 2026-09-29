@@ -18,6 +18,7 @@ import { SessionId, type Session, type SessionEvent } from '@deepseek-ai/dsh-ses
 import * as HyperionBridge from '../src/index.ts'
 import {
   HYPERION_CHAT_ROUTE,
+  HYPERION_FILES_ROUTE,
   HYPERION_HEALTH_ROUTE,
   HYPERION_REGISTRY_ROUTE,
   HYPERION_SKILLS_ROUTE,
@@ -156,6 +157,7 @@ describe('hyperion-bridge host routes (real Loader composition)', () => {
       HYPERION_SKILLS_ROUTE,
       HYPERION_TELEMETRY_ROUTE,
       HYPERION_TURN_ROUTE,
+      HYPERION_FILES_ROUTE,
     ]) {
       expect((await fetch(`${base}${route}`)).status).toBe(403)
     }
@@ -343,6 +345,51 @@ describe('hyperion-bridge host routes (real Loader composition)', () => {
         sovereignty: { sandboxMode: 'standard', approvalPolicy: 'prompt' },
       },
     })
+  })
+
+  it('serves demo xlsx artifacts from the files prefix with guards', async () => {
+    const previous = process.env.HYPERION_UPLOADS_DIR
+    const uploads = await mkdtemp(join(tmpdir(), 'dsh-hyperion-uploads-'))
+    const payload = Buffer.from('PK-demo-xlsx-bytes', 'utf8')
+    await writeFile(join(uploads, 'S-001_MG91_Compliance.xlsx'), payload)
+    process.env.HYPERION_UPLOADS_DIR = uploads
+    try {
+      const base = await boot()
+      const served = await fetch(`${base}${HYPERION_FILES_ROUTE}/S-001_MG91_Compliance.xlsx`)
+      expect(served.status).toBe(200)
+      expect(served.headers.get('content-type')).toBe(
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+      expect(Buffer.from(await served.arrayBuffer())).toEqual(payload)
+      expect((await fetch(`${base}${HYPERION_FILES_ROUTE}`, { method: 'POST' })).status).toBe(405)
+      expect((await fetch(`${base}${HYPERION_FILES_ROUTE}`)).status).toBe(404)
+      expect((await fetch(`${base}${HYPERION_FILES_ROUTE}/missing.xlsx`)).status).toBe(404)
+      expect((await fetch(`${base}${HYPERION_FILES_ROUTE}/notes.txt`)).status).toBe(404)
+      expect((await fetch(`${base}${HYPERION_FILES_ROUTE}/%2E%2E%2Fsecret.xlsx`)).status).toBe(404)
+      expect((await fetch(`${base}${HYPERION_FILES_ROUTE}/%E0%A4%A.xlsx`)).status).toBe(404)
+    } finally {
+      if (previous === undefined) delete process.env.HYPERION_UPLOADS_DIR
+      else process.env.HYPERION_UPLOADS_DIR = previous
+      await rm(uploads, { recursive: true, force: true })
+    }
+  })
+
+  it('falls back to the home uploads directory without the env override', async () => {
+    const previous = process.env.HYPERION_UPLOADS_DIR
+    delete process.env.HYPERION_UPLOADS_DIR
+    try {
+      const base = await boot()
+      expect((await fetch(`${base}${HYPERION_FILES_ROUTE}/no-such-demo-file.xlsx`)).status).toBe(404)
+    } finally {
+      if (previous !== undefined) process.env.HYPERION_UPLOADS_DIR = previous
+    }
+    process.env.HYPERION_UPLOADS_DIR = ''
+    try {
+      const base = await boot()
+      expect((await fetch(`${base}${HYPERION_FILES_ROUTE}/no-such-demo-file.xlsx`)).status).toBe(404)
+    } finally {
+      if (previous === undefined) delete process.env.HYPERION_UPLOADS_DIR
+      else process.env.HYPERION_UPLOADS_DIR = previous
+    }
   })
 
   it('removes all routes when the plugin row is disposed (HMR safety)', async () => {

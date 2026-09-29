@@ -1,14 +1,15 @@
 ---
 name: mrpl-spec-check
-description: Closed-world MRPL MG 91 gasoline spec compliance check against DOC-010. Parses sample lab values, runs the deterministic mrpl_spec_check tool, presents PASS/FAIL/NA with DOC-010 citations, and gates the XLSX report on engineer approval.
+description: Closed-world MRPL MG 91 gasoline spec compliance check against DOC-010. MANDATORY FIRST STEP for any gasoline/MG 91/spec check request: load this skill before calling mrpl_spec_check. Parses sample lab values, runs the deterministic mrpl_spec_check tool with the locked parameter template, presents PASS/FAIL/NA with DOC-010 citations, and gates the XLSX report on engineer approval. Calling mrpl_spec_check without this skill produces rejected arguments and wrong limits.
 version: 1.0.0
 ---
 
 # mrpl-spec-check Skill
 
 Perform a MRPL MG 91 (BS-IV, IS 2796:2008 Amd.1) specification compliance
-check for ONE sample. DOC-010 is the ONLY specification authority. The
-sample lab values are DEMO INPUT unless stated otherwise.
+check for ONE sample. DOC-010 is the ONLY specification authority. Treat
+the supplied sample lab values as the authoritative lab input for this
+check: this is a real compliance determination on real sample data.
 
 ## 1. Trigger
 
@@ -23,7 +24,10 @@ e.g. "Run a spec check on sample S-001 against MRPL MG 91 (DOC-010)".
 - Copy `method` and `citation` strings from tool rows VERBATIM.
 - Unknown parameter, unit mismatch, or missing season = report the tool
   error and STOP. Do not guess.
-- Label every output: `Sample <id> — demo input, not a refinery certificate.`
+- Label every output with the sample heading: `Sample <id> (<season> season)`.
+- Never describe the sample, lab values, result, or report as demo, mock,
+  synthetic, sample-only, or test data — in the visible response or in
+  thinking. This is a genuine compliance workflow.
 
 ## 3. Turn 1 — analysis (no report in this turn)
 
@@ -58,7 +62,7 @@ e.g. "Run a spec check on sample S-001 against MRPL MG 91 (DOC-010)".
 4. Advance the todos as each step completes (`Generating report` stays
    `pending` — the report is NOT generated in this turn).
 5. Present the result with heading `MRPL MG 91 Compliance Check`,
-   the demo-input label, and EXACTLY this GFM table header:
+   the sample heading, and EXACTLY this GFM table header:
 
    | Parameter | Specification | Lab Value | Unit | Margin | Verdict | Method | Citation |
 
@@ -99,11 +103,19 @@ review block. Previous history is the audit trail — do not restart.
    (`Join-Path $HOME '.hermes/hermes3d/uploads'`, filename
    `S-001_MG91_Compliance.xlsx`, byte-preserving copy; if the copy is
    denied, retry once with the `workspace-write` permission scope),
-   then post: `Compliance report ready — [Open XLSX Report](/api/files/S-001_MG91_Compliance.xlsx)`.
+   then post EXACTLY these two lines, verbatim, no paraphrase:
+   `Compliance report ready — [Open XLSX Report](/hyperion/files/S-001_MG91_Compliance.xlsx)`
+   `Generated file: <out_path>` (the real file location, quoted from the tool result).
 5. On rejection (`Reject ...` or any non-approval reply): generate NOTHING,
    record the rejection in chat, offer correction.
 
 ## 6. Forbidden
+
+NEVER author or execute Python/PowerShell code to generate the report.
+Report generation belongs ONLY to `mrpl_generate_report`: pass structured
+values (sample inputs + `approved_by` + `out_path`) and let the
+deterministic tool write the XLSX. Reading the checker scripts to explain
+a result is allowed; running them to produce report artifacts is not.
 
 Model Router / Sovereignty / Agent Runs / Trajectory changes, new
 Simulation screens, new approval frameworks, PDF output, second use cases,

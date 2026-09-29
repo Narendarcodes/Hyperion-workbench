@@ -218,6 +218,11 @@ describe('produced-file Turn data', () => {
         command: 'insert', path: 'notes/inserted.md', insert_line: 1, new_str: 'line',
       }),
       result(13, 'insert'),
+      call(14, 'report', 'mrpl_generate_report', {
+        sample_id: 'S-001', approved_by: 'engineer (chat approval)',
+        out_path: 'C:\\out\\S-001_MG91_Compliance.xlsx',
+      }),
+      result(15, 'report'),
     ])
 
     expect(producedForClosing(deliverablesOf(value))).toEqual([
@@ -227,6 +232,7 @@ describe('produced-file Turn data', () => {
       'notes/existing.md',
       'notes/deleted-text.md',
       'notes/inserted.md',
+      'C:\\out\\S-001_MG91_Compliance.xlsx',
     ])
   })
 
@@ -288,6 +294,10 @@ describe('produced-file Turn data', () => {
     {
       caseName: 'editor insert omits new_str', name: 'str_replace_editor',
       args: { command: 'insert', path: 'insert.txt', insert_line: 1 },
+    },
+    {
+      caseName: 'report omits out_path', name: 'mrpl_generate_report',
+      args: { approved_by: 'engineer (chat approval)' },
     },
   ])('ignores a successful result when $caseName', ({ name, args }) => {
     const value = assembler([

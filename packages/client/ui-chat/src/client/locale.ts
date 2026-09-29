@@ -119,6 +119,15 @@ export const en = {
   'json.truncated': '… truncated, {total} characters total',
   'clock.md': '{m}/{d}',
   'clock.ymd': '{y}-{m}-{d}',
+  'evidence.title': 'Evidence',
+  'evidence.sourceDocument': 'Source Document',
+  'evidence.reference': 'Reference',
+  'evidence.usedFor': 'Used For',
+  'evidence.usedForValue': 'Specification limits + VLI formula',
+  'evidence.artifact': 'Artifact',
+  'evidence.generatedFile': 'Generated File',
+  'evidence.status': 'Status',
+  'evidence.verified': 'Verified',
 }
 
 /** Hindi dictionary (mirrors the en key set). */
@@ -234,6 +243,15 @@ export const hi = {
   'json.truncated': '… काटा गया, कुल {total} वर्ण',
   'clock.md': '{m}/{d}',
   'clock.ymd': '{y}-{m}-{d}',
+  'evidence.title': 'साक्ष्य',
+  'evidence.sourceDocument': 'स्रोत दस्तावेज़',
+  'evidence.reference': 'संदर्भ',
+  'evidence.usedFor': 'उपयोग',
+  'evidence.usedForValue': 'विनिर्देश सीमाएँ + VLI सूत्र',
+  'evidence.artifact': 'आर्टिफैक्ट',
+  'evidence.generatedFile': 'उत्पन्न फ़ाइल',
+  'evidence.status': 'स्थिति',
+  'evidence.verified': 'सत्यापित',
 }
 
 /** Telugu dictionary (mirrors the en key set). */
@@ -349,4 +367,13 @@ export const te = {
   'json.truncated': '… కత్తిరించబడింది, మొత్తం {total} అక్షరాలు',
   'clock.md': '{m}/{d}',
   'clock.ymd': '{y}-{m}-{d}',
+  'evidence.title': 'ఆధారాలు',
+  'evidence.sourceDocument': 'మూల పత్రం',
+  'evidence.reference': 'సూచన',
+  'evidence.usedFor': 'వినియోగం',
+  'evidence.usedForValue': 'స్పెసిఫికేషన్ పరిమితులు + VLI ఫార్ములా',
+  'evidence.artifact': 'ఆర్టిఫ్యాక్ట్',
+  'evidence.generatedFile': 'రూపొందించిన ఫైల్',
+  'evidence.status': 'స్థితి',
+  'evidence.verified': 'ధృవీకరించబడింది',
 }

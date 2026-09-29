@@ -143,6 +143,21 @@ describe('UniversalModelRouter', () => {
       expect(['qwen3.5:4b', 'antigravity/gemini-3.7-flash-low']).toContain(result!.id)
     })
 
+    it('should route specification compliance checks to local Qwen 3.5 4B in every complexity band', () => {
+      for (const complexity of [0.1, 0.5, 0.85]) {
+        const result = policy.selectModel({
+          answers: {
+            task_type: { choice: 'spec_compliance', confidence: 0.9 },
+            complexity: { score: complexity },
+          },
+          routing_model: 'english',
+        }, DEFAULT_ROUTING_CONFIG)
+        expect(result).toBeDefined()
+        expect(result!.id).toBe('qwen3.5:4b')
+        expect(result!.provider).toBe('ollama')
+      }
+    })
+
     it('should route mission-critical engineering calculation to Gemini High', () => {
       const result = policy.selectModel({
         answers: {

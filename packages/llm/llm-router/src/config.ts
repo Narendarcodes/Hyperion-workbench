@@ -48,6 +48,7 @@ export const DEFAULT_ROUTING_CONFIG: RoutingEngineConfig = {
         engineering_reasoning: 'root cause analysis, mechanical or electrical calculations, failure diagnosis, physics math analysis',
         deliverable_report: 'drafting formal engineering reports, SOPs, summary documentation, technical writing',
         conversational: 'greetings (hi, hello, hey), brief acknowledgments, UI navigation, casual conversation',
+        spec_compliance: 'specification compliance verification, checking lab values against a standard specification document, pass/fail determination, specification limits',
       },
     },
     complexity: {
@@ -99,6 +100,16 @@ export const DEFAULT_ROUTING_CONFIG: RoutingEngineConfig = {
     {
       match: { complexity: { $lt: 0.70 } },
       scoreCostTier: { high: -15, low: 5 },
+    },
+    // 9. Specification compliance checks (e.g. MRPL MG 91) -> Favor the local
+    // scripting model with the locked template discipline (Qwen 3.5 4B) and
+    // keep closed-world checks off the cloud tiers. Weight 15 keeps qwen
+    // ahead of gemma4 in every complexity band and at worst ties the cloud
+    // low tier, where registry order keeps qwen first.
+    {
+      match: { task_type: 'spec_compliance' },
+      scoreCapabilities: { code_automation: 15 },
+      scoreCostTier: { high: -15, medium: -10, low: 5 },
     },
   ],
 }

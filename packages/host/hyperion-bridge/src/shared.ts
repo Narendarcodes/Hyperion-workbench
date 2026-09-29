@@ -11,6 +11,8 @@ export const HYPERION_SKILLS_ROUTE = '/hyperion/skills'
 export const HYPERION_TELEMETRY_ROUTE = '/hyperion/telemetry'
 export const HYPERION_CHAT_ROUTE = '/hyperion/chat'
 export const HYPERION_TURN_ROUTE = '/hyperion/turn'
+/** Demo report artifacts copied to the uploads directory (prefix route). */
+export const HYPERION_FILES_ROUTE = '/hyperion/files'
 
 /** One plan line with CLI-style state for office bubbles. */
 export interface HyperionPlanLine {

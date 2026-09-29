@@ -18,6 +18,7 @@ English
 - `GET /hyperion/telemetry?sessionId=` — tool allow/deny decisions, pending approvals, and sovereignty state folded from session events observed since plugin load.
 - `POST /hyperion/chat` — admit one `{ sessionId, message }` prompt to a live agent; returns `{ accepted: true }`.
 - `GET /hyperion/turn?sessionId=&since=` — session events after a sequence cursor plus the current `hyperion` envelope (task type, zones, stage, plan, skill, verification).
+- `GET /hyperion/files/<name>` — demo report artifacts (`.xlsx` basenames only) from `~/.hermes/hermes3d/uploads/` (`HYPERION_UPLOADS_DIR` overrides in tests); same browser-auth fence as every route above.
 
 ## Table of Contents
 
@@ -68,6 +69,9 @@ None; this package neither assembles nor sends a provider request.
 <a id="known-limitations-and-deferred-work"></a>
 
 - Cold reads before plugin load are not backfilled into telemetry history.
+- `/hyperion/files` is demo-scoped: it serves only `.xlsx` basenames from one
+  uploads directory so the MRPL compliance report opens in dsh web without
+  Studio. It is not a general file server.
 
 <a id="dev-note"></a>
 ### Dev Note
