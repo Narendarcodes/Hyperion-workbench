@@ -225,6 +225,8 @@ export async function readRawBody(req: IncomingMessage, ceiling: number): Promis
 
 /** The composition's ASR seam (typed locally to keep the bridge free of the asr package). */
 interface BridgeAsr {
+  /** Fill language and deadline from the provider's config (asr-http's transcribe() takes a resolved spec). */
+  resolve?(request: { audioPath: string; language?: string }): { audioPath: string; language: string; timeoutMs?: number }
   transcribe(request: { audioPath: string; language?: string }): Promise<{ text: string; language: string; model: string }>
 }
 
@@ -432,7 +434,8 @@ export function registerMrplLiveRoutes(ctx: Context, deps: MrplLiveDeps): void {
       const audioPath = join(dir, `clip${AUDIO_EXTENSIONS[contentType] ?? '.bin'}`)
       try {
         await writeFile(audioPath, audio)
-        const result = await asr.transcribe({ audioPath, language })
+        const request = { audioPath, language }
+        const result = await asr.transcribe(typeof asr.resolve === 'function' ? asr.resolve(request) : request)
         const payload: HyperionTranscribeResponse = { text: result.text, language: result.language, model: result.model }
         sendJson(res, 200, payload)
       } catch (error) {

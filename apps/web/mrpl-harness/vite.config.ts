@@ -15,6 +15,11 @@ export default defineConfig({
   root,
   publicDir: fileURLToPath(new URL('../public', import.meta.url)),
   plugins: [react(), tsconfigPaths({ projects: [`${repo}tsconfig.base.json`] })],
-  server: { fs: { allow: [repo] }, hmr: false },
+  // MRPL_BRIDGE_URL (live e2e): proxy the same-origin /hyperion routes to a real bridge.
+  server: {
+    fs: { allow: [repo] },
+    hmr: false,
+    ...(process.env.MRPL_BRIDGE_URL ? { proxy: { '/hyperion': { target: process.env.MRPL_BRIDGE_URL, changeOrigin: true } } } : {}),
+  },
   logLevel: 'warn',
 })

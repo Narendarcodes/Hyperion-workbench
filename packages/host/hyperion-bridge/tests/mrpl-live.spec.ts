@@ -277,4 +277,20 @@ describe('composer speech route', () => {
     const none = await fetch(`${off}${HYPERION_ASR_TRANSCRIBE_ROUTE}`, { method: 'POST', headers: { 'content-type': 'audio/webm' }, body: Buffer.alloc(10) })
     expect(none.status).toBe(503)
   })
+
+  it('resolves the request through the provider before transcribing (asr-http needs a deadline)', async () => {
+    // Found by the live e2e: asr-http.transcribe() takes a *resolved* spec; a raw
+    // request failed with "deadline timeoutMs must be a positive finite number".
+    const asr = {
+      resolve: (req: { audioPath: string; language?: string }) => ({ ...req, language: req.language ?? 'auto', timeoutMs: 120_000 }),
+      async transcribe(spec: { audioPath: string; language: string; timeoutMs?: number }) {
+        if (typeof spec.timeoutMs !== 'number') throw new Error('deadline timeoutMs must be a positive finite number')
+        return { text: 'P-101A pressure 15.2 bar', language: 'te', model: 'indicconformer' }
+      },
+    }
+    const base = await boot({}, asr)
+    const res = await fetch(`${base}${HYPERION_ASR_TRANSCRIBE_ROUTE}?language=te`, { method: 'POST', headers: { 'content-type': 'audio/webm' }, body: Buffer.alloc(100, 1) })
+    expect(res.status).toBe(200)
+    expect((await res.json() as HyperionTranscribeResponse).text).toBe('P-101A pressure 15.2 bar')
+  })
 })

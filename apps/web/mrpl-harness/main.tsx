@@ -1,10 +1,10 @@
 /**
- * MRPL screen harness entry: `?screen=documents|equipment|reports|evidence`,
+ * MRPL screen harness entry: `?screen=documents|equipment|reports|evidence|mic|mission`,
  * `&theme=light|dark`. Works on the base branch too (no MrplSourceProvider
  * there), which is how the "before" screenshots are taken.
  */
 import { createRoot } from 'react-dom/client'
-import type { ReactElement } from 'react'
+import { useRef, useState, type ReactElement } from 'react'
 import base from '../../../packages/client/ui-theme/src/styles/base.css?inline'
 import designPlatform from '../../../packages/client/ui-theme/src/styles/design-platform.css?inline'
 import { DocumentsOverview } from '../../../packages/client/ui-conversation/src/client/documents/DocumentsOverview.tsx'
@@ -49,12 +49,54 @@ const RESULT_PROSE = [
 ].join('\n')
 const TAMPERED_PROSE = RESULT_PROSE.replace('| Benzene | Max 1 |', '| Benzene | Max 0.9 |')
 
+/**
+ * `?screen=mic`: the composer's transcribe path without the whole session
+ * shell: MediaRecorder on the (fake or real) microphone -> asrTranscribeUrl()
+ * (the URL builder InputBar uses) -> /hyperion/asr/transcribe.
+ */
+function MicProbe() {
+  const [state, setState] = useState('idle')
+  const [result, setResult] = useState('')
+  const [lang, setLang] = useState('auto')
+  const recorder = useRef<MediaRecorder | null>(null)
+  const start = async (): Promise<void> => {
+    const { asrTranscribeUrl } = await import('../../../packages/client/ui-conversation/src/client/skeleton/InputBar.tsx')
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    const chunks: Blob[] = []
+    const rec = new MediaRecorder(stream)
+    recorder.current = rec
+    rec.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data) }
+    rec.onstop = async () => {
+      for (const track of stream.getTracks()) track.stop()
+      setState('transcribing')
+      const blob = new Blob(chunks, { type: 'audio/webm' })
+      const res = await fetch(asrTranscribeUrl(lang), { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'audio/webm' }, body: blob })
+      setResult(JSON.stringify({ status: res.status, ...(await res.json() as object) }))
+      setState('done')
+    }
+    rec.start(250)
+    setState('recording')
+  }
+  return (
+    <div style={{ padding: 24, fontFamily: 'system-ui' }}>
+      <select aria-label="Speech language" value={lang} onChange={(e) => { setLang(e.target.value) }}>
+        {['auto', 'te', 'hi', 'en'].map(code => <option key={code} value={code}>{code}</option>)}
+      </select>
+      <button type="button" onClick={() => { void start() }}>Record</button>
+      <button type="button" onClick={() => { recorder.current?.stop() }}>Stop</button>
+      <output aria-label="Mic state">{state}</output>
+      <pre aria-label="Transcript">{result}</pre>
+    </div>
+  )
+}
+
 async function render(): Promise<void> {
   const mrpl = import.meta.glob('../../../packages/client/ui-conversation/src/client/mrpl/api.ts', { eager: true }) as Record<string, { MrplSourceProvider?: (props: { source: unknown; children: ReactElement }) => ReactElement; createHttpMrplSource?: () => unknown }>
   const api = Object.values(mrpl)[0]
   let ui: ReactElement
   if (screen === 'equipment') ui = <EquipmentPage />
   else if (screen === 'reports') ui = <ReportsOverview />
+  else if (screen === 'mic') ui = <MicProbe />
   else if (screen === 'evidence') {
     const prose = params.get('variant') === 'tampered' ? TAMPERED_PROSE : RESULT_PROSE
     ui = (
