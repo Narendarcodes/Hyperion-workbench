@@ -134,18 +134,6 @@ export function InvestigationList({
             )
           })}
         </div>
-        <button
-          type="button"
-          className={css.tabActionBtn}
-          aria-label="Filter options"
-          title="Filter options"
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <line x1="4" y1="6" x2="20" y2="6" />
-            <line x1="4" y1="12" x2="16" y2="12" />
-            <line x1="4" y1="18" x2="11" y2="18" />
-          </svg>
-        </button>
       </div>
 
       {/* Sort Row */}
@@ -225,16 +213,11 @@ export function InvestigationList({
                     {item.assignee.initial}
                   </span>
 
-                  <button
-                    type="button"
-                    className={css.moreBtn}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                    }}
-                    aria-label={`Options for ${item.code}`}
-                  >
-                    <IconEllipsisOutline16 size={14} />
-                  </button>
+                  {rowMenuItems !== undefined && (
+                    <ActionMenu label={`Options for ${item.code}`} items={rowMenuItems(item)} triggerClassName={css.moreBtn}>
+                      <IconEllipsisOutline16 size={14} />
+                    </ActionMenu>
+                  )}
                 </div>
               </div>
             </li>
