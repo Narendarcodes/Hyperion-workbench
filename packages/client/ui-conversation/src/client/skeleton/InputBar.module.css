@@ -528,3 +528,21 @@
     padding-inline: 6px;
   }
 }
+
+/* Speech-language picker beside the mic (Hyperion ASR: auto/te/hi/en). */
+.asrLanguage {
+  height: 24px;
+  max-width: 116px;
+  padding: 0 4px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.asrLanguage:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

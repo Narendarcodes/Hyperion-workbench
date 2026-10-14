@@ -11,6 +11,7 @@ import { EMPTY_MISSION_SNAPSHOT } from './mission-contract.ts'
 import type { MissionPhase } from './mission-vocabulary.ts'
 import type { MissionKey } from './locales.ts'
 import { PixelOfficeCanvas } from './pixel-office/PixelOfficeCanvas.tsx'
+import { LifecycleReplayBar, useLifecycleOffice } from './pixel-office/lifecycle/LifecycleReplayBar.tsx'
 import css from './MissionView.module.css'
 
 /** Hook selector type for MissionSnapshot. */
@@ -100,9 +101,10 @@ export function MissionView({
   }
 
   const isCompleted = currentSnapshot.office.orchestrator.status === 'completed'
+  const office = useLifecycleOffice(currentSnapshot.lifecycle, firstPrompt)
 
   return (
-    <div className={css.missionViewRoot} data-mission-view data-hide-composer="">
+    <div className={`${css.missionViewRoot} ${css.missionTokens}`} data-mission-view data-hide-composer="">
       {/* 1. TOP POLISHED HEADER CARD */}
       <div className={css.headerCard}>
         <div className={css.headerMain}>
@@ -159,7 +161,11 @@ export function MissionView({
 
       {/* 3. NATIVE 2D GATHER-STYLE PIXEL OFFICE */}
       <div className={css.simulationArea}>
-        <PixelOfficeCanvas snapshot={currentSnapshot} />
+        <PixelOfficeCanvas
+          snapshot={currentSnapshot}
+          lifecycle={office.source === 'recording' || (office.view?.agents.length ?? 0) > 1 ? office.view : undefined}
+        />
+        <LifecycleReplayBar controller={office} />
         {renderSlot('mission.orb', {})}
       </div>
       {/* 4. BOTTOM 3-CARD EXECUTION STRIP */}
@@ -171,23 +177,23 @@ export function MissionView({
           </div>
           <div className={css.statusCountsGrid}>
             <div className={css.countRow}>
-              <span className={css.countCircle} style={{ backgroundColor: '#10b981' }} />
+              <span className={css.countCircle} data-status="working" />
               <span>{t('status.working', { count: counts.working })}</span>
             </div>
             <div className={css.countRow}>
-              <span className={css.countCircle} style={{ backgroundColor: '#06b6d4' }} />
+              <span className={css.countCircle} data-status="searching" />
               <span>{t('status.searching', { count: counts.searching })}</span>
             </div>
             <div className={css.countRow}>
-              <span className={css.countCircle} style={{ backgroundColor: '#f59e0b' }} />
+              <span className={css.countCircle} data-status="waiting" />
               <span>{t('status.waiting', { count: counts.waiting })}</span>
             </div>
             <div className={css.countRow}>
-              <span className={css.countCircle} style={{ backgroundColor: '#ef4444' }} />
+              <span className={css.countCircle} data-status="blocked" />
               <span>{t('status.blocked', { count: counts.blocked })}</span>
             </div>
             <div className={css.countRow}>
-              <span className={css.countCircle} style={{ backgroundColor: '#22c55e' }} />
+              <span className={css.countCircle} data-status="completed" />
               <span>{t('status.completed', { count: counts.completed })}</span>
             </div>
           </div>
@@ -229,13 +235,10 @@ export function MissionView({
         <div className={css.bottomCard}>
           <div className={css.cardHeader}>
             <span>{t('card.recentActivity')}</span>
-            <span style={{ fontSize: 11, color: '#3b82f6', cursor: 'pointer', fontWeight: 600 }}>
-              {t('activity.viewAll')}
-            </span>
           </div>
           <div className={css.activityList}>
             {currentSnapshot.activity.length === 0 ? (
-              <div style={{ color: '#94a3b8', fontSize: 11.5, fontStyle: 'italic' }}>
+              <div className={css.activityEmpty}>
                 {t('activity.empty')}
               </div>
             ) : (
@@ -244,10 +247,7 @@ export function MissionView({
                   <div className={css.activityItemLeft}>
                     <span
                       className={css.countCircle}
-                      style={{
-                        backgroundColor: entry.status === 'working' ? '#10b981' : entry.status === 'searching' ? '#06b6d4' : '#64748b',
-                        flexShrink: 0,
-                      }}
+                      data-status={entry.status === 'working' || entry.status === 'searching' ? entry.status : 'idle'}
                     />
                     <span className={css.activityAgent}>{entry.label}</span>
                     <span className={css.activityDesc}>{entry.detail ? `— ${entry.detail}` : ''}</span>

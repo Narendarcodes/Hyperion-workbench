@@ -6,7 +6,7 @@
  * @module @deepseek-ai/dsh-client-ui-conversation/client/equipment/EquipmentHeader
  */
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import {
   IconPlusOutline16,
   IconSearchOutline16,
@@ -21,6 +21,8 @@ export interface EquipmentHeaderProps {
   readonly onSearchChange?: (query: string) => void
   readonly onFilterClick?: () => void
   readonly onNewInvestigation?: () => void
+  /** Provenance badge shown beside the subtitle (dataset label). */
+  readonly badge?: ReactNode
 }
 
 export function EquipmentHeader({
@@ -31,6 +33,7 @@ export function EquipmentHeader({
   onSearchChange,
   onFilterClick,
   onNewInvestigation,
+  badge,
 }: EquipmentHeaderProps) {
   const [internalQuery, setInternalQuery] = useState(searchQuery)
 
@@ -65,6 +68,7 @@ export function EquipmentHeader({
           </nav>
           <h1 className={css.pageTitle}>{title}</h1>
           <p className={css.pageSubtitle}>{subtitle}</p>
+          {badge}
         </div>
 
         <div className={css.actionsRow}>

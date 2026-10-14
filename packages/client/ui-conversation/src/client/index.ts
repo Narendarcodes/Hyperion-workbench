@@ -78,3 +78,4 @@ declare module '@deepseek-ai/cordis' {
 
 export * from './plant/index.ts'
 export * from './documents/index.ts'
+export * from './mrpl/index.ts'

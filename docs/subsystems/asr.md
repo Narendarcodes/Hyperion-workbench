@@ -2,7 +2,7 @@
 
 English
 
-The speech-to-text seam is split across a Service Definition ([dsh-asr](../../packages/asr/asr), `ctx.asr`), a Service Provider ([dsh-asr-nemo](../../packages/asr/asr-nemo), AI4Bharat IndicConformer checkpoints through a NeMo sidecar), and a Consumer ([dsh-tool-transcribe](../../packages/asr/tool-transcribe), the `transcribe_audio` schema). One call decodes one audio file into transcript text; the transcript enters the agent as ordinary tool-result text, so it stays reconstructable from the session log. Request/spec vocabulary, provider configuration, and tool bounds are on the [package READMEs](../../packages/asr/README.md).
+The speech-to-text seam is split across a Service Definition ([dsh-asr](../../packages/asr/asr), `ctx.asr`), two interchangeable Service Providers ([dsh-asr-nemo](../../packages/asr/asr-nemo), AI4Bharat IndicConformer checkpoints through a per-call NeMo sidecar; [dsh-asr-http](../../packages/asr/asr-http), a persistent GPU sidecar over HTTP with per-language engine routing), and a Consumer ([dsh-tool-transcribe](../../packages/asr/tool-transcribe), the `transcribe_audio` schema). One call decodes one audio file into transcript text; the transcript enters the agent as ordinary tool-result text, so it stays reconstructable from the session log. Request/spec vocabulary, provider configuration, and tool bounds are on the [package READMEs](../../packages/asr/README.md).
 
 Source: [`packages/asr/asr/src/types.ts`](../../packages/asr/asr/src/types.ts)
 
@@ -30,3 +30,7 @@ interface AsrResult {
 ## The NeMo sidecar protocol
 
 The provider owns deadlines and transcript validation; the sidecar owns NeMo imports, checkpoint restore, and decoding. The sidecar prints exactly one JSON object (`{"text", "language"}`) on stdout and exits non-zero with stdout empty on any failure, so the provider never parses a half-written transcript. The engine (AI4Bharat NeMo, `nemo-v2` branch) and the `.nemo` checkpoint are deployment prerequisites that never ship with the harness.
+
+## The HTTP sidecar protocol
+
+`dsh-asr-http` keeps engines warm in one long-lived process (`py/stt_server.py`) instead of restoring a checkpoint per call. `POST /v1/transcribe` takes `{"language", "audio_b64" | "audio_path", "engine"?, "normalize"?}` and answers `{"text", "raw", "language", "engine", "model", "seconds"}`; failures answer 4xx/5xx with `{"error"}`. The sidecar routes each language to an engine (default: IndicConformer-600M for Telugu/Hindi and code-mixed speech, Whisper large-v3-turbo for English, SraVaani-1.0 as the fallback, chosen by [the STT benchmark](../benchmarks/stt.md)) and folds spelled-out plant equipment tags and English number words to canonical form (`P-101A`, `12.5`) unless the request asks for `normalize: "none"`.

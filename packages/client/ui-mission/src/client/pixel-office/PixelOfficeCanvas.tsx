@@ -6,6 +6,7 @@
  * @module @deepseek-ai/dsh-client-ui-mission/client/pixel-office/PixelOfficeCanvas
  */
 
+import { layoutLabels, type LabelBox } from './labelLayout.ts'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { MissionSnapshot } from '../mission-contract.ts'
 import {
@@ -30,6 +31,7 @@ import {
 import { buildHermesHqMap } from './map/hermesHqMap.ts'
 import { createPixelSimulation, type PixelSimulation } from './sim/agentSimulation.ts'
 import css from './PixelOfficeCanvas.module.css'
+import type { LifecycleOfficeView } from './lifecycle/state.ts'
 
 const TILE = PIXEL_TILE_SIZE
 const WALK_FRAME_MS = 140
@@ -50,7 +52,17 @@ const STATUS_COLOR: Record<string, string> = {
 
 export interface PixelOfficeCanvasProps {
   readonly snapshot: MissionSnapshot
+  /**
+   * Lifecycle-driven office (real agent/subagent events or a replay). When
+   * present it replaces the snapshot-derived squad: one character per agent,
+   * a model badge under each, and delegation lines parent → child.
+   */
+  readonly lifecycle?: LifecycleOfficeView | undefined
 }
+
+/** Delegation line colours: active handoffs pulse, finished ones fade. */
+const LINE_ACTIVE = 'rgba(56, 189, 248, 0.85)'
+const LINE_DONE = 'rgba(148, 163, 184, 0.35)'
 
 const DEFAULT_AGENTS = [
   { id: 'lead', name: 'Orchestrator', role: 'Lead Architect', color: '#f59e0b' },
@@ -69,7 +81,9 @@ interface AgentVisualMemory {
 
 type CameraMode = 'auto' | 'free'
 
-export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
+export function PixelOfficeCanvas({ snapshot, lifecycle }: PixelOfficeCanvasProps) {
+  const lifecycleRef = useRef<LifecycleOfficeView | undefined>(lifecycle)
+  lifecycleRef.current = lifecycle
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -153,6 +167,9 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
 
   // Derive agent inputs from snapshot
   const agentInputs = useMemo<PixelAgentInput[]>(() => {
+    if (lifecycle !== undefined && lifecycle.agents.length > 0) {
+      return lifecycle.agents.map(a => a.input)
+    }
     const workers = snapshot.office.workers
     const orchestrator = snapshot.office.orchestrator
 
@@ -262,7 +279,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
     })
 
     return [orchestratorInput, ...workerInputs]
-  }, [snapshot])
+  }, [snapshot, lifecycle])
 
   // Get cached character frames
   const getCharacterFrames = useCallback((agentId: string, color: string): CharacterFrameSet => {
@@ -439,12 +456,12 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
       const items: RenderItem[] = []
 
       // Furniture items
-      if (furnitureSpritesRef.current) {
+      {
         for (const obj of map.objects) {
           const sprite = furnitureSpritesRef.current[obj.kind]
           if (sprite) {
             const footprint = OBJECT_FOOTPRINT[obj.kind]
-            const fh = footprint ? footprint[1] : 1
+            const fh = footprint[1]
             const ySort = (obj.ty + fh) * TILE
             items.push({ kind: 'furniture', y: ySort, obj, sprite })
           }
@@ -473,7 +490,28 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
       // Sort by Y coordinate for correct perspective
       items.sort((a, b) => a.y - b.y)
 
+      // Delegation lines (parent → child), under the characters.
+      const view = lifecycleRef.current
+      if (view !== undefined) {
+        for (const line of view.lines) {
+          const a = posesRef.current.find(p => p.id === line.from)
+          const b = posesRef.current.find(p => p.id === line.to)
+          if (!a || !b) continue
+          ctx.save()
+          ctx.strokeStyle = line.active ? LINE_ACTIVE : LINE_DONE
+          ctx.lineWidth = line.active ? 2.5 : 1.5
+          ctx.setLineDash(line.mode === 'parallel' ? [6, 4] : [])
+          if (line.active) ctx.lineDashOffset = -((now / 40) % 20)
+          ctx.beginPath()
+          ctx.moveTo(a.x, a.y - 20)
+          ctx.lineTo(b.x, b.y - 20)
+          ctx.stroke()
+          ctx.restore()
+        }
+      }
+
       // 3. Render Depth-Sorted Items
+      const overlays: { box: LabelBox; draw: (dy: number) => void }[] = []
       for (const item of items) {
         if (item.kind === 'furniture') {
           paintSpriteToContext(item.sprite, ctx, item.obj.tx * TILE, item.obj.ty * TILE)
@@ -494,8 +532,8 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
             frameName = danceStep === 0 ? 'dance_a' : 'dance_b'
           }
 
-          const sprite = frames[frameName] || frames[`idle_${pose.facing}`]
-          if (sprite) {
+          const sprite = frames[frameName]
+          {
             const drawX = Math.round(pose.x - CHARACTER_WIDTH / 2)
             const drawY = Math.round(pose.y - CHARACTER_HEIGHT + 8)
 
@@ -530,61 +568,93 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
             // Paint character sprite
             paintSpriteToContext(sprite, ctx, drawX, drawY)
 
-            // Render name tag & status dot
+            // Name tag, model badge and bubble are drawn in an overlay pass after every
+            // sprite, stacked by layoutLabels so they never overlap (e.g. when every
+            // agent has finished and gathered in the same zone).
             ctx.font = 'bold 11px system-ui, sans-serif'
-            const textWidth = ctx.measureText(input.name).width
-            const tagX = Math.round(pose.x - textWidth / 2 - 8)
-            const tagY = drawY - 8
+            const tagWidth = ctx.measureText(input.name).width + 16
+            const bubbleRaw = input.bubble
+            const bubbleShown = bubbleRaw && bubbleRaw.length > 0 ? (bubbleRaw.length > 36 ? `${bubbleRaw.slice(0, 33)}...` : bubbleRaw) : ''
+            const bubbleW = bubbleShown ? ctx.measureText(bubbleShown).width + 18 : 0
+            const labelW = Math.max(tagWidth, bubbleW)
+            const labelH = bubbleShown ? 16 + 26 : 16
+            overlays.push({
+              box: { id: input.id, x: Math.round(pose.x - labelW / 2), y: drawY - 20 - (labelH - 16), w: labelW, h: labelH },
+              draw: (dy: number) => {
+                // Render name tag & status dot
+                ctx.font = 'bold 11px system-ui, sans-serif'
+                const textWidth = ctx.measureText(input.name).width
+                const tagX = Math.round(pose.x - textWidth / 2 - 8)
+                const tagY = drawY - 8 + dy
 
-            ctx.fillStyle = input.id === 'lead' ? 'rgba(30, 27, 75, 0.92)' : 'rgba(15, 23, 42, 0.88)'
-            ctx.beginPath()
-            ctx.roundRect(tagX, tagY - 12, textWidth + 16, 16, 4)
-            ctx.fill()
+                ctx.fillStyle = input.id === 'lead' ? 'rgba(30, 27, 75, 0.92)' : 'rgba(15, 23, 42, 0.88)'
+                ctx.beginPath()
+                ctx.roundRect(tagX, tagY - 12, textWidth + 16, 16, 4)
+                ctx.fill()
 
-            // Status indicator dot
-            ctx.fillStyle = STATUS_COLOR[input.status] || '#64748b'
-            ctx.beginPath()
-            ctx.arc(tagX + 6, tagY - 4, 3, 0, Math.PI * 2)
-            ctx.fill()
+                // Status indicator dot
+                ctx.fillStyle = STATUS_COLOR[input.status] || '#64748b'
+                ctx.beginPath()
+                ctx.arc(tagX + 6, tagY - 4, 3, 0, Math.PI * 2)
+                ctx.fill()
 
-            ctx.fillStyle = input.id === 'lead' ? '#fde047' : '#f8fafc'
-            ctx.fillText(input.name, tagX + 13, tagY - 1)
+                ctx.fillStyle = input.id === 'lead' ? '#fde047' : '#f8fafc'
+                ctx.fillText(input.name, tagX + 13, tagY - 1)
 
-            // Render Speech / Thought Bubble if present
-            const bubbleText = input.bubble
+                // Model badge under the feet (lifecycle mode only)
+                const badge = lifecycleRef.current?.agents.find(v => v.input.id === input.id)?.badge
+                if (badge) {
+                  ctx.font = 'bold 9px ui-monospace, monospace'
+                  const bw = ctx.measureText(badge).width + 10
+                  ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'
+                  ctx.beginPath()
+                  ctx.roundRect(Math.round(pose.x - bw / 2), pose.y + 2, bw, 13, 3)
+                  ctx.fill()
+                  ctx.fillStyle = input.color || '#38bdf8'
+                  ctx.fillText(badge, Math.round(pose.x - bw / 2) + 5, pose.y + 12)
+                }
 
-            if (bubbleText && bubbleText.length > 0) {
-              const displayBubble = bubbleText.length > 36 ? `${bubbleText.slice(0, 33)}...` : bubbleText
-              ctx.font = 'bold 11px system-ui, -apple-system, sans-serif'
-              const bubbleWidth = ctx.measureText(displayBubble).width + 18
-              const bubbleX = Math.round(pose.x - bubbleWidth / 2)
-              const bubbleY = tagY - 26
+                // Render Speech / Thought Bubble if present
+                const bubbleText = input.bubble
 
-              // Bubble backdrop with slight shadow
-              ctx.fillStyle = '#ffffff'
-              ctx.beginPath()
-              ctx.roundRect(bubbleX, bubbleY - 14, bubbleWidth, 22, 6)
-              ctx.fill()
+                if (bubbleText && bubbleText.length > 0) {
+                  const displayBubble = bubbleText.length > 36 ? `${bubbleText.slice(0, 33)}...` : bubbleText
+                  ctx.font = 'bold 11px system-ui, -apple-system, sans-serif'
+                  const bubbleWidth = ctx.measureText(displayBubble).width + 18
+                  const bubbleX = Math.round(pose.x - bubbleWidth / 2)
+                  const bubbleY = tagY - 26
 
-              ctx.strokeStyle = input.color || '#3b82f6'
-              ctx.lineWidth = 1.5
-              ctx.stroke()
+                  // Bubble backdrop with slight shadow
+                  ctx.fillStyle = '#ffffff'
+                  ctx.beginPath()
+                  ctx.roundRect(bubbleX, bubbleY - 14, bubbleWidth, 22, 6)
+                  ctx.fill()
 
-              // Bubble tail
-              ctx.fillStyle = '#ffffff'
-              ctx.beginPath()
-              ctx.moveTo(pose.x - 5, bubbleY + 8)
-              ctx.lineTo(pose.x + 5, bubbleY + 8)
-              ctx.lineTo(pose.x, bubbleY + 13)
-              ctx.closePath()
-              ctx.fill()
+                  ctx.strokeStyle = input.color || '#3b82f6'
+                  ctx.lineWidth = 1.5
+                  ctx.stroke()
 
-              ctx.fillStyle = '#0f172a'
-              ctx.fillText(displayBubble, bubbleX + 9, bubbleY + 2)
-            }
+                  // Bubble tail
+                  ctx.fillStyle = '#ffffff'
+                  ctx.beginPath()
+                  ctx.moveTo(pose.x - 5, bubbleY + 8)
+                  ctx.lineTo(pose.x + 5, bubbleY + 8)
+                  ctx.lineTo(pose.x, bubbleY + 13)
+                  ctx.closePath()
+                  ctx.fill()
+
+                  ctx.fillStyle = '#0f172a'
+                  ctx.fillText(displayBubble, bubbleX + 9, bubbleY + 2)
+                }
+
+              },
+            })
           }
         }
       }
+
+      const offsets = layoutLabels(overlays.map(o => o.box))
+      for (const o of overlays) o.draw(offsets.get(o.box.id) ?? 0)
 
       ctx.restore()
       animationFrameId = requestAnimationFrame(render)
@@ -607,7 +677,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
     }
     handleResize()
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    return () => { window.removeEventListener('resize', handleResize) }
   }, [])
 
   // Mouse / Touch Event Handlers for Free-Cam Dragging & Clicking
@@ -694,6 +764,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
 
   const selectedAgent = agentInputs.find(a => a.id === selectedAgentId)
   const selectedWorker = snapshot.office.workers.find(w => w.id === selectedAgentId)
+  const selectedView = lifecycle?.agents.find(a => a.input.id === selectedAgentId)
 
   return (
     <div ref={containerRef} className={css.canvasContainer}>
@@ -758,7 +829,7 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
             key={agent.id}
             type="button"
             className={`${css.agentTabButton} ${lockedAgentId === agent.id ? css.agentTabActive : ''}`}
-            onClick={() => handleJumpToAgent(agent.id)}
+            onClick={() => { handleJumpToAgent(agent.id) }}
           >
             <span
               style={{
@@ -791,6 +862,16 @@ export function PixelOfficeCanvas({ snapshot }: PixelOfficeCanvasProps) {
           <div className={css.inspectRole}>
             {selectedWorker?.role || (selectedAgent.id === 'lead' ? 'Lead Orchestrator' : 'Specialist Agent')}
           </div>
+          {selectedView?.badge && (
+            <div className={css.inspectTool} data-testid="inspect-model">
+              Model: <code>{selectedView.badge}</code>
+            </div>
+          )}
+          {selectedView?.zoneLabel && (
+            <div className={css.inspectTool} data-testid="inspect-zone">
+              Zone: {selectedView.zoneLabel}
+            </div>
+          )}
           {(selectedWorker?.bubble || (selectedAgent.id === 'lead' && snapshot.office.orchestrator.bubble)) && (
             <div className={css.inspectBubble}>
               "{selectedWorker?.bubble || snapshot.office.orchestrator.bubble}"

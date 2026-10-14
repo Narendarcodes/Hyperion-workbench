@@ -519,11 +519,16 @@ export function ConversationRoot({
               onOpenPid={() => {
                 setWorkbenchView('pid')
               }}
-              onOpenDocuments={() => {
-                setDraft('List connected documents for P-101 A/B ')
+              onOpenDocuments={(equipment) => {
+                setDraft(`List source documents for ${equipment.tag ?? equipment.name} `)
               }}
-              onNewInvestigation={() => {
-                setDraft('Start investigation for Crude Feed Pump P-101 A/B ')
+              onOpenCitation={() => {
+                setWorkbenchView('documents')
+              }}
+              onNewInvestigation={(equipment) => {
+                setDraft(equipment === undefined
+                  ? 'Start new equipment investigation '
+                  : `Start investigation for ${equipment.name}${equipment.tag === null ? '' : ` ${equipment.tag}`} `)
               }}
               onAskEquipment={(query) => {
                 setDraft(`${query} `)
@@ -548,17 +553,17 @@ export function ConversationRoot({
               onNavigateBack={() => {
                 setWorkbenchView('investigations')
               }}
-              onShare={() => {
-                setDraft('Share investigation INV-2024-001 ')
+              onShare={({ code }) => {
+                setDraft(`Share investigation ${code} `)
               }}
-              onChangeStatus={() => {
-                setDraft('Change status of investigation INV-2024-001 ')
+              onChangeStatus={({ code }) => {
+                setDraft(`Change status of investigation ${code} `)
               }}
-              onGenerateReport={() => {
-                setDraft('Generate comprehensive investigation report for INV-2024-001 ')
+              onGenerateReport={({ code }) => {
+                setDraft(`Generate comprehensive investigation report for ${code} `)
               }}
-              onRerun={() => {
-                setDraft('Rerun vibration and root cause analysis for P-204 ')
+              onRerun={({ tag }) => {
+                setDraft(`Rerun root cause analysis for ${tag} `)
               }}
               onSendQuery={(query) => {
                 setDraft(`${query} `)

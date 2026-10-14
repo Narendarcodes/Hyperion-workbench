@@ -179,3 +179,38 @@ describe('HYPERION Screen 5 — Investigation Detail & Analysis Workspace', () =
     expect(onSendQuery).toHaveBeenCalledWith('What is the recommended alignment tolerance?')
   })
 })
+
+describe('Investigation detail actions carry the open investigation, not a hard-coded INV-2024-001 / P-204', () => {
+  it('passes the open investigation code + tag to header and rerun actions, and the composer inserts its tag', async () => {
+    const { DEFAULT_ANALYSIS_DETAIL_DATA } = await import('../src/client/investigations/mockData.ts')
+    const data = { ...DEFAULT_ANALYSIS_DETAIL_DATA, code: 'INV-TEST-9', tag: 'X-77' }
+    const onShare = vi.fn()
+    const onChangeStatus = vi.fn()
+    const onGenerateReport = vi.fn()
+    const onRerun = vi.fn()
+    const onSendQuery = vi.fn()
+    render(
+      <InvestigationDetailView
+        initialData={data}
+        onShare={onShare}
+        onChangeStatus={onChangeStatus}
+        onGenerateReport={onGenerateReport}
+        onRerun={onRerun}
+        onSendQuery={onSendQuery}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Share investigation' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Change status' }))
+    fireEvent.click(screen.getAllByRole('button', { name: /Generate Report/ })[0]!)
+    fireEvent.click(screen.getByRole('button', { name: 'Rerun analysis' }))
+    const subject = { code: 'INV-TEST-9', tag: 'X-77' }
+    expect(onShare).toHaveBeenCalledWith(subject)
+    expect(onChangeStatus).toHaveBeenCalledWith(subject)
+    expect(onGenerateReport).toHaveBeenCalledWith(subject)
+    expect(onRerun).toHaveBeenCalledWith(subject)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Insert equipment context' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Send follow-up question' }))
+    expect(onSendQuery).toHaveBeenCalledWith('@X-77')
+  })
+})

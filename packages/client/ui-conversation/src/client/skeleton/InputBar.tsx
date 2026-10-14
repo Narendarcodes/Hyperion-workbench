@@ -38,6 +38,26 @@ import { attachmentErrorText, imageSizeText } from '../image-labels.ts'
 import { ContextMeter } from './ContextMeter.tsx'
 import { PermissionSelect } from './PermissionSelect.tsx'
 import { VoiceWaveform } from './VoiceWaveform.tsx'
+import { HYPERION_SPEECH_LANGUAGES, HYPERION_ASR_TRANSCRIBE_ROUTE } from '../mrpl/contract.ts'
+
+/** localStorage key for the composer's speech language. */
+export const ASR_LANGUAGE_STORAGE_KEY = 'hyperion.asrLanguage'
+const readAsrLanguage = (): string => {
+  try {
+    const stored = typeof window === 'undefined' ? null : window.localStorage.getItem(ASR_LANGUAGE_STORAGE_KEY)
+    return stored !== null && HYPERION_SPEECH_LANGUAGES.includes(stored) ? stored : 'auto'
+  } catch {
+    return 'auto'
+  }
+}
+const ASR_LANGUAGE_LABEL_KEYS = {
+  auto: 'voice.lang.auto', te: 'voice.lang.te', hi: 'voice.lang.hi', en: 'voice.lang.en',
+} as const
+type AsrLanguageCode = keyof typeof ASR_LANGUAGE_LABEL_KEYS
+const asrLanguageLabelKey = (code: string) => ASR_LANGUAGE_LABEL_KEYS[code as AsrLanguageCode] ?? ASR_LANGUAGE_LABEL_KEYS.auto
+/** Transcribe URL: `auto` leaves the language to the host's configured default. */
+export const asrTranscribeUrl = (language: string): string =>
+  language === 'auto' ? HYPERION_ASR_TRANSCRIBE_ROUTE : `${HYPERION_ASR_TRANSCRIBE_ROUTE}?language=${encodeURIComponent(language)}`
 import css from './InputBar.module.css'
 
 export type InputBarProps = ComposerBarProps
@@ -100,6 +120,15 @@ export const InputBar = memo(function InputBar({
   const audioChunksRef = useRef<Blob[]>([])
   // Discard without transcribing: the onstop path skips the fetch when set.
   const discardRef = useRef(false)
+  const [asrLanguage, setAsrLanguage] = useState<string>(readAsrLanguage)
+  const asrLanguageRef = useRef(asrLanguage)
+  asrLanguageRef.current = asrLanguage
+  const onPickAsrLanguage = useCallback((language: string) => {
+    setAsrLanguage(language)
+    try {
+      window.localStorage.setItem(ASR_LANGUAGE_STORAGE_KEY, language)
+    } catch { /* storage unavailable: keep the in-memory choice */ }
+  }, [])
 
   const onToggleMic = useCallback(async () => {
     if (recording) {
@@ -136,12 +165,14 @@ export const InputBar = memo(function InputBar({
         audioChunksRef.current = []
         setTranscribing(true)
         try {
-          const formData = new FormData()
-          formData.append('file', audioBlob, 'voice-prompt.webm')
-          formData.append('language', 'hi')
-          const res = await fetch('http://127.0.0.1:8008/transcribe', {
+          // Same-origin Hyperion route; the host's ASR provider (asr-http) owns the
+          // engine and endpoint; the language is the composer picker's (default
+          // `auto` = the host's configured te/hi/en detection).
+          const res = await fetch(asrTranscribeUrl(asrLanguageRef.current), {
             method: 'POST',
-            body: formData,
+            credentials: 'same-origin',
+            headers: { 'content-type': audioBlob.type || 'audio/webm' },
+            body: audioBlob,
           })
           if (!res.ok) throw new Error(`ASR Server error ${res.status}`)
           const data = (await res.json()) as { text?: string }
@@ -611,6 +642,17 @@ export const InputBar = memo(function InputBar({
                     </svg>
                   </button>
                 </Tooltip>
+                <select
+                  className={css.asrLanguage}
+                  aria-label={t('voice.language')}
+                  value={asrLanguage}
+                  disabled={subagent !== null || locked || machineBusy}
+                  onChange={(event) => { onPickAsrLanguage(event.target.value) }}
+                >
+                  {HYPERION_SPEECH_LANGUAGES.map(code => (
+                    <option key={code} value={code}>{t(asrLanguageLabelKey(code))}</option>
+                  ))}
+                </select>
                 <input
                   ref={fileInputRef}
                   type="file"

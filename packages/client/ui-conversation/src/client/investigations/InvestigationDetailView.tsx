@@ -22,13 +22,19 @@ import type {
 } from './types.ts'
 import css from './InvestigationDetailView.module.css'
 
+/** The investigation an action applies to (taken from the open record, never hard-coded). */
+export interface InvestigationSubject {
+  readonly code: string
+  readonly tag: string
+}
+
 export interface InvestigationDetailViewProps {
   readonly initialData?: InvestigationAnalysisDetailData
   readonly onNavigateBack?: () => void
-  readonly onShare?: () => void
-  readonly onChangeStatus?: () => void
-  readonly onGenerateReport?: () => void
-  readonly onRerun?: () => void
+  readonly onShare?: (subject: InvestigationSubject) => void
+  readonly onChangeStatus?: (subject: InvestigationSubject) => void
+  readonly onGenerateReport?: (subject: InvestigationSubject) => void
+  readonly onRerun?: (subject: InvestigationSubject) => void
   readonly onSendQuery?: (query: string) => void
   readonly onViewEquipmentDetails?: () => void
 }
@@ -44,6 +50,13 @@ export function InvestigationDetailView({
   onViewEquipmentDetails,
 }: InvestigationDetailViewProps) {
   const [data, setData] = useState<InvestigationAnalysisDetailData>(initialData)
+  const subject: InvestigationSubject = { code: data.code, tag: data.tag }
+  const bind = (cb: ((s: InvestigationSubject) => void) | undefined): (() => void) | undefined =>
+    cb === undefined ? undefined : () => { cb(subject) }
+  const share = bind(onShare)
+  const changeStatus = bind(onChangeStatus)
+  const generateReport = bind(onGenerateReport)
+  const rerun = bind(onRerun)
 
   const handleSelectStage = (stageKey: WorkflowStage['key']) => {
     setData(prev => ({
@@ -58,8 +71,8 @@ export function InvestigationDetailView({
 
   const handleQuickAction = (actionId: string) => {
     console.info(`[Hyperion] Action selected: ${actionId}`)
-    if (actionId === 'generate-report' && onGenerateReport) {
-      onGenerateReport()
+    if (actionId === 'generate-report' && generateReport) {
+      generateReport()
     }
   }
 
@@ -82,9 +95,9 @@ export function InvestigationDetailView({
       <InvestigationDetailHeader
         data={data}
         {...(onNavigateBack && { onNavigateBack })}
-        {...(onShare && { onShare })}
-        {...(onChangeStatus && { onChangeStatus })}
-        {...(onGenerateReport && { onGenerateReport })}
+        {...(share && { onShare: share })}
+        {...(changeStatus && { onChangeStatus: changeStatus })}
+        {...(generateReport && { onGenerateReport: generateReport })}
       />
 
       {/* 2. Investigation 4-Stage Workflow Stepper */}
@@ -100,13 +113,14 @@ export function InvestigationDetailView({
         <section className={css.centerAnalysisColumn} aria-label="Investigation Analysis">
           <AnalysisWorkspace
             data={data}
-            {...(onRerun && { onRerun })}
+            {...(rerun && { onRerun: rerun })}
             onAgentChange={(agent) => {
               setData(prev => ({ ...prev, activeAgentPreset: agent }))
             }}
           />
 
           <PersistentComposer
+            contextTag={data.tag}
             onSend={(query) => {
               onSendQuery?.(query)
             }}

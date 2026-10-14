@@ -104,10 +104,10 @@ export function EquipmentBrowser({
   onCollapse,
 }: EquipmentBrowserProps) {
   const [filterQuery, setFilterQuery] = useState('')
-  // Keep CDU expanded initially
-  const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>({
-    cdu: true,
-  })
+  // Expand the unit holding the initial selection
+  const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>(() => ({
+    [selectedUnitId]: true,
+  }))
 
   const toggleUnit = (unitId: string) => {
     setExpandedUnits(prev => ({

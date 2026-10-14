@@ -1,0 +1,55 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--mv-surface-deep) 88%, transparent);
+  color: var(--mv-text);
+  font: 600 12px/1.2 system-ui, sans-serif;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid color-mix(in srgb, var(--mv-text-3) 40%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--mv-surface) 90%, transparent);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.button[aria-pressed='true'] {
+  border-color: var(--mv-accent);
+  color: var(--mv-accent);
+}
+
+.slider {
+  flex: 1 1 160px;
+  min-width: 120px;
+  accent-color: var(--mv-accent);
+}
+
+.time,
+.stats {
+  font-variant-numeric: tabular-nums;
+  color: var(--mv-text-2);
+  white-space: nowrap;
+}
+
+.select {
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--mv-surface) 90%, transparent);
+  color: inherit;
+  border: 1px solid color-mix(in srgb, var(--mv-text-3) 40%, transparent);
+  font: inherit;
+}
+
+.file {
+  display: none;
+}
