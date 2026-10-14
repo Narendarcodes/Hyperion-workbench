@@ -5,8 +5,8 @@
   flex-wrap: wrap;
   padding: 6px 10px;
   border-radius: 8px;
-  background: rgba(15, 23, 42, 0.88);
-  color: #e2e8f0;
+  background: color-mix(in srgb, var(--mv-surface-deep) 88%, transparent);
+  color: var(--mv-text);
   font: 600 12px/1.2 system-ui, sans-serif;
 }
 
@@ -15,38 +15,38 @@
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
+  border: 1px solid color-mix(in srgb, var(--mv-text-3) 40%, transparent);
   border-radius: 6px;
-  background: rgba(30, 41, 59, 0.9);
+  background: color-mix(in srgb, var(--mv-surface) 90%, transparent);
   color: inherit;
   font: inherit;
   cursor: pointer;
 }
 
 .button[aria-pressed='true'] {
-  border-color: #38bdf8;
-  color: #38bdf8;
+  border-color: var(--mv-accent);
+  color: var(--mv-accent);
 }
 
 .slider {
   flex: 1 1 160px;
   min-width: 120px;
-  accent-color: #38bdf8;
+  accent-color: var(--mv-accent);
 }
 
 .time,
 .stats {
   font-variant-numeric: tabular-nums;
-  color: #94a3b8;
+  color: var(--mv-text-2);
   white-space: nowrap;
 }
 
 .select {
   padding: 3px 6px;
   border-radius: 6px;
-  background: rgba(30, 41, 59, 0.9);
+  background: color-mix(in srgb, var(--mv-surface) 90%, transparent);
   color: inherit;
-  border: 1px solid rgba(148, 163, 184, 0.4);
+  border: 1px solid color-mix(in srgb, var(--mv-text-3) 40%, transparent);
   font: inherit;
 }
 

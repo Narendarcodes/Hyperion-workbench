@@ -1,10 +1,31 @@
+.missionTokens {
+  /* Mission View palette on the app theme aliases: follows light and body[data-ds-dark-theme]. */
+  --mv-bg: var(--dsw-alias-bg-base);
+  --mv-surface: var(--dsw-alias-bg-layer-1);
+  --mv-surface-deep: var(--dsw-alias-bg-layer-2, var(--dsw-alias-bg-layer-1));
+  --mv-text: var(--dsw-alias-label-primary);
+  --mv-text-2: var(--dsw-alias-label-secondary);
+  --mv-text-3: var(--dsw-alias-label-tertiary);
+  --mv-line: var(--dsw-alias-label-primary);
+  --mv-shadow: #000;
+  --mv-accent: var(--dsw-alias-brand-primary);
+  --mv-brand: var(--dsw-alias-brand-primary);
+  --mv-on-accent: var(--dsw-alias-label-on-brand, #fff);
+  --mv-ok: var(--dsw-alias-state-success-primary);
+  --mv-err: var(--dsw-alias-state-error-primary);
+  --mv-warn: var(--dsw-alias-state-warn-primary);
+  --mv-lead: var(--dsw-alias-state-warn-primary);
+  --mv-plan: color-mix(in srgb, var(--dsw-alias-brand-primary) 55%, #a855f7);
+  --mv-search: color-mix(in srgb, var(--dsw-alias-brand-primary) 50%, var(--dsw-alias-state-success-primary));
+}
+
 .missionViewRoot {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background-color: #0f172a;
-  color: #f8fafc;
+  background-color: var(--mv-bg);
+  color: var(--mv-text);
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
@@ -18,12 +39,12 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  background: rgba(30, 41, 59, 0.7);
+  background: color-mix(in srgb, var(--mv-surface) 70%, transparent);
   backdrop-filter: blur(12px);
   border-radius: 12px;
   padding: 14px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.3);
+  border: 1px solid color-mix(in srgb, var(--mv-line) 8%, transparent);
+  box-shadow: 0 4px 16px -2px color-mix(in srgb, var(--mv-shadow) 30%, transparent);
   flex-shrink: 0;
   gap: 16px;
 }
@@ -43,7 +64,7 @@
 .taskTitle {
   font-size: 16px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--mv-text);
   letter-spacing: -0.01em;
 }
 
@@ -53,24 +74,24 @@
   gap: 6px;
   font-size: 11.5px;
   font-weight: 600;
-  color: #4ade80;
-  background: rgba(34, 197, 94, 0.15);
+  color: var(--mv-ok);
+  background: color-mix(in srgb, var(--mv-ok) 15%, transparent);
   padding: 3px 9px;
   border-radius: 12px;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  border: 1px solid color-mix(in srgb, var(--mv-ok) 30%, transparent);
 }
 
 .statusPillDot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #22c55e;
-  box-shadow: 0 0 6px #22c55e;
+  background-color: var(--mv-ok);
+  box-shadow: 0 0 6px var(--mv-ok);
 }
 
 .taskDescription {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--mv-text-2);
   line-height: 1.4;
 }
 
@@ -89,11 +110,11 @@
   font-size: 11px;
   font-family: monospace;
   font-weight: 500;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--mv-surface-deep) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mv-line) 12%, transparent);
   padding: 3px 8px;
   border-radius: 6px;
-  color: #60a5fa;
+  color: var(--mv-brand);
 }
 
 .sovereigntyBox {
@@ -103,20 +124,20 @@
   row-gap: 4px;
   font-size: 11px;
   font-family: monospace;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: color-mix(in srgb, var(--mv-surface-deep) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mv-line) 8%, transparent);
   border-radius: 8px;
   padding: 8px 14px;
   flex-shrink: 0;
 }
 
 .sovereigntyLabel {
-  color: #64748b;
+  color: var(--mv-text-3);
   font-weight: 500;
 }
 
 .sovereigntyVal {
-  color: #f1f5f9;
+  color: var(--mv-text);
   font-weight: 600;
   text-align: right;
 }
@@ -127,27 +148,27 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: color-mix(in srgb, var(--mv-err) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mv-err) 35%, transparent);
   border-radius: 10px;
-  color: #fca5a5;
+  color: var(--mv-err);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--mv-err) 15%, transparent);
   transition: all 0.15s ease;
 }
 
 .verificationBanner:hover {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.5);
+  background: color-mix(in srgb, var(--mv-err) 22%, transparent);
+  border-color: color-mix(in srgb, var(--mv-err) 50%, transparent);
 }
 
 .verificationButton {
   padding: 5px 14px;
   border-radius: 6px;
-  background-color: #ef4444;
-  color: #ffffff;
+  background-color: var(--mv-err);
+  color: var(--mv-on-accent);
   font-size: 12px;
   font-weight: 600;
   border: none;
@@ -156,7 +177,7 @@
 }
 
 .verificationButton:hover {
-  background-color: #dc2626;
+  background-color: var(--mv-err);
 }
 
 /* 3. SIMULATION AREA */
@@ -169,7 +190,7 @@
   position: relative;
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--mv-shadow) 40%, transparent);
   overflow: hidden;
 }
 
@@ -189,12 +210,12 @@
 }
 
 .bottomCard {
-  background: rgba(30, 41, 59, 0.7);
+  background: color-mix(in srgb, var(--mv-surface) 70%, transparent);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid color-mix(in srgb, var(--mv-line) 8%, transparent);
   border-radius: 12px;
   padding: 14px 18px;
-  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px -2px color-mix(in srgb, var(--mv-shadow) 30%, transparent);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -206,7 +227,7 @@
   justify-content: space-between;
   font-size: 13px;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--mv-text);
 }
 
 .statusCountsGrid {
@@ -221,7 +242,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #cbd5e1;
+  color: var(--mv-text-2);
   font-weight: 600;
 }
 
@@ -249,7 +270,7 @@
   font-size: 10.5px;
   font-family: sans-serif;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--mv-text-2);
   z-index: 2;
 }
 
@@ -262,30 +283,30 @@
   justify-content: center;
   font-size: 10.5px;
   font-weight: bold;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
-  color: #64748b;
+  background: color-mix(in srgb, var(--mv-surface-deep) 80%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--mv-line) 15%, transparent);
+  color: var(--mv-text-3);
   transition: all 0.2s ease;
 }
 
 .phaseIconReal {
-  background-color: #10b981;
-  border-color: #059669;
-  color: #ffffff;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  background-color: var(--mv-ok);
+  border-color: var(--mv-ok);
+  color: var(--mv-on-accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--mv-ok) 40%, transparent);
 }
 
 .phaseIconActive {
-  background-color: #3b82f6;
-  border-color: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+  background-color: var(--mv-brand);
+  border-color: var(--mv-brand);
+  color: var(--mv-on-accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--mv-brand) 60%, transparent);
 }
 
 .phaseIconDerived {
-  background-color: #8b5cf6;
-  border-color: #7c3aed;
-  color: #ffffff;
+  background-color: var(--mv-plan);
+  border-color: var(--mv-plan);
+  color: var(--mv-on-accent);
 }
 
 .activityList {
@@ -315,11 +336,11 @@
 
 .activityAgent {
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--mv-text);
 }
 
 .activityDesc {
-  color: #94a3b8;
+  color: var(--mv-text-2);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -327,7 +348,20 @@
 
 .activityTime {
   font-size: 10.5px;
-  color: #64748b;
+  color: var(--mv-text-3);
   font-family: monospace;
   flex-shrink: 0;
+}
+
+.countCircle { flex-shrink: 0; background-color: var(--mv-text-3); }
+.countCircle[data-status='working'] { background-color: var(--mv-ok); }
+.countCircle[data-status='searching'] { background-color: var(--mv-search); }
+.countCircle[data-status='waiting'] { background-color: var(--mv-warn); }
+.countCircle[data-status='blocked'] { background-color: var(--mv-err); }
+.countCircle[data-status='completed'] { background-color: var(--mv-ok); }
+
+.activityEmpty {
+  color: var(--mv-text-2);
+  font-size: 11.5px;
+  font-style: italic;
 }

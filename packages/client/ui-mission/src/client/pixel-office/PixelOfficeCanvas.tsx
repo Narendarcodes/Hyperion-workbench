@@ -6,6 +6,7 @@
  * @module @deepseek-ai/dsh-client-ui-mission/client/pixel-office/PixelOfficeCanvas
  */
 
+import { layoutLabels, type LabelBox } from './labelLayout.ts'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { MissionSnapshot } from '../mission-contract.ts'
 import {
@@ -510,6 +511,7 @@ export function PixelOfficeCanvas({ snapshot, lifecycle }: PixelOfficeCanvasProp
       }
 
       // 3. Render Depth-Sorted Items
+      const overlays: { box: LabelBox; draw: (dy: number) => void }[] = []
       for (const item of items) {
         if (item.kind === 'furniture') {
           paintSpriteToContext(item.sprite, ctx, item.obj.tx * TILE, item.obj.ty * TILE)
@@ -566,74 +568,93 @@ export function PixelOfficeCanvas({ snapshot, lifecycle }: PixelOfficeCanvasProp
             // Paint character sprite
             paintSpriteToContext(sprite, ctx, drawX, drawY)
 
-            // Render name tag & status dot
+            // Name tag, model badge and bubble are drawn in an overlay pass after every
+            // sprite, stacked by layoutLabels so they never overlap (e.g. when every
+            // agent has finished and gathered in the same zone).
             ctx.font = 'bold 11px system-ui, sans-serif'
-            const textWidth = ctx.measureText(input.name).width
-            const tagX = Math.round(pose.x - textWidth / 2 - 8)
-            const tagY = drawY - 8
+            const tagWidth = ctx.measureText(input.name).width + 16
+            const bubbleRaw = input.bubble
+            const bubbleShown = bubbleRaw && bubbleRaw.length > 0 ? (bubbleRaw.length > 36 ? `${bubbleRaw.slice(0, 33)}...` : bubbleRaw) : ''
+            const bubbleW = bubbleShown ? ctx.measureText(bubbleShown).width + 18 : 0
+            const labelW = Math.max(tagWidth, bubbleW)
+            const labelH = bubbleShown ? 16 + 26 : 16
+            overlays.push({
+              box: { id: input.id, x: Math.round(pose.x - labelW / 2), y: drawY - 20 - (labelH - 16), w: labelW, h: labelH },
+              draw: (dy: number) => {
+                // Render name tag & status dot
+                ctx.font = 'bold 11px system-ui, sans-serif'
+                const textWidth = ctx.measureText(input.name).width
+                const tagX = Math.round(pose.x - textWidth / 2 - 8)
+                const tagY = drawY - 8 + dy
 
-            ctx.fillStyle = input.id === 'lead' ? 'rgba(30, 27, 75, 0.92)' : 'rgba(15, 23, 42, 0.88)'
-            ctx.beginPath()
-            ctx.roundRect(tagX, tagY - 12, textWidth + 16, 16, 4)
-            ctx.fill()
+                ctx.fillStyle = input.id === 'lead' ? 'rgba(30, 27, 75, 0.92)' : 'rgba(15, 23, 42, 0.88)'
+                ctx.beginPath()
+                ctx.roundRect(tagX, tagY - 12, textWidth + 16, 16, 4)
+                ctx.fill()
 
-            // Status indicator dot
-            ctx.fillStyle = STATUS_COLOR[input.status] || '#64748b'
-            ctx.beginPath()
-            ctx.arc(tagX + 6, tagY - 4, 3, 0, Math.PI * 2)
-            ctx.fill()
+                // Status indicator dot
+                ctx.fillStyle = STATUS_COLOR[input.status] || '#64748b'
+                ctx.beginPath()
+                ctx.arc(tagX + 6, tagY - 4, 3, 0, Math.PI * 2)
+                ctx.fill()
 
-            ctx.fillStyle = input.id === 'lead' ? '#fde047' : '#f8fafc'
-            ctx.fillText(input.name, tagX + 13, tagY - 1)
+                ctx.fillStyle = input.id === 'lead' ? '#fde047' : '#f8fafc'
+                ctx.fillText(input.name, tagX + 13, tagY - 1)
 
-            // Model badge under the feet (lifecycle mode only)
-            const badge = lifecycleRef.current?.agents.find(v => v.input.id === input.id)?.badge
-            if (badge) {
-              ctx.font = 'bold 9px ui-monospace, monospace'
-              const bw = ctx.measureText(badge).width + 10
-              ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'
-              ctx.beginPath()
-              ctx.roundRect(Math.round(pose.x - bw / 2), pose.y + 2, bw, 13, 3)
-              ctx.fill()
-              ctx.fillStyle = input.color || '#38bdf8'
-              ctx.fillText(badge, Math.round(pose.x - bw / 2) + 5, pose.y + 12)
-            }
+                // Model badge under the feet (lifecycle mode only)
+                const badge = lifecycleRef.current?.agents.find(v => v.input.id === input.id)?.badge
+                if (badge) {
+                  ctx.font = 'bold 9px ui-monospace, monospace'
+                  const bw = ctx.measureText(badge).width + 10
+                  ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'
+                  ctx.beginPath()
+                  ctx.roundRect(Math.round(pose.x - bw / 2), pose.y + 2, bw, 13, 3)
+                  ctx.fill()
+                  ctx.fillStyle = input.color || '#38bdf8'
+                  ctx.fillText(badge, Math.round(pose.x - bw / 2) + 5, pose.y + 12)
+                }
 
-            // Render Speech / Thought Bubble if present
-            const bubbleText = input.bubble
+                // Render Speech / Thought Bubble if present
+                const bubbleText = input.bubble
 
-            if (bubbleText && bubbleText.length > 0) {
-              const displayBubble = bubbleText.length > 36 ? `${bubbleText.slice(0, 33)}...` : bubbleText
-              ctx.font = 'bold 11px system-ui, -apple-system, sans-serif'
-              const bubbleWidth = ctx.measureText(displayBubble).width + 18
-              const bubbleX = Math.round(pose.x - bubbleWidth / 2)
-              const bubbleY = tagY - 26
+                if (bubbleText && bubbleText.length > 0) {
+                  const displayBubble = bubbleText.length > 36 ? `${bubbleText.slice(0, 33)}...` : bubbleText
+                  ctx.font = 'bold 11px system-ui, -apple-system, sans-serif'
+                  const bubbleWidth = ctx.measureText(displayBubble).width + 18
+                  const bubbleX = Math.round(pose.x - bubbleWidth / 2)
+                  const bubbleY = tagY - 26
 
-              // Bubble backdrop with slight shadow
-              ctx.fillStyle = '#ffffff'
-              ctx.beginPath()
-              ctx.roundRect(bubbleX, bubbleY - 14, bubbleWidth, 22, 6)
-              ctx.fill()
+                  // Bubble backdrop with slight shadow
+                  ctx.fillStyle = '#ffffff'
+                  ctx.beginPath()
+                  ctx.roundRect(bubbleX, bubbleY - 14, bubbleWidth, 22, 6)
+                  ctx.fill()
 
-              ctx.strokeStyle = input.color || '#3b82f6'
-              ctx.lineWidth = 1.5
-              ctx.stroke()
+                  ctx.strokeStyle = input.color || '#3b82f6'
+                  ctx.lineWidth = 1.5
+                  ctx.stroke()
 
-              // Bubble tail
-              ctx.fillStyle = '#ffffff'
-              ctx.beginPath()
-              ctx.moveTo(pose.x - 5, bubbleY + 8)
-              ctx.lineTo(pose.x + 5, bubbleY + 8)
-              ctx.lineTo(pose.x, bubbleY + 13)
-              ctx.closePath()
-              ctx.fill()
+                  // Bubble tail
+                  ctx.fillStyle = '#ffffff'
+                  ctx.beginPath()
+                  ctx.moveTo(pose.x - 5, bubbleY + 8)
+                  ctx.lineTo(pose.x + 5, bubbleY + 8)
+                  ctx.lineTo(pose.x, bubbleY + 13)
+                  ctx.closePath()
+                  ctx.fill()
 
-              ctx.fillStyle = '#0f172a'
-              ctx.fillText(displayBubble, bubbleX + 9, bubbleY + 2)
-            }
+                  ctx.fillStyle = '#0f172a'
+                  ctx.fillText(displayBubble, bubbleX + 9, bubbleY + 2)
+                }
+
+              },
+            })
           }
         }
       }
+
+      const offsets = layoutLabels(overlays.map(o => o.box))
+      for (const o of overlays) o.draw(offsets.get(o.box.id) ?? 0)
 
       ctx.restore()
       animationFrameId = requestAnimationFrame(render)

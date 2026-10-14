@@ -31,6 +31,7 @@ const STT = process.env.HYPERION_LIVE_STT_URL ?? ''
 const UPLOAD = process.env.HYPERION_LIVE_UPLOAD ?? ''
 const AUDIO_EN = process.env.HYPERION_LIVE_AUDIO_EN ?? ''
 const AUDIO_TE = process.env.HYPERION_LIVE_AUDIO_TE ?? ''
+const AUDIO_HI = process.env.HYPERION_LIVE_AUDIO_HI ?? ''
 const live = RAG !== '' && STT !== '' && existsSync(UPLOAD)
 
 let root: string
@@ -157,7 +158,9 @@ describe.skipIf(!live)('MRPL live e2e (droplet services, nothing mocked)', () =>
     expect((page as Page & { errors: string[] }).errors).toEqual([])
   }, 900_000)
 
-  for (const [lang, audio, expectText] of [['en', AUDIO_EN, /101|1500|pressure/i], ['te', AUDIO_TE, /15\.2|bar|ప్రెషర్/]] as const) {
+  // Telugu is NOT in the auto list: Whisper language-ID labels code-mixed Telugu plant speech as Hindi
+  // (measured 3/3 clips on the droplet), so Telugu users pick 'te' explicitly (test below).
+  for (const [lang, audio, expectText] of [['en', AUDIO_EN, /101|1500|pressure/i], ['hi', AUDIO_HI, /12\.5|दबाव|बार/]] as const) {
     it.skipIf(!existsSync(audio))(`mic (${lang} clip, picker=auto) -> /hyperion/asr/transcribe -> live STT detects ${lang}`, async () => {
       const b = await launch(audio)
       const page = await open(b, 'mic')
@@ -186,8 +189,10 @@ describe.skipIf(!live)('MRPL live e2e (droplet services, nothing mocked)', () =>
     await page.getByRole('button', { name: 'Stop' }).click()
     expect((await req).url()).toContain('/hyperion/asr/transcribe?language=te')
     await page.getByText('done').waitFor({ timeout: 120_000 })
-    const result = JSON.parse(await page.getByLabel('Transcript').innerText()) as { status: number; language: string }
+    const result = JSON.parse(await page.getByLabel('Transcript').innerText()) as { status: number; language: string; text: string }
+    await writeFile(join(SHOTS, 'live-mic-te-forced.json'), JSON.stringify(result, null, 1))
     expect(result.status).toBe(200)
     expect(result.language).toBe('te')
+    expect(result.text).toMatch(/15\.2|ప్రెషర్|బార్/)
   }, 180_000)
 })
