@@ -5,6 +5,7 @@
  */
 import React from 'react'
 import { usePIDStore, pidStore } from './pidStore'
+import { TagEvidencePanel } from './TagEvidencePanel.tsx'
 import css from './EquipmentContextPanel.module.css'
 
 export interface EquipmentContextPanelProps {
@@ -14,21 +15,17 @@ export interface EquipmentContextPanelProps {
   onViewDocuments: (tag: string) => void
   /** Start a Hyperion investigation for the asset. */
   onStartInvestigation: (tag: string) => void
+  /** Open a cited source document (documentId, page) in the Documents view. */
+  onOpenCitation?: ((documentId: string, page: number) => void) | undefined
 }
-
-const TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'documents', label: 'Documents' },
-  { id: 'related', label: 'Related' },
-  { id: 'history', label: 'History' },
-] as const
 
 export const EquipmentContextPanel: React.FC<EquipmentContextPanelProps> = ({
   onViewEquipment,
   onViewDocuments,
   onStartInvestigation,
+  onOpenCitation,
 }) => {
-  const { selectedEquipment, activeEquipmentTab } = usePIDStore()
+  const { selectedEquipment } = usePIDStore()
 
   if (!selectedEquipment) {
     return (
@@ -65,20 +62,6 @@ export const EquipmentContextPanel: React.FC<EquipmentContextPanelProps> = ({
         </div>
       </div>
 
-      <nav className={css.tabNav} role="tablist" aria-label="Equipment detail tabs">
-        {TABS.map(tab => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={activeEquipmentTab === tab.id}
-            className={`${css.tabBtn} ${activeEquipmentTab === tab.id ? css.active : ''}`}
-            onClick={() => { pidStore.setActiveEquipmentTab(tab.id) }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
 
       <div className={css.panelBody}>
         <div className={css.imageBox}>
@@ -136,6 +119,8 @@ export const EquipmentContextPanel: React.FC<EquipmentContextPanelProps> = ({
           <div className={css.sectionTitle}>Description & Function</div>
           <div className={css.descriptionBox}>{eq.description}</div>
         </div>
+
+        <TagEvidencePanel tag={eq.tag} name={eq.name} onOpenCitation={onOpenCitation} />
 
         <div>
           <div className={css.sectionTitle}>Quick Actions</div>

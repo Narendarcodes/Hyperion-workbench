@@ -31,7 +31,8 @@ describe('Hyperion Screen 2 — Plant Overview', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'MRPL Refinery' })).toBeTruthy()
     expect(screen.getByText('Plant-wide engineering context')).toBeTruthy()
     expect(screen.getByPlaceholderText('Search units, equipment, documents...')).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Filter' })).toBeTruthy()
+    // Filter had no handler: removed (search covers it).
+    expect(screen.queryByRole('button', { name: 'Filter' })).toBeNull()
     expect(screen.getByRole('button', { name: 'Open P&ID' })).toBeTruthy()
 
     // Engineering Plant Map

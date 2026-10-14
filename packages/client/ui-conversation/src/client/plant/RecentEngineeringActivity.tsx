@@ -18,14 +18,17 @@ export function RecentEngineeringActivity({ activities, onActivityClick, onViewA
     <section className={css.activitySection} aria-labelledby="recent-activity-heading">
       <div className={css.sectionHeaderRow}>
         <h2 id="recent-activity-heading" className={css.sectionHeading}>Recent Engineering Activity</h2>
-        <button
-          type="button"
-          className={css.viewAllBtn}
-          onClick={onViewAll}
-        >
-          <span>View all activity</span>
-          <span aria-hidden="true">→</span>
-        </button>
+        {onViewAll !== undefined && (
+          <button
+            type="button"
+            className={css.viewAllBtn}
+            onClick={onViewAll}
+          >
+            <span>View all activity</span>
+            <span aria-hidden="true">→</span>
+          </button>
+
+        )}
       </div>
 
       <div className={css.activityList}>

@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react'
 import { usePIDStore, pidStore } from './pidStore'
+import { PID_WORKSPACE_CONFIG } from './config.ts'
 import css from './PIDViewer.module.css'
 
 export const PIDViewer: React.FC = () => {
   const {
     selectedEquipment,
-    activePIDTab,
     visibleLayers,
     zoomLevel,
     panOffset,
@@ -46,52 +46,8 @@ export const PIDViewer: React.FC = () => {
       {/* Top Toolbar */}
       <div className={css.toolbar}>
         <span className={css.demoNote} title="Vector demo rendering — not an MRPL as-built scan">
-          Demo schematic · CDU-03
+          {PID_WORKSPACE_CONFIG.sampleLabel}
         </span>
-        <div className={css.tabGroup}>
-          <button
-            type="button"
-            className={`${css.tabBtn} ${activePIDTab === 'viewer' ? css.active : ''}`}
-            onClick={() => {pidStore.setActivePIDTab('viewer') }}
-          >
-            P&ID Viewer
-          </button>
-          <button
-            type="button"
-            className={`${css.tabBtn} ${activePIDTab === 'layers' ? css.active : ''}`}
-            onClick={() => {pidStore.setActivePIDTab('layers') }}
-          >
-            Layers
-          </button>
-          <button
-            type="button"
-            className={`${css.tabBtn} ${activePIDTab === 'equipment' ? css.active : ''}`}
-            onClick={() => {pidStore.setActivePIDTab('equipment') }}
-          >
-            Equipment
-          </button>
-          <button
-            type="button"
-            className={`${css.tabBtn} ${activePIDTab === 'lines' ? css.active : ''}`}
-            onClick={() => {pidStore.setActivePIDTab('lines') }}
-          >
-            Line List
-          </button>
-          <button
-            type="button"
-            className={`${css.tabBtn} ${activePIDTab === 'loops' ? css.active : ''}`}
-            onClick={() => {pidStore.setActivePIDTab('loops') }}
-          >
-            Control Loops
-          </button>
-          <button
-            type="button"
-            className={`${css.tabBtn} ${activePIDTab === 'annotations' ? css.active : ''}`}
-            onClick={() => {pidStore.setActivePIDTab('annotations') }}
-          >
-            Annotations
-          </button>
-        </div>
 
         <div className={css.controlsRight}>
           <div className={css.zoomPill}>
@@ -254,6 +210,9 @@ export const PIDViewer: React.FC = () => {
                 transform="translate(140, 440)"
                 cursor="pointer"
                 data-selectable="true"
+                data-tag-id="P-101AB"
+                role="button"
+                aria-label="Select P-101AB on P&ID"
                 onClick={() => {pidStore.setSelectedEquipmentById('P-101AB') }}
               >
                 {/* Glow outline when selected */}
@@ -286,6 +245,9 @@ export const PIDViewer: React.FC = () => {
                 transform="translate(320, 310)"
                 cursor="pointer"
                 data-selectable="true"
+                data-tag-id="E-101"
+                role="button"
+                aria-label="Select E-101 on P&ID"
                 onClick={() => {pidStore.setSelectedEquipmentById('E-101') }}
               >
                 {isE101Selected && (
@@ -313,6 +275,9 @@ export const PIDViewer: React.FC = () => {
                 transform="translate(580, 110)"
                 cursor="pointer"
                 data-selectable="true"
+                data-tag-id="T-101"
+                role="button"
+                aria-label="Select T-101 on P&ID"
                 onClick={() => {pidStore.setSelectedEquipmentById('T-101') }}
               >
                 {isT101Selected && (
@@ -350,6 +315,9 @@ export const PIDViewer: React.FC = () => {
                 transform="translate(760, 260)"
                 cursor="pointer"
                 data-selectable="true"
+                data-tag-id="V-201"
+                role="button"
+                aria-label="Select V-201 on P&ID"
                 onClick={() => {pidStore.setSelectedEquipmentById('V-201') }}
               >
                 {isV201Selected && (

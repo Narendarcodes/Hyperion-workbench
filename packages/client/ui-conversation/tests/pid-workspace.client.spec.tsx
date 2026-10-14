@@ -60,7 +60,8 @@ describe('Hyperion P&ID workspace', () => {
 
     const panel = screen.getByRole('complementary', { name: 'Equipment context: E-101' })
     expect(within(panel).getByRole('heading', { level: 2, name: 'E-101' })).toBeTruthy()
-    expect(within(panel).getByRole('tab', { name: 'Overview' })).toBeTruthy()
+    // Context tabs never changed the body: removed.
+    expect(within(panel).queryByRole('tab', { name: 'Overview' })).toBeNull()
 
     fireEvent.click(within(panel).getByRole('button', { name: /View Equipment/ }))
     expect(props.onViewEquipment).toHaveBeenCalledWith('E-101')
@@ -105,7 +106,8 @@ describe('Hyperion P&ID workspace', () => {
   it('navigates view-all actions to Hyperion views and opens documents', () => {
     const { props } = renderPid()
     const viewAll = screen.getAllByRole('button', { name: 'View all →' })
-    expect(viewAll).toHaveLength(3)
+    // Related Lines "View all" only flipped a removed tab: removed.
+    expect(viewAll).toHaveLength(2)
 
     fireEvent.click(viewAll[0]!)
     expect(props.onViewAllEquipment).toHaveBeenCalledOnce()
@@ -131,14 +133,12 @@ describe('Hyperion P&ID workspace', () => {
     pidStore.toggleLayer('loops')
   })
 
-  it('drives viewer tabs, zoom controls, and line selection', () => {
+  it('drives zoom controls and line selection; no dead viewer tabs', () => {
     renderPid()
-    pidStore.setActivePIDTab('viewer')
-
-    fireEvent.click(screen.getByRole('button', { name: 'Layers' }))
-    expect(pidStore.getSnapshot().activePIDTab).toBe('layers')
-    fireEvent.click(screen.getByRole('button', { name: 'Line List' }))
-    expect(pidStore.getSnapshot().activePIDTab).toBe('lines')
+    // Viewer tabs changed nothing on screen: removed (dead controls).
+    for (const name of ['Layers', 'Line List', 'Control Loops', 'Annotations']) {
+      expect(screen.queryByRole('button', { name })).toBeNull()
+    }
 
     pidStore.resetZoom()
     fireEvent.click(screen.getByTitle('Zoom In (+)'))
