@@ -1,0 +1,6 @@
+# Dense + rerank path (BM25 path and tests are stdlib-only).
+# EmbeddingGemma 2 needs transformers >= 5.19 (model type `embedding_gemma2`).
+transformers>=5.19
+sentence-transformers>=6.1
+numpy>=2
+torch>=2.6
