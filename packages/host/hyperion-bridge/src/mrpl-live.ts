@@ -157,6 +157,20 @@ export class RagClient {
   }
 }
 
+/** Grounded answer over the RAG service in the bridge's wire shape (used by evidence/answer and report generation). */
+export async function ragAnswer(client: RagClient, question: string, documentIds?: readonly string[]): Promise<MrplEvidenceAnswerResponse> {
+  const raw = await client.answer(question, documentIds)
+  return {
+    question,
+    answer: raw.answer ?? '',
+    abstain: raw.abstain,
+    abstainReason: raw.abstain_reason,
+    citations: raw.citations.map(citationOf),
+    retrieval: raw.retrieval,
+    degraded: raw.degraded,
+  }
+}
+
 /** The `MrplRetrievalProvider` seam over the RAG service. */
 export function createRagRetriever(client: RagClient): MrplRetrievalProvider {
   return {
