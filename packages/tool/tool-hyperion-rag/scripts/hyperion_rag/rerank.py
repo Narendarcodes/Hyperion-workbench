@@ -7,14 +7,17 @@ the abstention gate uses the top score. Lazy heavy imports.
 from __future__ import annotations
 
 import math
-import os
 import threading
 
-DEFAULT_RERANKER = "BAAI/bge-reranker-v2-m3"
+from .config import RagConfig
+
+_CFG = RagConfig.from_env()
+DEFAULT_RERANKER = _CFG.reranker_model
 
 
 class Reranker:
-    def __init__(self, model_id: str = DEFAULT_RERANKER, device: str | None = None, max_length: int = 1024):
+    def __init__(self, model_id: str | None = None, device: str | None = None, max_length: int = 1024):
+        model_id = model_id or DEFAULT_RERANKER
         import torch
         from sentence_transformers import CrossEncoder
 
@@ -23,12 +26,12 @@ class Reranker:
         _cap_vram(torch)
         dev = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.model = CrossEncoder(model_id, device=dev, max_length=max_length,
-                                  model_kwargs={"torch_dtype": torch.bfloat16 if dev == "cuda" else torch.float32})
+                                  model_kwargs={"dtype": torch.bfloat16 if dev == "cuda" else torch.float32})
         self.model_id = model_id
         self._lock = threading.Lock()  # one GPU batch at a time keeps VRAM inside the budget
 
     def score(self, query: str, passages: list[str],
-              batch_size: int = int(os.environ.get("HYPERION_RAG_RERANK_BATCH", "16"))) -> list[float]:
+              batch_size: int = _CFG.rerank_batch) -> list[float]:
         if not passages:
             return []
         with self._lock:

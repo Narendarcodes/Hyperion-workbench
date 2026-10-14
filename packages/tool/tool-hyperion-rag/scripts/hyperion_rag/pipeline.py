@@ -20,6 +20,7 @@ import urllib.request
 from dataclasses import dataclass, field
 
 from .bm25 import BM25, normalize
+from .config import RagConfig
 from .chunk import Chunk, chunk_corpus
 from .ingest import load_corpus
 
@@ -48,6 +49,65 @@ class Index:
         chunks = chunk_corpus(docs, max_chars, min_chars)
         return cls(chunks, {"sources": paths, "n_docs": len(docs), "n_chunks": len(chunks),
                             "max_chars": max_chars, "min_chars": min_chars})
+
+    @classmethod
+    def from_documents(cls, docs: list, encoder=None, max_chars: int = 1600, min_chars: int = 300) -> "Index":
+        idx = cls([], {"sources": [], "n_docs": 0, "n_chunks": 0, "max_chars": max_chars, "min_chars": min_chars})
+        idx.add_documents(docs, encoder=encoder)
+        return idx
+
+    def doc_ids(self) -> list[str]:
+        seen: dict[str, None] = {}
+        for c in self.chunks:
+            seen.setdefault(c.doc_id, None)
+        return list(seen)
+
+    def _refresh_meta(self) -> None:
+        self.meta["n_docs"] = len(self.doc_ids())
+        self.meta["n_chunks"] = len(self.chunks)
+
+    def add_documents(self, docs: list, encoder=None) -> int:
+        """Incrementally index ``docs``: chunk, BM25-append and embed only the
+        new chunks (no full rebuild). A doc id already in the index is replaced.
+        Returns the number of chunks added."""
+        for d in docs:
+            if any(c.doc_id == d.doc_id for c in self.chunks):
+                self.remove_document(d.doc_id)
+        new = chunk_corpus(docs, self.meta.get("max_chars", 1600), self.meta.get("min_chars", 300))
+        if not new:
+            return 0
+        vecs = None
+        if encoder is not None:
+            from .dense import doc_text
+
+            vecs = encoder.encode_docs([doc_text(f"{c.doc_id} {c.title} | {c.section}", c.text) for c in new])
+            self.meta["embedding_model"] = encoder.model_id
+        elif self.dense is not None:
+            raise RuntimeError("index has dense vectors; pass the encoder so new chunks are embedded too")
+        self.chunks.extend(new)
+        self.bm25.add([c.index_text() for c in new])
+        if vecs is not None:
+            import numpy as np
+
+            self.dense = vecs if self.dense is None or len(self.dense) == 0 else np.vstack([self.dense, vecs])
+        self._dim_cache = {}
+        self._refresh_meta()
+        return len(new)
+
+    def remove_document(self, doc_id: str) -> int:
+        """Drop one document's chunks and vector rows (BM25 is re-tokenised from
+        the kept chunk text; nothing is re-embedded)."""
+        keep = [i for i, c in enumerate(self.chunks) if c.doc_id != doc_id]
+        removed = len(self.chunks) - len(keep)
+        if removed == 0:
+            return 0
+        self.chunks = [self.chunks[i] for i in keep]
+        if self.dense is not None:
+            self.dense = self.dense[keep]
+        self.bm25 = BM25([c.index_text() for c in self.chunks])
+        self._dim_cache = {}
+        self._refresh_meta()
+        return removed
 
     def embed(self, encoder) -> None:
         from .dense import doc_text
@@ -271,9 +331,13 @@ def evidence_block(n: int, c: Chunk) -> str:
 
 
 class LLM:
-    def __init__(self, base_url: str | None = None, model: str = "llm", reasoning_effort: str = "low",
+    def __init__(self, base_url: str | None = None, model: str | None = None, reasoning_effort: str | None = None,
                  timeout: float = 180.0, max_tokens: int = 2048):
-        self.base_url = (base_url or os.environ.get("HYPERION_LLM_URL", "http://127.0.0.1:8001/v1")).rstrip("/")
+        cfg = RagConfig.from_env()
+        base_url = base_url or cfg.llm_url
+        model = model or cfg.llm_model
+        reasoning_effort = reasoning_effort or cfg.llm_reasoning_effort
+        self.base_url = base_url.rstrip("/")
         self.model, self.effort, self.timeout, self.max_tokens = model, reasoning_effort, timeout, max_tokens
 
     def chat(self, messages: list[dict], max_tokens: int | None = None, retries: int = 3) -> str:

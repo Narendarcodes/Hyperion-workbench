@@ -60,18 +60,28 @@ def tokenize(text: str) -> list[str]:
 class BM25:
     def __init__(self, docs: list[str], k1: float = 1.2, b: float = 0.75):
         self.k1, self.b = k1, b
-        self.tfs = [Counter(tokenize(d)) for d in docs]
-        self.lens = [sum(tf.values()) for tf in self.tfs]
-        self.avg = (sum(self.lens) / len(self.lens)) if self.lens else 0.0
-        df: Counter = Counter()
-        for tf in self.tfs:
-            df.update(tf.keys())
-        n = len(docs)
-        self.idf = {t: math.log(1 + (n - c + 0.5) / (c + 0.5)) for t, c in df.items()}
+        self.tfs: list[Counter] = []
+        self.lens: list[int] = []
+        self.df: Counter = Counter()
         self.postings: dict[str, list[int]] = {}
-        for i, tf in enumerate(self.tfs):
+        self.idf: dict[str, float] = {}
+        self.avg = 0.0
+        self.add(docs)
+
+    def add(self, docs: list[str]) -> None:
+        """Append documents in place: only the new docs are tokenised; IDF and
+        the average length are refreshed (identical to a full build)."""
+        base = len(self.tfs)
+        for j, d in enumerate(docs):
+            tf = Counter(tokenize(d))
+            self.tfs.append(tf)
+            self.lens.append(sum(tf.values()))
+            self.df.update(tf.keys())
             for t in tf:
-                self.postings.setdefault(t, []).append(i)
+                self.postings.setdefault(t, []).append(base + j)
+        n = len(self.tfs)
+        self.avg = (sum(self.lens) / n) if n else 0.0
+        self.idf = {t: math.log(1 + (n - c + 0.5) / (c + 0.5)) for t, c in self.df.items()}
 
     def scores(self, query: str) -> dict[int, float]:
         q = Counter(tokenize(query))
