@@ -160,10 +160,10 @@ def _norm_map(text: str) -> tuple[str, list[int]]:
     return "".join(out), idx
 
 
-def locate(haystack: str, quote: str) -> tuple[int, int] | None:
-    """Exact span of ``quote`` in ``haystack`` (tolerant to markdown, hyphen and space variants)."""
-    if not quote or not quote.strip():
-        return None
+_WORD = re.compile(r"[a-z0-9]+")
+
+
+def _locate_exact(haystack: str, quote: str) -> tuple[int, int] | None:
     pos = haystack.find(quote)
     if pos >= 0:
         return pos, pos + len(quote)
@@ -176,6 +176,76 @@ def locate(haystack: str, quote: str) -> tuple[int, int] | None:
     if p < 0:
         return None
     return hmap[p], hmap[p + len(qn) - 1] + 1
+
+
+def _locate_fuzzy(haystack: str, quote: str, min_cover: float = 0.85) -> tuple[int, int] | None:
+    """Shortest token window covering >= ``min_cover`` of the quote's tokens.
+
+    Handles models that drop markdown/table pipes, bullets or line breaks
+    while copying. The window is at most 1.5x the quote's token count and the
+    returned span is the real page text, so the shown quote is always genuine.
+    """
+    folded = normalize(haystack)
+    htoks = [(m.group(0), m.start(), m.end()) for m in _WORD.finditer(folded)]
+    qtoks = _WORD.findall(normalize(quote))
+    if len(qtoks) < 3 or not htoks:
+        return None
+    need: dict[str, int] = {}
+    for t in qtoks:
+        need[t] = need.get(t, 0) + 1
+    target = min_cover * len(qtoks)
+    max_len = int(len(qtoks) * 1.5) + 2
+    best = None
+    for i in range(len(htoks)):
+        if htoks[i][0] not in need:
+            continue
+        have: dict[str, int] = {}
+        got = 0
+        for j in range(i, min(len(htoks), i + max_len)):
+            t = htoks[j][0]
+            if t in need and have.get(t, 0) < need[t]:
+                have[t] = have.get(t, 0) + 1
+                got += 1
+                if got >= target:
+                    if best is None or (j - i) < (best[1] - best[0]):
+                        best = (i, j)
+                    break
+    if best is None:
+        return None
+    # numbers, tags and part numbers must all be present: a wrong value never verifies
+    window = {t for t, _, _ in htoks[best[0]:best[1] + 1]}
+    if any(any(ch.isdigit() for ch in t) and t not in window for t in qtoks):
+        return None
+    return htoks[best[0]][1], htoks[best[1]][2]
+
+
+def locate(haystack: str, quote: str, fuzzy: bool = True) -> tuple[int, int] | None:
+    """Span of ``quote`` in ``haystack``.
+
+    Order: exact; normalised (markdown, Unicode hyphen and whitespace
+    tolerant); ellipsis-split segments located in order; token-window fuzzy
+    match (>= 85 % of quote tokens inside a tight window, every numeric
+    token present). Returns None when
+    the quote is not in the text, which makes the citation unverified.
+    """
+    if not quote or not quote.strip():
+        return None
+    hit = _locate_exact(haystack, quote)
+    if hit:
+        return hit
+    segs = [s.strip(" .,;:") for s in re.split(r"\.\.\.|\u2026", quote) if len(s.strip(" .,;:")) >= 4]
+    if len(segs) > 1:
+        spans, cur = [], 0
+        for sg in segs:
+            sp = _locate_exact(haystack[cur:], sg) or (_locate_fuzzy(haystack[cur:], sg) if fuzzy else None)
+            if sp is None:
+                spans = []
+                break
+            spans.append((cur + sp[0], cur + sp[1]))
+            cur += sp[1]
+        if spans:
+            return spans[0][0], spans[-1][1]
+    return _locate_fuzzy(haystack, quote) if fuzzy else None
 
 
 # --------------------------------------------------------------------------- generation
@@ -197,7 +267,7 @@ Reply with ONE JSON object and nothing else:
 
 
 def evidence_block(n: int, c: Chunk) -> str:
-    return f"[E{n}] doc={c.doc_id} page={c.page} section={c.section}\n{c.text}"
+    return f"[E{n}] doc={c.doc_id} title={c.title} page={c.page} section={c.section}\n{c.text}"
 
 
 class LLM:
@@ -374,7 +444,8 @@ REPORT_SYSTEM = (
     "least one block with a short verbatim quote copied exactly from that block. Do not state anything the "
     "blocks do not support; put gaps (missing documents, unreadable/unscanned pages, standards that are "
     "only referenced) under \"uncertainties\" instead of guessing. Never invent numbers, tags, clauses or "
-    "table values. If nothing in the evidence answers the question, set \"abstain\": true."
+    "table values. Partial answers are expected: report every claim the evidence supports and list the rest "
+    "as uncertainties. Set \"abstain\": true only if no block is relevant to the task at all."
 )
 
 REPORT_TEMPLATE = """Task: {question}

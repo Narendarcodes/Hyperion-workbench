@@ -23,6 +23,7 @@ from .ingest import Document
 HEADING_RE = re.compile(
     r"^(?:#{1,6}\s+\S.*"                      # markdown heading
     r"|\*\*\s*\d+(?:\.\d+)*[\.\)]?\s+[^*\n]{2,80}\*\*.*"  # **3. Title**
+    r"|[ \t]*\d{3,4}\.\d{1,4}\([a-z]\)"         # CFR top-level paragraph, e.g. 1910.119(k)
     r"|[A-Z][A-Z0-9 /&(),\-]{5,70})\s*$",    # OCR all-caps heading
     re.MULTILINE,
 )
@@ -54,7 +55,14 @@ def _clean_heading(line: str) -> str:
 
 def _section_spans(text: str) -> list[tuple[int, int, str | None]]:
     """Split page text into (start, end, heading-or-None) spans."""
-    starts = [(m.start(), _clean_heading(m.group(0))) for m in HEADING_RE.finditer(text)]
+    starts = []
+    for m in HEADING_RE.finditer(text):
+        h = _clean_heading(m.group(0))
+        if re.fullmatch(r"\d{3,4}\.\d{1,4}\([a-z]\)", h):  # CFR paragraph: title is the next line
+            nxt = re.search(r"\S[^\n]{0,80}", text[m.end():m.end() + 200])
+            if nxt:
+                h = f"{h} {nxt.group(0).strip()}"
+        starts.append((m.start(), h))
     # drop all-caps "headings" that are really table cells or long shouty lines
     starts = [(s, h) for s, h in starts if not text[s:s + 1] == "|"]
     spans: list[tuple[int, int, str | None]] = []

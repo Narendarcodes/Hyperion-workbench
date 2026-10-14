@@ -106,6 +106,16 @@ class AnswerTests(unittest.TestCase):
         self.assertTrue(hay[a:b].startswith("Install"))
         self.assertIsNone(locate(hay, "seal kit XY-0000"))
 
+    def test_fuzzy_locate_handles_tables_bullets_ellipses_but_not_wrong_numbers(self):
+        table = "| Quantity per Service    | **1.8 L** (ISO\u2011VG 220)   |"
+        a, b = locate(table, "Quantity per Service | 1.8 L (ISO-VG 220)")
+        self.assertIn("1.8 L", table[a:b])
+        log = "The filter element F-IN-07 was replaced. Operator logged it.\nDowntime: 49 minutes."
+        self.assertIsNotNone(locate(log, "The filter element F-IN-07 was replaced ... Downtime: 49 minutes"))
+        bullets = "\u2022 Shut down motor, inspected belt.\n\u2022 Re-tensioned belt to 22 mm (spec 21-23 mm) and restarted."
+        self.assertIsNotNone(locate(bullets, "Re-tensioned belt to 22 mm (spec 21-23 mm) and restarted"))
+        self.assertIsNone(locate(bullets, "Re-tensioned belt to 25 mm (spec 21-23 mm) and restarted"))
+
     def test_verified_citation_with_viewer_footnote(self):
         n = next(i for i, h in enumerate(self.hits) if "MS" in self.idx.chunks[h.idx].text) + 1
         llm = FakeLLM({"answer": "MS-4471-K", "abstain": False,

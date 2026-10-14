@@ -28,15 +28,32 @@ def normalize(text: str) -> str:
     return text.translate(_FOLD).lower()
 
 
+def stem(tok: str) -> str:
+    """Tiny suffix stripper for alphabetic words (permitting -> permit, valves -> valve)."""
+    if not tok.isalpha() or len(tok) <= 4:
+        return tok
+    for suf in ("ing", "ed", "es", "s"):
+        if suf == "es" and not tok.endswith(("ses", "xes", "ches", "shes")):
+            continue
+        if suf == "s" and tok.endswith("ss"):
+            continue
+        if tok.endswith(suf) and len(tok) - len(suf) >= 4:
+            tok = tok[: -len(suf)]
+            if suf == "ing" and len(tok) > 4 and tok[-1] == tok[-2]:
+                tok = tok[:-1]
+            return tok
+    return tok
+
+
 def tokenize(text: str) -> list[str]:
     out: list[str] = []
     for m in _TOKEN.finditer(normalize(text)):
         tok = m.group(0)
         if re.search(r"[-./]", tok):
             out.append(tok)
-            out.extend(p for p in re.split(r"[-./]", tok) if p and p not in _STOP)
+            out.extend(stem(p) for p in re.split(r"[-./]", tok) if p and p not in _STOP)
         elif tok not in _STOP:
-            out.append(tok)
+            out.append(stem(tok))
     return out
 
 
