@@ -165,7 +165,10 @@ export function MissionView({
           snapshot={currentSnapshot}
           lifecycle={office.source === 'recording' || (office.view?.agents.length ?? 0) > 1 ? office.view : undefined}
         />
-        <LifecycleReplayBar controller={office} />
+        <LifecycleReplayBar
+          controller={office}
+          session={{ total: currentSnapshot.office.workers.length, completed: counts.completed, failed: counts.blocked }}
+        />
         {renderSlot('mission.orb', {})}
       </div>
       {/* 4. BOTTOM 3-CARD EXECUTION STRIP */}

@@ -144,7 +144,7 @@ describe('Document Library facets (wired filters)', () => {
   it('details mini-composer has no dead duplicate tools and no Compare Version', async () => {
     withSource(seedSource(), <DocumentsOverview />)
     await screen.findByText('All (13)')
-    for (const name of ['Add attachment', 'Attach file', 'Compare Version']) expect(screen.queryByRole('button', { name })).toBeNull()
+    for (const name of ['Add attachment', 'Attach file', 'Compare Version', 'Search inside document', 'Export or share']) expect(screen.queryByRole('button', { name })).toBeNull()
     expect(screen.queryByText('⚙ Auto ▾')).toBeNull()
     expect(screen.getByRole('button', { name: 'Send question to Hyperion' })).toBeTruthy()
   })

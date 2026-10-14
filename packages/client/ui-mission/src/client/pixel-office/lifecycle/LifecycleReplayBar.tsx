@@ -132,8 +132,38 @@ export function useLifecycleOffice(
   }
 }
 
+/** Session-level worker counts (same source as the Mission header "Completed N" pill). */
+export interface SessionWorkerCounts {
+  readonly total: number
+  readonly completed: number
+  readonly failed: number
+}
+
+/**
+ * One counter text for the bar. Live mode reports the session counts so the bar never
+ * disagrees with the header pill ("0 done" vs "Completed 2"); replay mode reports the
+ * lifecycle state at the playhead and says so.
+ */
+export function replayBarStats(
+  agents: readonly { readonly status: string }[],
+  mode: 'live' | 'replay',
+  session?: SessionWorkerCounts,
+): string {
+  const lcDone = agents.filter(a => a.status === 'done').length
+  const lcFailed = agents.filter(a => a.status === 'error').length
+  const useSession = mode === 'live' && session !== undefined && session.total > 0
+  const total = useSession ? Math.max(session.total, agents.length) : agents.length
+  const done = useSession ? Math.max(session.completed, lcDone) : lcDone
+  const failed = useSession ? Math.max(session.failed, lcFailed) : lcFailed
+  const tail = failed > 0 ? ` · ${String(failed)} failed` : ''
+  return `${String(total)} agents · ${String(done)} done${tail}${mode === 'replay' ? ' (at playhead)' : ''}`
+}
+
 /** Control strip for {@link useLifecycleOffice}. */
-export function LifecycleReplayBar({ controller }: { readonly controller: LifecycleOfficeController }) {
+export function LifecycleReplayBar({ controller, session }: {
+  readonly controller: LifecycleOfficeController
+  readonly session?: SessionWorkerCounts
+}) {
   const c = controller
   const onFile = (e: ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0]
@@ -141,8 +171,6 @@ export function LifecycleReplayBar({ controller }: { readonly controller: Lifecy
     void file.text().then((text) => { c.loadRecording(text) })
   }
   const agents = c.state?.agents ?? []
-  const done = agents.filter(a => a.status === 'done').length
-  const failed = agents.filter(a => a.status === 'error').length
   return (
     <div className={css.bar} data-testid="lifecycle-replay-bar">
       {c.source === 'session' && (
@@ -182,7 +210,7 @@ export function LifecycleReplayBar({ controller }: { readonly controller: Lifecy
         </select>
       )}
       <span className={css.stats}>
-        {agents.length} agents · {done} done{failed > 0 ? ` · ${failed} failed` : ''}
+        {replayBarStats(agents, c.mode, session)}
       </span>
       <label className={css.button}>
         Load recording
