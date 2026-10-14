@@ -11,6 +11,7 @@ import { EMPTY_MISSION_SNAPSHOT } from './mission-contract.ts'
 import type { MissionPhase } from './mission-vocabulary.ts'
 import type { MissionKey } from './locales.ts'
 import { PixelOfficeCanvas } from './pixel-office/PixelOfficeCanvas.tsx'
+import { LifecycleReplayBar, useLifecycleOffice } from './pixel-office/lifecycle/LifecycleReplayBar.tsx'
 import css from './MissionView.module.css'
 
 /** Hook selector type for MissionSnapshot. */
@@ -100,6 +101,7 @@ export function MissionView({
   }
 
   const isCompleted = currentSnapshot.office.orchestrator.status === 'completed'
+  const office = useLifecycleOffice(currentSnapshot.lifecycle, firstPrompt)
 
   return (
     <div className={css.missionViewRoot} data-mission-view data-hide-composer="">
@@ -159,7 +161,11 @@ export function MissionView({
 
       {/* 3. NATIVE 2D GATHER-STYLE PIXEL OFFICE */}
       <div className={css.simulationArea}>
-        <PixelOfficeCanvas snapshot={currentSnapshot} />
+        <PixelOfficeCanvas
+          snapshot={currentSnapshot}
+          lifecycle={office.source === 'recording' || (office.view?.agents.length ?? 0) > 1 ? office.view : undefined}
+        />
+        <LifecycleReplayBar controller={office} />
         {renderSlot('mission.orb', {})}
       </div>
       {/* 4. BOTTOM 3-CARD EXECUTION STRIP */}
