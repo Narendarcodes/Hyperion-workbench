@@ -43,7 +43,7 @@ export interface Config {
   /** Retrieval mode used when the model does not choose one. */
   readonly defaultMode: RagMode
   /** Matryoshka dimension (768 full, 512/256/128 truncated + renormalised). */
-  readonly dim: number
+  readonly dim: 768 | 512 | 256 | 128
   /** Per-invocation ceiling in milliseconds. */
   readonly timeoutMs: number
   /** Stdout/stderr ceiling in bytes. */
@@ -157,7 +157,7 @@ function runQuery(cfg: Config, request: Record<string, unknown>): Promise<Record
     try {
       launcher = resolvePython(cfg.python)
     } catch (error) {
-      reject(error)
+      reject(error instanceof Error ? error : new Error(String(error)))
       return
     }
     if (!existsSync(join(cfg.indexDir, 'chunks.jsonl'))) {
@@ -172,19 +172,24 @@ function runQuery(cfg: Config, request: Record<string, unknown>): Promise<Record
     }, (error, stdout, stderr) => {
       let parsed: unknown
       try {
-        parsed = JSON.parse(String(stdout))
+        parsed = JSON.parse(stdout)
       } catch {
         parsed = undefined
       }
       const body = parsed as { error?: unknown } | undefined
       if (error || body === undefined || typeof body.error === 'string') {
-        reject(new Error(`hyperion rag failed: ${typeof body?.error === 'string' ? body.error : String(error?.message ?? 'non-JSON output')}; stderr: ${String(stderr).slice(0, 1500)}`))
+        const reason = typeof body?.error === 'string' ? body.error : (error?.message ?? 'non-JSON output')
+        reject(new Error(`hyperion rag failed: ${reason}; stderr: ${stderr.slice(0, 1500)}`))
         return
       }
       resolvePromise(parsed as Record<string, unknown>)
     })
-    child.stdin?.end(JSON.stringify({ llm_url: cfg.llmUrl, dim: cfg.dim, ...request }))
+    child.stdin?.end(JSON.stringify(Object.assign({ llm_url: cfg.llmUrl, dim: cfg.dim }, request)))
   })
+}
+
+function textOf(value: unknown): string {
+  return typeof value === 'string' ? value : ''
 }
 
 function pickMode(arg: unknown, fallback: RagMode): RagMode {
@@ -197,7 +202,7 @@ function pickMode(arg: unknown, fallback: RagMode): RagMode {
  * @param config - deployment execution choices.
  */
 export function apply(ctx: Context, config: Config): void {
-  const cfg: Config = { ...DEFAULT_CONFIG, ...config }
+  const cfg: Config = Object.assign({}, DEFAULT_CONFIG, config)
   ctx.tools.register(defineTool({
     name: 'hyperion_rag_search',
     description: 'Search the indexed plant documents (SOPs, fault logs, manuals, incident reports, specs). '
@@ -211,13 +216,13 @@ export function apply(ctx: Context, config: Config): void {
     output: {
       schema: SEARCH_SCHEMA,
       render: (_args, value) => {
-        const hits = (value as { hits?: { doc_id: string, page: number }[] }).hits ?? []
+        const hits = (value as { hits?: { doc_id: string; page: number }[] }).hits ?? []
         return [{ type: 'text', text: `Found ${hits.length} evidence chunk(s): ${hits.map(h => `${h.doc_id} p.${h.page}`).join(', ')}.` }]
       },
     },
     async execute(args) {
-      const k = Math.max(1, Math.min(20, Number(args.k ?? 5) || 5))
-      const out = await runQuery(cfg, { question: String(args.question ?? ''), k, mode: pickMode(args.mode, cfg.defaultMode) })
+      const k = Math.max(1, Math.min(20, typeof args.k === 'number' && args.k > 0 ? args.k : 5))
+      const out = await runQuery(cfg, { question: args.question, k, mode: pickMode(args.mode, cfg.defaultMode) })
       return out as InferValue<typeof SEARCH_SCHEMA>
     },
     presentCall: () => ({ card: 'generic', title: 'Search plant documents', kind: 'search', rawInput: {} }),
@@ -237,28 +242,28 @@ export function apply(ctx: Context, config: Config): void {
     },
     output: {
       schema: ANSWER_SCHEMA,
-      render: (_args, value) => [{ type: 'text', text: String((value as { markdown?: unknown }).markdown ?? '') }],
+      render: (_args, value) => [{ type: 'text', text: textOf((value as { markdown?: unknown }).markdown) }],
     },
     async execute(args) {
       const report = args.report === true
       const out = await runQuery(cfg, {
-        question: String(args.question ?? ''),
+        question: args.question,
         k: report ? 8 : 5,
         mode: pickMode(args.mode, cfg.defaultMode),
         ...(report ? { report: true } : { answer: true }),
       })
       const res = (report ? out['report'] : out['answer']) as Record<string, unknown> | undefined
-      const claims = (res?.['claims'] as { text: string, citations: unknown[] }[] | undefined) ?? []
+      const claims = (res?.['claims'] as { text: string; citations: unknown[] }[] | undefined) ?? []
       const citations = report
         ? claims.flatMap(claim => claim.citations)
         : (res?.['citations'] as unknown[] | undefined) ?? []
       return {
-        question: String(out['question'] ?? ''),
-        mode: String(out['mode'] ?? ''),
+        question: textOf(out['question']),
+        mode: textOf(out['mode']),
         abstain: res?.['abstain'] === true,
-        answer: report ? claims.map(claim => claim.text).join('\n') : String(res?.['answer'] ?? ''),
+        answer: report ? claims.map(claim => claim.text).join('\n') : textOf(res?.['answer']),
         citations,
-        markdown: String(out['markdown'] ?? ''),
+        markdown: textOf(out['markdown']),
         ...(out['degraded'] ? { degraded: out['degraded'] } : {}),
       } as InferValue<typeof ANSWER_SCHEMA>
     },

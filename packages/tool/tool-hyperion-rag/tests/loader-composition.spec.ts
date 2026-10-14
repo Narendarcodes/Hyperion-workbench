@@ -68,8 +68,12 @@ async function mockLlm(reply: (prompt: string) => unknown): Promise<string> {
       res.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify(reply(prompt)) } }] }))
     })
   })
-  await new Promise<void>(resolveListen => server.listen(0, '127.0.0.1', () => resolveListen()))
-  closeServer = () => new Promise<void>(resolveClose => server.close(() => resolveClose()))
+  await new Promise<void>((resolveListen) => {
+    server.listen(0, '127.0.0.1', () => { resolveListen() })
+  })
+  closeServer = () => new Promise<void>((resolveClose) => {
+    server.close(() => { resolveClose() })
+  })
   return `http://127.0.0.1:${(server.address() as AddressInfo).port}/v1`
 }
 
@@ -141,7 +145,7 @@ describe('hyperion-rag real Loader composition', () => {
     expect(names).toContain('hyperion_rag_answer')
     const result = await call(ctx, 'hyperion_rag_search', { question: 'knockout drum KO-7 high level alarm', k: 3 })
     expect(result.isError).toBe(false)
-    const hits = (result.value as { hits: { doc_id: string, page: number, href: string, char_end: number }[] }).hits
+    const hits = (result.value as { hits: { doc_id: string; page: number; href: string }[] }).hits
     expect(hits[0]).toMatchObject({ doc_id: 'DOC-900', page: 2 })
     expect(hits[0]?.href.endsWith('#page=2')).toBe(true)
   }, 60_000)
@@ -155,7 +159,8 @@ describe('hyperion-rag real Loader composition', () => {
     const ctx = await boot(url)
     const result = await call(ctx, 'hyperion_rag_answer', { question: 'Which seal kit part number is installed on pump P-101?' })
     expect(result.isError).toBe(false)
-    const value = result.value as { abstain: boolean, citations: { doc_id: string, page: number, quote_verified: boolean, footnote: string }[], markdown: string }
+    type Cite = { doc_id: string; page: number; quote_verified: boolean; footnote: string }
+    const value = result.value as { abstain: boolean; citations: Cite[]; markdown: string }
     expect(value.abstain).toBe(false)
     expect(value.citations[0]).toMatchObject({ doc_id: 'HYP-T01', page: 1, quote_verified: true })
     expect(value.citations[0]?.footnote).toMatch(/^\[\^1\]: \[HYP-T01\]\(.+#page=1\) p\. 1, chars \d+-\d+: "/)
