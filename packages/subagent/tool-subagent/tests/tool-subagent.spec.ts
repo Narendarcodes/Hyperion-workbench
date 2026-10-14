@@ -703,6 +703,49 @@ describe('dsh-tool-subagent', () => {
     expect(seen?.maxDepth).toBe(2)
   })
 
+  it('exposes a role enum only when roles are configured and forwards a valid role to the start request', async () => {
+    const requests: SubagentStartRequest[] = []
+    const ctx = await projectedContext()
+    await ctx.plugin(SystemPrompt)
+    await ctx.plugin(ToolRuntime)
+    await ctx.plugin(SubagentRuntime)
+    ctx.subagents.registerProvider({
+      name: 'capture-roles',
+      capabilities: { agentOptions: false, outputSchema: false, depthLimit: true, toolFilter: true, persona: true },
+      inheritsParentContext: false,
+      start: async (request) => {
+        requests.push(request)
+        return {
+          id: SessionId(`capture-roles-child-${requests.length}`),
+          localAgent: undefined,
+          result: Promise.resolve({ output: [{ type: 'text', text: 'ok' }], stopReason: 'completed' as const }),
+          dispose: async () => {},
+        }
+      },
+    })
+    await ctx.plugin(tool, { provider: 'capture-roles', maxDepth: 2, roles: ['planner', 'worker'] })
+
+    const schema = ctx.tools.schemas().find(s => s.name === 'subagent')
+    const props = (schema?.parameters as { properties: Record<string, { enum?: string[] }> }).properties
+    expect(props.role?.enum).toEqual(['planner', 'worker'])
+
+    await callSubagent(ctx, { description: 'd', prompt: 'p', role: 'worker' })
+    await callSubagent(ctx, { description: 'd', prompt: 'p' })
+    expect(requests.map(r => r.role)).toEqual(['worker', undefined])
+    expect('role' in (requests[1] ?? {})).toBe(false)
+
+    const rejected = await callSubagent(ctx, { description: 'd', prompt: 'p', role: 'vision' })
+    // The schema enum is enforced by the tool-args validator before execute().
+    expect(rejected).toMatchObject({ isError: true })
+    expect(text(rejected)).toContain('"role" must be one of')
+    expect(requests).toHaveLength(2)
+
+    const plain = await setup({ provider: 'mock' })
+    const plainSchema = plain.tools.schemas().find(s => s.name === 'subagent')
+    const plainProps = (plainSchema?.parameters as { properties: Record<string, unknown> }).properties
+    expect(plainProps).not.toHaveProperty('role')
+  })
+
   it.each([
     { label: 'a string', value: '1' as unknown as number },
     { label: 'NaN', value: Number.NaN },
