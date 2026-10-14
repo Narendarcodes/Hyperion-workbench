@@ -26,8 +26,8 @@ describe('MRPL wire contract mirror', () => {
     // Runtime import by path: the client typecheck program never includes host files.
     const hostUrl = pathToFileURL(join(process.cwd(), 'packages/host/hyperion-bridge/src/shared.ts')).href
     const HostShared = await import(/* @vite-ignore */ hostUrl) as Record<string, unknown>
-    const routes = Object.entries(ClientContract).filter(([key]) => key.startsWith('HYPERION_MRPL_'))
-    expect(routes.length).toBe(7)
+    const routes = Object.entries(ClientContract).filter(([key]) => key.startsWith('HYPERION_MRPL_') || key.startsWith('HYPERION_ASR_'))
+    expect(routes.length).toBe(12)
     for (const [key, value] of routes) expect(HostShared[key]).toBe(value)
   })
 })

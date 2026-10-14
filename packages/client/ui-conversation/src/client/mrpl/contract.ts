@@ -246,3 +246,101 @@ export interface MrplErrorBody {
   readonly code: string
   readonly message: string
 }
+
+// ---------------------------------------------------------------------------
+// MRPL live ingestion, cited answers and speech (`feat/mrpl-live-wiring`).
+//
+// The bridge proxies a Hyperion RAG service (`HYPERION_RAG_URL`, see
+// packages/tool/tool-hyperion-rag/scripts/hyperion_rag/service.py). Upload →
+// OCR (scanned pages only) → chunk → BM25 + EmbeddingGemma 2, appended to the
+// live index without a rebuild. Every response states the retrieval mode the
+// service actually ran (`hybrid_rerank` / `hybrid` / `bm25`) and why it is
+// degraded, if it is.
+// ---------------------------------------------------------------------------
+
+/** POST raw file bytes (application/pdf | text/markdown | text/plain); header `x-file-name`. */
+export const HYPERION_MRPL_UPLOAD_ROUTE = '/hyperion/mrpl/documents/upload'
+/** GET: RAG service health + every uploaded document with its ingest status. */
+export const HYPERION_MRPL_INGEST_ROUTE = '/hyperion/mrpl/ingest'
+/** GET `<prefix><jobId>`: one ingest job. */
+export const HYPERION_MRPL_INGEST_JOB_PREFIX = '/hyperion/mrpl/ingest/jobs/'
+/** POST `{question, documentIds?}`: grounded answer with verified citations. */
+export const HYPERION_MRPL_EVIDENCE_ANSWER_ROUTE = '/hyperion/mrpl/evidence/answer'
+/** POST raw audio (audio/*); optional `?language=`; default language from config (`auto`). */
+export const HYPERION_ASR_TRANSCRIBE_ROUTE = '/hyperion/asr/transcribe'
+
+/** Retrieval mode the RAG service ran. */
+export type MrplRetrievalMode = 'hybrid_rerank' | 'hybrid' | 'bm25_rerank' | 'bm25' | 'dense'
+
+/** Ingest pipeline stage. */
+export type MrplIngestStage = 'queued' | 'parsing' | 'ocr' | 'chunking' | 'indexing' | 'indexed' | 'failed'
+
+/** One ingest job. */
+export interface MrplIngestJob {
+  readonly jobId: string
+  readonly documentId: string
+  readonly fileName: string | null
+  readonly status: 'queued' | 'running' | 'indexed' | 'failed'
+  readonly stage: MrplIngestStage
+  readonly stages: readonly MrplIngestStage[]
+  /** Always false: uploads are appended, never trigger a full re-index. */
+  readonly fullRebuild: boolean
+  readonly chunksAdded: number
+  readonly error: string | null
+}
+
+/** One document known to the RAG index (uploads carry `uploaded: true`). */
+export interface MrplIngestDocument {
+  readonly documentId: string
+  readonly title: string
+  readonly fileName: string | null
+  readonly status: MrplIngestStage
+  readonly uploaded: boolean
+  readonly pages: number
+  readonly chunks: number
+  readonly ocrPages: readonly number[]
+  readonly ocrPendingPages: readonly number[]
+  readonly error: string | null
+  readonly jobId: string | null
+}
+
+/** GET ingest. */
+export interface MrplIngestStatusResponse {
+  /** `not-configured` when no RAG service URL is set; `unreachable` when it does not answer. */
+  readonly rag: 'ready' | 'not-configured' | 'unreachable'
+  readonly retrieval: MrplRetrievalMode | null
+  readonly degraded: readonly string[]
+  readonly embedModel: string | null
+  readonly chunks: number
+  readonly documents: readonly MrplIngestDocument[]
+}
+
+/** One verified citation of a grounded answer. */
+export interface MrplAnswerCitation {
+  readonly n: number
+  readonly documentId: string
+  readonly page: number
+  readonly quote: string
+  readonly verified: boolean
+  readonly charStart: number | null
+  readonly charEnd: number | null
+}
+
+/** POST evidence/answer response. */
+export interface MrplEvidenceAnswerResponse {
+  readonly question: string
+  readonly answer: string
+  readonly abstain: boolean
+  readonly abstainReason: string | null
+  readonly citations: readonly MrplAnswerCitation[]
+  readonly retrieval: MrplRetrievalMode
+  readonly degraded: readonly string[]
+}
+
+/** POST /hyperion/asr/transcribe response. */
+export interface HyperionTranscribeResponse {
+  readonly text: string
+  /** Language the engine decoded with (detected when the request asked for `auto`). */
+  readonly language: string
+  readonly model: string
+}

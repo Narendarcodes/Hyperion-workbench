@@ -185,6 +185,12 @@ def _norm_text(s: str) -> str:
     return s.lower()
 
 
+def _decimal_point(before: list[str], after: str | None) -> bool:
+    """'point' reads as a decimal point only between a number and a single digit word
+    ('twelve point five'); otherwise it is part of a property name ('flash point', 'dew point')."""
+    return bool(before) and before[-1] != 'point' and after in EN_NUM[:10]
+
+
 def _parse_number(words: list[str]) -> str | None:
     """English number words -> numeric string. Digit-by-digit runs concatenate."""
     if not words:
@@ -279,8 +285,14 @@ def canonicalize(text: str) -> list[str]:
             j = i
             ws = []
             while j < len(items) and items[j][0] == 'W':
+                if items[j][1] == 'point' and not _decimal_point(ws, items[j + 1][1] if j + 1 < len(items) and items[j + 1][0] == 'W' else None):
+                    break
                 ws.append(items[j][1])
                 j += 1
+            if not ws:  # a 'point' that is not a decimal point ('flash point'): keep the word
+                merged.append(('X', v))
+                i += 1
+                continue
             n = _parse_number(ws)
             merged.append(('N', n) if n is not None else ('X', ' '.join(ws)))
             i = j
@@ -415,7 +427,10 @@ def fold(text: str) -> str:
         j = i; ws = []; ds = []
         while j < len(toks):
             kd, v = kind(j)
-            if kd == 'W' and not ds: ws.append(v); j += 1
+            if kd == 'W' and not ds:
+                if v == 'point' and not _decimal_point(ws, kind(j + 1)[1] if j + 1 < len(toks) and kind(j + 1)[0] == 'W' else None):
+                    break
+                ws.append(v); j += 1
             elif kd == 'D' and not ws and len(v) == 1 and len(ds) < 5: ds.append(v); j += 1
             elif kd == 'D' and not ws and not ds: return v, j + 1, 1
             else: break

@@ -38,6 +38,7 @@ import { attachmentErrorText, imageSizeText } from '../image-labels.ts'
 import { ContextMeter } from './ContextMeter.tsx'
 import { PermissionSelect } from './PermissionSelect.tsx'
 import { VoiceWaveform } from './VoiceWaveform.tsx'
+import { HYPERION_ASR_TRANSCRIBE_ROUTE } from '../mrpl/contract.ts'
 import css from './InputBar.module.css'
 
 export type InputBarProps = ComposerBarProps
@@ -136,12 +137,13 @@ export const InputBar = memo(function InputBar({
         audioChunksRef.current = []
         setTranscribing(true)
         try {
-          const formData = new FormData()
-          formData.append('file', audioBlob, 'voice-prompt.webm')
-          formData.append('language', 'hi')
-          const res = await fetch('http://127.0.0.1:8008/transcribe', {
+          // Same-origin Hyperion route; the host's ASR provider (asr-http) owns the
+          // engine, endpoint and language (default `auto`: te/hi/en detection).
+          const res = await fetch(HYPERION_ASR_TRANSCRIBE_ROUTE, {
             method: 'POST',
-            body: formData,
+            credentials: 'same-origin',
+            headers: { 'content-type': audioBlob.type || 'audio/webm' },
+            body: audioBlob,
           })
           if (!res.ok) throw new Error(`ASR Server error ${res.status}`)
           const data = (await res.json()) as { text?: string }

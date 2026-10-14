@@ -12,6 +12,7 @@ import {
   assertServiceableAsrHttpConfig,
   bundledServerPath,
   engineFor,
+  envConfigDefaults,
   HttpTranscriber,
   parseSidecarResponse,
 } from '@deepseek-ai/dsh-asr-http'
@@ -146,6 +147,18 @@ describe('engineFor', () => {
     expect(engineFor({ en: 'whisper', '*': 'sravaani' }, 'te')).toBe('sravaani')
     expect(engineFor({ en: 'whisper' }, 'te')).toBeUndefined()
     expect(engineFor(undefined, 'te')).toBeUndefined()
+  })
+
+  it('never lets the wildcard bypass sidecar language detection for "auto"', () => {
+    expect(engineFor({ '*': 'sravaani' }, 'auto')).toBeUndefined()
+    expect(engineFor({ auto: 'whisper', '*': 'sravaani' }, 'auto')).toBe('whisper')
+  })
+})
+
+describe('envConfigDefaults', () => {
+  it('reads the sidecar endpoint and default language from the environment', () => {
+    expect(envConfigDefaults({ HYPERION_STT_URL: 'http://stt:8790', HYPERION_ASR_LANGUAGE: 'te' })).toEqual({ endpoint: 'http://stt:8790', defaultLanguage: 'te' })
+    expect(envConfigDefaults({})).toEqual({ endpoint: '', defaultLanguage: 'auto' })
   })
 })
 

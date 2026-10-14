@@ -103,6 +103,8 @@ export function assertServiceableAsrHttpConfig(config: Config): void {
  * @returns the engine name, or undefined to let the sidecar route.
  */
 export function engineFor(engines: Record<string, string> | undefined, language: string): string | undefined {
+  // `auto` asks the sidecar to detect and route; a wildcard override must not skip that.
+  if (language === 'auto') return engines?.auto
   return engines?.[language] ?? engines?.['*']
 }
 
@@ -151,13 +153,24 @@ function sidecarError(body: string): string {
 }
 
 /**
+ * Environment-backed defaults: `HYPERION_STT_URL` (sidecar base URL; empty
+ * fails loud at load) and `HYPERION_ASR_LANGUAGE` (default `auto` = the
+ * sidecar detects among its `--auto-languages`, te/hi/en by default).
+ */
+export function envConfigDefaults(env: Record<string, string | undefined> = process.env): Pick<Config, 'endpoint' | 'defaultLanguage'> {
+  return { endpoint: env.HYPERION_STT_URL ?? '', defaultLanguage: env.HYPERION_ASR_LANGUAGE ?? 'auto' }
+}
+
+const ENV_DEFAULTS = envConfigDefaults()
+
+/**
  * Transcriber over a persistent HTTP STT sidecar. One request per call; the
  * sidecar serialises GPU work per engine, so concurrent calls queue there.
  */
 export class HttpTranscriber extends AsrTranscriber {
   static Config: z<Config> = z.object({
-    endpoint: z.string(),
-    defaultLanguage: z.string(),
+    endpoint: z.string().default(ENV_DEFAULTS.endpoint),
+    defaultLanguage: z.string().default(ENV_DEFAULTS.defaultLanguage),
     engines: z.dict(z.string()),
     normalize: z.union(['plant', 'none'] as const).default('plant'),
     transport: z.union(['upload', 'path'] as const).default('upload'),

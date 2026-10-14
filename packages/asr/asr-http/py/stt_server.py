@@ -13,7 +13,8 @@ torch installed.
 
 Protocol (JSON over HTTP):
   GET  /healthz            -> {"ok": true, "routes": {...}, "engines": {...}, "loaded": [...]}
-  POST /v1/transcribe      body {"language": "te", "audio_b64": "<wav/flac/mp3 bytes>"}
+  POST /v1/transcribe      body {"language": "te" | "auto", "audio_b64": "<wav/flac/mp3 bytes>"}
+                         ("auto": --detect-engine picks among --auto-languages, then routes)
                                  or {"language": "te", "audio_path": "/abs/path.wav"}
                            optional "engine" (overrides the route), "normalize": "plant" | "none"
                         -> {"text", "raw", "language", "engine", "model", "seconds"}
@@ -93,6 +94,26 @@ class Engine:
             return str(self.model(torch.from_numpy(np.asarray(wav, dtype='float32')).unsqueeze(0), language, 'rnnt')).strip()
 
 
+    def detect_language(self, wav, candidates):
+        """Whisper language ID restricted to ``candidates``: one decoder step after
+        <|startoftranscript|>, softmax over the candidate language tokens only."""
+        import torch
+        if self.kind != 'whisper':
+            raise ValueError(f'engine {self.name} ({self.kind}) cannot detect language; use a whisper engine')
+        with self.lock:
+            self.load()
+            proc, mod = self.model
+            feats = proc(wav, sampling_rate=16000, return_tensors='pt').input_features.to(self.device, torch.float16)
+            tok = proc.tokenizer
+            sot = tok.convert_tokens_to_ids('<|startoftranscript|>')
+            ids = [tok.convert_tokens_to_ids(f'<|{c}|>') for c in candidates]
+            with torch.inference_mode():
+                logits = mod(input_features=feats, decoder_input_ids=torch.tensor([[sot]], device=self.device)).logits[0, -1]
+            probs = torch.softmax(logits[ids].float(), dim=-1).tolist()
+        scores = {c: round(p, 4) for c, p in zip(candidates, probs)}
+        return max(scores, key=scores.get), scores
+
+
 def load_audio(body: dict):
     import librosa
     if isinstance(body.get('audio_b64'), str):
@@ -106,8 +127,10 @@ def load_audio(body: dict):
 
 
 class State:
-    def __init__(self, routes: dict, engines: dict):
+    def __init__(self, routes: dict, engines: dict, detect_engine: str | None = None, auto_languages=None):
         self.routes, self.engines = routes, engines
+        self.detect_engine = detect_engine
+        self.auto_languages = list(auto_languages or [])
 
 
 def make_handler(state: State):
@@ -144,10 +167,18 @@ def make_handler(state: State):
                 language = body.get('language')
                 if not isinstance(language, str) or not language:
                     raise ValueError('"language" must be a non-empty string')
+                detected, scores = False, None
+                if language == 'auto':
+                    if not state.detect_engine or state.detect_engine not in state.engines or not state.auto_languages:
+                        raise ValueError('language "auto" needs --detect-engine and --auto-languages on the sidecar')
+                    wav = load_audio(body)
+                    language, scores = state.engines[state.detect_engine].detect_language(wav, state.auto_languages)
+                    detected = True
                 name = body.get('engine') or state.routes.get(language) or state.routes.get('*')
                 if name not in state.engines:
                     raise ValueError(f'no engine routed for language {language!r}')
-                wav = load_audio(body)
+                if not detected:
+                    wav = load_audio(body)
             except (ValueError, json.JSONDecodeError) as error:
                 return self._send(400, dict(error=str(error)))
             except Exception as error:  # unreadable audio
@@ -159,19 +190,26 @@ def make_handler(state: State):
             except Exception as error:
                 return self._send(500, dict(error=f'engine {name} failed: {error}'))
             text = plantnorm.fold(raw) if body.get('normalize', 'plant') == 'plant' else raw
-            self._send(200, dict(text=text, raw=raw, language=language, engine=name, model=engine.source,
-                                 seconds=round(time.time() - started, 3)))
+            doc = dict(text=text, raw=raw, language=language, engine=name, model=engine.source,
+                       seconds=round(time.time() - started, 3), detected=detected)
+            if scores is not None:
+                doc['languageScores'] = scores
+            self._send(200, doc)
     return Handler
 
 
 def parse_args(argv):
     p = argparse.ArgumentParser(description='Hyperion STT sidecar')
-    p.add_argument('--host', default='127.0.0.1')
-    p.add_argument('--port', type=int, default=8790)
+    p.add_argument('--host', default=os.environ.get('STT_HOST', '127.0.0.1'))
+    p.add_argument('--port', type=int, default=int(os.environ.get('STT_PORT', '8790')))
     p.add_argument('--device', default='cuda')
     p.add_argument('--engine', action='append', default=[], help='name=kind:source (kind: sravaani|whisper|indicconformer)')
     p.add_argument('--route', action='append', default=[], help='language=engine-name ("*" = fallback)')
     p.add_argument('--preload', action='store_true', help='load every routed engine before serving')
+    p.add_argument('--detect-engine', default=os.environ.get('STT_DETECT_ENGINE', ''),
+                   help='whisper engine used for language="auto" (env STT_DETECT_ENGINE)')
+    p.add_argument('--auto-languages', default=os.environ.get('STT_AUTO_LANGUAGES', 'te,hi,en'),
+                   help='candidate languages for language="auto" (env STT_AUTO_LANGUAGES, default te,hi,en)')
     return p.parse_args(argv)
 
 
@@ -190,7 +228,11 @@ def main(argv):
     if a.preload:
         for name in sorted(set(routes.values())):
             t = time.time(); engines[name].load(); print(f'loaded {name} in {time.time() - t:.1f}s', file=sys.stderr, flush=True)
-    server = ThreadingHTTPServer((a.host, a.port), make_handler(State(routes, engines)))
+    if a.detect_engine and a.detect_engine not in engines:
+        print(f'stt-server: --detect-engine names unknown engine {a.detect_engine!r}', file=sys.stderr)
+        return 2
+    auto = [x.strip() for x in a.auto_languages.split(',') if x.strip()]
+    server = ThreadingHTTPServer((a.host, a.port), make_handler(State(routes, engines, a.detect_engine or None, auto)))
     print(f'stt-server listening on {a.host}:{a.port} routes={routes}', file=sys.stderr, flush=True)
     server.serve_forever()
     return 0

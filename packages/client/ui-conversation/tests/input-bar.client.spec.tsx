@@ -1675,6 +1675,28 @@ describe('voice pill', () => {
     expect(view.container.querySelector('[data-input-scroll]')).not.toBeNull()
   })
 
+  it('posts the clip to the Hyperion ASR route with no hard-coded host, port or language', async () => {
+    const { view } = await startRecording(new Blob(['audio'], { type: 'audio/webm' }))
+    const fetchMock = vi.fn((_input: string | URL | Request, _init?: RequestInit): Promise<Response> =>
+      Promise.resolve(new Response(JSON.stringify({ text: 'flash point 35 degree', language: 'te', model: 'indicconformer' }))))
+    vi.stubGlobal('fetch', fetchMock)
+    onTestFinished(() => { vi.unstubAllGlobals() })
+    fireEvent.click(view.getByLabelText('Send message'))
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalled()
+    })
+    const [url, init] = fetchMock.mock.calls[0]!
+    expect(url).toBe('/hyperion/asr/transcribe')
+    expect(String(url)).not.toContain('8008')
+    expect(init?.method).toBe('POST')
+    expect(init?.credentials).toBe('same-origin')
+    expect((init?.headers as Record<string, string>)['content-type']).toBe('audio/webm')
+    expect(init?.body).toBeInstanceOf(Blob)
+    await vi.waitFor(() => {
+      expect(view.queryByText('Transcribing...')).toBeNull()
+    })
+  })
+
   it('discards the recording without transcribing', async () => {
     const { view } = await startRecording(new Blob(['audio'], { type: 'audio/webm' }))
     const fetchMock = vi.fn((): Promise<Response> => Promise.resolve(new Response(JSON.stringify({ text: 'नमस्ते' }))))
