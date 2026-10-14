@@ -20,8 +20,8 @@ import { Context } from '@deepseek-ai/cordis'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
 import Include from '@deepseek-ai/cordis-plugin-include'
 import WebServer from '@deepseek-ai/dsh-host-webserver'
-import * as HyperionBridge from '../../../packages/host/hyperion-bridge/src/index.ts'
-import * as AsrHttp from '../../../packages/asr/asr-http/src/index.ts'
+import * as HyperionBridge from '@deepseek-ai/dsh-host-hyperion-bridge'
+import * as AsrHttp from '@deepseek-ai/dsh-asr-http'
 
 const REPO = fileURLToPath(new URL('../../../', import.meta.url))
 const HARNESS = join(REPO, 'apps/web/mrpl-harness')
@@ -194,5 +194,32 @@ describe.skipIf(!live)('MRPL live e2e (droplet services, nothing mocked)', () =>
     expect(result.status).toBe(200)
     expect(result.language).toBe('te')
     expect(result.text).toMatch(/15\.2|ప్రెషర్|బార్/)
+  }, 180_000)
+  it('Mission view renders the recorded mission session: office canvas, replay controls, roadmap, theme tokens, no page errors', async () => {
+    const b = await launch()
+    for (const theme of ['light', 'dark'] as const) {
+      const page = await open(b, `mission&theme=${theme}`)
+      const view = page.locator('[data-mission-view]')
+      await view.waitFor({ timeout: 60_000 })
+      // The pixel office draws on a real canvas with a non-zero size.
+      const box = await view.locator('canvas').first().boundingBox()
+      expect(box?.width ?? 0).toBeGreaterThan(100)
+      expect(box?.height ?? 0).toBeGreaterThan(100)
+      // Lifecycle replay controls are live (derived from the recorded session, not a stub).
+      const bar = page.getByTestId('lifecycle-replay-bar')
+      expect(await bar.innerText()).toMatch(/[1-9]\d* agents/)
+      await bar.getByRole('button', { name: /Live/ }).click()
+      const position = page.getByLabel('Replay position')
+      await position.waitFor()
+      await page.getByRole('button', { name: 'Play', exact: true }).click()
+      await expect.poll(async () => Number(await position.inputValue()), { timeout: 15_000 }).toBeGreaterThan(0)
+      expect(await view.getByLabel('Simulation phase roadmap').count()).toBe(1)
+      // Theme tokens: the Mission root carries a resolved background, not the old literal slate.
+      const bg = await view.evaluate(el => getComputedStyle(el).backgroundColor)
+      expect(bg).not.toBe('rgb(15, 23, 42)')
+      await page.screenshot({ path: join(SHOTS, `live-mission-${theme}.png`), fullPage: true })
+      expect((page as Page & { errors: string[] }).errors).toEqual([])
+      await page.close()
+    }
   }, 180_000)
 })

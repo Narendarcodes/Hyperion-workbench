@@ -12,6 +12,10 @@ import { EquipmentPage } from '../../../packages/client/ui-conversation/src/clie
 import { ReportsOverview } from '../../../packages/client/ui-conversation/src/client/reports/ReportsOverview.tsx'
 import { MrplEvidencePanel } from '../../../packages/client/ui-chat/src/client/chat/MrplEvidenceCard.tsx'
 import { en } from '../../../packages/client/ui-chat/src/client/locale.ts'
+import { MissionView } from '../../../packages/client/ui-mission/src/client/MissionView.tsx'
+import { buildMissionSnapshot } from '../../../packages/client/ui-mission/src/client/mission-snapshot-builder.ts'
+import { en as missionEn } from '../../../packages/client/ui-mission/src/client/locales.ts'
+import missionSession from '../../../packages/client/ui-mission/tests/fixtures/mission-session.jsonl?raw'
 
 for (const css of [base, designPlatform]) {
   const tag = document.createElement('style')
@@ -90,6 +94,28 @@ function MicProbe() {
   )
 }
 
+const translate = (table: Record<string, string>) => ((key: string, vars?: Record<string, unknown>) => {
+  let text = table[key] ?? key
+  for (const [name, value] of Object.entries(vars ?? {})) text = text.replace(`{${name}}`, String(value))
+  return text
+}) as never
+
+/**
+ * `?screen=mission`: the real MissionView over a snapshot built by the real
+ * snapshot builder from the recorded mission session (a test fixture, clearly
+ * not a live run), so the office canvas, replay bar and roadmap render end to end.
+ */
+function MissionProbe() {
+  const entries = missionSession.split('\n').filter(Boolean).map(line => JSON.parse(line) as unknown)
+  const snapshot = buildMissionSnapshot(entries as never)
+  const useMission = (<S,>(selector?: (s: typeof snapshot) => S): S => (selector ? selector(snapshot) : snapshot as unknown as S)) as never
+  return (
+    <div style={{ height: '100vh' }}>
+      <MissionView {...({ useMission, openView: () => undefined, viewRequest: null, completeViewRequest: () => undefined, renderSlot: () => null, sessionId: 'harness-mission', t: translate(missionEn as Record<string, string>) } as never)} />
+    </div>
+  )
+}
+
 async function render(): Promise<void> {
   const mrpl = import.meta.glob('../../../packages/client/ui-conversation/src/client/mrpl/api.ts', { eager: true }) as Record<string, { MrplSourceProvider?: (props: { source: unknown; children: ReactElement }) => ReactElement; createHttpMrplSource?: () => unknown }>
   const api = Object.values(mrpl)[0]
@@ -97,6 +123,7 @@ async function render(): Promise<void> {
   if (screen === 'equipment') ui = <EquipmentPage />
   else if (screen === 'reports') ui = <ReportsOverview />
   else if (screen === 'mic') ui = <MicProbe />
+  else if (screen === 'mission') ui = <MissionProbe />
   else if (screen === 'evidence') {
     const prose = params.get('variant') === 'tampered' ? TAMPERED_PROSE : RESULT_PROSE
     ui = (
