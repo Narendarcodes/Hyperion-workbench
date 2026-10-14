@@ -15,6 +15,7 @@ import type {
   InvestigationSeverity,
   InvestigationStatus,
 } from './types.ts'
+import { ActionMenu, type ActionMenuItem } from './ActionMenu.tsx'
 import css from './InvestigationList.module.css'
 
 export interface InvestigationListProps {
@@ -23,6 +24,8 @@ export interface InvestigationListProps {
   readonly activeTab?: InvestigationFilterTab
   readonly onSelectInvestigation?: (item: InvestigationListItem) => void
   readonly onFilterTabChange?: (tab: InvestigationFilterTab) => void
+  /** Row ⋮ menu: real actions for one investigation (open, copy link, status). */
+  readonly rowMenuItems?: (item: InvestigationListItem) => readonly ActionMenuItem[]
 }
 
 function EquipmentTypeIcon({ type }: { type: InvestigationListItem['equipmentType'] }) {
@@ -89,6 +92,7 @@ export function InvestigationList({
   activeTab = 'all',
   onSelectInvestigation,
   onFilterTabChange,
+  rowMenuItems,
 }: InvestigationListProps) {
   const [currentTab, setCurrentTab] = useState<InvestigationFilterTab>(activeTab)
   const [sortBy, setSortBy] = useState('Updated (Newest)')
