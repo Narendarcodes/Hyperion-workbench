@@ -265,6 +265,7 @@
     { "path": "./packages/fs/tool-fs-search" },
     { "path": "./packages/fs/tool-str-replace-editor" },
     { "path": "./packages/asr/asr" },
+    { "path": "./packages/asr/asr-http" },
     { "path": "./packages/asr/asr-nemo" },
     { "path": "./packages/asr/tool-transcribe" },
     { "path": "./packages/compaction/compaction" },

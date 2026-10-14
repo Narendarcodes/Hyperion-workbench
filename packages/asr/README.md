@@ -25,6 +25,7 @@ The asr group turns audio prompts into agent-readable text: one transcription se
 | Package | Role | ctx key |
 |---|---|---|
 | [`asr`](asr/README.md) | Defines the transcription contract: requests, resolved specs, and results | `ctx.asr` |
+| [`asr-http`](asr-http/README.md) | Sends audio to a persistent GPU STT sidecar with per-language engine routing (IndicConformer / Whisper / SraVaani) and plant-tag normalisation | registers `ctx.asr` |
 | [`asr-nemo`](asr-nemo/README.md) | Runs IndicConformer checkpoints through the NeMo sidecar over `ctx.subprocess` | registers `ctx.asr` |
 | [`tool-transcribe`](tool-transcribe/README.md) | Exposes audio transcription to the model as the `transcribe_audio` tool | registers on `ctx.tools` |
 

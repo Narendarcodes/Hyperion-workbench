@@ -253,6 +253,7 @@
       "@deepseek-ai/dsh-anonymous-user-id": ["./packages/identity/anonymous-user-id/src"],
       "@deepseek-ai/dsh-app-boot": ["./packages/boot/app-boot/src"],
       "@deepseek-ai/dsh-asr": ["./packages/asr/asr/src"],
+      "@deepseek-ai/dsh-asr-http": ["./packages/asr/asr-http/src"],
       "@deepseek-ai/dsh-asr-nemo": ["./packages/asr/asr-nemo/src"],
       "@deepseek-ai/dsh-atomic-write": ["./packages/util/atomic-write/src"],
       "@deepseek-ai/dsh-attachment": ["./packages/attachment/attachment/src"],
