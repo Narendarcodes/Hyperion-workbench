@@ -23,12 +23,14 @@
       "default": "./lib/types/shared.js"
     },
     "./src/*": "./src/*",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./mrpl-seed/*": "./mrpl-seed/*"
   },
   "files": [
     "lib/index.js",
     "lib/types/**/*.js",
-    "lib/types/**/*.d.ts"
+    "lib/types/**/*.d.ts",
+    "mrpl-seed/**"
   ],
   "scripts": {
     "bundle": "tsdown",
