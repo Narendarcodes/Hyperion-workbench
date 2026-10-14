@@ -521,3 +521,114 @@
 .tabEmptyText {
   margin: 0;
 }
+
+/* Source-cited record layout (MRPL wiring) */
+.recordGrid {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(260px, 1.3fr);
+  gap: var(--hx-space-4, 16px);
+  margin-top: var(--hx-space-3, 12px);
+}
+
+@media (max-width: 860px) {
+  .recordGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.recordGrid .infoRow {
+  font-size: 12px;
+  padding: 4px 0;
+  gap: var(--hx-space-3, 12px);
+  border-bottom: 1px solid var(--dsw-alias-border-l1, #eef2f7);
+}
+
+.recordGrid .infoRow dd {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.recordGrid .keyInfoPanel {
+  height: auto;
+  overflow: visible;
+}
+
+.recordGrid .tabEmptyText {
+  margin-top: var(--hx-space-3, 12px);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-tertiary, #94a3b8);
+}
+
+.siblingRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hx-space-2, 8px);
+  margin-top: var(--hx-space-3, 12px);
+}
+
+.siblingBtn {
+  padding: 4px 10px;
+  border-radius: var(--hx-radius-s, 8px);
+  border: 1px solid var(--dsw-alias-border-l2, #e2e8f0);
+  background: transparent;
+  color: var(--dsw-alias-label-secondary, #475569);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.siblingActive {
+  border-color: var(--dsw-alias-brand-primary, #2563eb);
+  color: var(--dsw-alias-brand-primary, #2563eb);
+}
+
+.citationList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hx-space-3, 12px);
+}
+
+.citationItem {
+  padding: var(--hx-space-3, 12px);
+  border-radius: var(--hx-radius-s, 8px);
+  border: 1px solid var(--dsw-alias-border-l2, #e2e8f0);
+  background: var(--dsw-alias-bg-layer-2, transparent);
+}
+
+.citationHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hx-space-2, 8px);
+}
+
+.citationLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--dsw-alias-link, #2563eb);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.citationTitle {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--dsw-alias-label-secondary, #64748b);
+}
+
+.citationQuote {
+  margin: 6px 0 0;
+  padding-left: 8px;
+  border-left: 2px solid var(--dsw-alias-border-l3, #cbd5e1);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--dsw-alias-label-primary, #0f172a);
+}

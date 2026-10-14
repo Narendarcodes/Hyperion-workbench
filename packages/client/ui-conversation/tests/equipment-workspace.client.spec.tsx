@@ -1,183 +1,88 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { EquipmentPage } from '../src/client/equipment/EquipmentPage.tsx'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import type { ReactElement } from 'react'
+import { EquipmentPage, toUnitGroups } from '../src/client/equipment/EquipmentPage.tsx'
+import { MrplSourceProvider, type MrplDataSource } from '../src/client/mrpl/api.ts'
+import { emptySource, failingSource, pendingSource, seedSource } from './mrpl-fixture.client.ts'
 
 afterEach(cleanup)
 
-describe('HYPERION Screen 3 — Equipment Workspace', () => {
-  it('renders complete Equipment Workspace structure matching reference specifications', () => {
-    const onOpenPid = vi.fn()
-    const onOpenDocuments = vi.fn()
-    const onNewInvestigation = vi.fn()
-    const onAskEquipment = vi.fn()
+const withSource = (source: MrplDataSource, ui: ReactElement) => render(<MrplSourceProvider source={source}>{ui}</MrplSourceProvider>)
 
-    const { container } = render(
-      <EquipmentPage
-        onOpenPid={onOpenPid}
-        onOpenDocuments={onOpenDocuments}
-        onNewInvestigation={onNewInvestigation}
-        onAskEquipment={onAskEquipment}
-      />,
-    )
-
-    // Root container must suppress the chat composer
-    const root = container.querySelector('[data-hide-composer]')
-    expect(root).not.toBeNull()
-    expect(root?.getAttribute('aria-label')).toBe('Equipment Workspace')
-
-    // Header & Breadcrumb
-    expect(screen.getByText('Plant')).toBeTruthy()
-    expect(screen.getByRole('heading', { level: 1, name: 'Equipment' })).toBeTruthy()
-    expect(screen.getByText('Browse and explore all plant equipment • MRPL Refinery')).toBeTruthy()
-    expect(screen.getByPlaceholderText('Search equipment by tag, name, unit, service...')).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Filters' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'New Investigation' })).toBeTruthy()
-
-    // Equipment Browser
-    expect(screen.getByRole('heading', { level: 2, name: 'Equipment Browser' })).toBeTruthy()
-    expect(screen.getByPlaceholderText('Search equipment...')).toBeTruthy()
-    expect(screen.getByText('CDU - Crude Distillation Unit')).toBeTruthy()
-    expect(screen.getByText('(42)')).toBeTruthy()
-    expect(screen.getByText('Pumps')).toBeTruthy()
-    expect(screen.getByText('(12)')).toBeTruthy()
-    expect(screen.getByText('Heat Exchangers')).toBeTruthy()
-    expect(screen.getByText('Valves')).toBeTruthy()
-
-    // Other process units in tree
-    expect(screen.getByText('VDU - Vacuum Distillation Unit')).toBeTruthy()
-    expect(screen.getByText('HCU - Hydrocracking Unit')).toBeTruthy()
-    expect(screen.getByText('HDT - Hydrotreating Unit')).toBeTruthy()
-    expect(screen.getByText('SRU - Sulfur Recovery Unit')).toBeTruthy()
-    expect(screen.getByText('Utilities')).toBeTruthy()
-    expect(screen.getByText('Offsites')).toBeTruthy()
-
-    // Selected Equipment Detail
-    expect(screen.getByRole('heading', { level: 2, name: 'P-101 A/B' })).toBeTruthy()
-    expect(screen.getAllByText('In Service').length).toBeGreaterThanOrEqual(2)
-    expect(screen.getByText('Crude Feed Pump')).toBeTruthy()
-    expect(screen.getAllByText('CDU-03').length).toBeGreaterThanOrEqual(2)
-    expect(screen.getAllByText(/100 - Crude Preheat/).length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByRole('button', { name: 'View on P&ID' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Open Documents' })).toBeTruthy()
-
-    // Equipment Tabs
-    expect(screen.getByRole('tab', { name: 'Overview' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Specifications' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Operations' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Maintenance' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Documents' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Related' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'History' })).toBeTruthy()
-
-    // Media mode buttons
-    expect(screen.getByRole('button', { name: '3D' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Image' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Drawing' })).toBeTruthy()
-
-    // Key Information panel
-    expect(screen.getByRole('heading', { level: 3, name: 'Key Information' })).toBeTruthy()
-    expect(screen.getByText('Tag Number')).toBeTruthy()
-    expect(screen.getByText('Centrifugal Pump')).toBeTruthy()
-    expect(screen.getByText('Crude Feed')).toBeTruthy()
-    expect(screen.getByText('CDU-03-001')).toBeTruthy()
-    expect(screen.getByText('KSB')).toBeTruthy()
-    expect(screen.getByText('ETN 150-400')).toBeTruthy()
-    expect(screen.getByText('12 Mar 2018')).toBeTruthy()
-    expect(screen.getByText('High')).toBeTruthy()
-    expect(screen.getByText('04 Jan 2024')).toBeTruthy()
-    expect(screen.getByText('04 Jul 2024')).toBeTruthy()
-
-    // Performance panel
-    expect(screen.getByRole('heading', { level: 2, name: 'Performance' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Time range: Last 30 days' })).toBeTruthy()
-    expect(screen.getByText('Suction Pressure')).toBeTruthy()
-    expect(screen.getByText('3.2 bar')).toBeTruthy()
-    expect(screen.getByText('Discharge Pressure')).toBeTruthy()
-    expect(screen.getByText('28.5 bar')).toBeTruthy()
-    expect(screen.getByText('Flow Rate')).toBeTruthy()
-    expect(screen.getByText('520 m³/h')).toBeTruthy()
-    expect(screen.getByText('Motor Current')).toBeTruthy()
-    expect(screen.getByText('68 A')).toBeTruthy()
-    expect(screen.getByText('Vibration (RMS)')).toBeTruthy()
-    expect(screen.getByText('2.1 mm/s')).toBeTruthy()
-
-    // Connected Documents
-    expect(screen.getByRole('heading', { level: 3, name: 'Connected Documents (8)' })).toBeTruthy()
-    expect(screen.getByText('P-101 Datasheet.pdf')).toBeTruthy()
-    expect(screen.getByText('Datasheet')).toBeTruthy()
-    expect(screen.getByText('12 Jan 2024')).toBeTruthy()
-    expect(screen.getByText('P-101 Maintenance Manual.pdf')).toBeTruthy()
-    expect(screen.getByText('Manual')).toBeTruthy()
-    expect(screen.getByText('Crude Pump Procedure.pdf')).toBeTruthy()
-    expect(screen.getByText('Vibration Report.pdf')).toBeTruthy()
-    expect(screen.getByText('Spare Parts List.pdf')).toBeTruthy()
-
-    // Recent Activity
-    expect(screen.getByRole('heading', { level: 3, name: 'Recent Activity' })).toBeTruthy()
-    expect(screen.getByText('Vibration analysis completed')).toBeTruthy()
-    expect(screen.getByText('AI analysis report generated')).toBeTruthy()
-    expect(screen.getByText('2 hours ago')).toBeTruthy()
-    expect(screen.getByText('Maintenance work order closed')).toBeTruthy()
-    expect(screen.getByText('WO-2024-056')).toBeTruthy()
-    expect(screen.getByText('1 day ago')).toBeTruthy()
-
-    // Ask Hyperion Panel
-    expect(screen.getByRole('heading', { level: 3, name: 'Ask Hyperion' })).toBeTruthy()
-    expect(screen.getByText('Ask questions about this equipment, analyze issues, or get recommendations.')).toBeTruthy()
-    expect(screen.getByText('Why is vibration high recently?')).toBeTruthy()
-    expect(screen.getByText('Show maintenance history')).toBeTruthy()
-    expect(screen.getByText('Find related documents')).toBeTruthy()
-    expect(screen.getByText('Compare A/B performance')).toBeTruthy()
-    expect(screen.getByPlaceholderText('Ask about P-101 A/B...')).toBeTruthy()
+describe('Equipment workspace (source-cited records)', () => {
+  it('builds the browser tree from real host groups', async () => {
+    const groups = toUnitGroups(await seedSource().getEquipment())
+    expect(groups.reduce((sum, unit) => sum + unit.count, 0)).toBe(10)
+    expect(groups.every(unit => unit.categories.every(cat => cat.count === (cat.equipmentIds ?? []).length))).toBe(true)
   })
 
-  it('handles tab switching and button actions correctly', () => {
+  it('renders verified source records and no synthesized telemetry', async () => {
+    const onAsk = vi.fn()
     const onOpenPid = vi.fn()
-    const onOpenDocuments = vi.fn()
-    const onNewInvestigation = vi.fn()
-    const onAskEquipment = vi.fn()
-
-    render(
-      <EquipmentPage
-        onOpenPid={onOpenPid}
-        onOpenDocuments={onOpenDocuments}
-        onNewInvestigation={onNewInvestigation}
-        onAskEquipment={onAskEquipment}
-      />,
+    const onNew = vi.fn()
+    const { container } = withSource(
+      seedSource(),
+      <EquipmentPage onAskEquipment={onAsk} onOpenPid={onOpenPid} onNewInvestigation={onNew} />,
     )
+    expect(container.querySelector('[data-hide-composer]')?.getAttribute('aria-label')).toBe('Equipment Workspace')
+    expect(screen.getByRole('status', { name: 'Loading Equipment' })).toBeTruthy()
 
-    // Click Specifications tab
-    const specsTab = screen.getByRole('tab', { name: 'Specifications' })
-    fireEvent.click(specsTab)
-    expect(specsTab.getAttribute('aria-selected')).toBe('true')
-    expect(screen.getByText(/Engineering details for/)).toBeTruthy()
+    // First group = first record in the seed: Chevron #4 Crude Unit, C-1100 column.
+    expect(await screen.findByRole('heading', { level: 2, name: 'C-1100' })).toBeTruthy()
+    expect(screen.getByText('Public sample data')).toBeTruthy()
+    expect(screen.getByText('Source verified')).toBeTruthy()
+    const citations = screen.getByRole('list', { name: 'Source citations' })
+    expect(within(citations).getByText('DOC-007 · p. 11')).toBeTruthy()
+    expect(within(citations).getByText('Verified')).toBeTruthy()
+    expect(screen.getByText('Not connected')).toBeTruthy()
+    // Old fixture values are gone.
+    for (const fake of ['P-101 A/B', 'KSB', '3.2 bar', 'WO-2024-056', 'P-101 Datasheet.pdf']) {
+      expect(screen.queryByText(fake)).toBeNull()
+    }
 
-    // Click Overview tab back
-    const overviewTab = screen.getByRole('tab', { name: 'Overview' })
-    fireEvent.click(overviewTab)
-    expect(overviewTab.getAttribute('aria-selected')).toBe('true')
-    expect(screen.getByRole('heading', { level: 3, name: 'Key Information' })).toBeTruthy()
+    // Selecting a category with a real tag-less record shows "Not printed in source".
+    fireEvent.click(screen.getAllByRole('button', { name: /CDU\/VDU/ })[0]!)
+    fireEvent.click(screen.getAllByText('Heat Exchanger').find(el => el.closest('[role="tree"]') !== null)!)
+    expect(await screen.findByRole('heading', { level: 2, name: 'CRUDE/HVGO CR exchanger' })).toBeTruthy()
+    expect(screen.getByText('Not printed in source')).toBeTruthy()
 
-    // Click View on P&ID
     fireEvent.click(screen.getByRole('button', { name: 'View on P&ID' }))
-    expect(onOpenPid).toHaveBeenCalledTimes(1)
-
-    // Click Open Documents
-    fireEvent.click(screen.getByRole('button', { name: 'Open Documents' }))
-    expect(onOpenDocuments).toHaveBeenCalledTimes(1)
-
-    // Click New Investigation
+    expect(onOpenPid).toHaveBeenCalledWith(expect.objectContaining({ id: 'oisd-cs-08-crude-hvgo-exchanger' }))
     fireEvent.click(screen.getByRole('button', { name: 'New Investigation' }))
-    expect(onNewInvestigation).toHaveBeenCalledTimes(1)
+    expect(onNew).toHaveBeenCalledWith(expect.objectContaining({ id: 'oisd-cs-08-crude-hvgo-exchanger' }))
+    fireEvent.click(screen.getByText(/What does DOC-001 report about/))
+    expect(onAsk).toHaveBeenCalledWith('What does DOC-001 report about CRUDE/HVGO CR exchanger?')
+  })
 
-    // Click suggested question in Ask Hyperion
-    const suggBtn = screen.getByText('Why is vibration high recently?')
-    fireEvent.click(suggBtn)
-    expect(onAskEquipment).toHaveBeenCalledWith('Why is vibration high recently?')
+  it('switches between records sharing a category', async () => {
+    withSource(seedSource(), <EquipmentPage />)
+    await screen.findByRole('heading', { level: 2, name: 'C-1100' })
+    fireEvent.click(screen.getAllByRole('button', { name: /Catalytic Reformer/ })[0]!)
+    fireEvent.click(screen.getAllByText('Heat Exchanger').find(el => el.closest('[role="tree"]') !== null && el.closest('li')?.textContent?.includes('(2)'))!)
+    expect(await screen.findByRole('heading', { level: 2, name: 'E-6600E' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'E-6600B' }))
+    expect(await screen.findByRole('heading', { level: 2, name: 'E-6600B' })).toBeTruthy()
+  })
 
-    // Verify input value was populated
-    const input = screen.getByPlaceholderText('Ask about P-101 A/B...') as HTMLInputElement
-    expect(input.value).toBe('Why is vibration high recently?')
+  it('filters by header search with an empty-match state', async () => {
+    withSource(seedSource(), <EquipmentPage />)
+    await screen.findByRole('heading', { level: 2, name: 'C-1100' })
+    fireEvent.change(screen.getByPlaceholderText('Search equipment by tag, name, unit, service...'), { target: { value: 'P-1149' } })
+    expect(await screen.findByRole('heading', { level: 2, name: 'P-1149' })).toBeTruthy()
+    fireEvent.change(screen.getByPlaceholderText('Search equipment by tag, name, unit, service...'), { target: { value: 'zzz-none' } })
+    expect(await screen.findByText('No equipment matches')).toBeTruthy()
+  })
+
+  it('renders error, empty and loading states', async () => {
+    withSource(failingSource(), <EquipmentPage />)
+    expect(await screen.findByRole('alert', { name: 'Equipment: error' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy()
+    cleanup()
+    withSource(emptySource(), <EquipmentPage />)
+    expect(await screen.findByText('No equipment records')).toBeTruthy()
+    cleanup()
+    withSource(pendingSource(), <EquipmentPage />)
+    expect(screen.getByRole('status', { name: 'Loading Equipment' })).toBeTruthy()
   })
 })

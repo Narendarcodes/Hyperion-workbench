@@ -128,6 +128,13 @@ export const en = {
   'evidence.generatedFile': 'Generated File',
   'evidence.status': 'Status',
   'evidence.verified': 'Verified',
+  'evidence.citations': 'Citations',
+  'evidence.checking': 'Checking…',
+  'evidence.partial': 'Partially verified ({verified}/{total})',
+  'evidence.unverified': 'Not verified',
+  'evidence.none': 'No citations to check',
+  'evidence.error': 'Verification unavailable',
+  'evidence.retry': 'Retry',
 }
 
 /** Hindi dictionary (mirrors the en key set). */
@@ -252,6 +259,13 @@ export const hi = {
   'evidence.generatedFile': 'उत्पन्न फ़ाइल',
   'evidence.status': 'स्थिति',
   'evidence.verified': 'सत्यापित',
+  'evidence.citations': 'उद्धरण',
+  'evidence.checking': 'जाँच हो रही है…',
+  'evidence.partial': 'आंशिक रूप से सत्यापित ({verified}/{total})',
+  'evidence.unverified': 'सत्यापित नहीं',
+  'evidence.none': 'जाँचने के लिए कोई उद्धरण नहीं',
+  'evidence.error': 'सत्यापन उपलब्ध नहीं',
+  'evidence.retry': 'पुनः प्रयास करें',
 }
 
 /** Telugu dictionary (mirrors the en key set). */
@@ -376,4 +390,11 @@ export const te = {
   'evidence.generatedFile': 'రూపొందించిన ఫైల్',
   'evidence.status': 'స్థితి',
   'evidence.verified': 'ధృవీకరించబడింది',
+  'evidence.citations': 'ఉల్లేఖనలు',
+  'evidence.checking': 'తనిఖీ చేస్తోంది…',
+  'evidence.partial': 'పాక్షికంగా ధృవీకరించబడింది ({verified}/{total})',
+  'evidence.unverified': 'ధృవీకరించబడలేదు',
+  'evidence.none': 'తనిఖీ చేయడానికి ఉల్లేఖనలు లేవు',
+  'evidence.error': 'ధృవీకరణ అందుబాటులో లేదు',
+  'evidence.retry': 'మళ్ళీ ప్రయత్నించండి',
 }
