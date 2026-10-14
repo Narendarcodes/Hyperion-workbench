@@ -12,7 +12,6 @@ export interface DocumentDetailsPanelProps {
   readonly onOpenFullscreen?: () => void
   readonly onDownload?: () => void
   readonly onAddToInvestigation?: (doc: DocumentItem) => void
-  readonly onCompareVersion?: (doc: DocumentItem) => void
   readonly onAskCopilot?: (question: string) => void
 }
 
@@ -21,7 +20,6 @@ export function DocumentDetailsPanel({
   onOpenFullscreen,
   onDownload,
   onAddToInvestigation,
-  onCompareVersion,
   onAskCopilot,
 }: DocumentDetailsPanelProps) {
   const [activeTab, setActiveTab] = useState<DetailsTab>('details')
@@ -283,17 +281,6 @@ export function DocumentDetailsPanel({
               Add to Investigation
             </button>
 
-            <button
-              type="button"
-              className={css.secondaryActionBtn}
-              onClick={() => onCompareVersion?.(document)}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              Compare Version
-            </button>
           </div>
         </div>
 
@@ -382,28 +369,8 @@ export function DocumentDetailsPanel({
               }}
             />
             <div className={css.copilotToolsRow}>
-              <div className={css.copilotToolsLeft}>
-                <button type="button" className={css.toolIconBtn} aria-label="Add attachment" title="Add attachment">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                </button>
-                <button type="button" className={css.toolIconBtn} aria-label="Attach file" title="Attach file">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-                  </svg>
-                </button>
-                <button type="button" className={css.toolTextPill}>
-                  <span>@ Context</span>
-                </button>
-                <button type="button" className={css.toolTextPill}>
-                  <span>✨ Skill</span>
-                </button>
-                <button type="button" className={css.toolTextPill}>
-                  <span>⚙ Auto ▾</span>
-                </button>
-              </div>
+              {/* Dead tool pills removed: duplicates of Upload Document and the main composer. */}
+              <span />
 
               <button
                 type="button"

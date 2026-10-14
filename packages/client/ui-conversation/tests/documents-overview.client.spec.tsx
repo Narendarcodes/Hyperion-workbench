@@ -118,3 +118,34 @@ describe('Documents page (host-backed catalog)', () => {
     await waitFor(() => { expect(screen.queryByText('Find P-101 details')).toBeNull() })
   })
 })
+
+describe('Document Library facets (wired filters)', () => {
+  it('Unit / Equipment / Document Type / Tag selects filter the live list and Sort reorders it', async () => {
+    withSource(seedSource(), <DocumentsOverview />)
+    await screen.findByText('All (13)')
+    const lib = within(screen.getByRole('region', { name: 'Document Library' }))
+    const typeSel = lib.getByRole('combobox', { name: 'Filter by Document Type' }) as HTMLSelectElement
+    const opts = [...typeSel.options].map(o => o.value).filter(v => v !== '')
+    expect(opts.length).toBeGreaterThan(0)
+    fireEvent.change(typeSel, { target: { value: opts[0] } })
+    const rows = lib.getAllByRole('row').slice(1)
+    expect(rows.length).toBeGreaterThan(0)
+    for (const r of rows) expect(r.textContent).toContain(opts[0])
+    fireEvent.change(typeSel, { target: { value: '' } })
+    const tagSel = lib.getByRole('combobox', { name: 'Filter by Tag' }) as HTMLSelectElement
+    expect(tagSel.options.length).toBeGreaterThan(1)
+    for (const name of ['Filter by Unit', 'Filter by Equipment']) expect(lib.getByRole('combobox', { name })).toBeTruthy()
+    fireEvent.change(lib.getByRole('combobox', { name: 'Sort documents' }), { target: { value: 'name' } })
+    const names = lib.getAllByRole('row').slice(1).map(r => r.querySelector('[title]')?.getAttribute('title') ?? '')
+    expect([...names].sort((a, b) => a.localeCompare(b))).toEqual(names)
+    expect(lib.queryByRole('button', { name: /^Actions for / })).toBeNull()
+  })
+
+  it('details mini-composer has no dead duplicate tools and no Compare Version', async () => {
+    withSource(seedSource(), <DocumentsOverview />)
+    await screen.findByText('All (13)')
+    for (const name of ['Add attachment', 'Attach file', 'Compare Version', 'Search inside document', 'Export or share']) expect(screen.queryByRole('button', { name })).toBeNull()
+    expect(screen.queryByText('⚙ Auto ▾')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Send question to Hyperion' })).toBeTruthy()
+  })
+})
