@@ -41,6 +41,9 @@
     },
     {
       "path": "../../attachment/attachment"
+    },
+    {
+      "path": "../../guard/ocr-guard"
     }
   ]
 }

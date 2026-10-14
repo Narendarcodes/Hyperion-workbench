@@ -1,0 +1,28 @@
+{
+  "_about": "Key facts read by the agent from the DOC-011 scan (IS 1460:2017 Table 1, Requirement for Automotive Diesel Fuel, as hosted by IOCL). Status: proposed — agent-read from the 1700x2200 scan, pending human spot-check. Each row fact: the row keyword must appear on the same output row/line as the value(s).",
+  "rows": [
+    {"key": "Acidity, inorganic", "match": ["inorganic"], "values": ["Nil"]},
+    {"key": "Acidity, total", "match": ["Acidity, total", "total, mg of KOH"], "values": ["0.20"]},
+    {"key": "Ash", "match": ["Ash"], "values": ["0.01"]},
+    {"key": "Carbon residue", "match": ["Carbon residue", "Ramsbottom"], "values": ["0.30"]},
+    {"key": "Cetane number", "match": ["Cetane number"], "values": ["51"]},
+    {"key": "Cetane index", "match": ["Cetane index"], "values": ["46"]},
+    {"key": "Pour point winter", "match": ["Winter"], "values": ["3"], "near": "Pour point"},
+    {"key": "Copper strip corrosion", "match": ["Copper strip"], "values": ["No. 1"]},
+    {"key": "Distillation 95%", "match": ["Distillation"], "values": ["360"]},
+    {"key": "Flash point Abel", "match": ["Flash point"], "values": ["35"]},
+    {"key": "Kinematic viscosity", "match": ["Kinematic viscosity"], "values": ["2.0 to 4.5"]},
+    {"key": "Total contamination", "match": ["contamination"], "values": ["24"]},
+    {"key": "Density at 15C BS-IV", "match": ["Density"], "values": ["815"]},
+    {"key": "Density at 15C BS-VI", "match": ["Density"], "values": ["810"]},
+    {"key": "Total sulphur BS-IV", "match": ["sulphur"], "values": ["50"]},
+    {"key": "Total sulphur BS-VI", "match": ["sulphur"], "values": ["10"]},
+    {"key": "Water content", "match": ["Water content"], "values": ["200"]},
+    {"key": "Oxidation stability", "match": ["Oxidation stability"], "values": ["25"]},
+    {"key": "PAH", "match": ["Polycyclic", "PAH"], "values": ["8"]},
+    {"key": "Lubricity wear scar", "match": ["Lubricity", "wear scar"], "values": ["460"]},
+    {"key": "FAME content", "match": ["FAME content"], "values": ["7.0"]}
+  ],
+  "phrases_p1": ["IS 1460 : 2017", "Requirement for Automotive Diesel Fuel", "Bharat Stage VI", "ASTM D 4046/ISO 13759", "Assam Crude"],
+  "phrases_p2": ["November to February", "66°C", "IS 15607", "ISO 4259", "Date of certification", "Batch number or unique identifier"]
+}

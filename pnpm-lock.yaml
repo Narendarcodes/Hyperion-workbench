@@ -5832,6 +5832,9 @@ importers:
 
   packages/fs/tool-fs:
     dependencies:
+      '@deepseek-ai/dsh-ocr-guard':
+        specifier: workspace:^
+        version: link:../../guard/ocr-guard
       '@deepseek-ai/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
@@ -6149,6 +6152,8 @@ importers:
       '@deepseek-ai/dsh-tools':
         specifier: workspace:^
         version: link:../../core/tools
+
+  packages/guard/ocr-guard: {}
 
   packages/guard/repeat-tool-reminder:
     dependencies:
