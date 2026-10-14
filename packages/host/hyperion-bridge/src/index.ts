@@ -28,6 +28,7 @@ import { isUserInvocable } from '@deepseek-ai/dsh-skill'
 import z from '@deepseek-ai/schemastery'
 import { foldHyperionEnvelope } from './envelope.ts'
 import { registerMrplRoutes } from './mrpl-routes.ts'
+import { createRagRetriever, RagClient, registerMrplLiveRoutes } from './mrpl-live.ts'
 import { bundledSeedDir, MRPL_RETRIEVAL_SERVICE, MrplStore, type MrplRetrievalProvider } from './mrpl-store.ts'
 import type { HyperionSourceEvent } from './shared.ts'
 import {
@@ -58,16 +59,60 @@ export interface Config {
    * bundled public sample seed. `HYPERION_MRPL_CORPUS_DIR` overrides both.
    */
   readonly mrplCorpusDir: string
+  /**
+   * Hyperion RAG service base URL (scripts/hyperion_rag/service.py), e.g.
+   * `http://127.0.0.1:8120`. Empty = evidence search reports `not-configured`
+   * and uploads answer 503. `HYPERION_RAG_URL` supplies the default.
+   */
+  readonly ragUrl: string
+  /** Deadline for one RAG call (ms). `HYPERION_RAG_TIMEOUT_MS`. */
+  readonly ragTimeoutMs: number
+  /** Largest accepted document upload (bytes). `HYPERION_MRPL_MAX_UPLOAD_BYTES`. */
+  readonly maxUploadBytes: number
+  /** Largest accepted composer audio clip (bytes). `HYPERION_ASR_MAX_AUDIO_BYTES`. */
+  readonly maxAudioBytes: number
+  /**
+   * Language sent to `ctx.asr` when the composer does not choose one;
+   * `auto` = detect (te/hi/en per the STT sidecar's `--auto-languages`). `HYPERION_ASR_LANGUAGE`.
+   */
+  readonly asrLanguage: string
+  /** Generated-artifact directory. `HYPERION_UPLOADS_DIR`; default `~/.hermes/hermes3d/uploads`. */
+  readonly uploadsDir: string
 }
 
 const boundedBytes = (): z<number> => z.number().step(1).min(1024).max(4_194_304).required()
 
+/** Environment-backed defaults (documented in docs/mrpl/configuration.md). */
+function envDefaults(env: NodeJS.ProcessEnv = process.env): Omit<Config, 'maxBodyBytes' | 'mrplCorpusDir'> {
+  const num = (name: string, fallback: number): number => {
+    const raw = env[name]
+    const value = raw === undefined || raw === '' ? NaN : Number(raw)
+    return Number.isFinite(value) && value > 0 ? value : fallback
+  }
+  return {
+    ragUrl: env.HYPERION_RAG_URL ?? '',
+    ragTimeoutMs: num('HYPERION_RAG_TIMEOUT_MS', 120_000),
+    maxUploadBytes: num('HYPERION_MRPL_MAX_UPLOAD_BYTES', 50 * 1024 * 1024),
+    maxAudioBytes: num('HYPERION_ASR_MAX_AUDIO_BYTES', 25 * 1024 * 1024),
+    asrLanguage: env.HYPERION_ASR_LANGUAGE ?? 'auto',
+    uploadsDir: env.HYPERION_UPLOADS_DIR ?? join(homedir(), '.hermes', 'hermes3d', 'uploads'),
+  }
+}
+
+const ENV = envDefaults()
+
 export const Config: z<Config> = z.object({
   maxBodyBytes: boundedBytes(),
   mrplCorpusDir: z.string().default(''),
+  ragUrl: z.string().default(ENV.ragUrl),
+  ragTimeoutMs: z.number().step(1).min(100).max(3_600_000).default(ENV.ragTimeoutMs),
+  maxUploadBytes: z.number().step(1).min(1024).max(1_073_741_824).default(ENV.maxUploadBytes),
+  maxAudioBytes: z.number().step(1).min(1024).max(268_435_456).default(ENV.maxAudioBytes),
+  asrLanguage: z.string().min(2).default(ENV.asrLanguage),
+  uploadsDir: z.string().default(ENV.uploadsDir),
 })
 
-export const DEFAULT_CONFIG: Config = { maxBodyBytes: 64 * 1024, mrplCorpusDir: '' }
+export const DEFAULT_CONFIG: Config = { maxBodyBytes: 64 * 1024, mrplCorpusDir: '', ...ENV }
 
 /** Trust surface consumed here; the browser-side connection package owns the full type. */
 interface HyperionBridgeConnection {
@@ -179,11 +224,13 @@ async function readBoundedBody(req: IncomingMessage, ceiling: number): Promise<s
 const textOf = (value: unknown): string | null =>
   typeof value === 'string' && value.trim().length > 0 ? value : null
 
-/** Demo report-artifact directory; tests point it at a fixture dir via env. */
-function uploadsDir(): string {
-  const override = process.env.HYPERION_UPLOADS_DIR
-  if (override !== undefined && override.length > 0) return override
-  return join(homedir(), '.hermes', 'hermes3d', 'uploads')
+/** Generated-artifact directory: env override (tests), then config. */
+function uploadsDirOf(config: Config): () => string {
+  return () => {
+    const override = process.env.HYPERION_UPLOADS_DIR
+    if (override !== undefined && override.length > 0) return override
+    return typeof config.uploadsDir === 'string' && config.uploadsDir.length > 0 ? config.uploadsDir : envDefaults().uploadsDir
+  }
 }
 
 /** MRPL store directory: env override, then config, then the bundled public sample seed. */
@@ -294,6 +341,7 @@ const RING_CAP = 500
 
 /** Register the Hyperion bridge routes behind the connection trust fence. */
 export function apply(ctx: Context, config: Config): void {
+  const uploadsDir = uploadsDirOf(config)
   const buffers = new Map<string, { events: HyperionSourceEvent[]; nextSeq: number }>()
 
   const bufferFor = (sessionId: string): { events: HyperionSourceEvent[]; nextSeq: number } => {
@@ -606,6 +654,23 @@ export function apply(ctx: Context, config: Config): void {
   }), `hyperion-bridge: GET ${HYPERION_FILES_ROUTE}/<name>`)
 
   const mrpl = mrplStoreDir(config)
+  const ragUrl = typeof config.ragUrl === 'string' ? config.ragUrl.trim() : ''
+  const rag = ragUrl.length > 0 ? new RagClient({ url: ragUrl, timeoutMs: config.ragTimeoutMs ?? ENV.ragTimeoutMs }) : undefined
+  const ragRetriever = rag !== undefined ? createRagRetriever(rag) : undefined
+  registerMrplLiveRoutes(ctx, {
+    rag,
+    maxUploadBytes: config.maxUploadBytes ?? ENV.maxUploadBytes,
+    maxBodyBytes: config.maxBodyBytes,
+    maxAudioBytes: config.maxAudioBytes ?? ENV.maxAudioBytes,
+    asrLanguage: config.asrLanguage ?? ENV.asrLanguage,
+    asr: () => {
+      const provider = optionalService(ctx, 'asr') as { transcribe?: unknown } | undefined
+      return provider !== undefined && typeof provider.transcribe === 'function' ? provider as never : undefined
+    },
+    rejected,
+    sendJson,
+    readBody: readBoundedBody,
+  })
   registerMrplRoutes(ctx, {
     store: new MrplStore(mrpl.dir, { uploadsDir, seed: mrpl.seed }),
     maxBodyBytes: config.maxBodyBytes,
@@ -614,7 +679,14 @@ export function apply(ctx: Context, config: Config): void {
     readBody: readBoundedBody,
     retriever: () => {
       const provider = optionalService(ctx, MRPL_RETRIEVAL_SERVICE) as MrplRetrievalProvider | undefined
-      return provider !== undefined && typeof provider.retrieve === 'function' ? provider : undefined
+      return provider !== undefined && typeof provider.retrieve === 'function' ? provider : ragRetriever
+    },
+    extraDocumentText: rag === undefined ? undefined : async (documentId) => {
+      try {
+        return await rag.pages(documentId)
+      } catch {
+        return null
+      }
     },
   })
 }

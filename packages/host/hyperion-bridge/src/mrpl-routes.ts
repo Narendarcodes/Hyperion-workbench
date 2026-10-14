@@ -37,6 +37,12 @@ const MAX_CITATIONS = 200
 const MAX_QUOTES = 20
 const MAX_STRING = 500
 
+/** Page text of a document held outside the store (a live upload). */
+export interface MrplExtraDocument {
+  readonly title: string
+  readonly pages: readonly { readonly page: number; readonly text: string }[]
+}
+
 export interface MrplRouteDeps {
   readonly store: MrplStore
   readonly maxBodyBytes: number
@@ -44,6 +50,8 @@ export interface MrplRouteDeps {
   readonly sendJson: (res: ServerResponse, status: number, payload: unknown) => void
   readonly readBody: (req: IncomingMessage, ceiling: number) => Promise<string | null>
   readonly retriever: () => MrplRetrievalProvider | undefined
+  /** Page text for documents outside the store (live uploads held by the RAG service). */
+  readonly extraDocumentText?: ((documentId: string) => Promise<MrplExtraDocument | null>) | undefined
 }
 
 /** Parse and bound a verify body; a string describes the first violation. */
@@ -132,7 +140,25 @@ export function registerMrplRoutes(ctx: Context, deps: MrplRouteDeps): void {
       try {
         const detail = await store.detail(documentId)
         if (detail === null) {
-          notFound()
+          const extra = rest.length === 2 && deps.extraDocumentText !== undefined ? await deps.extraDocumentText(documentId) : null
+          if (extra === null || extra.pages.length === 0) {
+            notFound()
+            return
+          }
+          const pageRaw = url.searchParams.get('page')
+          const firstExtra = extra.pages[0]?.page ?? 1
+          const page = pageRaw === null ? firstExtra : Number(pageRaw)
+          const entry = extra.pages.find(candidate => candidate.page === page)
+          if (entry === undefined) {
+            sendJson(res, 404, { code: 'mrpl/page-not-found', message: `page ${String(page)} has no text in "${documentId}"` })
+            return
+          }
+          const { dataset } = await store.documents()
+          const payload: MrplDocumentTextResponse = {
+            dataset, documentId, page, textUnit: 'page',
+            first: firstExtra, last: extra.pages.at(-1)?.page ?? firstExtra, text: entry.text,
+          }
+          sendJson(res, 200, payload)
           return
         }
         if (rest.length === 1) {
@@ -148,7 +174,8 @@ export function registerMrplRoutes(ctx: Context, deps: MrplRouteDeps): void {
           return
         }
         const pageRaw = url.searchParams.get('page')
-        const page = pageRaw === null ? pages[0]!.page : Number(pageRaw)
+        const firstPage = pages[0]?.page ?? 1
+        const page = pageRaw === null ? firstPage : Number(pageRaw)
         if (!Number.isInteger(page)) {
           sendJson(res, 400, { code: 'bad-request', message: 'query "page" must be an integer' })
           return
@@ -163,8 +190,8 @@ export function registerMrplRoutes(ctx: Context, deps: MrplRouteDeps): void {
           documentId,
           page,
           textUnit: detail.document.textUnit,
-          first: pages[0]!.page,
-          last: pages[pages.length - 1]!.page,
+          first: firstPage,
+          last: pages.at(-1)?.page ?? firstPage,
           text: entry.text,
         }
         sendJson(res, 200, payload)
@@ -325,7 +352,7 @@ export function registerMrplRoutes(ctx: Context, deps: MrplRouteDeps): void {
         return
       }
       res.statusCode = 200
-      res.setHeader('content-type', DELIVERABLE_CONTENT_TYPES[fileName.split('.').pop()!.toLowerCase()] ?? 'application/octet-stream')
+      res.setHeader('content-type', DELIVERABLE_CONTENT_TYPES[(fileName.split('.').pop() ?? '').toLowerCase()] ?? 'application/octet-stream')
       res.setHeader('content-length', String(body.byteLength))
       res.setHeader('content-disposition', `inline; filename="${fileName}"`)
       res.setHeader('cache-control', 'no-store')
