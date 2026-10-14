@@ -9,8 +9,8 @@ import { useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import {
   IconContextInjectionOutline16,
-  IconPaperclipOutline16,
-  IconPlusOutline16,
+
+
   IconSkillOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { EquipmentSuggestionPrompt } from './types.ts'
@@ -128,22 +128,6 @@ export function AskHyperionPanel({
           <div className={css.leftTools}>
             <button
               type="button"
-              className={css.toolBtn}
-              aria-label="Add action or file"
-              title="Add"
-            >
-              <IconPlusOutline16 size={13} />
-            </button>
-            <button
-              type="button"
-              className={css.toolBtn}
-              aria-label="Attach file"
-              title="Attach"
-            >
-              <IconPaperclipOutline16 size={13} />
-            </button>
-            <button
-              type="button"
               className={css.chipBtn}
               onClick={() => setInputText(prev => `${prev} @${subject} `)}
               aria-label="Add equipment context"
@@ -163,20 +147,6 @@ export function AskHyperionPanel({
           </div>
 
           <div className={css.rightTools}>
-            <button
-              type="button"
-              className={css.autoModelBtn}
-              aria-label="Model routing: Auto"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-              </svg>
-              <span>Auto</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
 
             <button
               type="button"

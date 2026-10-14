@@ -5,7 +5,7 @@
  */
 
 import {
-  IconEllipsisOutline16,
+
   IconShareOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { ConnectedDocument } from './types.ts'
@@ -94,14 +94,6 @@ export function ConnectedDocuments({
                   title="Open external"
                 >
                   <IconShareOutline16 size={13} />
-                </button>
-                <button
-                  type="button"
-                  className={css.rowActionBtn}
-                  aria-label={`Options for ${doc.name}`}
-                  title="More actions"
-                >
-                  <IconEllipsisOutline16 size={13} />
                 </button>
               </div>
             </li>
