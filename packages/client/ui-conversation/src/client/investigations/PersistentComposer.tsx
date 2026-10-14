@@ -17,11 +17,17 @@ import {
 import css from './PersistentComposer.module.css'
 
 export interface PersistentComposerProps {
+  /** Equipment tag of the open investigation, inserted by the Context chip. */
+  readonly contextTag?: string
+  /** Skill trigger inserted by the Skill chip (default: the generic investigate skill). */
+  readonly skillTrigger?: string
   readonly onSend?: (query: string) => void
   readonly onToggleWorkspaceWrite?: (active: boolean) => void
 }
 
 export function PersistentComposer({
+  contextTag,
+  skillTrigger = '/investigate',
   onSend,
   onToggleWorkspaceWrite,
 }: PersistentComposerProps) {
@@ -84,7 +90,8 @@ export function PersistentComposer({
             <button
               type="button"
               className={css.chipBtn}
-              onClick={() => setInputText(prev => `${prev} @P-204 `)}
+              onClick={() => { if (contextTag !== undefined && contextTag !== '') setInputText(prev => `${prev} @${contextTag} `) }}
+              disabled={contextTag === undefined || contextTag === ''}
               aria-label="Insert equipment context"
             >
               <IconContextInjectionOutline16 size={12} />
@@ -94,7 +101,7 @@ export function PersistentComposer({
             <button
               type="button"
               className={css.chipBtn}
-              onClick={() => setInputText(prev => `${prev} /vibration-analysis `)}
+              onClick={() => setInputText(prev => `${prev} ${skillTrigger} `)}
               aria-label="Insert skill trigger"
             >
               <IconSkillOutline16 size={12} />

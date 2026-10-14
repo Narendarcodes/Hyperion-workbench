@@ -553,17 +553,17 @@ export function ConversationRoot({
               onNavigateBack={() => {
                 setWorkbenchView('investigations')
               }}
-              onShare={() => {
-                setDraft('Share investigation INV-2024-001 ')
+              onShare={({ code }) => {
+                setDraft(`Share investigation ${code} `)
               }}
-              onChangeStatus={() => {
-                setDraft('Change status of investigation INV-2024-001 ')
+              onChangeStatus={({ code }) => {
+                setDraft(`Change status of investigation ${code} `)
               }}
-              onGenerateReport={() => {
-                setDraft('Generate comprehensive investigation report for INV-2024-001 ')
+              onGenerateReport={({ code }) => {
+                setDraft(`Generate comprehensive investigation report for ${code} `)
               }}
-              onRerun={() => {
-                setDraft('Rerun vibration and root cause analysis for P-204 ')
+              onRerun={({ tag }) => {
+                setDraft(`Rerun root cause analysis for ${tag} `)
               }}
               onSendQuery={(query) => {
                 setDraft(`${query} `)
