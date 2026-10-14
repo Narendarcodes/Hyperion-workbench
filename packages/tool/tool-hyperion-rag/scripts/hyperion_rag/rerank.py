@@ -7,6 +7,8 @@ the abstention gate uses the top score. Lazy heavy imports.
 from __future__ import annotations
 
 import math
+import os
+import threading
 
 DEFAULT_RERANKER = "BAAI/bge-reranker-v2-m3"
 
@@ -23,10 +25,16 @@ class Reranker:
         self.model = CrossEncoder(model_id, device=dev, max_length=max_length,
                                   model_kwargs={"torch_dtype": torch.bfloat16 if dev == "cuda" else torch.float32})
         self.model_id = model_id
+        self._lock = threading.Lock()  # one GPU batch at a time keeps VRAM inside the budget
 
-    def score(self, query: str, passages: list[str], batch_size: int = 32) -> list[float]:
+    def score(self, query: str, passages: list[str],
+              batch_size: int = int(os.environ.get("HYPERION_RAG_RERANK_BATCH", "16"))) -> list[float]:
         if not passages:
             return []
-        raw = self.model.predict([(query, p) for p in passages], batch_size=batch_size,
-                                 show_progress_bar=False, activation_fn=None)
+        with self._lock:
+            raw = self._predict(query, passages, batch_size)
         return [1 / (1 + math.exp(-float(x))) for x in raw]
+
+    def _predict(self, query: str, passages: list[str], batch_size: int):
+        return self.model.predict([(query, p) for p in passages], batch_size=batch_size,
+                                  show_progress_bar=False, activation_fn=None)

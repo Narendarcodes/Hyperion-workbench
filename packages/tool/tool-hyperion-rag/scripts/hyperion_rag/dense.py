@@ -17,6 +17,7 @@ BM25 path and the unit tests stay stdlib-only.
 from __future__ import annotations
 
 import os
+import threading
 
 PRIMARY = "google/embeddinggemma-2"
 FALLBACK = "google/embeddinggemma-300m"
@@ -58,12 +59,17 @@ class DenseEncoder:
             self.model = SentenceTransformer(FALLBACK, model_kwargs={"torch_dtype": dtype}, device=dev)
             self.model_id = FALLBACK
         self.device = dev
+        self._lock = threading.Lock()
 
     def encode_docs(self, texts: list[str], batch_size: int = int(os.environ.get("HYPERION_RAG_EMBED_BATCH", "16"))):
         return self.model.encode(texts, batch_size=batch_size, normalize_embeddings=True,
                                  convert_to_numpy=True, show_progress_bar=False).astype("float32")
 
     def encode_queries(self, queries: list[str], batch_size: int = 64):
+        with self._lock:
+            return self._encode_queries(queries, batch_size)
+
+    def _encode_queries(self, queries: list[str], batch_size: int):
         return self.model.encode([QUERY_PREFIX + q for q in queries], batch_size=batch_size,
                                  normalize_embeddings=True, convert_to_numpy=True,
                                  show_progress_bar=False).astype("float32")

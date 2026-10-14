@@ -136,6 +136,7 @@ def main() -> None:
     ap.add_argument("--llm-url", default="http://127.0.0.1:8001/v1")
     ap.add_argument("--configs", default="bm25,hybrid@768,hybrid_rerank@768,hybrid_rerank@256")
     ap.add_argument("--k", type=int, default=8)
+    ap.add_argument("--reuse-index", action="store_true", help="reuse OUT/index when it already has dense vectors")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
 
@@ -146,14 +147,21 @@ def main() -> None:
     if a.ocr and os.path.isdir(a.ocr) and os.listdir(a.ocr):
         sources.insert(0, a.ocr)  # OCR text wins over the empty scanned pages (first id kept)
     t0 = time.time()
-    index = Index.build(sources)
+    enc = DenseEncoder()
+    idx_dir = os.path.join(a.out, "index")
+    if a.reuse_index and os.path.exists(os.path.join(idx_dir, "dense.npy")):
+        index = Index.load(idx_dir)
+        embed_s = float(index.meta.get("embed_seconds", 0))
+    else:
+        index = Index.build(sources)
+        t1 = time.time()
+        index.embed(enc)
+        embed_s = time.time() - t1
+        index.meta["embed_seconds"] = round(embed_s, 1)
+        index.save(idx_dir)
     npages = {}
     for c in index.chunks:
         npages[c.doc_id] = max(npages.get(c.doc_id, 0), c.page)
-    enc = DenseEncoder()
-    t1 = time.time()
-    index.embed(enc)
-    embed_s = time.time() - t1
     rer = Reranker()
     cases = json.load(open(os.path.join(a.eval, "cases.json")))
     gts = {g["case_id"]: g["ground_truth"] for g in json.load(open(os.path.join(a.eval, "ground_truth.json")))}
