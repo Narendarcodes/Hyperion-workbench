@@ -27,6 +27,7 @@ import {
   HYPERION_MRPL_INGEST_JOB_PREFIX,
   HYPERION_MRPL_INGEST_ROUTE,
   HYPERION_MRPL_UPLOAD_ROUTE,
+  MRPL_UPLOAD_CONTENT_TYPES,
   type HyperionTranscribeResponse,
   type MrplAnswerCitation,
   type MrplEvidenceAnswerResponse,
@@ -39,7 +40,7 @@ import {
 } from './shared.ts'
 
 /** Upload content types the RAG service ingests. */
-export const UPLOAD_CONTENT_TYPES: readonly string[] = ['application/pdf', 'text/markdown', 'text/plain']
+export const UPLOAD_CONTENT_TYPES: readonly string[] = MRPL_UPLOAD_CONTENT_TYPES
 
 /** Error from the RAG service (status 0 = unreachable). */
 export class RagServiceError extends Error {

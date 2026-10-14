@@ -320,6 +320,8 @@ export interface MrplErrorBody {
 
 /** POST raw file bytes (application/pdf | text/markdown | text/plain); header `x-file-name`. */
 export const HYPERION_MRPL_UPLOAD_ROUTE = '/hyperion/mrpl/documents/upload'
+/** Upload content types the bridge accepts (mirrors hyperion-bridge UPLOAD_CONTENT_TYPES). */
+export const MRPL_UPLOAD_CONTENT_TYPES: readonly string[] = ['application/pdf', 'text/markdown', 'text/plain']
 /** GET: RAG service health + every uploaded document with its ingest status. */
 export const HYPERION_MRPL_INGEST_ROUTE = '/hyperion/mrpl/ingest'
 /** GET `<prefix><jobId>`: one ingest job. */

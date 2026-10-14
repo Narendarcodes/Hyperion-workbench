@@ -1,0 +1,133 @@
+/* Upload + ask strip on the Documents page. Theme tokens only (light/dark). */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hx-space-3);
+  padding: var(--hx-space-4);
+  margin-bottom: var(--hx-space-4);
+  color: var(--hx-text);
+}
+
+.uploadRow,
+.job {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hx-space-2);
+}
+
+.fileName {
+  font-size: 13px;
+}
+
+.stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hx-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: var(--hx-text-3);
+}
+
+.stages li + li::before {
+  content: '→ ';
+}
+
+.muted {
+  font-size: 12px;
+  color: var(--hx-text-2);
+}
+
+.error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--hx-err);
+  background: var(--hx-err-bg);
+  border-radius: var(--hx-radius-s);
+  padding: var(--hx-space-1) var(--hx-space-2);
+}
+
+.askRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hx-space-2);
+}
+
+.question {
+  flex: 1;
+  min-width: 240px;
+  height: 36px;
+  padding: 0 var(--hx-space-3);
+  border-radius: var(--hx-radius-s);
+  border: var(--hx-card-border);
+  background: var(--dsw-alias-bg-base);
+  color: var(--hx-text);
+  font-size: 13px;
+}
+
+.scope {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hx-space-1);
+  font-size: 12px;
+  color: var(--hx-text-2);
+}
+
+.askBtn {
+  height: 36px;
+  padding: 0 var(--hx-space-4);
+  border: none;
+  border-radius: var(--hx-radius-s);
+  background: var(--hx-info);
+  color: var(--dsw-alias-label-on-brand, #fff);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.askBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hx-space-2);
+  font-size: 13px;
+}
+
+.answerText {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.citations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hx-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.citation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--hx-space-2);
+}
+
+.citeRef {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.quote {
+  font-size: 12px;
+  color: var(--hx-text-2);
+}

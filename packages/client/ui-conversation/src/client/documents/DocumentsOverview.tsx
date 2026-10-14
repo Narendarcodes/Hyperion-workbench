@@ -9,15 +9,17 @@
  * @module @deepseek-ai/dsh-client-ui-conversation/client/documents/DocumentsOverview
  */
 
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { DocumentsHeader } from './DocumentsHeader.tsx'
 import { CategoryCards } from './CategoryCards.tsx'
 import { DocumentLibraryPanel } from './DocumentLibraryPanel.tsx'
 import { DocumentViewerPanel } from './DocumentViewerPanel.tsx'
 import { DocumentDetailsPanel } from './DocumentDetailsPanel.tsx'
+import { UploadAskPanel } from './UploadAskPanel.tsx'
 import { toDocumentCategories, toDocumentItem } from './adapter.ts'
 import type { DocumentItem } from './types.ts'
 import { useMrplSource } from '../mrpl/api.ts'
+import { MRPL_UPLOAD_CONTENT_TYPES } from '../mrpl/contract.ts'
 import { useMrplResource } from '../mrpl/useMrplResource.ts'
 import { DatasetBadge, WorkbenchState, workbenchTokensClass } from '../mrpl/Workbench.tsx'
 import css from './DocumentsOverview.module.css'
@@ -26,6 +28,8 @@ export interface DocumentsOverviewProps {
   readonly onOpenPid?: (doc: DocumentItem) => void
   readonly onAddToInvestigation?: (doc: DocumentItem) => void
   readonly onAskCopilot?: (question: string) => void
+  /** Ingest-job poll interval (ms). */
+  readonly ingestPollMs?: number
 }
 
 const SUBTITLE = 'Engineering documents and reference material • Refinery corpus'
@@ -34,6 +38,7 @@ export function DocumentsOverview({
   onOpenPid,
   onAddToInvestigation,
   onAskCopilot,
+  ingestPollMs,
 }: DocumentsOverviewProps) {
   const source = useMrplSource()
   const catalog = useMrplResource(
@@ -44,6 +49,10 @@ export function DocumentsOverview({
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(undefined)
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [askOpen, setAskOpen] = useState(false)
+  const fileInput = useRef<HTMLInputElement>(null)
+  const canUpload = source.uploadDocument !== undefined
 
   const documents = useMemo(
     () => (catalog.status === 'ready' ? catalog.data.documents.map(toDocumentItem) : []),
@@ -79,7 +88,8 @@ export function DocumentsOverview({
         setSelectedCategoryId(undefined)
         setSearchQuery('')
       }}
-      onUploadClick={() => {}}
+      onUploadClick={canUpload ? () => { fileInput.current?.click() } : undefined}
+      uploadDisabledReason={canUpload ? undefined : 'Uploads need the live RAG service (HYPERION_RAG_URL on the bridge)'}
       badge={catalog.status === 'ready' || catalog.status === 'empty' ? <DatasetBadge dataset={catalog.data.dataset} /> : undefined}
     />
   )
@@ -94,6 +104,24 @@ export function DocumentsOverview({
       <div className={css.backgroundWatermark} aria-hidden="true" />
       <div className={css.contentWrapper}>
         {header}
+        <input
+          ref={fileInput}
+          type="file"
+          hidden
+          data-mrpl-upload=""
+          accept={[...MRPL_UPLOAD_CONTENT_TYPES, '.pdf', '.md', '.txt'].join(',')}
+          onChange={(event) => {
+            const picked = event.target.files?.[0]
+            if (picked !== undefined) {
+              setUploadFile(picked)
+              setAskOpen(true)
+            }
+            event.target.value = ''
+          }}
+        />
+        {askOpen || (source.answerEvidence !== undefined && uploadFile === null && canUpload)
+          ? <UploadAskPanel source={source} file={uploadFile} {...(ingestPollMs === undefined ? {} : { pollMs: ingestPollMs })} />
+          : null}
         {body}
       </div>
     </div>

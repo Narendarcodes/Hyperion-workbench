@@ -16,7 +16,13 @@ import {
   HYPERION_MRPL_EQUIPMENT_ROUTE,
   HYPERION_MRPL_EVIDENCE_SEARCH_ROUTE,
   HYPERION_MRPL_EVIDENCE_VERIFY_ROUTE,
+  HYPERION_MRPL_EVIDENCE_ANSWER_ROUTE,
+  HYPERION_MRPL_INGEST_JOB_PREFIX,
+  HYPERION_MRPL_UPLOAD_ROUTE,
+  MRPL_UPLOAD_CONTENT_TYPES,
   type MrplCitationRequest,
+  type MrplEvidenceAnswerResponse,
+  type MrplIngestJob,
   type MrplDeliverablesResponse,
   type MrplDocumentDetailResponse,
   type MrplDocumentListResponse,
@@ -52,6 +58,23 @@ export interface MrplDataSource {
     signal?: AbortSignal,
   ): Promise<MrplEvidenceSearchResponse>
   listDeliverables(signal?: AbortSignal): Promise<MrplDeliverablesResponse>
+  /**
+   * Live ingest + grounded answers (RAG service behind the bridge). Optional:
+   * a source without them (seed fixtures, other hosts) renders the upload
+   * control disabled with the reason instead of a no-op button.
+   */
+  uploadDocument?(file: File, signal?: AbortSignal): Promise<MrplIngestJob>
+  getIngestJob?(jobId: string, signal?: AbortSignal): Promise<MrplIngestJob>
+  answerEvidence?(question: string, documentIds?: readonly string[], signal?: AbortSignal): Promise<MrplEvidenceAnswerResponse>
+}
+
+const EXTENSION_TYPES: Readonly<Record<string, string>> = { pdf: 'application/pdf', md: 'text/markdown', markdown: 'text/markdown', txt: 'text/plain' }
+
+/** Content type sent for an upload: the browser's type when accepted, else by extension. */
+export function uploadContentType(file: { readonly name: string; readonly type: string }): string {
+  if (MRPL_UPLOAD_CONTENT_TYPES.includes(file.type)) return file.type
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+  return EXTENSION_TYPES[ext] ?? (file.type || 'application/octet-stream')
 }
 
 type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
@@ -103,6 +126,19 @@ export function createHttpMrplSource(fetchImpl: FetchLike = (input, init) => fet
       return call(`${HYPERION_MRPL_EVIDENCE_SEARCH_ROUTE}?${params.toString()}`, { signal: signal ?? null })
     },
     listDeliverables: signal => call(HYPERION_MRPL_DELIVERABLES_ROUTE, { signal: signal ?? null }),
+    uploadDocument: async (file, signal) => call(HYPERION_MRPL_UPLOAD_ROUTE, {
+      method: 'POST',
+      headers: { 'content-type': uploadContentType(file), 'x-file-name': encodeURIComponent(file.name) },
+      body: await file.arrayBuffer(),
+      signal: signal ?? null,
+    }),
+    getIngestJob: (jobId, signal) => call(`${HYPERION_MRPL_INGEST_JOB_PREFIX}${encodeURIComponent(jobId)}`, { signal: signal ?? null }),
+    answerEvidence: (question, documentIds, signal) => call(HYPERION_MRPL_EVIDENCE_ANSWER_ROUTE, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(documentIds !== undefined && documentIds.length > 0 ? { question, documentIds } : { question }),
+      signal: signal ?? null,
+    }),
   }
 }
 

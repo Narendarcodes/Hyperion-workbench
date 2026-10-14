@@ -15,7 +15,9 @@ export interface DocumentsHeaderProps {
   readonly searchQuery?: string
   readonly onSearchChange?: (query: string) => void
   readonly onFilterClick?: () => void
-  readonly onUploadClick?: () => void
+  readonly onUploadClick?: (() => void) | undefined
+  /** When set, the upload button is disabled and explains why. */
+  readonly uploadDisabledReason?: string | undefined
   /** Provenance badge shown beside the subtitle (dataset label). */
   readonly badge?: ReactNode
 }
@@ -28,6 +30,7 @@ export function DocumentsHeader({
   onSearchChange,
   onFilterClick,
   onUploadClick,
+  uploadDisabledReason,
   badge,
 }: DocumentsHeaderProps) {
   const [internalQuery, setInternalQuery] = useState(searchQuery)
@@ -88,6 +91,8 @@ export function DocumentsHeader({
             type="button"
             className={css.uploadBtn}
             onClick={onUploadClick}
+            disabled={uploadDisabledReason !== undefined}
+            title={uploadDisabledReason}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
               <line x1="12" y1="5" x2="12" y2="19" />

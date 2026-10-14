@@ -134,18 +134,23 @@
   padding: 0 16px;
   border-radius: 8px;
   border: none;
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--dsw-alias-brand-primary);
+  color: var(--dsw-alias-label-on-brand, #fff);
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--dsw-alias-brand-primary) 25%, transparent);
   transition: all 140ms ease;
 }
 
-.uploadBtn:hover {
-  background: #1d4ed8;
+.uploadBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 85%, var(--dsw-alias-label-primary));
+}
+
+.uploadBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 @media (max-width: 900px) {
