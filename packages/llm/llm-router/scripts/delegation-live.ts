@@ -126,7 +126,8 @@ const t0 = performance.now()
 const allResults = await runScenarios(scenarios, { policy, llm, maxTokens: 768 }, concurrency)
 const wallMs = performance.now() - t0
 // Scenarios touched by an infrastructure failure are not eval results.
-const isInfra = (msg: string | undefined) => msg !== undefined && /^(connection failed|HTTP (5\d\d|429) after retry budget|endpoint )/.test(msg)
+const INFRA = /^(connection failed|HTTP (5\d\d|429) after retry budget|endpoint )/
+const isInfra = (msg: string | undefined) => msg !== undefined && INFRA.test(msg)
 const results = allResults.filter(r => !r.nodes.some(n => isInfra(n.error)))
 const excludedInfra = allResults.length - results.length
 const summary = summarize(results)

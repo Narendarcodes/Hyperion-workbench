@@ -102,7 +102,10 @@ describe('AgentModelPolicy precedence', () => {
   })
 
   it('uses depth defaults before parent inheritance', async () => {
-    const p = new AgentModelPolicy({ roles: {}, depthDefaults: { 2: FAST }, default: DROPLET_LLM, inferRoles: false }, { isAvailable: () => true })
+    const p = new AgentModelPolicy(
+      { roles: {}, depthDefaults: { 2: FAST }, default: DROPLET_LLM, inferRoles: false },
+      { isAvailable: () => true },
+    )
     expect((await p.resolve({ depth: 2, parent: CODE })).source).toBe('depth')
     expect((await p.resolve({ depth: 1, parent: CODE })).source).toBe('parent')
   })

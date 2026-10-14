@@ -190,7 +190,12 @@ export class AgentModelPolicy {
       }
     }
 
-    const pick = (chain: readonly ModelRoute[], source: RouteSource, role: string | undefined, why: string): AgentRouteDecision | undefined => {
+    const pick = (
+      chain: readonly ModelRoute[],
+      source: RouteSource,
+      role: string | undefined,
+      why: string,
+    ): AgentRouteDecision | undefined => {
       for (const [i, route] of chain.entries()) {
         if (this.available(route)) {
           return {
@@ -206,10 +211,12 @@ export class AgentModelPolicy {
       return undefined
     }
 
-    const overrideKey = [req.agentId, req.label].find(k => k !== undefined && this.config.agents?.[k] !== undefined)
-    if (overrideKey !== undefined) {
-      const hit = pick([this.config.agents![overrideKey]!], 'agent-override', req.role, `agent override for "${overrideKey}"`)
+    for (const key of [req.agentId, req.label]) {
+      const pinned = key === undefined ? undefined : this.config.agents?.[key]
+      if (key === undefined || pinned === undefined) continue
+      const hit = pick([pinned], 'agent-override', req.role, `agent override for "${key}"`)
       if (hit) return hit
+      break
     }
 
     const inferEnabled = this.config.inferRoles !== false

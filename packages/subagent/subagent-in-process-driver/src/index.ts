@@ -138,7 +138,6 @@ export async function startInProcessRun(
     parent.ctx.get('agentModelRouting'),
     { role: request.role, label: request.label, prompt: promptText(request.prompt), agentId: childId },
   )
-  if (request.signal.aborted) throw prePublicationAbort()
 
   const handle = await parent.ctx.agents.create({
     sessionId: childId,

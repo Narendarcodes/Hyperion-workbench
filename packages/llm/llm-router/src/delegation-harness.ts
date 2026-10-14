@@ -138,7 +138,7 @@ export async function runScenario(scenario: Scenario, opts: HarnessOptions): Pro
   const events: MissionEvent[] = []
   const nodes: NodeScore[] = []
   const emit = (e: UnstampedMissionEvent): void => {
-    events.push({ ...e, t: Math.round((now() - t0) * 1000) / 1000 } as MissionEvent)
+    events.push({ ...e, t: Math.round((now() - t0) * 1000) / 1000 })
   }
   const maxTokens = opts.maxTokens ?? 512
 
@@ -261,11 +261,21 @@ export async function runScenarios(scenarios: readonly Scenario[], opts: Harness
   const worker = async (): Promise<void> => {
     while (next < scenarios.length) {
       const i = next++
-      out[i] = await runScenario(scenarios[i]!, opts)
+      const scenario = scenarios[i]
+      if (scenario !== undefined) out[i] = await runScenario(scenario, opts)
     }
   }
   await Promise.all(Array.from({ length: Math.max(1, Math.min(concurrency, scenarios.length)) }, worker))
   return out
+}
+
+/** Per-kind aggregate. */
+export interface KindSummary {
+  readonly scenarios: number
+  readonly success: number
+  readonly completion: number
+  readonly modelAccuracy: number
+  readonly meanWallMs: number
 }
 
 /** Aggregate metrics over results. */
@@ -282,12 +292,12 @@ export interface HarnessSummary {
   readonly p95NodeLatencyMs: number
   readonly meanScenarioWallMs: number
   readonly totalCostUSD: number
-  readonly byKind: Readonly<Record<string, { scenarios: number; success: number; completion: number; modelAccuracy: number; meanWallMs: number }>>
+  readonly byKind: Readonly<Record<string, KindSummary>>
 }
 
 function pct(sorted: readonly number[], p: number): number {
   if (sorted.length === 0) return 0
-  return sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))]!
+  return sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))] ?? 0
 }
 
 /**
@@ -398,11 +408,11 @@ export function sequentialScenario(i: number, ex: ExpectedRoutes): Scenario {
 }
 
 const CONVERSIONS: ReadonlyArray<(r: () => number) => { q: string; a: number }> = [
-  r => { const b = 1 + Math.floor(r() * 9); return { q: `${b} bar in kPa`, a: b * 100 } },
-  r => { const c = 10 * (1 + Math.floor(r() * 9)); return { q: `${c} degrees Celsius in Kelvin (use 273)`, a: c + 273 } },
-  r => { const rpm = 60 * (5 + Math.floor(r() * 50)); return { q: `${rpm} rpm in Hz`, a: rpm / 60 } },
-  r => { const m = 1 + Math.floor(r() * 9); return { q: `${m} metres in millimetres`, a: m * 1000 } },
-  r => { const kw = 1 + Math.floor(r() * 20); return { q: `${kw} kW in W`, a: kw * 1000 } },
+  (r) => { const b = 1 + Math.floor(r() * 9); return { q: `${b} bar in kPa`, a: b * 100 } },
+  (r) => { const c = 10 * (1 + Math.floor(r() * 9)); return { q: `${c} degrees Celsius in Kelvin (use 273)`, a: c + 273 } },
+  (r) => { const rpm = 60 * (5 + Math.floor(r() * 50)); return { q: `${rpm} rpm in Hz`, a: rpm / 60 } },
+  (r) => { const m = 1 + Math.floor(r() * 9); return { q: `${m} metres in millimetres`, a: m * 1000 } },
+  (r) => { const kw = 1 + Math.floor(r() * 20); return { q: `${kw} kW in W`, a: kw * 1000 } },
 ]
 
 /**
@@ -443,7 +453,7 @@ export function parallelScenario(i: number, ex: ExpectedRoutes, width = 4): Scen
  */
 export function treeScenario(i: number, ex: ExpectedRoutes, explicitRoute: ModelRoute): Scenario {
   const r = rng(3000 + i)
-  const sections = ['A', 'B'].map(s => {
+  const sections = ['A', 'B'].map((s) => {
     const len = 2 + Math.floor(r() * 8)
     const wid = 2 + Math.floor(r() * 8)
     return { s, len, wid, area: len * wid }
@@ -454,7 +464,7 @@ export function treeScenario(i: number, ex: ExpectedRoutes, explicitRoute: Model
     kind: 'tree',
     root: {
       id: 'root', label: 'Plant layout planner', role: 'planner', mode: 'parallel', expect: ex.planner,
-      prompt: `Section results:\n{{children}}\nAdd the section areas and answer "AREA=<number>".`,
+      prompt: 'Section results:\n{{children}}\nAdd the section areas and answer "AREA=<number>".',
       check: has(`AREA=${totalArea}`),
       children: sections.map(sec => ({
         id: `sec${sec.s}`, label: `Section ${sec.s} lead`, role: 'planner', mode: 'sequential' as const, expect: ex.planner,
@@ -468,16 +478,16 @@ export function treeScenario(i: number, ex: ExpectedRoutes, explicitRoute: Model
           },
           sec.s === 'A'
             ? {
-                id: `calc${sec.s}`, label: `Area calc ${sec.s}`, role: 'code', explicit: explicitRoute, expect: explicitRoute,
-                prompt: 'Dimensions: {{previous}}\nCompute length times width. Reply with just the number.',
-                check: has(sec.area),
-              }
+              id: `calc${sec.s}`, label: `Area calc ${sec.s}`, role: 'code', explicit: explicitRoute, expect: explicitRoute,
+              prompt: 'Dimensions: {{previous}}\nCompute length times width. Reply with just the number.',
+              check: has(sec.area),
+            }
             : {
-                id: `calc${sec.s}`, label: `Area calc ${sec.s}`, role: 'code', expect: ex.code,
-                tool: { name: 'calc.mul', input: `${sec.len}*${sec.wid}`, run: (s: string) => String(s.split('*').map(Number).reduce((a, b) => a * b, 1)) },
-                prompt: 'Dimensions: {{previous}}\nA calculator returned {{tool}}. Reply with just that number.',
-                check: has(sec.area),
-              },
+              id: `calc${sec.s}`, label: `Area calc ${sec.s}`, role: 'code', expect: ex.code,
+              tool: { name: 'calc.mul', input: `${sec.len}*${sec.wid}`, run: (s: string) => String(s.split('*').map(Number).reduce((a, b) => a * b, 1)) },
+              prompt: 'Dimensions: {{previous}}\nA calculator returned {{tool}}. Reply with just that number.',
+              check: has(sec.area),
+            },
         ],
       })),
     },

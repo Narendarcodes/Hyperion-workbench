@@ -204,9 +204,7 @@ export async function resolveRoutedChildAgentOptions(
       ...input.prompt === undefined ? {} : { prompt: input.prompt },
       depth: childDepth,
       ...parentRoute === undefined ? {} : { parent: parentRoute },
-      ...requested?.provider !== undefined || requested?.model !== undefined
-        ? { explicit: { ...requested?.provider === undefined ? {} : { provider: requested.provider }, ...requested?.model === undefined ? {} : { model: requested.model } } }
-        : {},
+      ...explicitRoute(requested),
     })
   } catch {
     return { options: base }
@@ -214,9 +212,23 @@ export async function resolveRoutedChildAgentOptions(
   if (decision === undefined) return { options: base }
   const options: AgentOptions = { ...base, provider: decision.provider, model: decision.model }
   const effort = requested?.reasoningEffort ?? decision.reasoningEffort
-  if (effort !== undefined) (options as { reasoningEffort?: unknown }).reasoningEffort = effort
-  else if (decision.provider !== base.provider || decision.model !== base.model) delete (options as { reasoningEffort?: unknown }).reasoningEffort
+  const mutable = options as { reasoningEffort?: unknown }
+  if (effort !== undefined) mutable.reasoningEffort = effort
+  else if (decision.provider !== base.provider || decision.model !== base.model) delete mutable.reasoningEffort
   return { options, decision }
+}
+
+/** The caller's explicit (possibly partial) route, as resolver input. */
+function explicitRoute(requested: AgentOptions | undefined): { explicit?: Partial<ChildModelRoute> } {
+  const provider = requested?.provider
+  const model = requested?.model
+  if (provider === undefined && model === undefined) return {}
+  return {
+    explicit: {
+      ...provider === undefined ? {} : { provider },
+      ...model === undefined ? {} : { model },
+    },
+  }
 }
 
 /**
