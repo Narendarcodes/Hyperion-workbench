@@ -3,6 +3,7 @@
  * @module @deepseek-ai/dsh-client-ui-mission/client/mission-snapshot-builder
  */
 
+import { lifecycleFromSession } from './pixel-office/lifecycle/fromSession.ts'
 import type {
   SessionEventLike,
   SessionEventLikeEntry,
@@ -665,6 +666,7 @@ export function buildMissionSnapshot(
       model,
       egress: 'unavailable',
     },
+    lifecycle: lifecycleFromSession(entries.map(unwrapEvent)),
   }
 }
 
