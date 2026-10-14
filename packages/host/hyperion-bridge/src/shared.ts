@@ -330,6 +330,8 @@ export const HYPERION_MRPL_INGEST_JOB_PREFIX = '/hyperion/mrpl/ingest/jobs/'
 export const HYPERION_MRPL_EVIDENCE_ANSWER_ROUTE = '/hyperion/mrpl/evidence/answer'
 /** POST raw audio (audio/*); optional `?language=`; default language from config (`auto`). */
 export const HYPERION_ASR_TRANSCRIBE_ROUTE = '/hyperion/asr/transcribe'
+/** Speech languages the composer offers; `auto` = server-side te/hi/en detection (HYPERION_ASR_LANGUAGE). */
+export const HYPERION_SPEECH_LANGUAGES: readonly string[] = ['auto', 'te', 'hi', 'en']
 
 /** Retrieval mode the RAG service ran. */
 export type MrplRetrievalMode = 'hybrid_rerank' | 'hybrid' | 'bm25_rerank' | 'bm25' | 'dense'

@@ -1697,6 +1697,29 @@ describe('voice pill', () => {
     })
   })
 
+  it('sends the speech language picked next to the mic (te/hi/en) and remembers it', async () => {
+    window.localStorage.removeItem('hyperion.asrLanguage')
+    onTestFinished(() => { window.localStorage.removeItem('hyperion.asrLanguage') })
+    const probe = bench()
+    const picker = probe.view.getByLabelText('Speech language') as HTMLSelectElement
+    expect([...picker.options].map(o => o.value)).toEqual(['auto', 'te', 'hi', 'en'])
+    expect(picker.value).toBe('auto')
+    fireEvent.change(picker, { target: { value: 'te' } })
+    expect(window.localStorage.getItem('hyperion.asrLanguage')).toBe('te')
+    probe.view.unmount()
+    const { view } = await startRecording(new Blob(['audio'], { type: 'audio/webm' }))
+    expect((view.queryByLabelText('Speech language') as HTMLSelectElement | null)?.value ?? 'te').toBe('te')
+    const fetchMock = vi.fn((_input: string | URL | Request, _init?: RequestInit): Promise<Response> =>
+      Promise.resolve(new Response(JSON.stringify({ text: 'ఫ్లాష్ పాయింట్', language: 'te', model: 'indicconformer' }))))
+    vi.stubGlobal('fetch', fetchMock)
+    onTestFinished(() => { vi.unstubAllGlobals() })
+    fireEvent.click(view.getByLabelText('Send message'))
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalled()
+    })
+    expect(fetchMock.mock.calls[0]![0]).toBe('/hyperion/asr/transcribe?language=te')
+  })
+
   it('discards the recording without transcribing', async () => {
     const { view } = await startRecording(new Blob(['audio'], { type: 'audio/webm' }))
     const fetchMock = vi.fn((): Promise<Response> => Promise.resolve(new Response(JSON.stringify({ text: 'नमस्ते' }))))
