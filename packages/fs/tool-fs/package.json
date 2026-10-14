@@ -28,7 +28,8 @@
   "license": "MIT",
   "dependencies": {
     "diff": "^9.0.0",
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@deepseek-ai/schemastery": "workspace:^",
+    "@deepseek-ai/dsh-ocr-guard": "workspace:^"
   },
   "peerDependencies": {
     "@deepseek-ai/dsh-attachment": "workspace:^",
