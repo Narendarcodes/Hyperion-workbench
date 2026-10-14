@@ -54,3 +54,16 @@ export class UniversalModelRouter {
     this.laya.shutdown()
   }
 }
+
+let sharedRouter: UniversalModelRouter | undefined
+
+/**
+ * Process-wide router, created on first use. Construction spawns the Laya
+ * daemon, so it must not happen at module import time (tests, CLIs that
+ * never route, and subagent hosts would all pay for a Python process).
+ * @returns the shared router.
+ */
+export function getSharedModelRouter(): UniversalModelRouter {
+  sharedRouter ??= new UniversalModelRouter()
+  return sharedRouter
+}

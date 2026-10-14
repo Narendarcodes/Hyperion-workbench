@@ -1,3 +1,9 @@
+import { DEFAULT_DROPLET_ENDPOINT, DROPLET_MODELS } from './droplet.ts'
+import type { DropletEndpoint } from './droplet.ts'
+import type { ModelProfile } from './registry.ts'
+import { DROPLET_ROLE_POLICY } from './agent-policy.ts'
+import type { AgentModelPolicyConfig } from './agent-policy.ts'
+
 export interface LayaQuestionChoice {
   type: 'choice'
   instructions: string
@@ -113,3 +119,20 @@ export const DEFAULT_ROUTING_CONFIG: RoutingEngineConfig = {
     },
   ],
 }
+
+/**
+ * Self-hosted droplet routing bundle: the endpoint (SSH-forwarded vLLM), the
+ * model registrations (`llm` = gpt-oss-120b live; fast/vision/code
+ * placeholders disabled), and the default per-role agent policy.
+ */
+export interface DropletRoutingConfig {
+  readonly endpoint: DropletEndpoint
+  readonly models: readonly ModelProfile[]
+  readonly agentPolicy: AgentModelPolicyConfig
+}
+
+export const DROPLET_ROUTING_CONFIG: DropletRoutingConfig = Object.freeze({
+  endpoint: DEFAULT_DROPLET_ENDPOINT,
+  models: DROPLET_MODELS,
+  agentPolicy: DROPLET_ROLE_POLICY,
+})
