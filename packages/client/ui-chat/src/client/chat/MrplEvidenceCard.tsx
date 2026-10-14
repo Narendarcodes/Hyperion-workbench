@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react'
 import { DisclosureRow, IconBrowseOutline16 } from '@deepseek-ai/dsh-client-ui-primitives'
 import {
   StatusChip,
+  workbenchTokensClass,
   useMrplResource,
   useMrplSource,
   type AssistantBlock,
@@ -46,6 +47,12 @@ const ROW_STATUS: Record<MrplCitationStatus, StatusTone> = {
   'page-not-found': 'error',
   'document-not-found': 'error',
   'no-text': 'warn',
+}
+
+/** Readable label for the non-quote failure outcomes (host status ids are kebab-case). */
+function rowStatusLabel(status: MrplCitationStatus): string {
+  const text = status.replace(/-/g, ' ')
+  return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
 /** Basename of a Windows or POSIX path / served link. */
@@ -98,7 +105,7 @@ export function MrplEvidenceCard({
 
   return (
     <section
-      className={css.root}
+      className={`${css.root} ${workbenchTokensClass}`}
       aria-label={t('evidence.title')}
       data-expanded={open || undefined}
       data-evidence-status={key === null ? 'none' : verification.status === 'ready' ? verification.data.status : verification.status}
@@ -159,7 +166,7 @@ export function MrplEvidenceCard({
                     <li key={result.id} className={css.citation} data-status={result.status}>
                       <span className={css.citationLabel}>{`${result.id} · ${result.documentId} p.${String(result.page)}`}</span>
                       <StatusChip tone={ROW_STATUS[result.status]} title={result.missingQuotes.length > 0 ? `Not on page: ${result.missingQuotes.join(', ')}` : undefined}>
-                        {result.status === 'verified' ? t('evidence.verified') : result.status}
+                        {result.status === 'verified' ? t('evidence.verified') : result.status === 'unverified' ? t('evidence.unverified') : rowStatusLabel(result.status)}
                       </StatusChip>
                     </li>
                   ))}

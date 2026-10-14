@@ -20,11 +20,12 @@
   --hx-text: var(--dsw-alias-label-primary);
   --hx-text-2: var(--dsw-alias-label-secondary);
   --hx-text-3: var(--dsw-alias-label-tertiary);
-  --hx-ok: var(--dsw-alias-state-success-primary);
+  /* Chip text mixes the state colour toward the label colour: ≥4.5:1 on the tinted chip in light and dark. */
+  --hx-ok: color-mix(in srgb, var(--dsw-alias-state-success-primary) 60%, var(--dsw-alias-label-primary));
   --hx-ok-bg: color-mix(in srgb, var(--dsw-alias-state-success-primary) 12%, transparent);
-  --hx-warn: var(--dsw-alias-state-warn-label, var(--dsw-alias-state-warn-primary));
+  --hx-warn: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 60%, var(--dsw-alias-label-primary));
   --hx-warn-bg: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 14%, transparent);
-  --hx-err: var(--dsw-alias-state-error-primary);
+  --hx-err: color-mix(in srgb, var(--dsw-alias-state-error-primary) 75%, var(--dsw-alias-label-primary));
   --hx-err-bg: color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent);
   --hx-info: var(--dsw-alias-brand-primary);
   --hx-skeleton: var(--dsw-alias-bg-skeleton);
