@@ -19,9 +19,12 @@ import {
   HYPERION_MRPL_EVIDENCE_ANSWER_ROUTE,
   HYPERION_MRPL_INGEST_JOB_PREFIX,
   HYPERION_MRPL_UPLOAD_ROUTE,
+  HYPERION_MRPL_REPORTS_ROUTE,
   MRPL_UPLOAD_CONTENT_TYPES,
   type MrplCitationRequest,
   type MrplEvidenceAnswerResponse,
+  type MrplGenerateReportRequest,
+  type MrplGenerateReportResponse,
   type MrplIngestJob,
   type MrplDeliverablesResponse,
   type MrplDocumentDetailResponse,
@@ -66,6 +69,9 @@ export interface MrplDataSource {
   uploadDocument?(file: File, signal?: AbortSignal): Promise<MrplIngestJob>
   getIngestJob?(jobId: string, signal?: AbortSignal): Promise<MrplIngestJob>
   answerEvidence?(question: string, documentIds?: readonly string[], signal?: AbortSignal): Promise<MrplEvidenceAnswerResponse>
+  /** LLM + RAG report generation and generated-deliverable deletion (optional: absent = controls disabled with a reason). */
+  generateReport?(request: MrplGenerateReportRequest, signal?: AbortSignal): Promise<MrplGenerateReportResponse>
+  deleteDeliverable?(fileName: string, signal?: AbortSignal): Promise<void>
 }
 
 const EXTENSION_TYPES: Readonly<Record<string, string>> = { pdf: 'application/pdf', md: 'text/markdown', markdown: 'text/markdown', txt: 'text/plain' }
@@ -139,6 +145,21 @@ export function createHttpMrplSource(fetchImpl: FetchLike = (input, init) => fet
       body: JSON.stringify(documentIds !== undefined && documentIds.length > 0 ? { question, documentIds } : { question }),
       signal: signal ?? null,
     }),
+    generateReport: (request, signal) => call(HYPERION_MRPL_REPORTS_ROUTE, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(request),
+      signal: signal ?? null,
+    }),
+    deleteDeliverable: async (fileName, signal) => {
+      let res: Response
+      try {
+        res = await fetchImpl(`${base}${HYPERION_MRPL_DELIVERABLES_ROUTE}/${encodeURIComponent(fileName)}`, { method: 'DELETE', credentials: 'same-origin', signal: signal ?? null })
+      } catch (error) {
+        throw new MrplApiError(0, 'network', `Hyperion host unreachable: ${String(error)}`)
+      }
+      if (!res.ok) throw new MrplApiError(res.status, `http-${String(res.status)}`, `Delete failed (${String(res.status)})`)
+    },
   }
 }
 
