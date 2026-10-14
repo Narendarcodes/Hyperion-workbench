@@ -131,9 +131,29 @@ failure mode it guards against (repetition loops), which unit tests cover.
   parameters and description are unchanged, so the snapshots are untouched.
 - Sidecar: `packages/fs/tool-fs/ocr-sidecar/` (stdlib HTTP, PyMuPDF render, parallel per-page VLM calls, optional
   bearer auth). `deploy/launch.sh start` brings up `hx-ocr-vlm` (vLLM :8110) and `hx-ocr-sidecar` (:8111) on 127.0.0.1.
-- End to end: DOC-011 (real scan) through sidecar plus guard gave both pages, with the values above. The 300-document
-  synthetic corpus was OCR'd through the same path for the RAG stream; the corpus throughput is in the RESULTS.md
-  of the OCR output folder.
+- End to end: DOC-011 (real scan) through sidecar plus guard gave both pages, with the values above: 21/21 row
+  facts, but the Method-of-Test column is shifted in rows vi-ix and xv-xvii (see the DOC-011 section).
+
+## Corpus run through the production path (verified)
+
+The 300-document synthetic Hyperion corpus (100 equipment manuals, 100 SOPs, 100 fault logs; 956 pages) was
+rendered as image-only PDFs with light/medium scan degradation and OCR'd end to end through the deployed path:
+`hx-ocr-sidecar` -> Qwen3-VL-8B-FP8 (KV cache pinned, 19.98 GB footprint) -> OCR guard. The text feeds the RAG stream.
+
+| measure | value |
+|---|---|
+| documents / pages | 300 / 956 |
+| final (resumed) run | 729 pages in 1,128 s = **38.8 pages/min** (the remaining 227 pages were OCR'd in an earlier pass of the same run) |
+| mean CER vs source text | **0.014** |
+| median CER | **0.006** |
+| bag-of-words F1 | **0.988** |
+| tag recall (micro) | **0.998** |
+| docs with CER > 0.10 | 3: HYP-EQU-132 (0.33), HYP-EQU-063 (0.27), HYP-SOP-139 (0.15) |
+| guard | 1 page flagged, 0 empty pages |
+
+Corpus CER is lower than the benchmark's synthetic-slice CER (0.030) because the corpus used only light and medium
+degradation. The three high-CER documents are worth a manual look before they are used as RAG evidence
+(**unresolved**: cause not yet diagnosed). Throughput was measured on the shared MI300X, like the benchmark.
 
 ## Reproduce
 
