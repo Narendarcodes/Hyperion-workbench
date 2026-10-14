@@ -258,6 +258,8 @@ def main() -> None:
     ap.add_argument("--gen-configs", default="bm25,dense@768,hybrid@768,hybrid_rerank@768,hybrid_rerank@256,noexp:hybrid_rerank@768,deid:hybrid_rerank@768")
     ap.add_argument("--skip-gen", action="store_true")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--corpus", nargs="*", default=[],
+                    help="index these files/dirs instead of EVAL/documents.jsonl (e.g. an OCR'd copy of the corpus)")
     ap.add_argument("--reuse-retrieval", default="", help="retrieval_cache.pkl from an earlier run on the same index")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -274,7 +276,7 @@ def main() -> None:
     import torch
 
     t0 = time.time()
-    index = Index.build([os.path.join(a.eval_dir, "documents.jsonl")])
+    index = Index.build(a.corpus or [os.path.join(a.eval_dir, "documents.jsonl")])
     enc = DenseEncoder(a.model)
     say("encoder", enc.model_id, "fallback:", enc.fallback_reason)
     t1 = time.time()
