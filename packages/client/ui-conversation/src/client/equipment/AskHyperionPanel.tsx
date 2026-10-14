@@ -13,13 +13,14 @@ import {
   IconPlusOutline16,
   IconSkillOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { EquipmentSuggestionPrompt, SelectedEquipment } from './types.ts'
+import type { EquipmentSuggestionPrompt } from './types.ts'
 import css from './AskHyperionPanel.module.css'
 
 export interface AskHyperionPanelProps {
-  readonly equipment: SelectedEquipment
+  /** What the question is about: the equipment tag, or its name when the source prints no tag. */
+  readonly subject: string
   readonly suggestions: readonly EquipmentSuggestionPrompt[]
-  readonly onAskEquipment?: (query: string) => void
+  readonly onAskEquipment?: ((query: string) => void) | undefined
 }
 
 function SuggestionIcon({ type }: { type: EquipmentSuggestionPrompt['iconType'] }) {
@@ -51,7 +52,7 @@ function SuggestionIcon({ type }: { type: EquipmentSuggestionPrompt['iconType'] 
 }
 
 export function AskHyperionPanel({
-  equipment,
+  subject,
   suggestions,
   onAskEquipment,
 }: AskHyperionPanelProps) {
@@ -115,11 +116,11 @@ export function AskHyperionPanel({
         <input
           type="text"
           className={css.composerInput}
-          placeholder={`Ask about ${equipment.tag}...`}
+          placeholder={`Ask about ${subject}...`}
           value={inputText}
           onChange={e => setInputText(e.target.value)}
           onKeyDown={handleKeyDown}
-          aria-label={`Ask about ${equipment.tag}`}
+          aria-label={`Ask about ${subject}`}
         />
 
         {/* Bottom Control Bar */}
@@ -144,7 +145,7 @@ export function AskHyperionPanel({
             <button
               type="button"
               className={css.chipBtn}
-              onClick={() => setInputText(prev => `${prev} @${equipment.tag} `)}
+              onClick={() => setInputText(prev => `${prev} @${subject} `)}
               aria-label="Add equipment context"
             >
               <IconContextInjectionOutline16 size={12} />

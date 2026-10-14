@@ -1,63 +1,63 @@
 // @vitest-environment jsdom
-import { readFileSync, existsSync } from 'node:fs'
+import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, render, screen, within } from '@testing-library/react'
+import type { ReactElement } from 'react'
 import { ReportsOverview } from '../src/client/reports/ReportsOverview.tsx'
-import { GENERATED_DELIVERABLES } from '../src/client/reports/deliverables.ts'
+import { MrplSourceProvider, type MrplDataSource } from '../src/client/mrpl/api.ts'
+import { emptySource, failingSource, pendingSource, seedSource } from './mrpl-fixture.client.ts'
 
 afterEach(cleanup)
 
-const PUBLIC_DIR = join(process.cwd(), 'apps', 'web', 'public', 'deliverables')
+const withSource = (source: MrplDataSource, ui: ReactElement) => render(<MrplSourceProvider source={source}>{ui}</MrplSourceProvider>)
+const cardOf = (fileName: string): HTMLElement => screen.getByText(fileName).closest('[data-kind]') as HTMLElement
 
-describe('Reports — corpus-derived deliverables (DOC-010)', () => {
-  it('lists one sample per format with provenance and real download targets', () => {
-    render(<ReportsOverview />)
-
+describe('Reports — deliverables served by the host', () => {
+  it('lists real sample files with formats, sizes and host download links', async () => {
+    withSource(seedSource(), <ReportsOverview />)
     const strip = screen.getByRole('region', { name: 'Generated deliverables' })
-    expect(strip).toBeTruthy()
-    expect(screen.getByText(/Hyperion-generated from corpus DOC-010/)).toBeTruthy()
-
-    for (const item of GENERATED_DELIVERABLES) {
-      const card = screen.getByText(item.fileName).closest('div')?.parentElement?.parentElement
-      expect(card).not.toBeNull()
-      const scope = within(card as HTMLElement)
-      expect(scope.getByText(item.format)).toBeTruthy()
-      expect(scope.getByText(item.classification)).toBeTruthy()
+    expect(within(strip).getByRole('status', { name: 'Loading Deliverables' })).toBeTruthy()
+    expect(await screen.findByText('MG91_Specification_Summary.pdf')).toBeTruthy()
+    for (const [name, format] of [
+      ['MG91_Specification_Summary.pdf', 'PDF'],
+      ['MG91_Specification_Summary.docx', 'DOCX'],
+      ['MG91_Specification_Matrix.xlsx', 'XLSX'],
+      ['MG91_Specification_Brief.pptx', 'PPTX'],
+    ] as const) {
+      const card = within(cardOf(name))
+      expect(card.getByText(format)).toBeTruthy()
+      expect(card.getByText('Sample')).toBeTruthy()
+      expect(card.getByRole('link', { name: 'Download' }).getAttribute('href')).toBe(`/hyperion/mrpl/deliverables/${name}`)
     }
-    expect(GENERATED_DELIVERABLES.map(d => d.format).sort()).toEqual(
-      ['DOCX', 'PDF', 'PPTX', 'XLSX'],
-    )
+    expect(within(cardOf('MG91_Specification_Summary.pdf')).getByText(/3\.7 KB/)).toBeTruthy()
+    expect(within(cardOf('MG91_Specification_Summary.pdf')).getByRole('link', { name: 'Preview' })).toBeTruthy()
+    expect(within(strip).getByText('Public sample data')).toBeTruthy()
+  })
 
-    const pdfCard = screen.getByText('MG91_Specification_Summary.pdf').closest('div')?.parentElement?.parentElement as HTMLElement
-    expect(within(pdfCard).getByRole('link', { name: 'Preview' })).toBeTruthy()
-    const xlsxCard = screen.getByText('MG91_Specification_Matrix.xlsx').closest('div')?.parentElement?.parentElement as HTMLElement
-    expect(within(xlsxCard).getByRole('link', { name: 'Open' })).toBeTruthy()
-
-    const downloads = screen.getAllByRole('link', { name: 'Download' })
-    expect(downloads.length).toBe(GENERATED_DELIVERABLES.length)
-    for (const [i, link] of downloads.entries()) {
-      expect(link.getAttribute('href')).toBe(GENERATED_DELIVERABLES[i]!.href)
+  it('shows generated XLSX artifacts found on the host', async () => {
+    const uploads = await mkdtemp(join(tmpdir(), 'hx-reports-'))
+    try {
+      await writeFile(join(uploads, 'S-001_MG91_Compliance.xlsx'), Buffer.from('PK'))
+      withSource(seedSource({ uploadsDir: uploads }), <ReportsOverview />)
+      expect(await screen.findByText('S-001_MG91_Compliance.xlsx')).toBeTruthy()
+      const card = within(cardOf('S-001_MG91_Compliance.xlsx'))
+      expect(card.getByText('Generated on this host')).toBeTruthy()
+      expect(card.getByRole('link', { name: 'Open' }).getAttribute('href')).toBe('/hyperion/files/S-001_MG91_Compliance.xlsx')
+    } finally {
+      await rm(uploads, { recursive: true, force: true })
     }
   })
 
-  it('ships real readable files for every listed deliverable', () => {
-    for (const item of GENERATED_DELIVERABLES) {
-      const path = join(PUBLIC_DIR, item.fileName)
-      expect(existsSync(path), `${item.fileName} exists`).toBe(true)
-      const head = readFileSync(path).subarray(0, 5).toString('latin1')
-      if (item.format === 'PDF') {
-        expect(head.startsWith('%PDF')).toBe(true)
-      } else {
-        expect(head.startsWith('PK')).toBe(true)
-      }
-    }
-  })
-
-  it('marks the legacy fixture areas as demo', () => {
-    render(<ReportsOverview />)
-    expect(screen.getByText('Demo dataset')).toBeTruthy()
-    expect(screen.getByText('Demo records — illustrative layout')).toBeTruthy()
-    expect(screen.getByText('Demo preview')).toBeTruthy()
+  it('renders error, empty and loading states for the strip', async () => {
+    withSource(failingSource(), <ReportsOverview />)
+    expect(await screen.findByRole('alert', { name: 'Deliverables: error' })).toBeTruthy()
+    cleanup()
+    withSource(emptySource(), <ReportsOverview />)
+    expect(await screen.findByText('No deliverables yet')).toBeTruthy()
+    cleanup()
+    withSource(pendingSource(), <ReportsOverview />)
+    expect(screen.getByRole('status', { name: 'Loading Deliverables' })).toBeTruthy()
   })
 })

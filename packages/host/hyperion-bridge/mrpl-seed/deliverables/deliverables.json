@@ -1,0 +1,9 @@
+{
+  "label": "Hyperion-generated sample deliverables derived from public corpus document DOC-010 (MRPL MG 91 public spec sheet). Not original MRPL-issued records.",
+  "deliverables": [
+    { "id": "mg91-pdf", "fileName": "MG91_Specification_Summary.pdf", "title": "MG 91 Specification Summary", "sourceDocumentIds": ["DOC-010"] },
+    { "id": "mg91-docx", "fileName": "MG91_Specification_Summary.docx", "title": "MG 91 Specification Memo", "sourceDocumentIds": ["DOC-010"] },
+    { "id": "mg91-xlsx", "fileName": "MG91_Specification_Matrix.xlsx", "title": "MG 91 Specification Matrix", "sourceDocumentIds": ["DOC-010"] },
+    { "id": "mg91-pptx", "fileName": "MG91_Specification_Brief.pptx", "title": "MG 91 Specification Brief", "sourceDocumentIds": ["DOC-010"] }
+  ]
+}

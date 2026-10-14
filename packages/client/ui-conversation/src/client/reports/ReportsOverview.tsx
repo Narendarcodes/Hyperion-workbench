@@ -3,7 +3,8 @@ import {
   FIXTURE_SUMMARY_CARDS,
   FIXTURE_RELATED_ITEMS,
 } from './mockData.ts'
-import { GENERATED_DELIVERABLES } from './deliverables.ts'
+import { DeliverablesStrip } from './DeliverablesStrip.tsx'
+import { workbenchTokensClass } from '../mrpl/Workbench.tsx'
 import { pumpBase64 } from './pumpImage.ts'
 import css from './ReportsOverview.module.css'
 
@@ -17,7 +18,7 @@ function join(...args: unknown[]) {
 
 export function ReportsOverview(_props: ReportsOverviewProps) {
   return (
-    <div className={css.root} data-hide-composer="" role="region">
+    <div className={`${css.root} ${workbenchTokensClass}`} data-hide-composer="" role="region" aria-label="Reports">
       <div className={css.watermarkBg} />
       {/* HEADER */}
       <header className={css.header}>
@@ -79,48 +80,8 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
         </div>
       </header>
 
-      {/* GENERATED DELIVERABLES — real files derived from corpus DOC-010 */}
-      <section className={css.deliverablesStrip} aria-label="Generated deliverables">
-        <div className={css.deliverablesHeader}>
-          <h2 className={css.deliverablesTitle}>Generated deliverables</h2>
-          <span className={css.deliverablesProvenance}>
-            Hyperion-generated from corpus DOC-010 (MRPL MG 91 spec) — not original MRPL records
-          </span>
-        </div>
-        <div className={css.deliverablesGrid}>
-          {GENERATED_DELIVERABLES.map(item => (
-            <div key={item.id} className={css.deliverableCard}>
-              <span className={css.formatBadge} data-format={item.format}>
-                {item.format}
-              </span>
-              <div className={css.deliverableBody}>
-                <div className={css.deliverableName}>{item.fileName}</div>
-                <div className={css.deliverableMeta}>
-                  {item.title} · {item.source} · {item.size}
-                </div>
-                <div className={css.deliverableClass}>{item.classification}</div>
-              </div>
-              <div className={css.deliverableActions}>
-                <a
-                  className={css.deliverableOpen}
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {item.format === 'PDF' ? 'Preview' : 'Open'}
-                </a>
-                <a
-                  className={css.deliverableDownload}
-                  href={item.href}
-                  download={item.fileName}
-                >
-                  Download
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* GENERATED DELIVERABLES — real files served by the host */}
+      <DeliverablesStrip />
 
       {/* SUMMARY CARDS */}
       <div className={css.summaryCardsRow}>

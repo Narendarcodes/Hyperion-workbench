@@ -1,0 +1,126 @@
+{
+  "dataset": "hyperion-public-refinery-sample",
+  "label": "Equipment named in public incident and investigation reports. Not an MRPL asset register: tags appear only when the source prints them, and every record carries the verbatim quote the host verifies against the page text.",
+  "equipment": [
+    {
+      "id": "csb-chevron-c-1100",
+      "tag": "C-1100",
+      "name": "Crude Unit Atmospheric Column",
+      "type": "Column",
+      "unit": "#4 Crude Unit",
+      "facility": "Chevron Richmond Refinery (CSB case)",
+      "service": "Atmospheric crude distillation",
+      "citations": [
+        { "documentId": "DOC-007", "page": 11, "quote": "C-1100 Crude Unit Atmospheric Column" }
+      ]
+    },
+    {
+      "id": "csb-chevron-p-1149",
+      "tag": "P-1149",
+      "name": "4-sidecut pump",
+      "type": "Pump",
+      "unit": "#4 Crude Unit",
+      "facility": "Chevron Richmond Refinery (CSB case)",
+      "service": "4-sidecut stream",
+      "citations": [
+        { "documentId": "DOC-007", "page": 86, "quote": "4-sidecut pump P-1149" }
+      ]
+    },
+    {
+      "id": "csb-chevron-4-sidecut-line",
+      "tag": null,
+      "name": "4-sidecut 8-inch line (52-inch component)",
+      "type": "Piping",
+      "unit": "#4 Crude Unit",
+      "facility": "Chevron Richmond Refinery (CSB case)",
+      "service": "4-sidecut stream from the atmospheric column",
+      "citations": [
+        { "documentId": "DOC-007", "page": 11, "quote": "4- sidecut 8-inch line (the 52-inch component)" }
+      ]
+    },
+    {
+      "id": "csb-tesoro-e-6600e",
+      "tag": "E-6600E",
+      "name": "NHT feed/product heat exchanger (E)",
+      "type": "Heat Exchanger",
+      "unit": "Catalytic Reformer / Naphtha Hydrotreater",
+      "facility": "Tesoro Anacortes Refinery (CSB case)",
+      "service": "Naphtha hydrotreater feed/effluent",
+      "citations": [
+        { "documentId": "DOC-008", "page": 13, "quote": "The heat exchanger, known as E-6600E" }
+      ]
+    },
+    {
+      "id": "csb-tesoro-e-6600b",
+      "tag": "E-6600B",
+      "name": "NHT feed/product heat exchanger (B)",
+      "type": "Heat Exchanger",
+      "unit": "Catalytic Reformer / Naphtha Hydrotreater",
+      "facility": "Tesoro Anacortes Refinery (CSB case)",
+      "service": "Naphtha hydrotreater feed/effluent",
+      "citations": [
+        { "documentId": "DOC-008", "page": 43, "quote": "E-6600E and E-6600B Metallurgical Analysis report" }
+      ]
+    },
+    {
+      "id": "oisd-cs-08-crude-hvgo-exchanger",
+      "tag": null,
+      "name": "CRUDE/HVGO CR exchanger",
+      "type": "Heat Exchanger",
+      "unit": "CDU/VDU",
+      "facility": "Refinery (OISD case study, unnamed)",
+      "service": "Crude preheat (HVGO circulating reflux)",
+      "citations": [
+        { "documentId": "DOC-001", "page": 1, "quote": "flushing the tube side of the CRUDE/HVGO CR EXCHANGER" }
+      ]
+    },
+    {
+      "id": "oisd-cs-08-flo-line",
+      "tag": null,
+      "name": "2-inch flushing oil (FLO) line",
+      "type": "Piping",
+      "unit": "CDU/VDU",
+      "facility": "Refinery (OISD case study, unnamed)",
+      "service": "Flushing oil to exchanger tube side",
+      "citations": [
+        { "documentId": "DOC-001", "page": 1, "quote": "2-inch flushing oil (FLO) line" }
+      ]
+    },
+    {
+      "id": "oisd-cs-09-tpa-pump",
+      "tag": null,
+      "name": "TPA pump, JBO stripper column",
+      "type": "Pump",
+      "unit": "CDU",
+      "facility": "Refinery (OISD case study, unnamed)",
+      "service": "Total pump around, Jute Batching Oil stripper",
+      "citations": [
+        { "documentId": "DOC-004", "page": 1, "quote": "total pump around (TPA) pump of Jute Batching Oil (JBO) stripper column" }
+      ]
+    },
+    {
+      "id": "oisd-cs-17-drain-line",
+      "tag": null,
+      "name": "2-inch hydrocarbon drain line",
+      "type": "Piping",
+      "unit": "Gas Processing Plant",
+      "facility": "Gas processing plant (OISD case study, unnamed)",
+      "service": "Drain on 18-inch gas interconnection pipeline",
+      "citations": [
+        { "documentId": "DOC-002", "page": 1, "quote": "drain line in a 18’’ gas interconnection pipeline" }
+      ]
+    },
+    {
+      "id": "oisd-cs-10-slop-tank",
+      "tag": null,
+      "name": "Slop tank (external floating roof)",
+      "type": "Storage Tank",
+      "unit": "Oil Movement & Storage",
+      "facility": "Refinery (OISD case study, unnamed)",
+      "service": "Slop storage",
+      "citations": [
+        { "documentId": "DOC-003", "page": 1, "quote": "inspect the slop tank roof" }
+      ]
+    }
+  ]
+}

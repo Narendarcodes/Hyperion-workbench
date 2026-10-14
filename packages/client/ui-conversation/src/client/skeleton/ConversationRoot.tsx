@@ -519,11 +519,16 @@ export function ConversationRoot({
               onOpenPid={() => {
                 setWorkbenchView('pid')
               }}
-              onOpenDocuments={() => {
-                setDraft('List connected documents for P-101 A/B ')
+              onOpenDocuments={(equipment) => {
+                setDraft(`List source documents for ${equipment.tag ?? equipment.name} `)
               }}
-              onNewInvestigation={() => {
-                setDraft('Start investigation for Crude Feed Pump P-101 A/B ')
+              onOpenCitation={() => {
+                setWorkbenchView('documents')
+              }}
+              onNewInvestigation={(equipment) => {
+                setDraft(equipment === undefined
+                  ? 'Start new equipment investigation '
+                  : `Start investigation for ${equipment.name}${equipment.tag === null ? '' : ` ${equipment.tag}`} `)
               }}
               onAskEquipment={(query) => {
                 setDraft(`${query} `)
