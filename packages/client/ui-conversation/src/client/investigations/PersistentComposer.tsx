@@ -8,10 +8,7 @@
 import { useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import {
-  IconChevronDownOutline14,
   IconContextInjectionOutline16,
-  IconPaperclipOutline16,
-  IconPlusOutline16,
   IconSkillOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import css from './PersistentComposer.module.css'
@@ -69,23 +66,7 @@ export function PersistentComposer({
 
         <div className={css.controlsRow}>
           <div className={css.leftToolsGroup}>
-            <button
-              type="button"
-              className={css.iconBtn}
-              aria-label="Add action or file"
-              title="Add"
-            >
-              <IconPlusOutline16 size={13} />
-            </button>
 
-            <button
-              type="button"
-              className={css.iconBtn}
-              aria-label="Attach file"
-              title="Attach"
-            >
-              <IconPaperclipOutline16 size={13} />
-            </button>
 
             <button
               type="button"
@@ -125,19 +106,6 @@ export function PersistentComposer({
           </div>
 
           <div className={css.rightToolsGroup}>
-            <button
-              type="button"
-              className={css.autoRoutePill}
-              title="Automatic model routing enabled"
-              aria-label="Automatic model selection"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 2a4 4 0 0 0-4 4c0 1.5.8 2.8 2 3.4V14a2 2 0 0 0 2 2v0a2 2 0 0 0 2-2V9.4c1.2-.6 2-1.9 2-3.4a4 4 0 0 0-4-4z" />
-                <path d="M9 18a3 3 0 0 0 6 0" />
-              </svg>
-              <span>Auto</span>
-              <IconChevronDownOutline14 size={10} className={css.autoChevron} aria-hidden="true" />
-            </button>
 
             <button
               type="button"

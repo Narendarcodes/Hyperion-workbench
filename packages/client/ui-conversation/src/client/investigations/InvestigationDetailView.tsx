@@ -20,6 +20,11 @@ import type {
   SimilarEquipmentRecord,
   WorkflowStage,
 } from './types.ts'
+import { ActionNotice, AnalysisResult } from './ActionMenu.tsx'
+import { investigationsConfig } from './config.ts'
+import { codeFromDeepLink } from './investigation-actions.ts'
+import { useInvestigationStore } from './investigation-store.ts'
+import { useInvestigationActions } from './useInvestigationActions.ts'
 import css from './InvestigationDetailView.module.css'
 
 /** The investigation an action applies to (taken from the open record, never hard-coded). */
@@ -30,33 +35,50 @@ export interface InvestigationSubject {
 
 export interface InvestigationDetailViewProps {
   readonly initialData?: InvestigationAnalysisDetailData
+  /** Investigation to show; defaults to the deep-link code, then the store selection. */
+  readonly investigationCode?: string
   readonly onNavigateBack?: () => void
-  readonly onShare?: (subject: InvestigationSubject) => void
-  readonly onChangeStatus?: (subject: InvestigationSubject) => void
-  readonly onGenerateReport?: (subject: InvestigationSubject) => void
-  readonly onRerun?: (subject: InvestigationSubject) => void
   readonly onSendQuery?: (query: string) => void
   readonly onViewEquipmentDetails?: () => void
+  readonly onOpenPid?: () => void
+  readonly onOpenDocuments?: () => void
+}
+
+function resolveCode(explicit: string | undefined, selected: string | null): string | null {
+  if (explicit !== undefined) return explicit
+  if (typeof window !== 'undefined') {
+    const fromLink = codeFromDeepLink(window.location.href)
+    if (fromLink !== null) return fromLink
+  }
+  return selected
 }
 
 export function InvestigationDetailView({
   initialData = DEFAULT_ANALYSIS_DETAIL_DATA,
+  investigationCode,
   onNavigateBack,
-  onShare,
-  onChangeStatus,
-  onGenerateReport,
-  onRerun,
   onSendQuery,
   onViewEquipmentDetails,
+  onOpenPid,
+  onOpenDocuments,
 }: InvestigationDetailViewProps) {
-  const [data, setData] = useState<InvestigationAnalysisDetailData>(initialData)
+  const [local, setData] = useState<InvestigationAnalysisDetailData>(initialData)
+  const store = useInvestigationStore()
+  const code = resolveCode(investigationCode, store.selectedCode) ?? local.code
+  const record = code === null ? undefined : store.investigations.find(i => i.code === code)
+  const labels = investigationsConfig().statusLabels
+  const data: InvestigationAnalysisDetailData = record === undefined ? local : {
+    ...local,
+    code: record.code,
+    tag: record.tag,
+    title: record.title,
+    severity: record.severity,
+    status: record.status,
+    statusLabel: labels[record.status],
+    updatedTimeAgo: `Updated ${new Date(record.updatedAt).toLocaleString()}`,
+  }
   const subject: InvestigationSubject = { code: data.code, tag: data.tag }
-  const bind = (cb: ((s: InvestigationSubject) => void) | undefined): (() => void) | undefined =>
-    cb === undefined ? undefined : () => { cb(subject) }
-  const share = bind(onShare)
-  const changeStatus = bind(onChangeStatus)
-  const generateReport = bind(onGenerateReport)
-  const rerun = bind(onRerun)
+  const actions = useInvestigationActions({ code: subject.code, tag: subject.tag, title: data.title, statusLabel: data.statusLabel })
 
   const handleSelectStage = (stageKey: WorkflowStage['key']) => {
     setData(prev => ({
@@ -70,18 +92,13 @@ export function InvestigationDetailView({
   }
 
   const handleQuickAction = (actionId: string) => {
-    console.info(`[Hyperion] Action selected: ${actionId}`)
-    if (actionId === 'generate-report' && generateReport) {
-      generateReport()
-    }
-  }
-
-  const handleOpenDoc = (doc: InvestigationEvidence) => {
-    console.info(`[Hyperion] Opening document: ${doc.name}`)
+    if (actionId === 'ask-hyperion') onSendQuery?.(investigationsConfig().analysisQuestion({ tag: data.tag, title: data.title }))
+    else if (actionId === 'compare-similar') actions.rerun('compare')
+    else if (actionId === 'open-pid') onOpenPid?.()
   }
 
   const handleSelectSimilar = (item: SimilarEquipmentRecord) => {
-    console.info(`[Hyperion] Selected benchmark equipment: ${item.tag}`)
+    onSendQuery?.(`Compare ${data.tag} with ${item.tag} (${item.name}) `)
   }
 
   return (
@@ -91,29 +108,27 @@ export function InvestigationDetailView({
       role="region"
       aria-label="Investigation Detail and Analysis Workspace"
     >
-      {/* 1. Header with Breadcrumb, Code, Title, Badges, Actions, Refinery Backdrop */}
       <InvestigationDetailHeader
         data={data}
         {...(onNavigateBack && { onNavigateBack })}
-        {...(share && { onShare: share })}
-        {...(changeStatus && { onChangeStatus: changeStatus })}
-        {...(generateReport && { onGenerateReport: generateReport })}
+        onShare={actions.share}
+        statusItems={record === undefined ? [] : actions.statusItems(record.status)}
+        onGenerateReport={actions.generateReport}
       />
 
-      {/* 2. Investigation 4-Stage Workflow Stepper */}
       <InvestigationWorkflowStepper
         stages={data.stages}
         currentStageKey={data.currentStage}
         onSelectStage={handleSelectStage}
       />
 
-      {/* 3. Main Workspace: Analysis + Right Context Column */}
       <main className={css.mainWorkspaceGrid}>
-        {/* Left/Center: Analysis Workspace & Persistent Composer */}
         <section className={css.centerAnalysisColumn} aria-label="Investigation Analysis">
+          <ActionNotice text={actions.notice} />
+          {actions.result !== null && <AnalysisResult title={actions.result.title} result={actions.result.answer} />}
           <AnalysisWorkspace
             data={data}
-            {...(rerun && { onRerun: rerun })}
+            onRerun={() => { actions.rerun() }}
             onAgentChange={(agent) => {
               setData(prev => ({ ...prev, activeAgentPreset: agent }))
             }}
@@ -127,12 +142,14 @@ export function InvestigationDetailView({
           />
         </section>
 
-        {/* Right: Equipment Context, Quick Actions, Related Documents, Similar Equipment */}
         <RightContextColumn
           data={data}
           {...(onViewEquipmentDetails && { onViewEquipmentDetails })}
           onQuickAction={handleQuickAction}
-          onOpenDocument={handleOpenDoc}
+          {...(onOpenDocuments && {
+            onOpenDocument: (_doc: InvestigationEvidence) => { onOpenDocuments() },
+            onViewAllDocuments: onOpenDocuments,
+          })}
           onSelectSimilarEquipment={handleSelectSimilar}
         />
       </main>

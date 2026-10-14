@@ -16,12 +16,13 @@ import type {
   InvestigationEvidence,
   SelectedInvestigation,
 } from './types.ts'
+import { ActionMenu, type ActionMenuItem } from './ActionMenu.tsx'
 import css from './InvestigationDetail.module.css'
 
 export interface InvestigationDetailProps {
   readonly investigation: SelectedInvestigation
   readonly onOpenStatus?: () => void
-  readonly onEditSummary?: () => void
+  readonly moreItems?: readonly ActionMenuItem[]
   readonly onTabChange?: (tab: InvestigationDetailTab) => void
   readonly onOpenEvidence?: (item: InvestigationEvidence) => void
   readonly onViewAllEvidence?: () => void
@@ -156,7 +157,7 @@ function FileTypeIcon({ type }: { type: InvestigationEvidence['fileType'] }) {
 export function InvestigationDetail({
   investigation,
   onOpenStatus,
-  onEditSummary,
+  moreItems,
   onTabChange,
   onOpenEvidence,
   onViewAllEvidence,
@@ -197,14 +198,11 @@ export function InvestigationDetail({
           >
             Open
           </button>
-          <button
-            type="button"
-            className={css.moreMenuBtn}
-            aria-label="More options"
-            title="More options"
-          >
-            <IconEllipsisOutline16 size={15} />
-          </button>
+          {moreItems !== undefined && moreItems.length > 0 && (
+            <ActionMenu label="More options" items={moreItems} triggerClassName={css.moreMenuBtn}>
+              <IconEllipsisOutline16 size={15} />
+            </ActionMenu>
+          )}
         </div>
       </div>
 
@@ -246,18 +244,6 @@ export function InvestigationDetail({
             <div className={css.summaryCard}>
               <div className={css.summaryHeader}>
                 <h3 className={css.sectionHeading}>Summary</h3>
-                <button
-                  type="button"
-                  className={css.editLinkBtn}
-                  onClick={onEditSummary}
-                  aria-label="Edit summary"
-                >
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                  <span>Edit</span>
-                </button>
               </div>
               <p className={css.summaryBodyText}>{investigation.summary}</p>
             </div>
@@ -440,14 +426,6 @@ export function InvestigationDetail({
                           title="Open external"
                         >
                           <IconShareOutline16 size={13} />
-                        </button>
-                        <button
-                          type="button"
-                          className={css.evidenceIconBtn}
-                          aria-label={`Options for ${item.name}`}
-                          title="Options"
-                        >
-                          <IconEllipsisOutline16 size={13} />
                         </button>
                       </div>
                     </li>

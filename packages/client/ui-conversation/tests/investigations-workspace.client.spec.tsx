@@ -27,14 +27,15 @@ describe('HYPERION Screen 4 — Investigations Workspace', () => {
     expect(screen.getByText('All Investigations')).toBeTruthy()
     expect(screen.getByText('Track, analyze and resolve plant issues with AI assistance.')).toBeTruthy()
     expect(screen.getByPlaceholderText('Search investigations, equipment, unit, or tag...')).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Filter' })).toBeTruthy()
+    // Filter button removed (duplicate of status tabs/cards)
     expect(screen.getByRole('button', { name: 'New Investigation' })).toBeTruthy()
 
     // Status Summary Cards
-    expect(screen.getByLabelText('7 Open investigations')).toBeTruthy()
-    expect(screen.getByLabelText('3 In Progress investigations')).toBeTruthy()
-    expect(screen.getByLabelText('12 Resolved investigations')).toBeTruthy()
-    expect(screen.getByLabelText('2 On Hold investigations')).toBeTruthy()
+    // counts are computed from the investigation store, not fixture constants
+    expect(screen.getByLabelText(/^\d+ Open investigations$/)).toBeTruthy()
+    expect(screen.getByLabelText(/^\d+ In Progress investigations$/)).toBeTruthy()
+    expect(screen.getByLabelText(/^\d+ Resolved investigations$/)).toBeTruthy()
+    expect(screen.getByLabelText(/^\d+ On Hold investigations$/)).toBeTruthy()
 
     // Investigation List tabs
     expect(screen.getByRole('tab', { name: /All/ })).toBeTruthy()
@@ -117,7 +118,7 @@ describe('HYPERION Screen 4 — Investigations Workspace', () => {
     expect(screen.getByRole('button', { name: /Add Evidence/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: /Assign to Me/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: /Create Report/ })).toBeTruthy()
-    expect(screen.getByRole('button', { name: /Change Status/ })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Change investigation status/ })).toBeTruthy()
   })
 
   it('handles row selection, tab filtering, and AI suggested actions', () => {
