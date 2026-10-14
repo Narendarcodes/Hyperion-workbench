@@ -99,6 +99,14 @@ export interface Config {
    * budget belongs to the child runtime or its own deployment.
    */
   maxDepth?: number | 'provider-managed'
+  /**
+   * Roles the model may assign to a child (e.g. `planner`, `worker`, `fast`,
+   * `vision`, `code`). When non-empty the tool exposes an optional `role`
+   * parameter limited to these values; the composed `agentModelRouting`
+   * resolver maps the role to a model. Omitted (default) keeps the tool
+   * schema unchanged.
+   */
+  roles?: string[]
 }
 
 export const Config: z<Config> = z.object({
@@ -126,6 +134,8 @@ export const Config: z<Config> = z.object({
     deny: z.array(z.string()).default(undefined as unknown as string[]),
   }).default(undefined as unknown as { allow: string[]; deny: string[] }),
   maxDepth: z.union([z.natural().max(Number.MAX_SAFE_INTEGER), z.const('provider-managed' as const)]).default(3),
+  // Preserve omission: an empty default would still be "no roles".
+  roles: z.array(z.string()).default(undefined as unknown as string[]),
 })
 
 /** Render text blocks from the canonical JSON block array without trusting arbitrary values. */
@@ -369,6 +379,7 @@ export function apply(ctx: Context, config: Config): void {
           + (subagentProvider.inheritsParentContext
             ? ' Changing the route can prevent provider-side reuse of the inherited conversation prefix.'
             : '')
+      const roleChoices = config.roles ?? []
       const disposeTool = runtimeCtx.tools.register(defineTool({
         name: toolName,
         description: wording.description + (backgroundEnabled
@@ -408,6 +419,13 @@ export function apply(ctx: Context, config: Config): void {
               description: providerRouteDefaults !== undefined
                 ? 'Adapter-owned reasoning effort for the effective child route. Omit to use a compatible configured effort or the selected model\'s default.'
                 : 'Adapter-owned reasoning effort for the effective child route. Omit to inherit a compatible configured/parent effort or use a newly selected model\'s default.',
+            },
+          } : {},
+          ...roleChoices.length > 0 ? {
+            role: {
+              type: 'string' as const,
+              enum: roleChoices,
+              description: `Optional role for the child (${roleChoices.join(', ')}). The deployment maps each role to a model; omit to let routing decide. Ignored when provider and model are given.`,
             },
           } : {},
           ...backgroundEnabled ? {
@@ -513,6 +531,7 @@ export function apply(ctx: Context, config: Config): void {
             ...config.persona !== undefined ? { persona: config.persona } : {},
             ...config.toolFilter !== undefined ? { toolFilter: config.toolFilter } : {},
             ...maxDepth !== undefined ? { maxDepth } : {},
+            ...roleArg(args, roleChoices),
           }
 
           const runSpec = resolveDelegationRun(args, { backgroundEnabled, continuable })
@@ -695,4 +714,14 @@ export function apply(ctx: Context, config: Config): void {
   // set and emits `tools/change`; reconcile the Agent-owned override with the
   // new ancestry. Other registry changes are idempotent no-ops here.
   ctx.on('tools/change', reconcileComposedAgents)
+}
+
+/** Validated optional `role` argument, present only when roles are configured. */
+function roleArg(args: unknown, roles: readonly string[]): { role?: string } {
+  const role = (args as { role?: unknown }).role
+  if (roles.length === 0 || role === undefined) return {}
+  if (typeof role !== 'string' || !roles.includes(role)) {
+    throw new Error(`subagent role must be one of: ${roles.join(', ')}`)
+  }
+  return { role }
 }

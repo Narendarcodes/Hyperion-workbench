@@ -26,7 +26,7 @@ import {
   captureDelegatedPolicyOverrides,
   childSessionMeta,
   finalAssistantOutput,
-  resolveChildAgentOptions,
+  resolveRoutedChildAgentOptions,
   resolveChildDepth,
 } from '@deepseek-ai/dsh-subagent'
 import type {
@@ -131,12 +131,21 @@ export async function startInProcessRun(
     attachDescriptorAppend(childCtx, request.descriptor)
   }
 
+  const routed = await resolveRoutedChildAgentOptions(
+    parent,
+    request.agentOptions,
+    childDepth,
+    parent.ctx.get('agentModelRouting'),
+    { role: request.role, label: request.label, prompt: promptText(request.prompt), agentId: childId },
+  )
+  if (request.signal.aborted) throw prePublicationAbort()
+
   const handle = await parent.ctx.agents.create({
     sessionId: childId,
     meta: childSessionMeta(parent, childDepth, seed !== undefined),
     ...seed !== undefined ? { seed } : {},
     ...seed === undefined ? {} : { inheritedEventCount: activationBoundary },
-    agentOptions: resolveChildAgentOptions(parent, request.agentOptions, childDepth),
+    agentOptions: routed.options,
     signal: request.signal,
     setup,
   })
@@ -233,4 +242,9 @@ function readResult(
     if (stopReason === 'completed') return { output, stopReason: cancelled ? 'aborted' : 'error' }
   }
   return { output, stopReason }
+}
+
+/** Plain text of the prompt blocks, for model-routing role inference only. */
+function promptText(prompt: readonly ContentBlock[]): string {
+  return prompt.map(b => (b as { type?: string; text?: string }).type === 'text' ? (b as { text?: string }).text ?? '' : '').join(' ').slice(0, 4000)
 }

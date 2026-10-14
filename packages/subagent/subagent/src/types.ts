@@ -198,6 +198,13 @@ export interface SubagentStartRequest {
    * persona (strict `{{…}}` interpolation against the registered variables).
    */
   readonly persona?: string
+  /**
+   * Optional declared role (`planner`, `worker`, `fast`, `vision`, `code`,
+   * `auto`, …). Consumed only by an `agentModelRouting` resolver to pick the
+   * child's model; ignored when no resolver is composed or when
+   * `agentOptions` names an explicit provider+model.
+   */
+  readonly role?: string
 }
 
 /**
