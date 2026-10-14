@@ -118,6 +118,119 @@ export function resolveChildAgentOptions(
   return resolved
 }
 
+/** One concrete child route. Structurally identical to the router's `ModelRoute`. */
+export interface ChildModelRoute {
+  readonly provider: string
+  readonly model: string
+  readonly reasoningEffort?: string
+}
+
+/** What the delegation layer tells a model resolver about a child. */
+export interface ChildRouteRequest {
+  readonly agentId?: string
+  readonly label?: string
+  readonly role?: string
+  readonly depth: number
+  readonly prompt?: string
+  readonly parent?: ChildModelRoute
+  readonly explicit?: Partial<ChildModelRoute>
+}
+
+/** A resolver's answer: a route plus why it was chosen. */
+export interface ChildRouteDecision extends ChildModelRoute {
+  readonly source: string
+  readonly role?: string
+  readonly reason?: string
+}
+
+/**
+ * Per-agent model routing seam. `@deepseek-ai/dsh-llm-router`'s
+ * `AgentModelPolicy` satisfies it structurally; a deployment provides one as
+ * the `agentModelRouting` service and every in-process child is routed
+ * through it. Without a provider, children inherit the parent route exactly
+ * as before.
+ */
+export interface ChildModelResolver {
+  resolveChildRoute(request: ChildRouteRequest): Promise<ChildRouteDecision | undefined> | ChildRouteDecision | undefined
+}
+
+declare module '@deepseek-ai/cordis' {
+  interface Context {
+    agentModelRouting: ChildModelResolver
+  }
+}
+
+/** Routing inputs a delegation call adds on top of the plain option merge. */
+export interface ChildRoutingInput {
+  readonly role?: string | undefined
+  readonly label?: string | undefined
+  readonly prompt?: string | undefined
+  readonly agentId?: string | undefined
+}
+
+/**
+ * Resolve child options through an optional {@link ChildModelResolver}.
+ * An explicit provider+model in `requested` still wins (the resolver sees it
+ * as `explicit` and is expected to honour it); otherwise the resolver's route
+ * replaces the inherited parent route. A resolver that returns `undefined`
+ * or throws leaves the plain inherited options untouched, so routing can
+ * never break delegation.
+ * @param parent - delegating parent.
+ * @param requested - caller overrides.
+ * @param childDepth - resolved child depth.
+ * @param resolver - routing service, when composed.
+ * @param input - role/label/prompt for the resolver.
+ * @returns resolved options plus the routing decision (if any).
+ */
+export async function resolveRoutedChildAgentOptions(
+  parent: Agent,
+  requested: AgentOptions | undefined,
+  childDepth: number,
+  resolver: ChildModelResolver | undefined,
+  input: ChildRoutingInput = {},
+): Promise<{ options: AgentOptions; decision?: ChildRouteDecision }> {
+  const base = resolveChildAgentOptions(parent, requested, childDepth)
+  if (resolver === undefined) return { options: base }
+  const parentOptions = parentAgentOptionsForDelegation(parent)
+  const parentRoute = parentOptions.provider !== undefined && parentOptions.model !== undefined
+    ? { provider: parentOptions.provider, model: parentOptions.model }
+    : undefined
+  let decision: ChildRouteDecision | undefined
+  try {
+    decision = await resolver.resolveChildRoute({
+      ...input.agentId === undefined ? {} : { agentId: input.agentId },
+      ...input.label === undefined ? {} : { label: input.label },
+      ...input.role === undefined ? {} : { role: input.role },
+      ...input.prompt === undefined ? {} : { prompt: input.prompt },
+      depth: childDepth,
+      ...parentRoute === undefined ? {} : { parent: parentRoute },
+      ...explicitRoute(requested),
+    })
+  } catch {
+    return { options: base }
+  }
+  if (decision === undefined) return { options: base }
+  const options: AgentOptions = { ...base, provider: decision.provider, model: decision.model }
+  const effort = requested?.reasoningEffort ?? decision.reasoningEffort
+  const mutable = options as { reasoningEffort?: unknown }
+  if (effort !== undefined) mutable.reasoningEffort = effort
+  else if (decision.provider !== base.provider || decision.model !== base.model) delete mutable.reasoningEffort
+  return { options, decision }
+}
+
+/** The caller's explicit (possibly partial) route, as resolver input. */
+function explicitRoute(requested: AgentOptions | undefined): { explicit?: Partial<ChildModelRoute> } {
+  const provider = requested?.provider
+  const model = requested?.model
+  if (provider === undefined && model === undefined) return {}
+  return {
+    explicit: {
+      ...provider === undefined ? {} : { provider },
+      ...model === undefined ? {} : { model },
+    },
+  }
+}
+
 /**
  * Build the child session's durable creation metadata: the parent's workspace,
  * its direct lineage, coarse product origin, the recursion budget that must

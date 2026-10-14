@@ -311,6 +311,7 @@
       "@deepseek-ai/dsh-llm-pi-ai": ["./packages/llm/llm-pi-ai/src"],
       "@deepseek-ai/dsh-llm-replay": ["./packages/test-support/llm-replay/src"],
       "@deepseek-ai/dsh-llm-retry": ["./packages/llm/llm-retry/src"],
+      "@deepseek-ai/dsh-llm-router": ["./packages/llm/llm-router/src"],
       "@deepseek-ai/dsh-llm-retry/invariant": ["./packages/llm/llm-retry/src/invariant.ts"],
       "@deepseek-ai/dsh-loader-smoke": ["./packages/test-support/loader-smoke/src"],
       "@deepseek-ai/dsh-lsp": ["./packages/lsp/lsp/src"],

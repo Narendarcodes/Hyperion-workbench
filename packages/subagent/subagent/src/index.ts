@@ -119,9 +119,18 @@ export {
   parentAgentOptionsForDelegation,
   resolveChildAgentOptions,
   resolveChildDepth,
+  resolveRoutedChildAgentOptions,
   SubagentDepthError,
 } from './child-agent.ts'
-export type { ChildComposition, DelegatedPolicyOverrides } from './child-agent.ts'
+export type {
+  ChildComposition,
+  ChildModelResolver,
+  ChildModelRoute,
+  ChildRouteDecision,
+  ChildRouteRequest,
+  ChildRoutingInput,
+  DelegatedPolicyOverrides,
+} from './child-agent.ts'
 export type { AgentMessageSource, SubagentSettledMessageSource } from './continuation-messages.ts'
 export type * from './control-types.ts'
 export type { SubagentDescendantListEntry } from './list-children.ts'

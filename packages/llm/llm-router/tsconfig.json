@@ -4,5 +4,12 @@
     "outDir": "lib/types",
     "rootDir": "src"
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "../../llm/llm"
+    }
+  ]
 }

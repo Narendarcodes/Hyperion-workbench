@@ -26,7 +26,7 @@ import type { SessionObservation, SessionQueryEngine } from '@deepseek-ai/dsh-se
 import {
   childSessionMeta,
   captureDelegatedPolicyOverrides,
-  resolveChildAgentOptions,
+  resolveRoutedChildAgentOptions,
   resolveChildDepth,
 } from './child-agent.ts'
 import {
@@ -101,6 +101,16 @@ export class SubagentContinuationManager {
   async startContinuable(spec: ContinuableStartSpec): Promise<ContinuableStart> {
     const request = spec.request
     const parent = request.parent
+    // Model routing may await a resolver; do it before any admission or
+    // ownership state is touched so the synchronous section below stays
+    // atomic exactly as before.
+    const routed = await resolveRoutedChildAgentOptions(
+      parent,
+      request.agentOptions,
+      resolveChildDepth(parent, request.maxDepth),
+      parent.ctx.get('agentModelRouting'),
+      { role: request.role, label: spec.label },
+    )
     this.activations.assertAdmitting(parent)
     const persistence = this.requirePersistence()
     assertSubagentMaxDepth(request.maxDepth)
@@ -109,7 +119,7 @@ export class SubagentContinuationManager {
     const childDepth = resolveChildDepth(parent, request.maxDepth)
     // Snapshot before any await: invalid descriptor JSON rejects the call
     // before a child exists, and the detached value is what reaches the log.
-    const agentOptions = resolveChildAgentOptions(parent, request.agentOptions, childDepth)
+    const agentOptions = { ...routed.options, subagentDepth: childDepth }
     const agentProvider = agentOptions.provider
     const agentModel = agentOptions.model
     const agentReasoningEffort = agentOptions.reasoningEffort

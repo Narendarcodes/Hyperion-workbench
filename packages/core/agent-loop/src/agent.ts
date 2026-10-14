@@ -36,9 +36,7 @@ import { ReactLoopInbox } from './inbox.ts'
 import { RuntimeContextProjection } from './runtime-context.ts'
 import { AssistantStreamAttempt } from './assistant-stream.ts'
 import { executeToolCalls } from './tool-calls.ts'
-import { UniversalModelRouter } from '@deepseek-ai/dsh-llm-router'
-
-const router = new UniversalModelRouter()
+import { getSharedModelRouter } from '@deepseek-ai/dsh-llm-router'
 
 type Phase =
   | { kind: 'idle'; lastTurn: number }
@@ -595,7 +593,7 @@ export class ReactLoopAgent implements Agent {
           }
         }
 
-        const decision = await router.route(
+        const decision = await getSharedModelRouter().route(
           promptText,
           candidateIds.length > 0 ? { candidates: candidateIds } : undefined,
         )

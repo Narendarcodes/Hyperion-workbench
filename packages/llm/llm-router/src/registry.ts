@@ -246,6 +246,16 @@ export class StaticModelRegistry {
     return this.models.find(m => m.id === id)
   }
 
+  /**
+   * Find one exact provider/model registration, enabled or not.
+   * @param provider - provider id.
+   * @param id - provider-owned model id.
+   * @returns the profile, or `undefined` when never registered.
+   */
+  findRoute(provider: string, id: string): ModelProfile | undefined {
+    return this.models.find(m => m.id === id && m.provider === provider)
+  }
+
   registerModel(profile: ModelProfile): void {
     const idx = this.models.findIndex(m => m.id === profile.id && m.provider === profile.provider)
     if (idx >= 0) {
