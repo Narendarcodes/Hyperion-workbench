@@ -17,7 +17,8 @@ clone gets them through the `bundled` discovery source — no per-machine
 
 Slimmed 2026-09-28 for the MRPL demo: only document intake and evidence
 skills remain (`pdf`, `docx`, `xlsx`, `powerpoint`, `nano-pdf`,
-`ocr-and-documents`, `grounded-citations`). Everything else (code review/quality, security scanners,
+`ocr-and-documents`, `grounded-citations`), plus the in-repo `mrpl-spec-check` and `hyperion-rag`
+(document RAG with verified page citations, 2026-10-14). Everything else (code review/quality, security scanners,
 API/architecture, process/meta, UI/misc — 44 dirs) was deleted: none of it
 loads in the web composition, and every entry taxes each step of every
 session on small local models. Restore from source control if a use case
