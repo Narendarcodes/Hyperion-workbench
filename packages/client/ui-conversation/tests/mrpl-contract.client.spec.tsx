@@ -27,7 +27,7 @@ describe('MRPL wire contract mirror', () => {
     const hostUrl = pathToFileURL(join(process.cwd(), 'packages/host/hyperion-bridge/src/shared.ts')).href
     const HostShared = await import(/* @vite-ignore */ hostUrl) as Record<string, unknown>
     const routes = Object.entries(ClientContract).filter(([key]) => key.startsWith('HYPERION_MRPL_') || key.startsWith('HYPERION_ASR_'))
-    expect(routes.length).toBe(12)
+    expect(routes.length).toBe(13)
     for (const [key, value] of routes) expect(HostShared[key]).toBe(value)
   })
 })
