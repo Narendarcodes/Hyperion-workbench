@@ -33,6 +33,11 @@ export type {
   MissionWorker,
 } from './mission-contract.ts'
 export type { UseMission } from './MissionView.tsx'
+export type { AgentLifecycleEvent } from './pixel-office/lifecycle/events.ts'
+export { parseLifecycleJsonl } from './pixel-office/lifecycle/events.ts'
+export { lifecycleFromSession } from './pixel-office/lifecycle/fromSession.ts'
+export { createLifecycleReplay, foldLifecycle, lifecycleToOffice } from './pixel-office/lifecycle/state.ts'
+export type { LifecycleOfficeView, LifecycleState } from './pixel-office/lifecycle/state.ts'
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface SlotMap {

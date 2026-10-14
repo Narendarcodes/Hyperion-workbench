@@ -1,0 +1,63 @@
+{"scenario":"seq-0","kind":"spawn","agentId":"seq-0/lead","label":"Pump report lead","role":"planner","depth":0,"t":0.161}
+{"scenario":"seq-0","kind":"model","agentId":"seq-0/lead","provider":"droplet","model":"llm","source":"role","reason":"declared role \"planner\"","t":2.267}
+{"scenario":"seq-0","kind":"handoff","agentId":"seq-0/lead","to":"seq-0/extract","mode":"sequential","t":2.277}
+{"scenario":"seq-0","kind":"spawn","agentId":"seq-0/extract","parentId":"seq-0/lead","label":"Extract readings","role":"fast","depth":1,"t":2.284}
+{"scenario":"seq-0","kind":"model","agentId":"seq-0/extract","provider":"droplet","model":"llm","source":"fallback","reason":"declared role \"fast\"; fell back past droplet/llm-fast","t":3.352}
+{"scenario":"seq-0","kind":"done","agentId":"seq-0/extract","ok":true,"tokens":165,"latencyMs":1231,"t":1234.6}
+{"scenario":"seq-0","kind":"handoff","agentId":"seq-0/lead","to":"seq-0/compute","mode":"sequential","t":1234.609}
+{"scenario":"seq-0","kind":"spawn","agentId":"seq-0/compute","parentId":"seq-0/lead","label":"Compute total","role":"code","depth":1,"t":1234.615}
+{"scenario":"seq-0","kind":"model","agentId":"seq-0/compute","provider":"droplet","model":"llm","source":"fallback","reason":"declared role \"code\"; fell back past droplet/llm-code","t":1234.645}
+{"scenario":"seq-0","kind":"tool","agentId":"seq-0/compute","tool":"calc.sum","input":"81+84+72+89","output":"326","t":1234.661}
+{"scenario":"seq-0","kind":"done","agentId":"seq-0/compute","ok":true,"tokens":164,"latencyMs":1407,"t":2641.659}
+{"scenario":"seq-0","kind":"handoff","agentId":"seq-0/lead","to":"seq-0/report","mode":"sequential","t":2641.666}
+{"scenario":"seq-0","kind":"spawn","agentId":"seq-0/report","parentId":"seq-0/lead","label":"Write summary line","role":"worker","depth":1,"t":2641.671}
+{"scenario":"seq-0","kind":"model","agentId":"seq-0/report","provider":"droplet","model":"llm","source":"role","reason":"declared role \"worker\"","t":2641.69}
+{"scenario":"seq-0","kind":"done","agentId":"seq-0/report","ok":true,"tokens":158,"latencyMs":1534,"t":4175.692}
+{"scenario":"seq-0","kind":"done","agentId":"seq-0/lead","ok":true,"tokens":183,"latencyMs":1072,"t":5247.65}
+{"scenario":"par-0","kind":"spawn","agentId":"par-0/lead","label":"Unit conversion lead","role":"planner","depth":0,"t":0.008}
+{"scenario":"par-0","kind":"model","agentId":"par-0/lead","provider":"droplet","model":"llm","source":"role","reason":"declared role \"planner\"","t":1.975}
+{"scenario":"par-0","kind":"handoff","agentId":"par-0/lead","to":"par-0/w0","mode":"parallel","t":1.977}
+{"scenario":"par-0","kind":"handoff","agentId":"par-0/lead","to":"par-0/w1","mode":"parallel","t":1.979}
+{"scenario":"par-0","kind":"handoff","agentId":"par-0/lead","to":"par-0/w2","mode":"parallel","t":1.98}
+{"scenario":"par-0","kind":"handoff","agentId":"par-0/lead","to":"par-0/w3","mode":"parallel","t":1.981}
+{"scenario":"par-0","kind":"spawn","agentId":"par-0/w0","parentId":"par-0/lead","label":"Convert 0","role":"fast","depth":1,"t":2.003}
+{"scenario":"par-0","kind":"spawn","agentId":"par-0/w1","parentId":"par-0/lead","label":"Convert 1","role":"worker","depth":1,"t":2.051}
+{"scenario":"par-0","kind":"spawn","agentId":"par-0/w2","parentId":"par-0/lead","label":"Convert 2","role":"fast","depth":1,"t":2.058}
+{"scenario":"par-0","kind":"spawn","agentId":"par-0/w3","parentId":"par-0/lead","label":"Convert 3","role":"worker","depth":1,"t":2.064}
+{"scenario":"par-0","kind":"model","agentId":"par-0/w0","provider":"droplet","model":"llm","source":"fallback","reason":"declared role \"fast\"; fell back past droplet/llm-fast","t":24.181}
+{"scenario":"par-0","kind":"model","agentId":"par-0/w1","provider":"droplet","model":"llm","source":"role","reason":"declared role \"worker\"","t":24.861}
+{"scenario":"par-0","kind":"model","agentId":"par-0/w2","provider":"droplet","model":"llm","source":"fallback","reason":"declared role \"fast\"; fell back past droplet/llm-fast","t":25.379}
+{"scenario":"par-0","kind":"model","agentId":"par-0/w3","provider":"droplet","model":"llm","source":"role","reason":"declared role \"worker\"","t":25.708}
+{"scenario":"par-0","kind":"done","agentId":"par-0/w3","ok":true,"tokens":135,"latencyMs":1037,"t":1062.384}
+{"scenario":"par-0","kind":"done","agentId":"par-0/w1","ok":true,"tokens":143,"latencyMs":1194,"t":1218.646}
+{"scenario":"par-0","kind":"done","agentId":"par-0/w0","ok":true,"tokens":148,"latencyMs":1422,"t":1445.893}
+{"scenario":"par-0","kind":"done","agentId":"par-0/w2","ok":true,"tokens":149,"latencyMs":1497,"t":1522.227}
+{"scenario":"par-0","kind":"done","agentId":"par-0/lead","ok":true,"tokens":180,"latencyMs":1550,"t":3072.019}
+{"scenario":"tree-0","kind":"spawn","agentId":"tree-0/root","label":"Plant layout planner","role":"planner","depth":0,"t":0.006}
+{"scenario":"tree-0","kind":"model","agentId":"tree-0/root","provider":"droplet","model":"llm","source":"role","reason":"declared role \"planner\"","t":2.049}
+{"scenario":"tree-0","kind":"handoff","agentId":"tree-0/root","to":"tree-0/secA","mode":"parallel","t":2.051}
+{"scenario":"tree-0","kind":"handoff","agentId":"tree-0/root","to":"tree-0/secB","mode":"parallel","t":2.052}
+{"scenario":"tree-0","kind":"spawn","agentId":"tree-0/secA","parentId":"tree-0/root","label":"Section A lead","role":"planner","depth":1,"t":2.055}
+{"scenario":"tree-0","kind":"spawn","agentId":"tree-0/secB","parentId":"tree-0/root","label":"Section B lead","role":"planner","depth":1,"t":2.061}
+{"scenario":"tree-0","kind":"model","agentId":"tree-0/secA","provider":"droplet","model":"llm","source":"role","reason":"declared role \"planner\"","t":26.122}
+{"scenario":"tree-0","kind":"handoff","agentId":"tree-0/secA","to":"tree-0/readA","mode":"sequential","t":26.126}
+{"scenario":"tree-0","kind":"spawn","agentId":"tree-0/readA","parentId":"tree-0/secA","label":"Read drawing A","role":"vision","depth":2,"t":26.132}
+{"scenario":"tree-0","kind":"model","agentId":"tree-0/secB","provider":"droplet","model":"llm","source":"role","reason":"declared role \"planner\"","t":26.156}
+{"scenario":"tree-0","kind":"handoff","agentId":"tree-0/secB","to":"tree-0/readB","mode":"sequential","t":26.158}
+{"scenario":"tree-0","kind":"spawn","agentId":"tree-0/readB","parentId":"tree-0/secB","label":"Read drawing B","role":"vision","depth":2,"t":26.161}
+{"scenario":"tree-0","kind":"model","agentId":"tree-0/readA","provider":"droplet","model":"llm","source":"fallback","reason":"declared role \"vision\"; fell back past droplet/llm-vision","t":42.97}
+{"scenario":"tree-0","kind":"model","agentId":"tree-0/readB","provider":"droplet","model":"llm","source":"fallback","reason":"declared role \"vision\"; fell back past droplet/llm-vision","t":43.224}
+{"scenario":"tree-0","kind":"done","agentId":"tree-0/readA","ok":true,"tokens":158,"latencyMs":1346,"t":1389.299}
+{"scenario":"tree-0","kind":"handoff","agentId":"tree-0/secA","to":"tree-0/calcA","mode":"sequential","t":1389.302}
+{"scenario":"tree-0","kind":"spawn","agentId":"tree-0/calcA","parentId":"tree-0/secA","label":"Area calc A","role":"code","depth":2,"t":1389.304}
+{"scenario":"tree-0","kind":"model","agentId":"tree-0/calcA","provider":"droplet","model":"llm","source":"explicit","reason":"explicit override droplet/llm","t":1389.321}
+{"scenario":"tree-0","kind":"done","agentId":"tree-0/readB","ok":true,"tokens":159,"latencyMs":1397,"t":1440.145}
+{"scenario":"tree-0","kind":"handoff","agentId":"tree-0/secB","to":"tree-0/calcB","mode":"sequential","t":1440.152}
+{"scenario":"tree-0","kind":"spawn","agentId":"tree-0/calcB","parentId":"tree-0/secB","label":"Area calc B","role":"code","depth":2,"t":1440.156}
+{"scenario":"tree-0","kind":"model","agentId":"tree-0/calcB","provider":"droplet","model":"llm","source":"fallback","reason":"declared role \"code\"; fell back past droplet/llm-code","t":1440.183}
+{"scenario":"tree-0","kind":"tool","agentId":"tree-0/calcB","tool":"calc.mul","input":"3*3","output":"9","t":1440.193}
+{"scenario":"tree-0","kind":"done","agentId":"tree-0/calcB","ok":true,"tokens":139,"latencyMs":705,"t":2145.528}
+{"scenario":"tree-0","kind":"done","agentId":"tree-0/calcA","ok":true,"tokens":140,"latencyMs":803,"t":2192.477}
+{"scenario":"tree-0","kind":"done","agentId":"tree-0/secA","ok":true,"tokens":165,"latencyMs":1421,"t":3613.091}
+{"scenario":"tree-0","kind":"done","agentId":"tree-0/secB","ok":true,"tokens":188,"latencyMs":2341,"t":4486.639}
+{"scenario":"tree-0","kind":"done","agentId":"tree-0/root","ok":true,"tokens":173,"latencyMs":2088,"t":6574.618}

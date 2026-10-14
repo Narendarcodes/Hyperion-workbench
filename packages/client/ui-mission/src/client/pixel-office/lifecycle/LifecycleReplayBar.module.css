@@ -1,0 +1,55 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.88);
+  color: #e2e8f0;
+  font: 600 12px/1.2 system-ui, sans-serif;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 6px;
+  background: rgba(30, 41, 59, 0.9);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.button[aria-pressed='true'] {
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.slider {
+  flex: 1 1 160px;
+  min-width: 120px;
+  accent-color: #38bdf8;
+}
+
+.time,
+.stats {
+  font-variant-numeric: tabular-nums;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.select {
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(30, 41, 59, 0.9);
+  color: inherit;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  font: inherit;
+}
+
+.file {
+  display: none;
+}

@@ -3,6 +3,7 @@
  * @module @deepseek-ai/dsh-client-ui-mission/client/mission-contract
  */
 
+import type { AgentLifecycleEvent } from './pixel-office/lifecycle/events.ts'
 import type {
   MissionAgentStatus,
   MissionPhase,
@@ -131,6 +132,11 @@ export interface MissionSnapshot {
   readonly deliverables: readonly MissionDeliverable[]
   readonly verification: readonly MissionVerificationItem[]
   readonly sovereignty: MissionSovereigntyState
+  /**
+   * Agent/subagent lifecycle stream (spawn, model, tool, handoff, done/error)
+   * derived from the session log; drives the pixel office and its replay.
+   */
+  readonly lifecycle?: readonly AgentLifecycleEvent[]
 }
 
 /** Initial empty mission snapshot before events are processed. */
