@@ -507,6 +507,9 @@ export function ConversationRoot({
               onOpenPid={() => {
                 setWorkbenchView('pid')
               }}
+              onNavigate={(target) => {
+                setWorkbenchView(target)
+              }}
               onStartInvestigation={(unit) => {
                 setDraft(
                   `Start equipment investigation for ${unit.name} (${unit.code}) `,
@@ -609,6 +612,9 @@ export function ConversationRoot({
               }}
               onStartInvestigation={(tag) => {
                 setDraft(`Start equipment investigation for ${tag} `)
+              }}
+              onOpenCitation={() => {
+                setWorkbenchView('documents')
               }}
             />
           )}

@@ -135,13 +135,6 @@ export const BottomCards: React.FC<BottomCardsProps> = ({
       <div className={css.card}>
         <div className={css.cardHeader}>
           <span className={css.cardTitle}>Related Lines ({lines.length})</span>
-          <button
-            type="button"
-            className={css.viewAllLink}
-            onClick={() => { pidStore.setActivePIDTab('lines') }}
-          >
-            View all →
-          </button>
         </div>
         <div className={css.cardBody}>
           <table className={css.table} aria-label="Related process lines">

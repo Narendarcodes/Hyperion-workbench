@@ -29,6 +29,8 @@ export interface PIDViewProps {
   onOpenDocument: (doc: PIDDocument) => void
   /** Start a Hyperion investigation for an asset. */
   onStartInvestigation: (tag: string) => void
+  /** Open a cited source document (documentId, page) in the Documents view. */
+  onOpenCitation?: ((documentId: string, page: number) => void) | undefined
 }
 
 const STATUS_FILTERS = ['all', 'In Service', 'Standby', 'Maintenance', 'Offline'] as const
@@ -41,6 +43,7 @@ export const PIDView: React.FC<PIDViewProps> = ({
   onViewAllDocuments,
   onOpenDocument,
   onStartInvestigation,
+  onOpenCitation,
 }) => {
   const { selectedEquipment, selectedPID, searchQuery, filterState } = usePIDStore()
 
@@ -102,6 +105,7 @@ export const PIDView: React.FC<PIDViewProps> = ({
           onViewEquipment={onViewEquipment}
           onViewDocuments={onViewDocuments}
           onStartInvestigation={onStartInvestigation}
+          onOpenCitation={onOpenCitation}
         />
       </div>
 
