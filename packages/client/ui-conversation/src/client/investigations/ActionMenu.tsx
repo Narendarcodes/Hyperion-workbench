@@ -19,7 +19,7 @@ export interface ActionMenuItem {
 export interface ActionMenuProps {
   readonly label: string
   readonly items: readonly ActionMenuItem[]
-  readonly triggerClassName?: string
+  readonly triggerClassName?: string | undefined
   readonly children: ReactNode
 }
 
@@ -88,7 +88,9 @@ export function AnalysisResult({ title, result }: { readonly title: string; read
   return (
     <section className={css.result} aria-label={title}>
       <h3 className={css.resultTitle}>{title}</h3>
-      <p className={css.answer}>{result.abstain ? `No grounded answer: ${result.abstainReason ?? 'insufficient evidence'}` : result.answer}</p>
+      <p className={css.answer}>
+        {result.abstain ? `No grounded answer: ${result.abstainReason ?? 'insufficient evidence'}` : result.answer}
+      </p>
       {result.citations.length > 0 && (
         <ol className={css.citations} aria-label="Citations">
           {result.citations.map(c => (
@@ -98,7 +100,10 @@ export function AnalysisResult({ title, result }: { readonly title: string; read
           ))}
         </ol>
       )}
-      <span className={css.meta}>Retrieval: {result.retrieval}{result.degraded.length > 0 ? ` · degraded: ${result.degraded.join(', ')}` : ''}</span>
+      <span className={css.meta}>
+        Retrieval: {result.retrieval}
+        {result.degraded.length > 0 ? ` · degraded: ${result.degraded.join(', ')}` : ''}
+      </span>
     </section>
   )
 }

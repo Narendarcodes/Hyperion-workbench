@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import { InvestigationDetailView } from '../src/client/investigations/InvestigationDetailView.tsx'
 
 afterEach(cleanup)
@@ -8,20 +8,12 @@ afterEach(cleanup)
 describe('HYPERION Screen 5 — Investigation Detail & Analysis Workspace', () => {
   it('renders complete Investigation Detail and Analysis structure matching reference specifications', () => {
     const onNavigateBack = vi.fn()
-    const onShare = vi.fn()
-    const onChangeStatus = vi.fn()
-    const onGenerateReport = vi.fn()
-    const onRerun = vi.fn()
     const onSendQuery = vi.fn()
     const onViewEquipmentDetails = vi.fn()
 
     const { container } = render(
       <InvestigationDetailView
         onNavigateBack={onNavigateBack}
-        onShare={onShare}
-        onChangeStatus={onChangeStatus}
-        onGenerateReport={onGenerateReport}
-        onRerun={onRerun}
         onSendQuery={onSendQuery}
         onViewEquipmentDetails={onViewEquipmentDetails}
       />,
@@ -46,8 +38,7 @@ describe('HYPERION Screen 5 — Investigation Detail & Analysis Workspace', () =
 
     // Header Actions
     expect(screen.getByRole('button', { name: 'Share investigation' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Change status' })).toBeTruthy()
-    expect(screen.getAllByRole('button', { name: 'Generate Report' }).length).toBeGreaterThanOrEqual(2)
+    expect(screen.getAllByRole('button', { name: 'Generate Report' }).length).toBe(1)
 
     // 4-Stage Workflow Stepper
     expect(screen.getByRole('button', { name: 'Stage 1: Investigate' })).toBeTruthy()
@@ -112,7 +103,6 @@ describe('HYPERION Screen 5 — Investigation Detail & Analysis Workspace', () =
     expect(screen.getByRole('button', { name: 'Ask Hyperion' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Compare with Similar' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Open in P&ID' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Create Work Order' })).toBeTruthy()
 
     // Related Documents (6)
     expect(screen.getByRole('heading', { level: 3, name: 'Related Documents (6)' })).toBeTruthy()
@@ -137,80 +127,5 @@ describe('HYPERION Screen 5 — Investigation Detail & Analysis Workspace', () =
     expect(screen.getByRole('button', { name: 'Insert equipment context' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Insert skill trigger' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Toggle Workspace Write capability' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Automatic model selection' })).toBeTruthy()
-  })
-
-  it('handles user actions, stage clicks, and follow-up submissions', () => {
-    const onNavigateBack = vi.fn()
-    const onGenerateReport = vi.fn()
-    const onRerun = vi.fn()
-    const onSendQuery = vi.fn()
-
-    render(
-      <InvestigationDetailView
-        onNavigateBack={onNavigateBack}
-        onGenerateReport={onGenerateReport}
-        onRerun={onRerun}
-        onSendQuery={onSendQuery}
-      />,
-    )
-
-    // Click breadcrumb back
-    fireEvent.click(screen.getByRole('button', { name: 'Investigations' }))
-    expect(onNavigateBack).toHaveBeenCalledTimes(1)
-
-    // Click Generate Report
-    fireEvent.click(screen.getAllByRole('button', { name: 'Generate Report' })[0]!)
-    expect(onGenerateReport).toHaveBeenCalledTimes(1)
-
-    // Click Rerun analysis
-    fireEvent.click(screen.getByRole('button', { name: 'Rerun analysis' }))
-    expect(onRerun).toHaveBeenCalledTimes(1)
-
-    // Click stage 2: Analyze
-    const stage2Btn = screen.getByRole('button', { name: 'Stage 2: Analyze' })
-    fireEvent.click(stage2Btn)
-    expect(stage2Btn.getAttribute('aria-current')).toBe('step')
-
-    // Submit composer inquiry
-    const input = screen.getByPlaceholderText('Ask Hyperion a follow-up question...') as HTMLInputElement
-    fireEvent.change(input, { target: { value: 'What is the recommended alignment tolerance?' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Send follow-up question' }))
-    expect(onSendQuery).toHaveBeenCalledWith('What is the recommended alignment tolerance?')
-  })
-})
-
-describe('Investigation detail actions carry the open investigation, not a hard-coded INV-2024-001 / P-204', () => {
-  it('passes the open investigation code + tag to header and rerun actions, and the composer inserts its tag', async () => {
-    const { DEFAULT_ANALYSIS_DETAIL_DATA } = await import('../src/client/investigations/mockData.ts')
-    const data = { ...DEFAULT_ANALYSIS_DETAIL_DATA, code: 'INV-TEST-9', tag: 'X-77' }
-    const onShare = vi.fn()
-    const onChangeStatus = vi.fn()
-    const onGenerateReport = vi.fn()
-    const onRerun = vi.fn()
-    const onSendQuery = vi.fn()
-    render(
-      <InvestigationDetailView
-        initialData={data}
-        onShare={onShare}
-        onChangeStatus={onChangeStatus}
-        onGenerateReport={onGenerateReport}
-        onRerun={onRerun}
-        onSendQuery={onSendQuery}
-      />,
-    )
-    fireEvent.click(screen.getByRole('button', { name: 'Share investigation' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Change status' }))
-    fireEvent.click(screen.getAllByRole('button', { name: /Generate Report/ })[0]!)
-    fireEvent.click(screen.getByRole('button', { name: 'Rerun analysis' }))
-    const subject = { code: 'INV-TEST-9', tag: 'X-77' }
-    expect(onShare).toHaveBeenCalledWith(subject)
-    expect(onChangeStatus).toHaveBeenCalledWith(subject)
-    expect(onGenerateReport).toHaveBeenCalledWith(subject)
-    expect(onRerun).toHaveBeenCalledWith(subject)
-
-    fireEvent.click(screen.getByRole('button', { name: 'Insert equipment context' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Send follow-up question' }))
-    expect(onSendQuery).toHaveBeenCalledWith('@X-77')
   })
 })

@@ -23,7 +23,9 @@ const ANSWER: MrplEvidenceAnswerResponse = {
   answer: 'Bearing wear is the likely cause [1].',
   abstain: false,
   abstainReason: null,
-  citations: [{ n: 1, documentId: 'DOC-011', page: 3, quote: 'bearing temperature limit 85 C', verified: true, charStart: 0, charEnd: 10 }],
+  citations: [
+    { n: 1, documentId: 'DOC-011', page: 3, quote: 'bearing temperature limit 85 C', verified: true, charStart: 0, charEnd: 10 },
+  ],
   retrieval: 'hybrid_rerank',
   degraded: [],
 }
@@ -31,7 +33,9 @@ const ANSWER: MrplEvidenceAnswerResponse = {
 function source(answer = vi.fn(async () => ANSWER)): MrplDataSource {
   return { answerEvidence: answer } as unknown as MrplDataSource
 }
-const wrap = (src: MrplDataSource) => ({ children }: { children?: ReactNode }) => <MrplSourceProvider source={src}>{children}</MrplSourceProvider>
+const wrap = (src: MrplDataSource) => ({ children }: { children?: ReactNode }) => (
+  <MrplSourceProvider source={src}>{children}</MrplSourceProvider>
+)
 
 class MemStorage {
   m = new Map<string, string>()
@@ -89,7 +93,7 @@ describe('Investigations page wiring', () => {
     expect(screen.queryByRole('button', { name: 'Filter' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Filter options' })).toBeNull()
     expect(screen.getAllByText(/Sample ·/).length).toBeGreaterThan(0)
-    fireEvent.change(screen.getByRole('textbox', { name: 'Search investigations' }), { target: { value: 'Seal leak on P-301' } })
+    fireEvent.change(screen.getByLabelText('Search investigations'), { target: { value: 'Seal leak on P-301' } })
     fireEvent.click(screen.getByRole('button', { name: /New Investigation/ }))
     const created = investigationStore().getState().investigations[0]
     expect(created?.origin).toBe('ask')

@@ -64,7 +64,7 @@ export function InvestigationDetailView({
 }: InvestigationDetailViewProps) {
   const [local, setData] = useState<InvestigationAnalysisDetailData>(initialData)
   const store = useInvestigationStore()
-  const code = resolveCode(investigationCode, store.selectedCode)
+  const code = resolveCode(investigationCode, store.selectedCode) ?? local.code
   const record = code === null ? undefined : store.investigations.find(i => i.code === code)
   const labels = investigationsConfig().statusLabels
   const data: InvestigationAnalysisDetailData = record === undefined ? local : {
@@ -146,7 +146,10 @@ export function InvestigationDetailView({
           data={data}
           {...(onViewEquipmentDetails && { onViewEquipmentDetails })}
           onQuickAction={handleQuickAction}
-          {...(onOpenDocuments && { onOpenDocument: (_doc: InvestigationEvidence) => { onOpenDocuments() }, onViewAllDocuments: onOpenDocuments })}
+          {...(onOpenDocuments && {
+            onOpenDocument: (_doc: InvestigationEvidence) => { onOpenDocuments() },
+            onViewAllDocuments: onOpenDocuments,
+          })}
           onSelectSimilarEquipment={handleSelectSimilar}
         />
       </main>
