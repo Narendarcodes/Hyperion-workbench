@@ -47,7 +47,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "scripts"))
 
 from hyperion_rag.bm25 import tokenize  # noqa: E402
-from hyperion_rag.pipeline import (LLM, Hit, Index, answer_report, named_doc_hits,  # noqa: E402
+from hyperion_rag.pipeline import (LLM, Hit, Index, LLMUnavailable, answer_report, named_doc_hits,  # noqa: E402
                                    render_report_markdown, retrieve)
 
 PROC = {"CASE-004", "CASE-008"}
@@ -136,6 +136,7 @@ def main() -> None:
     ap.add_argument("--llm-url", default="http://127.0.0.1:8001/v1")
     ap.add_argument("--configs", default="bm25,hybrid@768,hybrid_rerank@768,hybrid_rerank@256")
     ap.add_argument("--k", type=int, default=8)
+    ap.add_argument("--keep-previous", action="store_true", help="merge into an existing refinery_metrics.json")
     ap.add_argument("--reuse-index", action="store_true", help="reuse OUT/index when it already has dense vectors")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -165,11 +166,14 @@ def main() -> None:
     rer = Reranker()
     cases = json.load(open(os.path.join(a.eval, "cases.json")))
     gts = {g["case_id"]: g["ground_truth"] for g in json.load(open(os.path.join(a.eval, "ground_truth.json")))}
-    llm = LLM(a.llm_url)
+    llm = LLM(a.llm_url, timeout=900.0)  # long multi-document reports under shared-server load
+    prev_path = os.path.join(a.out, "refinery_metrics.json")
+    prev = json.load(open(prev_path)) if os.path.exists(prev_path) else {}
     report = {"dataset": {"docs": index.meta["n_docs"], "chunks": index.meta["n_chunks"], "cases": len(cases),
                           "pages_indexed": sum(npages.values()), "doc011_ocr_text": npages.get("DOC-011", 0) > 0,
                           "sources": sources},
-              "embedding_model": enc.model_id, "embed_seconds": round(embed_s, 1), "configs": {}}
+              "embedding_model": enc.model_id, "embed_seconds": round(embed_s, 1),
+              "configs": prev.get("configs", {}) if a.keep_previous else {}}
     for cfg in a.configs.split(","):
         mode, dim = (cfg.split("@") + ["768"])[:2]
         dim = int(dim)
@@ -180,14 +184,21 @@ def main() -> None:
             seen = {h.idx for h in hits}
             hits += [h for h in named_doc_hits(index, q, rer if "rerank" in mode else None) if h.idx not in seen]
             t = time.time()
-            res = answer_report(index, q, hits, llm)
+            res = None
+            for _ in range(2):  # infrastructure failures are retried, never scored
+                try:
+                    res = answer_report(index, q, hits, llm)
+                    break
+                except LLMUnavailable as exc:
+                    res = {"infra_error": str(exc), "claims": [], "dropped_claims": [], "evidence": []}
             res["latency_s"] = round(time.time() - t, 1)
             res["markdown"] = render_report_markdown(res)
             return res
 
         with ThreadPoolExecutor(10) as ex:
             results = list(ex.map(run, cases))
-        rows = [score_case(c, gts[c["case_id"]], r, index, npages) for c, r in zip(cases, results)]
+        infra = [c["case_id"] for c, r in zip(cases, results) if "infra_error" in r]
+        rows = [score_case(c, gts[c["case_id"]], r, index, npages) for c, r in zip(cases, results) if "infra_error" not in r]
 
         def mean(key):
             v = [r[key] for r in rows if r.get(key) is not None]
@@ -201,6 +212,7 @@ def main() -> None:
                                          "ocr_rule_score")}
         summary["unsupported_claim_rate_pooled"] = round(sum(r["unsupported_claims"] for r in rows) / tot_claims, 3) if tot_claims else None
         summary["all_required_docs_retrieved"] = round(sum(r["all_required_docs_retrieved"] for r in rows) / len(rows), 3)
+        summary["excluded_infra_error_cases"] = infra
         report["configs"][cfg] = {"summary": summary, "cases": rows}
         with open(os.path.join(a.out, f"refinery_answers_{cfg.replace('@', '_')}.json"), "w") as fh:
             json.dump(results, fh, indent=1, ensure_ascii=False)

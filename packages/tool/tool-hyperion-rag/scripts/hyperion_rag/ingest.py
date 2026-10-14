@@ -27,7 +27,8 @@ from html.parser import HTMLParser
 from dataclasses import dataclass, field
 from typing import Iterable
 
-PAGE_MARKER = re.compile(r"<!--\s*page\s+(\d+)\s*-->", re.IGNORECASE)
+# "<!-- page N -->" or an OCR hand-off line "--- page N ---"
+PAGE_MARKER = re.compile(r"<!--\s*page\s+(\d+)\s*-->|^-{3}\s*page\s+(\d+)\s*-{3}[ \t]*$", re.IGNORECASE | re.MULTILINE)
 
 
 @dataclass
@@ -51,12 +52,16 @@ def split_pages(text: str) -> list[Page]:
         pages: list[Page] = []
         marks = list(PAGE_MARKER.finditer(text))
         head = text[: marks[0].start()]
-        if head.strip():
+        head_is_meta = not re.sub(r"<!--.*?-->", "", head, flags=re.DOTALL).strip()
+        first = int(marks[0].group(1) or marks[0].group(2))
+        if head.strip() and not head_is_meta and first > 1:
             pages.append(Page(1, head))
         for i, m in enumerate(marks):
             end = marks[i + 1].start() if i + 1 < len(marks) else len(text)
             body = text[m.end():end]
-            pages.append(Page(int(m.group(1)), body))
+            if i == 0 and head.strip() and not head_is_meta and first == 1:
+                body = head + body  # stray text before an explicit page 1 belongs to page 1
+            pages.append(Page(int(m.group(1) or m.group(2)), body))
         return pages
     if "\f" in text:
         return [Page(i + 1, t) for i, t in enumerate(text.split("\f"))]
@@ -99,9 +104,9 @@ def _from_json_file(path: str) -> Document | None:
     plist = row.get("pages") if isinstance(row.get("pages"), list) else row.get("page_text")
     if not isinstance(plist, list):
         return None
-    doc_id = str(row.get("doc_id") or row.get("document_id") or row.get("id")
+    doc_id = str(row.get("doc_id") or row.get("document_id") or row.get("doc") or row.get("id")
                  or os.path.splitext(os.path.basename(path))[0])
-    pages = [Page(int(p.get("page", i + 1)), str(p.get("text", ""))) for i, p in enumerate(plist)]
+    pages = [Page(int(p.get("page", p.get("number", i + 1))), str(p.get("text", ""))) for i, p in enumerate(plist)]
     pages = [p for p in pages if p.text.strip()]  # empty pages (unscanned / OCR pending) carry no evidence
     if not pages:
         return None

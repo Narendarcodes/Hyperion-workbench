@@ -41,6 +41,8 @@ class IngestChunkTests(unittest.TestCase):
         self.assertEqual([p.page for p in split_pages("a<!-- page 2 -->b<!-- page 3 -->c")], [1, 2, 3])
         self.assertEqual([p.text for p in split_pages("x\fy")], ["x", "y"])
         self.assertEqual(len(split_pages("no breaks")), 1)
+        ocr = "<!-- DOC-011 | OCR -->\n\n--- page 1 ---\nTable 1\n\n--- page 2 ---\nNotes"
+        self.assertEqual([(p.page, p.text.strip()) for p in split_pages(ocr)], [(1, "Table 1"), (2, "Notes")])
 
     def test_fixture_corpus_loads_dirs_and_page_files(self):
         docs = {d.doc_id: d for d in load_corpus([FIXTURES])}
