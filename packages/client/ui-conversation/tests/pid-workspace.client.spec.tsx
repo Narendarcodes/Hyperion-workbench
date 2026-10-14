@@ -37,7 +37,7 @@ describe('Hyperion P&ID workspace', () => {
 
     expect(screen.getByRole('heading', { level: 2, name: 'P&ID Navigator' })).toBeTruthy()
     expect(screen.getByLabelText('Search in P&ID')).toBeTruthy()
-    expect(screen.getByText('P&ID Viewer')).toBeTruthy()
+    expect(screen.queryByText('P&ID Viewer')).toBeNull()
     expect(screen.getByText('Related Equipment (10)')).toBeTruthy()
     expect(screen.getByText('Connected Documents (5)')).toBeTruthy()
     expect(screen.getByText('Related Lines (4)')).toBeTruthy()
