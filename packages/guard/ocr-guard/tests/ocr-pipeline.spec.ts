@@ -5,7 +5,6 @@ import {
   parseRawOcrOutput,
   processOcrPipeline,
   validateOcrResponse,
-  type OcrDetection,
 } from '../src/ocr-pipeline.ts'
 
 describe('OCR Pipeline & Spatial Deduplication', () => {

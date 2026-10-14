@@ -1,0 +1,719 @@
+{
+ "qwen3vl": {
+  "pages_scored": 81,
+  "errors": 0,
+  "truncated": 0,
+  "pages_per_min": 41.53,
+  "run": {
+   "engine": "qwen3vl",
+   "pages": 83,
+   "errors": 0,
+   "wall_s": 119.9,
+   "pages_per_min": 41.53,
+   "concurrency": 16
+  },
+  "all": {
+   "n": 81,
+   "cer": 0.0433,
+   "bow_f1": 0.9763,
+   "cell_f1": 0.9653,
+   "n_cell_pages": 69,
+   "tag_recall": 0.9978,
+   "n_tag_pages": 65
+  },
+  "synthetic": {
+   "n": 64,
+   "cer": 0.0297,
+   "bow_f1": 0.9779,
+   "cell_f1": 0.9758,
+   "n_cell_pages": 60,
+   "tag_recall": 0.9978,
+   "n_tag_pages": 64
+  },
+  "real": {
+   "n": 17,
+   "cer": 0.0948,
+   "bow_f1": 0.9701,
+   "cell_f1": 0.8954,
+   "n_cell_pages": 9,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "syn_light": {
+   "n": 22,
+   "cer": 0.0436,
+   "bow_f1": 0.9691,
+   "cell_f1": 0.9876,
+   "n_cell_pages": 20,
+   "tag_recall": 1.0,
+   "n_tag_pages": 22
+  },
+  "syn_medium": {
+   "n": 22,
+   "cer": 0.0319,
+   "bow_f1": 0.978,
+   "cell_f1": 0.9738,
+   "n_cell_pages": 21,
+   "tag_recall": 1.0,
+   "n_tag_pages": 22
+  },
+  "syn_heavy": {
+   "n": 20,
+   "cer": 0.0119,
+   "bow_f1": 0.9876,
+   "cell_f1": 0.9655,
+   "n_cell_pages": 19,
+   "tag_recall": 0.9928,
+   "n_tag_pages": 20
+  },
+  "real_CSB report table": {
+   "n": 6,
+   "cer": 0.0467,
+   "bow_f1": 0.984,
+   "cell_f1": 0.8843,
+   "n_cell_pages": 6,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "real_P&ID / instrumentation diagram": {
+   "n": 9,
+   "cer": 0.1318,
+   "bow_f1": 0.9644,
+   "cell_f1": 0.9176,
+   "n_cell_pages": 3,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "real_product spec table": {
+   "n": 2,
+   "cer": 0.0733,
+   "bow_f1": 0.9538,
+   "cell_f1": null,
+   "n_cell_pages": 0,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "doc011": {
+   "row_fact_recall": 1.0,
+   "phrase_recall": 1.0,
+   "missed_rows": []
+  }
+ },
+ "olmocr": {
+  "pages_scored": 81,
+  "errors": 0,
+  "truncated": 0,
+  "pages_per_min": 50.54,
+  "run": {
+   "engine": "olmocr",
+   "pages": 83,
+   "errors": 0,
+   "wall_s": 98.5,
+   "pages_per_min": 50.54,
+   "concurrency": 16
+  },
+  "all": {
+   "n": 81,
+   "cer": 0.055,
+   "bow_f1": 0.962,
+   "cell_f1": 0.9486,
+   "n_cell_pages": 69,
+   "tag_recall": 0.9768,
+   "n_tag_pages": 65
+  },
+  "synthetic": {
+   "n": 64,
+   "cer": 0.0414,
+   "bow_f1": 0.9652,
+   "cell_f1": 0.9593,
+   "n_cell_pages": 60,
+   "tag_recall": 0.9765,
+   "n_tag_pages": 64
+  },
+  "real": {
+   "n": 17,
+   "cer": 0.1063,
+   "bow_f1": 0.9501,
+   "cell_f1": 0.8767,
+   "n_cell_pages": 9,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "syn_light": {
+   "n": 22,
+   "cer": 0.0519,
+   "bow_f1": 0.9592,
+   "cell_f1": 0.967,
+   "n_cell_pages": 20,
+   "tag_recall": 0.9903,
+   "n_tag_pages": 22
+  },
+  "syn_medium": {
+   "n": 22,
+   "cer": 0.0383,
+   "bow_f1": 0.9633,
+   "cell_f1": 0.961,
+   "n_cell_pages": 21,
+   "tag_recall": 0.9949,
+   "n_tag_pages": 22
+  },
+  "syn_heavy": {
+   "n": 20,
+   "cer": 0.0331,
+   "bow_f1": 0.9737,
+   "cell_f1": 0.9495,
+   "n_cell_pages": 19,
+   "tag_recall": 0.941,
+   "n_tag_pages": 20
+  },
+  "real_CSB report table": {
+   "n": 6,
+   "cer": 0.0549,
+   "bow_f1": 0.9656,
+   "cell_f1": 0.8563,
+   "n_cell_pages": 6,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "real_P&ID / instrumentation diagram": {
+   "n": 9,
+   "cer": 0.1471,
+   "bow_f1": 0.9413,
+   "cell_f1": 0.9176,
+   "n_cell_pages": 3,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "real_product spec table": {
+   "n": 2,
+   "cer": 0.077,
+   "bow_f1": 0.9436,
+   "cell_f1": null,
+   "n_cell_pages": 0,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "doc011": {
+   "row_fact_recall": 1.0,
+   "phrase_recall": 0.909,
+   "missed_rows": []
+  }
+ },
+ "deepseekocr": {
+  "pages_scored": 81,
+  "errors": 0,
+  "truncated": 1,
+  "pages_per_min": 76.01,
+  "run": {
+   "engine": "deepseekocr",
+   "pages": 83,
+   "errors": 0,
+   "wall_s": 65.5,
+   "pages_per_min": 76.01,
+   "concurrency": 16
+  },
+  "all": {
+   "n": 81,
+   "cer": 0.0668,
+   "bow_f1": 0.955,
+   "cell_f1": 0.9145,
+   "n_cell_pages": 69,
+   "tag_recall": 0.9782,
+   "n_tag_pages": 65
+  },
+  "synthetic": {
+   "n": 64,
+   "cer": 0.0427,
+   "bow_f1": 0.9707,
+   "cell_f1": 0.9395,
+   "n_cell_pages": 60,
+   "tag_recall": 0.9779,
+   "n_tag_pages": 64
+  },
+  "real": {
+   "n": 17,
+   "cer": 0.1576,
+   "bow_f1": 0.8956,
+   "cell_f1": 0.7478,
+   "n_cell_pages": 9,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "syn_light": {
+   "n": 22,
+   "cer": 0.0556,
+   "bow_f1": 0.9631,
+   "cell_f1": 0.9742,
+   "n_cell_pages": 20,
+   "tag_recall": 0.9689,
+   "n_tag_pages": 22
+  },
+  "syn_medium": {
+   "n": 22,
+   "cer": 0.0439,
+   "bow_f1": 0.9739,
+   "cell_f1": 0.9457,
+   "n_cell_pages": 21,
+   "tag_recall": 0.9949,
+   "n_tag_pages": 22
+  },
+  "syn_heavy": {
+   "n": 20,
+   "cer": 0.0272,
+   "bow_f1": 0.9757,
+   "cell_f1": 0.8961,
+   "n_cell_pages": 19,
+   "tag_recall": 0.9689,
+   "n_tag_pages": 20
+  },
+  "real_CSB report table": {
+   "n": 6,
+   "cer": 0.0617,
+   "bow_f1": 0.9635,
+   "cell_f1": 0.7911,
+   "n_cell_pages": 6,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "real_P&ID / instrumentation diagram": {
+   "n": 9,
+   "cer": 0.2311,
+   "bow_f1": 0.8479,
+   "cell_f1": 0.6614,
+   "n_cell_pages": 3,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "real_product spec table": {
+   "n": 2,
+   "cer": 0.1148,
+   "bow_f1": 0.9065,
+   "cell_f1": null,
+   "n_cell_pages": 0,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "doc011": {
+   "row_fact_recall": 1.0,
+   "phrase_recall": 0.727,
+   "missed_rows": []
+  }
+ },
+ "mineru25": {
+  "pages_scored": 81,
+  "errors": 0,
+  "truncated": 0,
+  "pages_per_min": 40.16,
+  "run": {
+   "engine": "mineru25",
+   "pages": 83,
+   "wall_s": 124.0,
+   "pages_per_min": 40.16,
+   "concurrency": 32
+  },
+  "all": {
+   "n": 81,
+   "cer": 0.0713,
+   "bow_f1": 0.9478,
+   "cell_f1": 0.9664,
+   "n_cell_pages": 69,
+   "tag_recall": 0.979,
+   "n_tag_pages": 65
+  },
+  "synthetic": {
+   "n": 64,
+   "cer": 0.0641,
+   "bow_f1": 0.9465,
+   "cell_f1": 0.9803,
+   "n_cell_pages": 60,
+   "tag_recall": 0.9787,
+   "n_tag_pages": 64
+  },
+  "real": {
+   "n": 17,
+   "cer": 0.0982,
+   "bow_f1": 0.9527,
+   "cell_f1": 0.8738,
+   "n_cell_pages": 9,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "syn_light": {
+   "n": 22,
+   "cer": 0.053,
+   "bow_f1": 0.9546,
+   "cell_f1": 0.9925,
+   "n_cell_pages": 20,
+   "tag_recall": 0.9955,
+   "n_tag_pages": 22
+  },
+  "syn_medium": {
+   "n": 22,
+   "cer": 0.0633,
+   "bow_f1": 0.9423,
+   "cell_f1": 0.9885,
+   "n_cell_pages": 21,
+   "tag_recall": 0.9841,
+   "n_tag_pages": 22
+  },
+  "syn_heavy": {
+   "n": 20,
+   "cer": 0.0772,
+   "bow_f1": 0.9423,
+   "cell_f1": 0.9584,
+   "n_cell_pages": 19,
+   "tag_recall": 0.9543,
+   "n_tag_pages": 20
+  },
+  "real_CSB report table": {
+   "n": 6,
+   "cer": 0.0499,
+   "bow_f1": 0.9832,
+   "cell_f1": 0.852,
+   "n_cell_pages": 6,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "real_P&ID / instrumentation diagram": {
+   "n": 9,
+   "cer": 0.1398,
+   "bow_f1": 0.9322,
+   "cell_f1": 0.9174,
+   "n_cell_pages": 3,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "real_product spec table": {
+   "n": 2,
+   "cer": 0.0562,
+   "bow_f1": 0.9536,
+   "cell_f1": null,
+   "n_cell_pages": 0,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "doc011": {
+   "row_fact_recall": 1.0,
+   "phrase_recall": 1.0,
+   "missed_rows": []
+  }
+ },
+ "paddleocr": {
+  "pages_scored": 81,
+  "errors": 0,
+  "truncated": 0,
+  "pages_per_min": 11.51,
+  "run": {
+   "engine": "paddleocr",
+   "pages": 83,
+   "wall_s": 432.7,
+   "pages_per_min": 11.51,
+   "device": "droplet CPU, 8 threads, sequential"
+  },
+  "all": {
+   "n": 81,
+   "cer": 0.2381,
+   "bow_f1": 0.65,
+   "cell_f1": 0.0,
+   "n_cell_pages": 69,
+   "tag_recall": 0.9364,
+   "n_tag_pages": 65
+  },
+  "synthetic": {
+   "n": 64,
+   "cer": 0.2405,
+   "bow_f1": 0.6522,
+   "cell_f1": 0.0,
+   "n_cell_pages": 60,
+   "tag_recall": 0.9354,
+   "n_tag_pages": 64
+  },
+  "real": {
+   "n": 17,
+   "cer": 0.2288,
+   "bow_f1": 0.6418,
+   "cell_f1": 0.0,
+   "n_cell_pages": 9,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "syn_light": {
+   "n": 22,
+   "cer": 0.2817,
+   "bow_f1": 0.654,
+   "cell_f1": 0.0,
+   "n_cell_pages": 20,
+   "tag_recall": 0.9707,
+   "n_tag_pages": 22
+  },
+  "syn_medium": {
+   "n": 22,
+   "cer": 0.1683,
+   "bow_f1": 0.6594,
+   "cell_f1": 0.0,
+   "n_cell_pages": 21,
+   "tag_recall": 0.9567,
+   "n_tag_pages": 22
+  },
+  "syn_heavy": {
+   "n": 20,
+   "cer": 0.2748,
+   "bow_f1": 0.6422,
+   "cell_f1": 0.0,
+   "n_cell_pages": 19,
+   "tag_recall": 0.8732,
+   "n_tag_pages": 20
+  },
+  "real_CSB report table": {
+   "n": 6,
+   "cer": 0.246,
+   "bow_f1": 0.5987,
+   "cell_f1": 0.0,
+   "n_cell_pages": 6,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "real_P&ID / instrumentation diagram": {
+   "n": 9,
+   "cer": 0.2126,
+   "bow_f1": 0.6931,
+   "cell_f1": 0.0,
+   "n_cell_pages": 3,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "real_product spec table": {
+   "n": 2,
+   "cer": 0.2501,
+   "bow_f1": 0.5401,
+   "cell_f1": null,
+   "n_cell_pages": 0,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "doc011": {
+   "row_fact_recall": 0.857,
+   "phrase_recall": 0.909,
+   "missed_rows": [
+    "Acidity, total",
+    "Copper strip corrosion",
+    "Flash point Abel"
+   ]
+  }
+ },
+ "tesseract": {
+  "pages_scored": 81,
+  "errors": 0,
+  "truncated": 0,
+  "pages_per_min": 66.66,
+  "run": {
+   "engine": "tesseract",
+   "pages": 83,
+   "wall_s": 74.7,
+   "pages_per_min": 66.66,
+   "workers": 4,
+   "device": "sandbox CPU x4"
+  },
+  "all": {
+   "n": 81,
+   "cer": 0.3702,
+   "bow_f1": 0.7582,
+   "cell_f1": 0.0063,
+   "n_cell_pages": 69,
+   "tag_recall": 0.6928,
+   "n_tag_pages": 65
+  },
+  "synthetic": {
+   "n": 64,
+   "cer": 0.4016,
+   "bow_f1": 0.7231,
+   "cell_f1": 0.0067,
+   "n_cell_pages": 60,
+   "tag_recall": 0.688,
+   "n_tag_pages": 64
+  },
+  "real": {
+   "n": 17,
+   "cer": 0.2519,
+   "bow_f1": 0.8903,
+   "cell_f1": 0.0033,
+   "n_cell_pages": 9,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "syn_light": {
+   "n": 22,
+   "cer": 0.3154,
+   "bow_f1": 0.8966,
+   "cell_f1": 0.0169,
+   "n_cell_pages": 20,
+   "tag_recall": 0.9659,
+   "n_tag_pages": 22
+  },
+  "syn_medium": {
+   "n": 22,
+   "cer": 0.3165,
+   "bow_f1": 0.8001,
+   "cell_f1": 0.001,
+   "n_cell_pages": 21,
+   "tag_recall": 0.705,
+   "n_tag_pages": 22
+  },
+  "syn_heavy": {
+   "n": 20,
+   "cer": 0.5901,
+   "bow_f1": 0.4478,
+   "cell_f1": 0.0022,
+   "n_cell_pages": 19,
+   "tag_recall": 0.3638,
+   "n_tag_pages": 20
+  },
+  "real_CSB report table": {
+   "n": 6,
+   "cer": 0.195,
+   "bow_f1": 0.9575,
+   "cell_f1": 0.0,
+   "n_cell_pages": 6,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "real_P&ID / instrumentation diagram": {
+   "n": 9,
+   "cer": 0.1949,
+   "bow_f1": 0.8539,
+   "cell_f1": 0.01,
+   "n_cell_pages": 3,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "real_product spec table": {
+   "n": 2,
+   "cer": 0.6787,
+   "bow_f1": 0.8522,
+   "cell_f1": null,
+   "n_cell_pages": 0,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "doc011": {
+   "row_fact_recall": 0.333,
+   "phrase_recall": 1.0,
+   "missed_rows": [
+    "Copper strip corrosion",
+    "Distillation 95%",
+    "Flash point Abel",
+    "Kinematic viscosity",
+    "Total contamination",
+    "Density at 15C BS-IV",
+    "Density at 15C BS-VI",
+    "Total sulphur BS-IV",
+    "Total sulphur BS-VI",
+    "Water content",
+    "Oxidation stability",
+    "PAH",
+    "Lubricity wear scar",
+    "FAME content"
+   ]
+  }
+ },
+ "qwen3vl+guard": {
+  "pages_scored": 81,
+  "errors": 0,
+  "truncated": 0,
+  "pages_per_min": 41.53,
+  "run": {
+   "engine": "qwen3vl",
+   "pages": 83,
+   "errors": 0,
+   "wall_s": 119.9,
+   "pages_per_min": 41.53,
+   "concurrency": 16
+  },
+  "all": {
+   "n": 81,
+   "cer": 0.0433,
+   "bow_f1": 0.9763,
+   "cell_f1": 0.9653,
+   "n_cell_pages": 69,
+   "tag_recall": 0.9978,
+   "n_tag_pages": 65
+  },
+  "synthetic": {
+   "n": 64,
+   "cer": 0.0297,
+   "bow_f1": 0.9779,
+   "cell_f1": 0.9758,
+   "n_cell_pages": 60,
+   "tag_recall": 0.9978,
+   "n_tag_pages": 64
+  },
+  "real": {
+   "n": 17,
+   "cer": 0.0948,
+   "bow_f1": 0.9701,
+   "cell_f1": 0.8954,
+   "n_cell_pages": 9,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "syn_light": {
+   "n": 22,
+   "cer": 0.0436,
+   "bow_f1": 0.9691,
+   "cell_f1": 0.9876,
+   "n_cell_pages": 20,
+   "tag_recall": 1.0,
+   "n_tag_pages": 22
+  },
+  "syn_medium": {
+   "n": 22,
+   "cer": 0.0319,
+   "bow_f1": 0.978,
+   "cell_f1": 0.9738,
+   "n_cell_pages": 21,
+   "tag_recall": 1.0,
+   "n_tag_pages": 22
+  },
+  "syn_heavy": {
+   "n": 20,
+   "cer": 0.0119,
+   "bow_f1": 0.9876,
+   "cell_f1": 0.9655,
+   "n_cell_pages": 19,
+   "tag_recall": 0.9928,
+   "n_tag_pages": 20
+  },
+  "real_CSB report table": {
+   "n": 6,
+   "cer": 0.0467,
+   "bow_f1": 0.984,
+   "cell_f1": 0.8843,
+   "n_cell_pages": 6,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "real_P&ID / instrumentation diagram": {
+   "n": 9,
+   "cer": 0.1318,
+   "bow_f1": 0.9644,
+   "cell_f1": 0.9176,
+   "n_cell_pages": 3,
+   "tag_recall": 1.0,
+   "n_tag_pages": 1
+  },
+  "real_product spec table": {
+   "n": 2,
+   "cer": 0.0733,
+   "bow_f1": 0.9538,
+   "cell_f1": null,
+   "n_cell_pages": 0,
+   "tag_recall": null,
+   "n_tag_pages": 0
+  },
+  "doc011": {
+   "row_fact_recall": 1.0,
+   "phrase_recall": 1.0,
+   "missed_rows": []
+  }
+ }
+}

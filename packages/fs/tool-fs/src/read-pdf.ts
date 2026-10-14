@@ -14,6 +14,8 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { GenericCallView } from '@deepseek-ai/dsh-tools'
 import type {} from '@deepseek-ai/dsh-fs'
 import { resolveRegularReadTarget } from './read-target.ts'
+import { ocrPdfWindow, ocrProviderFromEnv } from './ocr-provider.ts'
+import type { OcrProvider, OcrReadSummary } from './ocr-provider.ts'
 
 /** Largest PDF accepted in one call; larger files must be split before reading. */
 export const PDF_MAX_BYTES = 25 * 1024 * 1024
@@ -300,6 +302,9 @@ function extractTextFromContent(src: string): string {
   return chunks.join('').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
 }
 
+/** Error text prefix for image-only PDFs; `read_pdf` matches it to decide on the OCR fallback. */
+export const PDF_NO_TEXT_LAYER = 'this PDF has no native text layer'
+
 /** Page texts in document order. Throws when the bytes are not a PDF or carry no text layer. */
 export function extractPdfPages(data: Uint8Array): { pageCount: number; pages: string[] } {
   if (!isPdfBytes(data)) throw new Error('not a PDF file: the bytes do not open with a %PDF- header')
@@ -332,8 +337,9 @@ export function extractPdfPages(data: Uint8Array): { pageCount: number; pages: s
   }
   if (pages.every(p => p === '')) {
     throw new Error(
-      'this PDF has no native text layer (scanned or image-only): text extraction is empty. '
-      + 'Use the read_image tool or a vision-capable model to inspect its pages instead.',
+      `${PDF_NO_TEXT_LAYER} (scanned or image-only): text extraction is empty. `
+      + 'Use the read_image tool or a vision-capable model to inspect its pages instead '
+      + '(or configure an OCR provider: HYPERION_OCR_PROVIDER=sidecar).',
     )
   }
   return { pageCount: pages.length, pages }
@@ -374,6 +380,8 @@ export interface PdfReadOutcome {
   pageCount: number
   pages: Array<{ number: number; text: string }>
   truncatedChars: boolean
+  /** Present when the pages came from the OCR provider (scanned PDF) rather than the text layer. */
+  ocr?: OcrReadSummary
 }
 
 /**
@@ -382,17 +390,31 @@ export interface PdfReadOutcome {
  * @returns the text blocks dispatched to the model.
  */
 export function formatPdfOutput(outcome: PdfReadOutcome): Array<{ type: 'text'; text: string }> {
-  const head = `<path>${outcome.path}</path>\n<type>pdf</type>\n<pages>${outcome.pages.map(p => p.number).join(',') || 'none'} of ${outcome.pageCount}</pages>\n<content>\n`
+  const ocr = outcome.ocr === undefined
+    ? ''
+    : `<source>ocr (${outcome.ocr.provider}${outcome.ocr.model ? `, ${outcome.ocr.model}` : ''}); scanned pages are machine-transcribed, verify critical values against the page image`
+      + `${outcome.ocr.repetitionPages + outcome.ocr.runawayPages + outcome.ocr.rejectedPages > 0 ? `; guard: ${outcome.ocr.repetitionPages} page(s) deduplicated, ${outcome.ocr.runawayPages} runaway, ${outcome.ocr.rejectedPages} empty` : ''}</source>\n`
+  const head = `<path>${outcome.path}</path>\n<type>pdf</type>\n${ocr}<pages>${outcome.pages.map(p => p.number).join(',') || 'none'} of ${outcome.pageCount}</pages>\n<content>\n`
   const body = outcome.pages.map(p => `--- page ${p.number} ---\n${p.text}`).join('\n')
   const tail = `${outcome.truncatedChars ? '\n[... output truncated to budget; narrow page_offset/page_limit ...]' : ''}\n</content>`
   return [{ type: 'text', text: `${head}${body}${tail}` }]
 }
 
+/** Options for {@link applyReadPdfTool}. */
+export interface ReadPdfToolOptions {
+  /**
+   * OCR fallback for scanned PDFs. `undefined` (default) resolves a provider
+   * from the environment at call time (`HYPERION_OCR_PROVIDER`); `null` disables OCR.
+   */
+  ocr?: OcrProvider | null
+}
+
 /**
  * Register the `read_pdf` tool and its system-prompt guidance.
  * @param ctx - the plugin context; registrations are effects scoped to it, and execution uses its `fs` service.
+ * @param options - optional OCR provider override.
  */
-export function applyReadPdfTool(ctx: Context): void {
+export function applyReadPdfTool(ctx: Context, options: ReadPdfToolOptions = {}): void {
   ctx.systemPrompt.section({
     name: 'tool:read-pdf',
     order: ctx.systemPrompt.getSectionOrder('TOOL_READ'),
@@ -429,6 +451,17 @@ export function applyReadPdfTool(ctx: Context): void {
             },
           },
           truncatedChars: { type: 'boolean', required: true },
+          ocr: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              provider: { type: 'string', required: true },
+              model: { type: 'string' },
+              repetitionPages: { type: 'integer', required: true },
+              runawayPages: { type: 'integer', required: true },
+              rejectedPages: { type: 'integer', required: true },
+            },
+          },
         },
       },
       render: (_args, value) => formatPdfOutput(value),
@@ -437,6 +470,7 @@ export function applyReadPdfTool(ctx: Context): void {
         pageOffset: value.pageOffset,
         pageLimit: value.pageLimit,
         pageCount: value.pageCount,
+        ...(value.ocr ? { ocr: value.ocr.provider } : {}),
       }),
     },
     isConcurrencySafe: () => true,
@@ -451,10 +485,24 @@ export function applyReadPdfTool(ctx: Context): void {
         throw new Error(`cannot read "${target.displayPath}": file exceeds the ${PDF_MAX_BYTES}-byte read_pdf budget; split it before reading`)
       }
       const data = await ctx.fs.readBytes(target, exec.signal, PDF_MAX_BYTES)
-      const { pageCount, pages } = extractPdfPages(data)
-      const selected = pages
-        .map((text, index) => ({ number: index + 1, text }))
-        .slice(input.pageOffset - 1, input.pageOffset - 1 + input.pageLimit)
+      let pageCount: number
+      let selected: Array<{ number: number; text: string }>
+      let ocr: OcrReadSummary | undefined
+      try {
+        const extracted = extractPdfPages(data)
+        pageCount = extracted.pageCount
+        selected = extracted.pages
+          .map((text, index) => ({ number: index + 1, text }))
+          .slice(input.pageOffset - 1, input.pageOffset - 1 + input.pageLimit)
+      } catch (error) {
+        const provider = options.ocr === undefined ? ocrProviderFromEnv() : options.ocr
+        if (!provider || !(error instanceof Error) || !error.message.startsWith(PDF_NO_TEXT_LAYER)) throw error
+        // Scanned/image-only PDF: OCR the requested window; every page passes the OCR guard.
+        const result = await ocrPdfWindow(provider, data, { pageOffset: input.pageOffset, pageLimit: input.pageLimit }, exec.signal)
+        pageCount = result.pageCount
+        selected = result.pages.map(p => ({ number: p.number, text: p.text }))
+        ocr = result.summary
+      }
       let budget = PDF_MAX_CHARS
       const capped = selected.map((p) => {
         if (budget <= 0) return { number: p.number, text: '' }
@@ -471,6 +519,7 @@ export function applyReadPdfTool(ctx: Context): void {
         pageCount,
         pages: capped,
         truncatedChars,
+        ...(ocr ? { ocr } : {}),
       }
       ctx.emit('fs/observed', target, { kind: 'present', version: info.version }, exec)
       return outcome
