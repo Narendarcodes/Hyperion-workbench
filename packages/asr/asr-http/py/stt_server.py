@@ -114,16 +114,41 @@ class Engine:
         return max(scores, key=scores.get), scores
 
 
-def load_audio(body: dict):
+def _librosa_load(src):
     import librosa
+    wav, _ = librosa.load(src, sr=16000)
+    return wav
+
+
+def decode_audio_bytes(data: bytes):
+    """Decode any container ffmpeg understands (browser WebM/Opus, OGG, M4A) to
+    16 kHz mono float32. Binary from STT_FFMPEG (default ``ffmpeg``)."""
+    import subprocess
+    import numpy as np
+    cmd = [os.environ.get('STT_FFMPEG', 'ffmpeg'), '-v', 'error', '-i', 'pipe:0', '-ac', '1', '-ar', '16000', '-f', 'f32le', 'pipe:1']
+    proc = subprocess.run(cmd, input=data, capture_output=True, timeout=float(os.environ.get('STT_FFMPEG_TIMEOUT_S', '60')))
+    if proc.returncode != 0:
+        raise ValueError(f'ffmpeg could not decode audio: {proc.stderr.decode(errors="replace").strip()[:300]}')
+    return np.frombuffer(proc.stdout, dtype='<f4').copy()
+
+
+def load_audio(body: dict, primary=None):
+    """WAV/FLAC/MP3 via libsndfile (librosa); anything it cannot open (the
+    composer's WebM/Opus) falls back to ffmpeg instead of a 422."""
+    primary = primary or _librosa_load
     if isinstance(body.get('audio_b64'), str):
         data = base64.b64decode(body['audio_b64'], validate=True)
-        wav, _ = librosa.load(io.BytesIO(data), sr=16000)
-    elif isinstance(body.get('audio_path'), str) and os.path.isabs(body['audio_path']):
-        wav, _ = librosa.load(body['audio_path'], sr=16000)
-    else:
-        raise ValueError('request needs "audio_b64" or an absolute "audio_path"')
-    return wav
+        try:
+            return primary(io.BytesIO(data))
+        except Exception:
+            return decode_audio_bytes(data)
+    if isinstance(body.get('audio_path'), str) and os.path.isabs(body['audio_path']):
+        try:
+            return primary(body['audio_path'])
+        except Exception:
+            with open(body['audio_path'], 'rb') as fh:
+                return decode_audio_bytes(fh.read())
+    raise ValueError('request needs "audio_b64" or an absolute "audio_path"')
 
 
 class State:
