@@ -1,0 +1,226 @@
+{
+ "_about": "DOC-011 answer key with table values (IS 1460:2017 Table 1 as hosted by IOCL). Values read from the scan and the Qwen3-VL OCR transcription; status PROPOSED (agent-read), pending a human spot-check. Method-of-Test values are deliberately excluded: the OCR row-shifts that column in rows vi-ix and xv-xvii (unresolved).",
+ "document": "DOC-011",
+ "items": [
+  {
+   "id": "acidity-inorganic",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the requirement for inorganic acidity (mg of KOH/g) of automotive diesel fuel?",
+   "values": [
+    "nil"
+   ],
+   "page": 1
+  },
+  {
+   "id": "acidity-total",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum total acidity, in mg of KOH/g, of automotive diesel fuel?",
+   "values": [
+    "0.20"
+   ],
+   "page": 1
+  },
+  {
+   "id": "ash",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum ash content, percent by mass, of automotive diesel fuel?",
+   "values": [
+    "0.01"
+   ],
+   "page": 1
+  },
+  {
+   "id": "carbon-residue",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum carbon residue (Ramsbottom or micro) on 10 percent residue, percent by mass?",
+   "values": [
+    "0.30"
+   ],
+   "page": 1
+  },
+  {
+   "id": "cetane-number",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the minimum cetane number of automotive diesel fuel?",
+   "values": [
+    "51"
+   ],
+   "page": 1
+  },
+  {
+   "id": "cetane-index",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the minimum cetane index of automotive diesel fuel?",
+   "values": [
+    "46"
+   ],
+   "page": 1
+  },
+  {
+   "id": "pour-point-winter",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum pour point of diesel fuel in winter?",
+   "values": [
+    "3"
+   ],
+   "page": 1
+  },
+  {
+   "id": "pour-point-summer",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum pour point of diesel fuel in summer?",
+   "values": [
+    "15"
+   ],
+   "page": 1
+  },
+  {
+   "id": "copper-strip",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the copper strip corrosion requirement (3 h at 50 °C)?",
+   "values": [
+    "no. 1"
+   ],
+   "page": 1
+  },
+  {
+   "id": "distillation-95",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum 95 percent v/v distillation recovery temperature in °C?",
+   "values": [
+    "360"
+   ],
+   "page": 1
+  },
+  {
+   "id": "flash-point",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the minimum Abel flash point of automotive diesel fuel in °C?",
+   "values": [
+    "35"
+   ],
+   "page": 1
+  },
+  {
+   "id": "viscosity",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the kinematic viscosity range at 40 °C, in cSt?",
+   "values": [
+    "2.0",
+    "4.5"
+   ],
+   "page": 1
+  },
+  {
+   "id": "contamination",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum total contamination in mg/kg?",
+   "values": [
+    "24"
+   ],
+   "page": 1
+  },
+  {
+   "id": "density-bs4",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the density range at 15 °C (kg/m³) for Bharat Stage IV diesel?",
+   "values": [
+    "815",
+    "845"
+   ],
+   "page": 1
+  },
+  {
+   "id": "density-bs6",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the density range at 15 °C (kg/m³) for Bharat Stage VI diesel?",
+   "values": [
+    "810",
+    "845"
+   ],
+   "page": 1
+  },
+  {
+   "id": "sulphur-bs4",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum total sulphur (mg/kg) for Bharat Stage IV diesel?",
+   "values": [
+    "50"
+   ],
+   "page": 1
+  },
+  {
+   "id": "sulphur-bs6",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum total sulphur (mg/kg) for Bharat Stage VI diesel?",
+   "values": [
+    "10"
+   ],
+   "page": 1
+  },
+  {
+   "id": "water",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum water content of diesel fuel in mg/kg?",
+   "values": [
+    "200"
+   ],
+   "page": 1
+  },
+  {
+   "id": "cfpp-winter",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum cold filter plugging point (CFPP) in winter?",
+   "values": [
+    "6"
+   ],
+   "page": 1
+  },
+  {
+   "id": "cfpp-summer",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum cold filter plugging point (CFPP) in summer?",
+   "values": [
+    "18"
+   ],
+   "page": 1
+  },
+  {
+   "id": "oxidation",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum oxidation stability value in g/m³?",
+   "values": [
+    "25"
+   ],
+   "page": 1
+  },
+  {
+   "id": "rancimat",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the minimum oxidation stability by Rancidity meter, in hours?",
+   "values": [
+    "20"
+   ],
+   "page": 1
+  },
+  {
+   "id": "pah",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum polycyclic aromatic hydrocarbon (PAH) content, percent by mass?",
+   "values": [
+    "8"
+   ],
+   "page": 1
+  },
+  {
+   "id": "lubricity",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum lubricity corrected wear scar diameter (wsd 1.4) at 60 °C, in microns?",
+   "values": [
+    "460"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fame",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), what is the maximum FAME content, % v/v?",
+   "values": [
+    "7.0"
+   ],
+   "page": 1
+  },
+  {
+   "id": "note-pmcc",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), above what Abel flash point must the PMCC flash point method be used instead?",
+   "values": [
+    "66"
+   ],
+   "page": 2
+  },
+  {
+   "id": "note-winter",
+   "question": "Per IS 1460:2017 Table 1 (IOCL HSD specification, DOC-011), which months count as winter for the pour point and CFPP limits?",
+   "values": [
+    "november",
+    "february"
+   ],
+   "page": 2
+  }
+ ]
+}
