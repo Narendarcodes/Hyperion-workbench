@@ -218,6 +218,7 @@ Hyperion-workbench/
 ├── packages/                 # Core Cordis workspace packages (70+)
 │   ├── asr/                  # Indic Conformer ASR capability seam
 │   │   ├── asr/              # Service definition: AsrTranscriber (resolve/transcribe)
+│   │   ├── asr-http/         # HTTP GPU-sidecar provider with per-language routing (py/stt_server.py)
 │   │   ├── asr-nemo/         # NeMo sidecar provider (py/transcribe.py)
 │   │   └── tool-transcribe/  # Model tool: transcribe_audio (file → text)
 │   ├── bundle/               # Deployment profiles

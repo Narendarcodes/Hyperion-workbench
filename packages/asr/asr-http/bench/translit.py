@@ -1,0 +1,6 @@
+import json,urllib.request,re
+W=['activate', 'adjust', 'alarm', 'ayindi', 'by', 'check', 'cheyyandi', 'close', 'column', 'compressor', 'confirm', 'draining', 'drop', 'exchanger', 'flow', 'for', 'heater', 'hot', 'hours', 'increase', 'indicator', 'inlet', 'ki', 'level', 'limit', 'lo', 'low', 'monitor', 'observe', 'off', 'open', 'permit', 'position', 'pressure', 'pump', 'rate', 'reach', 'reading', 'reduce', 'reflux', 'remaining', 'request', 'reset', 'safety', 'set', 'speed', 'spot', 'start', 'temperature', 'to', 'trip', 'undi', 'valve', 'vibration','percent','degree','celsius','cubic','meter','per','hour','point']
+u='Transliterate each word into Telugu script exactly as a Hyderabad plant operator pronounces it (English loanwords phonetically, romanized Telugu words into their Telugu spelling, e.g. cheyyandi -> చేయండి). Return JSON object word->telugu only.\n'+json.dumps(W)
+b=json.dumps(dict(model='llm',messages=[dict(role='user',content=u)],temperature=0,max_tokens=4000)).encode()
+r=json.load(urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8001/v1/chat/completions',b,{'Content-Type':'application/json'}),timeout=600))
+t=r['choices'][0]['message']['content'];print(re.search(r'\{.*\}',t,re.S).group(0))
