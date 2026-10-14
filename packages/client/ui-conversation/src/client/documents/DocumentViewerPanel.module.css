@@ -298,3 +298,11 @@
   background: rgba(37, 99, 235, 0.12);
   border-radius: 2px;
 }
+
+.pageRef {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dsw-alias-label-tertiary);
+  font-family: inherit;
+}

@@ -23,10 +23,10 @@
   align-items: stretch;
 }
 
-/* Lower Band: Documents (left) + Activity (center) + Ask Hyperion (right) */
+/* Lower Band: Source documents (left) + Ask Hyperion (right) */
 .lowerSection {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   width: 100%;
   align-items: stretch;

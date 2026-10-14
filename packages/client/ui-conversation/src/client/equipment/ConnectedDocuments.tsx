@@ -33,7 +33,7 @@ function DocTypeIcon({ color }: { color: ConnectedDocument['iconColor'] }) {
 
 export function ConnectedDocuments({
   documents,
-  totalCount = 8,
+  totalCount,
   onViewAll,
   onOpenDocument,
 }: ConnectedDocumentsProps) {
@@ -42,7 +42,7 @@ export function ConnectedDocuments({
       {/* Header */}
       <div className={css.docsHeader}>
         <h3 id="docs-heading" className={css.docsTitle}>
-          Connected Documents <span className={css.titleCount}>({totalCount})</span>
+          Source Documents <span className={css.titleCount}>({totalCount ?? documents.length})</span>
         </h3>
         <button
           type="button"

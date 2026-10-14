@@ -1,0 +1,194 @@
+/*
+ * Shared Hyperion workbench tokens + state components.
+ * Tokens are scoped custom properties on `.tokens` (applied by every MRPL
+ * screen root) layered on the ui-theme `--dsw-*` aliases, so dark/light
+ * follow the theme. ui-brand-official carries no tokens (sidebar mark only).
+ */
+
+.tokens {
+  --hx-space-1: 4px;
+  --hx-space-2: 8px;
+  --hx-space-3: 12px;
+  --hx-space-4: 16px;
+  --hx-space-5: 24px;
+  --hx-space-6: 32px;
+  --hx-radius-s: 8px;
+  --hx-radius-m: 10px;
+  --hx-card-bg: var(--dsw-alias-bg-layer-1);
+  --hx-card-border: 1px solid var(--dsw-alias-border-l2);
+  --hx-card-shadow: var(--dsw-elevation-panel);
+  --hx-text: var(--dsw-alias-label-primary);
+  --hx-text-2: var(--dsw-alias-label-secondary);
+  --hx-text-3: var(--dsw-alias-label-tertiary);
+  /* Chip text mixes the state colour toward the label colour: ≥4.5:1 on the tinted chip in light and dark. */
+  --hx-ok: color-mix(in srgb, var(--dsw-alias-state-success-primary) 60%, var(--dsw-alias-label-primary));
+  --hx-ok-bg: color-mix(in srgb, var(--dsw-alias-state-success-primary) 12%, transparent);
+  --hx-warn: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 60%, var(--dsw-alias-label-primary));
+  --hx-warn-bg: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 14%, transparent);
+  --hx-err: color-mix(in srgb, var(--dsw-alias-state-error-primary) 75%, var(--dsw-alias-label-primary));
+  --hx-err-bg: color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent);
+  --hx-info: var(--dsw-alias-brand-primary);
+  --hx-skeleton: var(--dsw-alias-bg-skeleton);
+}
+
+.card {
+  background: var(--hx-card-bg);
+  border: var(--hx-card-border);
+  border-radius: var(--hx-radius-m);
+  box-shadow: var(--hx-card-shadow);
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hx-space-2);
+  padding: var(--hx-space-6) var(--hx-space-5);
+  text-align: center;
+  color: var(--hx-text-2);
+  min-height: 120px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.stateCompact {
+  min-height: 0;
+  padding: var(--hx-space-4);
+}
+
+.stateTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hx-text);
+}
+
+.stateDetail {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 48ch;
+  color: var(--hx-text-3);
+  overflow-wrap: anywhere;
+}
+
+.stateError .stateTitle {
+  color: var(--hx-err);
+}
+
+.retry {
+  margin-top: var(--hx-space-1);
+  padding: 6px 14px;
+  border-radius: var(--hx-radius-s);
+  border: 1px solid var(--dsw-alias-border-l3);
+  background: var(--dsw-alias-button-elevated-fill);
+  color: var(--hx-text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retry:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hx-space-2);
+  width: 100%;
+  padding: var(--hx-space-4);
+  box-sizing: border-box;
+}
+
+.skeletonLine {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--hx-skeleton);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonLine:nth-child(2n) {
+  width: 72%;
+}
+
+.skeletonLine:nth-child(3n) {
+  width: 46%;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonLine {
+    animation: none;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.chipDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chip[data-tone='ok'] {
+  color: var(--hx-ok);
+  background: var(--hx-ok-bg);
+}
+
+.chip[data-tone='warn'] {
+  color: var(--hx-warn);
+  background: var(--hx-warn-bg);
+}
+
+.chip[data-tone='error'] {
+  color: var(--hx-err);
+  background: var(--hx-err-bg);
+}
+
+.chip[data-tone='info'] {
+  color: var(--hx-info);
+  border-color: var(--dsw-alias-border-l2);
+}
+
+.chip[data-tone='neutral'] {
+  color: var(--hx-text-2);
+  border-color: var(--dsw-alias-border-l2);
+}
+
+.dataset {
+  display: inline-flex;
+  align-self: flex-start;
+  width: fit-content;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px dashed var(--dsw-alias-border-l3);
+  color: var(--hx-text-2);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

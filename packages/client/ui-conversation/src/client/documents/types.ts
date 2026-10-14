@@ -62,6 +62,14 @@ export interface DocumentItem {
   readonly authenticity?: DocumentAuthenticity | undefined
   /** Honest viewer limitation (scanned PDF, HTML capture, oversized report…). */
   readonly viewerNote?: string | undefined
+  /** Whether host page text exists (`extracted`), awaits OCR, or is missing. */
+  readonly textStatus?: 'extracted' | 'ocr-pending' | 'missing' | undefined
+  /** `page` for PDFs, `section` for HTML captures. */
+  readonly textUnit?: 'page' | 'section' | undefined
+  /** First/last page (or section) number that has text. */
+  readonly textRange?: { readonly first: number; readonly last: number } | null | undefined
+  /** Category card this record belongs to. */
+  readonly category?: DocumentCategoryType | undefined
 }
 
 export type LibraryTab = 'all' | 'pids' | 'procedures' | 'reports'

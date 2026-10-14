@@ -27,6 +27,8 @@ import type { Session } from '@deepseek-ai/dsh-session'
 import { isUserInvocable } from '@deepseek-ai/dsh-skill'
 import z from '@deepseek-ai/schemastery'
 import { foldHyperionEnvelope } from './envelope.ts'
+import { registerMrplRoutes } from './mrpl-routes.ts'
+import { bundledSeedDir, MRPL_RETRIEVAL_SERVICE, MrplStore, type MrplRetrievalProvider } from './mrpl-store.ts'
 import type { HyperionSourceEvent } from './shared.ts'
 import {
   HYPERION_CHAT_ROUTE,
@@ -40,6 +42,7 @@ import {
 } from './shared.ts'
 
 export type * from './shared.ts'
+export type { MrplRetrievalProvider } from './mrpl-store.ts'
 
 /** Cordis function-plugin name. */
 export const name = 'hyperion-bridge'
@@ -50,15 +53,21 @@ export const inject = ['webServer', 'connection', 'agents', 'sessionQuery']
 export interface Config {
   /** Per-request body ceiling in bytes for mutating routes. */
   readonly maxBodyBytes: number
+  /**
+   * MRPL document store directory (refinery-corpus layout). Unset = the
+   * bundled public sample seed. `HYPERION_MRPL_CORPUS_DIR` overrides both.
+   */
+  readonly mrplCorpusDir: string
 }
 
 const boundedBytes = (): z<number> => z.number().step(1).min(1024).max(4_194_304).required()
 
 export const Config: z<Config> = z.object({
   maxBodyBytes: boundedBytes(),
+  mrplCorpusDir: z.string().default(''),
 })
 
-export const DEFAULT_CONFIG: Config = { maxBodyBytes: 64 * 1024 }
+export const DEFAULT_CONFIG: Config = { maxBodyBytes: 64 * 1024, mrplCorpusDir: '' }
 
 /** Trust surface consumed here; the browser-side connection package owns the full type. */
 interface HyperionBridgeConnection {
@@ -175,6 +184,14 @@ function uploadsDir(): string {
   const override = process.env.HYPERION_UPLOADS_DIR
   if (override !== undefined && override.length > 0) return override
   return join(homedir(), '.hermes', 'hermes3d', 'uploads')
+}
+
+/** MRPL store directory: env override, then config, then the bundled public sample seed. */
+function mrplStoreDir(config: Config): { dir: string; seed: boolean } {
+  const override = process.env.HYPERION_MRPL_CORPUS_DIR
+  if (override !== undefined && override.length > 0) return { dir: override, seed: false }
+  if (typeof config.mrplCorpusDir === 'string' && config.mrplCorpusDir.length > 0) return { dir: config.mrplCorpusDir, seed: false }
+  return { dir: bundledSeedDir(), seed: true }
 }
 
 /** Demo-scoped artifact names: plain basenames ending in .xlsx (no traversal). */
@@ -587,4 +604,17 @@ export function apply(ctx: Context, config: Config): void {
       res.end(body)
     },
   }), `hyperion-bridge: GET ${HYPERION_FILES_ROUTE}/<name>`)
+
+  const mrpl = mrplStoreDir(config)
+  registerMrplRoutes(ctx, {
+    store: new MrplStore(mrpl.dir, { uploadsDir, seed: mrpl.seed }),
+    maxBodyBytes: config.maxBodyBytes,
+    rejected,
+    sendJson,
+    readBody: readBoundedBody,
+    retriever: () => {
+      const provider = optionalService(ctx, MRPL_RETRIEVAL_SERVICE) as MrplRetrievalProvider | undefined
+      return provider !== undefined && typeof provider.retrieve === 'function' ? provider : undefined
+    },
+  })
 }

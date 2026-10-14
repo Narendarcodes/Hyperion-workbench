@@ -4,7 +4,7 @@
  */
 
 export * from './types.ts'
-export * from './mockData.ts'
+export * from './adapter.ts'
 export * from './DocumentsHeader.tsx'
 export * from './CategoryCards.tsx'
 export * from './DocumentLibraryPanel.tsx'

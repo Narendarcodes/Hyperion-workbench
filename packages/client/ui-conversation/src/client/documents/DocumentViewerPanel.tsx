@@ -6,7 +6,9 @@
 
 import { useEffect, useState } from 'react'
 import type { DocumentItem } from './types.ts'
-import { CORPUS_TEXT } from './corpusText.ts'
+import { useMrplSource } from '../mrpl/api.ts'
+import { useMrplResource } from '../mrpl/useMrplResource.ts'
+import { WorkbenchState } from '../mrpl/Workbench.tsx'
 import css from './DocumentViewerPanel.module.css'
 
 export interface DocumentViewerPanelProps {
@@ -34,11 +36,19 @@ export function DocumentViewerPanel({
   const handleZoomIn = () => { setZoom(z => Math.min(200, z + 15)) }
   const handleZoomOut = () => { setZoom(z => Math.max(50, z - 15)) }
 
-  // Real extracted corpus text when embedded; otherwise an honest unavailable state.
-  const textPages = document.corpusId === undefined ? undefined : CORPUS_TEXT[document.corpusId]
-  const pageCount = textPages?.length ?? document.pageCount
+  // Page text is served by the host (/hyperion/mrpl/documents/<id>/text); records
+  // without extracted text render an honest unavailable state instead.
+  const source = useMrplSource()
+  const range = document.textStatus === 'extracted' ? document.textRange ?? null : null
+  const pageCount = range === null ? 0 : range.last - range.first + 1
   const safePage = Math.min(Math.max(currentPage, 1), Math.max(pageCount, 1))
-  const pageText = textPages?.[safePage - 1]?.text
+  const pageNumber = range === null ? null : range.first + safePage - 1
+  const unitLabel = document.textUnit === 'section' ? 'Section' : 'Page'
+  const text = useMrplResource(
+    signal => source.getDocumentText(document.id, pageNumber ?? undefined, signal),
+    page => page.text.trim().length === 0,
+    pageNumber === null ? null : `${document.id}:${String(pageNumber)}`,
+  )
 
   return (
     <section className={css.viewerRoot} aria-label="Document Viewer">
@@ -90,7 +100,7 @@ export function DocumentViewerPanel({
             </svg>
           </button>
           <span className={css.pageIndicator}>
-            {pageCount === 0 ? '—' : `${safePage} / ${pageCount}`}
+            {pageCount === 0 ? '—' : `${String(safePage)} / ${String(pageCount)}`}
           </span>
           <button
             type="button"
@@ -197,19 +207,34 @@ export function DocumentViewerPanel({
 
       {/* 3. Document content: real extracted corpus text, or an honest unavailable state */}
       <div className={css.canvasArea}>
-        {pageText !== undefined ? (
+        {pageNumber !== null && text.status === 'loading' && (
+          <WorkbenchState kind="loading" label="Document text" />
+        )}
+        {pageNumber !== null && text.status === 'error' && (
+          <WorkbenchState kind="error" label="Document text" error={text.error} onRetry={text.retry} />
+        )}
+        {pageNumber !== null && text.status === 'empty' && (
+          <WorkbenchState kind="empty" label="Document text" title={`${unitLabel} ${String(pageNumber)} has no text`} />
+        )}
+        {pageNumber !== null && text.status === 'ready' && (
           <article
             className={css.textPage}
             style={{ fontSize: 13 * zoom / 100 }}
-            aria-label={`Page ${safePage} extracted text`}
+            aria-label={`${unitLabel} ${String(pageNumber)} extracted text`}
           >
-            {pageText}
+            {range !== null && range.first !== 1 && (
+              <div className={css.pageRef}>{`Source ${unitLabel.toLowerCase()} ${String(pageNumber)}`}</div>
+            )}
+            {text.data.text}
           </article>
-        ) : (
+        )}
+        {pageNumber === null && (
           <div className={css.unavailable} role="status">
-            <div className={css.unavailableTitle}>Text preview unavailable</div>
+            <div className={css.unavailableTitle}>
+              {document.textStatus === 'ocr-pending' ? 'OCR pending' : 'Text preview unavailable'}
+            </div>
             <div className={css.unavailableBody}>
-              {document.viewerNote ?? 'Extracted text for this source is not embedded in the viewer.'}
+              {document.viewerNote ?? 'The host has no extracted text for this source.'}
             </div>
             {document.sourceUrl !== undefined && (
               <a

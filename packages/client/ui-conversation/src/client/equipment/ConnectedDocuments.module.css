@@ -12,7 +12,7 @@
   box-shadow: var(--dsw-elevation-panel);
 }
 
-:global([data-ds-dark-theme="true"]) .docsCard,
+:global([data-ds-dark-theme]) .docsCard,
 :global(.dark) .docsCard {
   background: var(--dsw-alias-surface-raised, #1e293b);
   border-color: var(--dsw-alias-border-subtle, #334155);
@@ -32,7 +32,7 @@
   margin: 0;
 }
 
-:global([data-ds-dark-theme="true"]) .docsTitle,
+:global([data-ds-dark-theme]) .docsTitle,
 :global(.dark) .docsTitle {
   color: #f8fafc;
 }
@@ -61,7 +61,7 @@
   text-decoration: underline;
 }
 
-:global([data-ds-dark-theme="true"]) .viewAllBtn,
+:global([data-ds-dark-theme]) .viewAllBtn,
 :global(.dark) .viewAllBtn {
   color: #60a5fa;
 }
@@ -90,7 +90,7 @@
   color: var(--dsw-alias-label-tertiary, #94a3b8);
 }
 
-:global([data-ds-dark-theme="true"]) .tableHeaderRow,
+:global([data-ds-dark-theme]) .tableHeaderRow,
 :global(.dark) .tableHeaderRow {
   border-color: #334155;
 }
@@ -120,7 +120,7 @@
   background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, 0.025));
 }
 
-:global([data-ds-dark-theme="true"]) .docRow:hover,
+:global([data-ds-dark-theme]) .docRow:hover,
 :global(.dark) .docRow:hover {
   background: rgba(255, 255, 255, 0.03);
 }
@@ -154,11 +154,11 @@
 .docTone_orange { background: #fff7ed; color: #ea580c; }
 .docTone_amber { background: #fffbeb; color: #d97706; }
 
-:global([data-ds-dark-theme="true"]) .docTone_red, :global(.dark) .docTone_red { background: rgba(220, 38, 38, 0.2); color: #f87171; }
-:global([data-ds-dark-theme="true"]) .docTone_purple, :global(.dark) .docTone_purple { background: rgba(147, 51, 234, 0.2); color: #c084fc; }
-:global([data-ds-dark-theme="true"]) .docTone_blue, :global(.dark) .docTone_blue { background: rgba(37, 99, 235, 0.2); color: #60a5fa; }
-:global([data-ds-dark-theme="true"]) .docTone_orange, :global(.dark) .docTone_orange { background: rgba(234, 88, 12, 0.2); color: #fb923c; }
-:global([data-ds-dark-theme="true"]) .docTone_amber, :global(.dark) .docTone_amber { background: rgba(217, 119, 6, 0.2); color: #fbbf24; }
+:global([data-ds-dark-theme]) .docTone_red, :global(.dark) .docTone_red { background: rgba(220, 38, 38, 0.2); color: #f87171; }
+:global([data-ds-dark-theme]) .docTone_purple, :global(.dark) .docTone_purple { background: rgba(147, 51, 234, 0.2); color: #c084fc; }
+:global([data-ds-dark-theme]) .docTone_blue, :global(.dark) .docTone_blue { background: rgba(37, 99, 235, 0.2); color: #60a5fa; }
+:global([data-ds-dark-theme]) .docTone_orange, :global(.dark) .docTone_orange { background: rgba(234, 88, 12, 0.2); color: #fb923c; }
+:global([data-ds-dark-theme]) .docTone_amber, :global(.dark) .docTone_amber { background: rgba(217, 119, 6, 0.2); color: #fbbf24; }
 
 .docNameText {
   font-size: 12px;
@@ -169,7 +169,7 @@
   white-space: nowrap;
 }
 
-:global([data-ds-dark-theme="true"]) .docNameText,
+:global([data-ds-dark-theme]) .docNameText,
 :global(.dark) .docNameText {
   color: #e2e8f0;
 }
@@ -183,7 +183,7 @@
   white-space: nowrap;
 }
 
-:global([data-ds-dark-theme="true"]) .typeText,
+:global([data-ds-dark-theme]) .typeText,
 :global(.dark) .typeText {
   color: #94a3b8;
 }
@@ -197,7 +197,7 @@
   white-space: nowrap;
 }
 
-:global([data-ds-dark-theme="true"]) .dateText,
+:global([data-ds-dark-theme]) .dateText,
 :global(.dark) .dateText {
   color: #94a3b8;
 }
@@ -230,7 +230,7 @@
   color: var(--dsw-alias-label-primary, #0f172a);
 }
 
-:global([data-ds-dark-theme="true"]) .rowActionBtn:hover,
+:global([data-ds-dark-theme]) .rowActionBtn:hover,
 :global(.dark) .rowActionBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #f8fafc;

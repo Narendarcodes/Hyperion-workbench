@@ -108,7 +108,9 @@
     "tests/composer-tab-geometry.e2e.ts",
     "tests/complex-history.perf.ts",
     "tests/pwsh-terminal.e2e.ts",
-    "tests/workflow-run.e2e.ts"
+    "tests/workflow-run.e2e.ts",
+    // Reads the host MRPL store directly (node:fs) to fulfil harness routes.
+    "tests/mrpl-screens.e2e.ts"
   ],
   "references": [
     {

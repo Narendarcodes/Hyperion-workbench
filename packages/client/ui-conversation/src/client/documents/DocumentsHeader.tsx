@@ -4,7 +4,7 @@
  * @module @deepseek-ai/dsh-client-ui-conversation/client/documents/DocumentsHeader
  */
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { IconSearchOutline16 } from '@deepseek-ai/dsh-client-ui-primitives'
 import css from './DocumentsHeader.module.css'
 
@@ -16,6 +16,8 @@ export interface DocumentsHeaderProps {
   readonly onSearchChange?: (query: string) => void
   readonly onFilterClick?: () => void
   readonly onUploadClick?: () => void
+  /** Provenance badge shown beside the subtitle (dataset label). */
+  readonly badge?: ReactNode
 }
 
 export function DocumentsHeader({
@@ -26,6 +28,7 @@ export function DocumentsHeader({
   onSearchChange,
   onFilterClick,
   onUploadClick,
+  badge,
 }: DocumentsHeaderProps) {
   const [internalQuery, setInternalQuery] = useState(searchQuery)
 
@@ -50,6 +53,7 @@ export function DocumentsHeader({
           </nav>
           <h1 className={css.pageTitle}>{title}</h1>
           <p className={css.pageSubtitle}>{subtitle}</p>
+          {badge}
         </div>
 
         <div className={css.actionsRow}>
@@ -61,7 +65,7 @@ export function DocumentsHeader({
               type="text"
               className={css.searchInput}
               placeholder="Search documents, file name, tags, equipment..."
-              value={internalQuery}
+              value={onSearchChange === undefined ? internalQuery : searchQuery}
               onChange={(e) => { handleSearch(e.target.value) }}
               aria-label="Search documents"
             />
