@@ -60,6 +60,7 @@ class RagConfig:
     index_dir: str
     ingest_dir: str
     max_upload_bytes: int
+    listen_backlog: int
 
     # name -> (env var, default, description)
     ENV = {
@@ -88,6 +89,7 @@ class RagConfig:
         "HYPERION_RAG_INDEX_DIR": ("index_dir", "./index", "persistent index directory"),
         "HYPERION_RAG_INGEST_DIR": ("ingest_dir", "./ingest", "where uploaded originals are kept"),
         "HYPERION_RAG_MAX_UPLOAD_BYTES": ("max_upload_bytes", "52428800", "largest accepted upload (50 MiB)"),
+        "HYPERION_RAG_LISTEN_BACKLOG": ("listen_backlog", "256", "TCP accept backlog; socketserver's default of 5 resets bursts of concurrent clients"),
     }
 
     @classmethod

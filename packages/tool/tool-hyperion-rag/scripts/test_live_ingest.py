@@ -262,6 +262,14 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(pages["pages"][0]["page"], 1)
         self.assertIn("flash point of the HSD sample", pages["pages"][0]["text"])
 
+    def test_burst_of_concurrent_clients_is_not_reset(self):
+        # the DOC-011 bench at concurrency 81 got ECONNRESET: socketserver's default backlog is 5
+        self.assertGreaterEqual(self.server.request_queue_size, RagConfig.from_env({}).listen_backlog)
+        import concurrent.futures as cf
+        with cf.ThreadPoolExecutor(96) as ex:
+            res = list(ex.map(lambda i: self.call("/v1/search", {"q": f"seal {i}", "limit": 2}), range(96)))
+        self.assertEqual(len(res), 96)
+
     def test_search_filters_by_document_ids(self):
         res = self.call("/v1/search", {"q": "seal", "documentIds": ["DOC-900"], "limit": 5})
         self.assertTrue(all(p["documentId"] == "DOC-900" for p in res["passages"]))

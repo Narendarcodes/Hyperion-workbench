@@ -315,4 +315,8 @@ def make_handler(svc: RagService):
 
 
 def serve(svc: RagService, host: str, port: int) -> ThreadingHTTPServer:
-    return ThreadingHTTPServer((host, port), make_handler(svc))
+    class Server(ThreadingHTTPServer):
+        daemon_threads = True
+        request_queue_size = svc.cfg.listen_backlog
+
+    return Server((host, port), make_handler(svc))
