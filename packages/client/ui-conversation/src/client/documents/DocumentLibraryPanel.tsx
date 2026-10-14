@@ -5,6 +5,7 @@
 
 import { useState } from 'react'
 import type { DocumentItem, LibraryTab } from './types.ts'
+import { EMPTY_FACETS, facetOptions, matchesFacets, sortDocuments, type LibraryFacets, type LibrarySortKey } from './library-filters.ts'
 import css from './DocumentLibraryPanel.module.css'
 
 export interface DocumentLibraryPanelProps {
@@ -58,6 +59,8 @@ export function DocumentLibraryPanel({
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
   const [page, setPage] = useState(1)
+  const [facets, setFacets] = useState<LibraryFacets>(EMPTY_FACETS)
+  const [sortKey, setSortKey] = useState<LibrarySortKey>('catalog')
 
   const PAGE_SIZE = 10
 
@@ -83,6 +86,7 @@ export function DocumentLibraryPanel({
       && doc.type !== 'Inspection' && doc.type !== 'Case Study'
       && doc.type !== 'Investigation') return false
 
+    if (!matchesFacets(doc, facets)) return false
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase()
       const matchName = doc.name.toLowerCase().includes(q)
@@ -95,9 +99,11 @@ export function DocumentLibraryPanel({
     return true
   })
 
-  const totalPages = Math.max(1, Math.ceil(filteredDocs.length / PAGE_SIZE))
+  const sortedDocs = sortDocuments(filteredDocs, sortKey)
+  const options = facetOptions(documents)
+  const totalPages = Math.max(1, Math.ceil(sortedDocs.length / PAGE_SIZE))
   const safePage = Math.min(Math.max(page, 1), totalPages)
-  const visibleDocs = filteredDocs.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+  const visibleDocs = sortedDocs.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
 
   return (
     <section className={css.panelRoot} aria-label="Document Library">
@@ -196,44 +202,53 @@ export function DocumentLibraryPanel({
         </div>
 
         <div className={css.pillsRow}>
-          <button type="button" className={css.filterPill}>
-            <span>Unit</span>
-            <svg className={css.pillChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-          <button type="button" className={css.filterPill}>
-            <span>Equipment</span>
-            <svg className={css.pillChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-          <button type="button" className={css.filterPill}>
-            <span>Document Type</span>
-            <svg className={css.pillChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-          <button type="button" className={css.filterPill}>
-            <span>Tag</span>
-            <svg className={css.pillChevron} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-
-          <button type="button" className={css.filterSettingsBtn} aria-label="Sort and filter options">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="4" y1="21" x2="4" y2="14" />
-              <line x1="4" y1="10" x2="4" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12" y2="3" />
-              <line x1="20" y1="21" x2="20" y2="16" />
-              <line x1="20" y1="12" x2="20" y2="3" />
-              <line x1="1" y1="14" x2="7" y2="14" />
-              <line x1="9" y1="8" x2="15" y2="8" />
-              <line x1="17" y1="16" x2="23" y2="16" />
-            </svg>
-          </button>
+          <select
+            className={css.filterPill}
+            aria-label="Filter by Unit"
+            value={facets.unit}
+            onChange={(e) => { setFacets(f => ({ ...f, unit: e.target.value })); setPage(1) }}
+          >
+            <option value="">Unit</option>
+            {options.unit.map(v => <option key={v} value={v}>{v}</option>)}
+          </select>
+          <select
+            className={css.filterPill}
+            aria-label="Filter by Equipment"
+            value={facets.equipment}
+            onChange={(e) => { setFacets(f => ({ ...f, equipment: e.target.value })); setPage(1) }}
+          >
+            <option value="">Equipment</option>
+            {options.equipment.map(v => <option key={v} value={v}>{v}</option>)}
+          </select>
+          <select
+            className={css.filterPill}
+            aria-label="Filter by Document Type"
+            value={facets.type}
+            onChange={(e) => { setFacets(f => ({ ...f, type: e.target.value })); setPage(1) }}
+          >
+            <option value="">Document Type</option>
+            {options.type.map(v => <option key={v} value={v}>{v}</option>)}
+          </select>
+          <select
+            className={css.filterPill}
+            aria-label="Filter by Tag"
+            value={facets.tag}
+            onChange={(e) => { setFacets(f => ({ ...f, tag: e.target.value })); setPage(1) }}
+          >
+            <option value="">Tag</option>
+            {options.tag.map(v => <option key={v} value={v}>{v}</option>)}
+          </select>
+          <select
+            className={css.filterSettingsBtn}
+            aria-label="Sort documents"
+            value={sortKey}
+            onChange={(e) => { setSortKey(e.target.value as LibrarySortKey) }}
+          >
+            <option value="catalog">Sort: Catalog</option>
+            <option value="name">Sort: Name</option>
+            <option value="type">Sort: Type</option>
+            <option value="date">Sort: Newest</option>
+          </select>
         </div>
       </div>
 
@@ -252,7 +267,6 @@ export function DocumentLibraryPanel({
               <th className={css.tableTh}>
                 Date <span className={css.sortIcon}>▾</span>
               </th>
-              <th className={css.tableTh}></th>
             </tr>
           </thead>
           <tbody>
@@ -283,22 +297,7 @@ export function DocumentLibraryPanel({
                   </td>
                   <td className={`${css.tableTd} ${css.unitCell}`}>{doc.unit}</td>
                   <td className={`${css.tableTd} ${css.dateCell}`}>{doc.date}</td>
-                  <td className={`${css.tableTd} ${css.actionCell}`}>
-                    <button
-                      type="button"
-                      className={css.actionBtn}
-                      aria-label={`Actions for ${doc.name}`}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                      }}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <circle cx="12" cy="5" r="2" />
-                        <circle cx="12" cy="12" r="2" />
-                        <circle cx="12" cy="19" r="2" />
-                      </svg>
-                    </button>
-                  </td>
+
                 </tr>
               )
             })}

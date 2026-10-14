@@ -190,7 +190,6 @@ export function DocumentsOverview({
               openSource(selectedDoc)
             }}
             onAddToInvestigation={onAddToInvestigation ?? (() => {})}
-            onCompareVersion={() => {}}
             onAskCopilot={onAskCopilot ?? (() => {})}
           />
         </div>
