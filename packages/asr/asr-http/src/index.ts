@@ -108,6 +108,33 @@ export function engineFor(engines: Record<string, string> | undefined, language:
   return engines?.[language] ?? engines?.['*']
 }
 
+/** Unicode script blocks that identify a language unambiguously from the transcript text. */
+const SCRIPT_LANGUAGES: readonly { readonly language: string; readonly from: number; readonly to: number }[] = [
+  { language: 'te', from: 0x0C00, to: 0x0C7F },
+  { language: 'hi', from: 0x0900, to: 0x097F },
+]
+
+/**
+ * Language implied by the transcript's dominant Indic script (Telugu vs Devanagari), or
+ * undefined when neither script covers at least half of the letters. Used to correct
+ * auto-detect mislabels (Telugu speech reported as `hi`).
+ */
+export function scriptLanguage(text: string): string | undefined {
+  const counts = new Map<string, number>()
+  let letters = 0
+  for (const ch of text) {
+    const cp = ch.codePointAt(0) ?? 0
+    if (!/\p{L}|\p{M}/u.test(ch)) continue
+    letters++
+    const hit = SCRIPT_LANGUAGES.find(s => cp >= s.from && cp <= s.to)
+    if (hit !== undefined) counts.set(hit.language, (counts.get(hit.language) ?? 0) + 1)
+  }
+  let best: string | undefined
+  let bestCount = 0
+  for (const [language, n] of counts) if (n > bestCount) { best = language; bestCount = n }
+  return best !== undefined && bestCount * 2 >= letters ? best : undefined
+}
+
 /** Sidecar response document (validated by {@link parseSidecarResponse}). */
 interface SidecarDocument {
   text: string
@@ -134,7 +161,9 @@ export function parseSidecarResponse(body: string, spec: AsrSpec): AsrResult {
     throw new Error('asr-http: sidecar JSON must be an object with a string "text" field')
   }
   const doc = parsed as SidecarDocument
-  const language = typeof doc.language === 'string' && doc.language.length > 0 ? doc.language : spec.language
+  const reported = typeof doc.language === 'string' && doc.language.length > 0 ? doc.language : spec.language
+  // Auto-detect only: trust the transcript's script over a mislabelled detection (te heard as hi).
+  const language = spec.language === 'auto' ? (scriptLanguage(doc.text) ?? reported) : reported
   const engine = typeof doc.engine === 'string' && doc.engine.length > 0 ? doc.engine : undefined
   const model = typeof doc.model === 'string' && doc.model.length > 0 ? doc.model : undefined
   const identity = [engine, model].filter((x): x is string => x !== undefined).join(':')

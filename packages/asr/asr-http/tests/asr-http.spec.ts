@@ -270,3 +270,20 @@ describe('bundledServerPath', () => {
     expect(existsSync(bundledServerPath())).toBe(true)
   })
 })
+
+describe('auto-detect language correction by script', () => {
+  it('relabels Telugu-script text reported as hi to te on auto', async () => {
+    const { parseSidecarResponse, scriptLanguage } = await import('../src/index.ts')
+    const spec = { language: 'auto' } as Parameters<typeof parseSidecarResponse>[1]
+    const out = parseSidecarResponse(JSON.stringify({ text: 'పంప్ పి-204 లో కంపనం ఎక్కువగా ఉంది', language: 'hi' }), spec)
+    expect(out.language).toBe('te')
+    expect(scriptLanguage('पंप में कंपन बढ़ गया है')).toBe('hi')
+    expect(scriptLanguage('pump vibration is high')).toBeUndefined()
+    expect(parseSidecarResponse(JSON.stringify({ text: 'pump vibration high', language: 'en' }), spec).language).toBe('en')
+  })
+  it('does not override an explicitly requested language', async () => {
+    const { parseSidecarResponse } = await import('../src/index.ts')
+    const spec = { language: 'hi' } as Parameters<typeof parseSidecarResponse>[1]
+    expect(parseSidecarResponse(JSON.stringify({ text: 'పంప్', language: 'hi' }), spec).language).toBe('hi')
+  })
+})
