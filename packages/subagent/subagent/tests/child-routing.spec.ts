@@ -25,9 +25,11 @@ function roleResolver(seen: ChildRouteRequest[] = []): ChildModelResolver {
       if (req.explicit?.provider !== undefined && req.explicit.model !== undefined) {
         return { provider: req.explicit.provider, model: req.explicit.model, source: 'explicit' }
       }
-      const model = req.role === undefined ? undefined : roles[req.role]
+      const role = req.role
+      if (role === undefined) return undefined
+      const model = roles[role]
       if (model === undefined) return undefined
-      return { provider: 'droplet', model, source: 'role', role: req.role, reason: `role ${req.role}` }
+      return { provider: 'droplet', model, source: 'role', role, reason: `role ${role}` }
     },
   }
 }
