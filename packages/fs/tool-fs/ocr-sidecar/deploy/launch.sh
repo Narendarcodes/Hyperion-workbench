@@ -9,8 +9,13 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 IMAGE="${VLLM_IMAGE:-vllm/vllm-openai-rocm:v0.27.1}"
 VLM_PORT="${VLM_PORT:-8110}"; OCR_PORT="${OCR_PORT:-8111}"
-# MI300X has 192 GiB; 0.095 ~= 18 GiB (weights + KV cache), inside the 20 GB OCR budget.
+# MI300X has 192 GiB; 0.095 ~= 18 GiB caps the whole engine inside the 20 GB OCR budget.
 VLM_GPU_UTIL="${VLM_GPU_UTIL:-0.095}"
+# Pin the KV cache explicitly: on a shared GPU vLLM's startup profiling counts other tenants'
+# allocations as "consumed", which starved KV to ~2 GiB (and halved throughput) in one launch.
+# Measured on the droplet (rocm-smi, Qwen3-VL-8B-FP8): ~16.9 GB without KV; 2.75 GiB KV -> ~19.9 GB total,
+# inside the 20 GB OCR budget. 4.5 GiB KV (~21.6 GB) roughly doubles throughput if the budget allows.
+VLM_KV_CACHE_BYTES="${VLM_KV_CACHE_BYTES:-2952790016}"
 HF_CACHE="${HF_CACHE:-/root/.cache/huggingface}"
 case "${OCR_ENGINE:-qwen3vl}" in
   qwen3vl)     MODEL=Qwen/Qwen3-VL-8B-Instruct-FP8; PRESET=qwen-vl
@@ -30,10 +35,10 @@ start() {
     --device /dev/kfd --device /dev/dri --group-add video --security-opt seccomp=unconfined \
     -e GLOO_SOCKET_IFNAME=lo -e VLLM_HOST_IP=127.0.0.1 -v "${HF_CACHE}:/root/.cache/huggingface" \
     "${IMAGE}" --model "${MODEL}" --served-model-name ocr --host 127.0.0.1 --port "${VLM_PORT}" \
-    --gpu-memory-utilization "${VLM_GPU_UTIL}" --max-num-seqs 32 "${EXTRA[@]}"
+    --gpu-memory-utilization "${VLM_GPU_UTIL}" --kv-cache-memory "${VLM_KV_CACHE_BYTES}" --max-num-seqs 32 "${EXTRA[@]}"
   docker run -d --name hx-ocr-sidecar --restart unless-stopped --network host \
     -v "${HERE}:/app:ro" -v hx-ocr-pip:/pip -e PYTHONPATH=/pip \
-    -e OCR_UPSTREAM="http://127.0.0.1:${VLM_PORT}/v1" -e OCR_MODEL=ocr -e OCR_PRESET="${PRESET}" \
+    -e OCR_UPSTREAM="http://127.0.0.1:${VLM_PORT}/v1" -e OCR_MODEL=ocr -e OCR_MODEL_ID="${MODEL}" -e OCR_PRESET="${PRESET}" \
     -e OCR_PORT="${OCR_PORT}" -e OCR_CONCURRENCY="${OCR_CONCURRENCY:-16}" -e OCR_API_KEY="${OCR_API_KEY:-}" \
     --entrypoint bash "${IMAGE}" -c 'python3 -c "import pymupdf" 2>/dev/null || pip install -q --target /pip pymupdf; exec python3 /app/ocr_sidecar.py'
   echo "waiting for vLLM (${MODEL}) ..."

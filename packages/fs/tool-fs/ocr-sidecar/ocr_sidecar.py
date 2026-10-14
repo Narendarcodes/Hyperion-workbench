@@ -14,6 +14,7 @@ runs every page through the OCR guard (@deepseek-ai/dsh-ocr-guard) before the mo
 Environment
   OCR_UPSTREAM     http://127.0.0.1:8110/v1   OpenAI-compatible VLM server
   OCR_MODEL        ocr                        served model name
+  OCR_MODEL_ID     (= OCR_MODEL)              model id reported back to callers, e.g. Qwen/Qwen3-VL-8B-Instruct-FP8
   OCR_PRESET       qwen-vl                    prompt/resize preset: qwen-vl | olmocr | deepseek-ocr
   OCR_HOST/PORT    127.0.0.1 / 8111
   OCR_CONCURRENCY  16                         parallel page requests to the VLM
@@ -43,6 +44,7 @@ PRESETS = {
 CFG = dict(
     upstream=os.environ.get('OCR_UPSTREAM', 'http://127.0.0.1:8110/v1').rstrip('/'),
     model=os.environ.get('OCR_MODEL', 'ocr'),
+    model_id=os.environ.get('OCR_MODEL_ID') or os.environ.get('OCR_MODEL', 'ocr'),
     preset=os.environ.get('OCR_PRESET', 'qwen-vl'),
     host=os.environ.get('OCR_HOST', '127.0.0.1'),
     port=int(os.environ.get('OCR_PORT', '8111')),
@@ -136,7 +138,7 @@ def handle_pdf(payload, transcribe=vlm_page):
     t0 = time.time()
     count, images = render_pdf(data, off, lim, CFG['dpi'])
     pages = ocr_images(images, transcribe)
-    return {'page_count': count, 'model': CFG['model'], 'preset': CFG['preset'], 'pages': pages, 'wall_s': round(time.time() - t0, 2)}
+    return {'page_count': count, 'model': CFG['model_id'], 'preset': CFG['preset'], 'pages': pages, 'wall_s': round(time.time() - t0, 2)}
 
 
 def handle_image(payload, transcribe=vlm_page):
@@ -147,7 +149,7 @@ def handle_image(payload, transcribe=vlm_page):
     except Exception:
         raise OcrError(400, 'image_base64 is not a readable image')
     t0 = time.time()
-    return {'page_count': 1, 'model': CFG['model'], 'preset': CFG['preset'], 'pages': ocr_images([(1, im)], transcribe), 'wall_s': round(time.time() - t0, 2)}
+    return {'page_count': 1, 'model': CFG['model_id'], 'preset': CFG['preset'], 'pages': ocr_images([(1, im)], transcribe), 'wall_s': round(time.time() - t0, 2)}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -166,7 +168,7 @@ class Handler(BaseHTTPRequestHandler):
         ok = True
         try: urllib.request.urlopen(CFG['upstream'] + '/models', timeout=5).read()
         except Exception: ok = False
-        self._send(200, {'ok': True, 'model': CFG['model'], 'preset': CFG['preset'], 'upstream_ok': ok})
+        self._send(200, {'ok': True, 'model': CFG['model_id'], 'preset': CFG['preset'], 'upstream_ok': ok})
 
     def do_POST(self):
         if not self._authorized(): return self._send(401, {'error': 'unauthorized'})
