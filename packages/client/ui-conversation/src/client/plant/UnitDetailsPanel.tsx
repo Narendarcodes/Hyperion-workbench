@@ -170,14 +170,16 @@ export function UnitDetailsPanel({
 
         {/* Bottom Actions */}
         <div className={css.actionsRow}>
-          <button
-            type="button"
-            className={css.openUnitBtn}
-            onClick={onOpenUnit}
-          >
-            <span>Open Unit</span>
-            <span aria-hidden="true">→</span>
-          </button>
+          {onOpenUnit !== undefined && (
+            <button
+              type="button"
+              className={css.openUnitBtn}
+              onClick={onOpenUnit}
+            >
+              <span>Open Unit</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          )}
 
           <button
             type="button"

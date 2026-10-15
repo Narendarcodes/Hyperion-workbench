@@ -78,13 +78,10 @@ export function PlantOverview({
     console.info('[Hyperion] Navigating to P&ID Explorer...')
   }
 
-  const handleOpenUnit = () => {
-    if (onOpenUnit) {
-      onOpenUnit(selectedUnit)
-      return
-    }
-    console.info(`[Hyperion] Opening unit: ${selectedUnit.code}`)
-  }
+  // Open Unit: the host's unit handler, else the unit-grouped Equipment browser; hidden with neither.
+  const handleOpenUnit = onOpenUnit !== undefined
+    ? () => { onOpenUnit(selectedUnit) }
+    : (onNavigate === undefined ? undefined : () => { onNavigate('equipment') })
 
   const handleStartInvestigation = () => {
     if (onStartInvestigation) {
@@ -112,6 +109,8 @@ export function PlantOverview({
         selectedUnit={selectedUnit}
         onOpenUnit={handleOpenUnit}
         onStartInvestigation={handleStartInvestigation}
+        units={data.processUnits}
+        onSelectUnit={handleSelectUnit}
         onRowClick={onNavigate === undefined ? undefined : (category: string) => {
           const target = plantRowTarget(category)
           if (target !== undefined) onNavigate(target)

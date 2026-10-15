@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { PlantOverview } from '../src/client/plant/PlantOverview.tsx'
 import { EngineeringPlantMap } from '../src/client/plant/EngineeringPlantMap.tsx'
 import { EngineeringPlantMapPlaceholder } from '../src/client/plant/EngineeringPlantMapPlaceholder.tsx'
@@ -38,10 +38,12 @@ describe('Hyperion Screen 2 — Plant Overview', () => {
     // Engineering Plant Map
     expect(screen.getByRole('heading', { level: 2, name: 'Engineering Plant Map' })).toBeTruthy()
     expect(screen.getByText('Click on a unit to explore equipment, documents, P&IDs and investigations.')).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Diagram' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Satellite' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'List' })).toBeTruthy()
-    expect(screen.getByLabelText('Expand map to fullscreen')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Diagram' }).getAttribute('aria-pressed')).toBe('true')
+    expect(screen.getByRole('button', { name: 'List' }).getAttribute('aria-pressed')).toBe('false')
+    // No satellite imagery source exists: the toggle that only changed local state is gone.
+    expect(screen.queryByRole('button', { name: 'Satellite' })).toBeNull()
+    // jsdom has no Fullscreen API and no handler is passed: no dead fullscreen button.
+    expect(screen.queryByLabelText('Expand map to fullscreen')).toBeNull()
 
     // Map placeholder intentional empty state
     expect(screen.getByRole('heading', { level: 3, name: 'Plant map preview will appear here' })).toBeTruthy()
@@ -129,6 +131,44 @@ describe('Hyperion Screen 2 — Plant Overview', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Start Investigation' }))
     expect(onStartInvestigation).toHaveBeenCalledTimes(1)
+  })
+
+  it('map List view lists the process units and selecting one updates the unit card', () => {
+    render(<PlantOverview />)
+    fireEvent.click(screen.getByRole('button', { name: 'List' }))
+    expect(screen.getByRole('button', { name: 'List' }).getAttribute('aria-pressed')).toBe('true')
+    const list = screen.getByRole('list', { name: 'Process units (map list view)' })
+    fireEvent.click(within(list).getByRole('button', { name: /VDU/ }))
+    expect(screen.getByRole('heading', { level: 3, name: 'Vacuum Distillation (VDU)' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Diagram' }))
+    expect(screen.queryByRole('list', { name: 'Process units (map list view)' })).toBeNull()
+  })
+
+  it('Open Unit is hidden without a handler (was a console.info stub)', () => {
+    render(<PlantOverview />)
+    expect(screen.queryByRole('button', { name: 'Open Unit' })).toBeNull()
+  })
+
+  it('Open Unit navigates to the Equipment view when only onNavigate is given', () => {
+    const onNavigate = vi.fn()
+    render(<PlantOverview onNavigate={onNavigate} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Open Unit' }))
+    expect(onNavigate).toHaveBeenCalledWith('equipment')
+  })
+
+  it('fullscreen: a host handler is used; otherwise the Fullscreen API on the map card', () => {
+    const onFullscreen = vi.fn()
+    const { unmount } = render(<EngineeringPlantMap onFullscreen={onFullscreen} />)
+    fireEvent.click(screen.getByLabelText('Expand map to fullscreen'))
+    expect(onFullscreen).toHaveBeenCalledTimes(1)
+    unmount()
+    const requestFullscreen = vi.fn(async () => undefined)
+    Object.defineProperty(document, 'fullscreenEnabled', { configurable: true, value: true })
+    Object.defineProperty(HTMLElement.prototype, 'requestFullscreen', { configurable: true, value: requestFullscreen })
+    render(<EngineeringPlantMap />)
+    fireEvent.click(screen.getByLabelText('Expand map to fullscreen'))
+    expect(requestFullscreen).toHaveBeenCalledTimes(1)
+    Object.defineProperty(document, 'fullscreenEnabled', { configurable: true, value: undefined })
   })
 
   it('EngineeringPlantMap provides stable dimensions and placeholder fallback', () => {
