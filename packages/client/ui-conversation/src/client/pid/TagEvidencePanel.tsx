@@ -7,6 +7,7 @@
 import React, { useEffect, useState } from 'react'
 import { useMrplSource } from '../mrpl/api.ts'
 import type { MrplEvidenceAnswerResponse, MrplRetrievedPassage } from '../mrpl/contract.ts'
+import { abstainConfig, describeAbstain } from '../mrpl/abstain.ts'
 import { PID_WORKSPACE_CONFIG } from './config.ts'
 import css from './EquipmentContextPanel.module.css'
 
@@ -48,7 +49,11 @@ export const TagEvidencePanel: React.FC<TagEvidencePanelProps> = ({ tag, name, o
         {answer.state === 'error' && <span>Answer failed: {answer.message}</span>}
         {answer.state === 'ready' && (
           answer.value.abstain
-            ? <span data-testid="pid-tag-abstain">No grounded answer for {tag}: {answer.value.abstainReason ?? 'the indexed documents do not cover it'}.</span>
+            ? (
+              <span data-testid="pid-tag-abstain" data-abstain-reason={answer.value.abstainReason ?? ''}>
+                <strong>{abstainConfig().headline}.</strong> {describeAbstain(answer.value.abstainReason, tag)}
+              </span>
+            )
             : <span data-testid="pid-tag-answer">{answer.value.answer}</span>
         )}
       </div>

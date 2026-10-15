@@ -572,6 +572,9 @@ export function ConversationRoot({
               onOpenDocuments={() => {
                 setWorkbenchView('documents')
               }}
+              onOpenCitation={() => {
+                setWorkbenchView('documents')
+              }}
             />
           )}
           {isReports && <ReportsOverview />}

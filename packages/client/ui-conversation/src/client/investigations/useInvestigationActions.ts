@@ -25,7 +25,7 @@ import type { InvestigationStatus } from './types.ts'
 export interface InvestigationActions {
   readonly busy: string | null
   readonly notice: string | null
-  readonly result: { readonly title: string; readonly answer: MrplEvidenceAnswerResponse } | null
+  readonly result: { readonly title: string; readonly subject: string; readonly answer: MrplEvidenceAnswerResponse } | null
   readonly canAnalyse: boolean
   share: () => void
   setStatus: (status: InvestigationStatus) => void
@@ -72,7 +72,7 @@ export function useInvestigationActions(inv: InvestigationRef): InvestigationAct
     setNotice(null)
     runInvestigationAnalysis(source, { code, tag, title }, kind)
       .then((answer) => {
-        setResult({ title: kind === 'compare' ? `Comparison — ${tag}` : `Analysis — ${tag}`, answer })
+        setResult({ title: kind === 'compare' ? `Comparison — ${tag}` : `Analysis — ${tag}`, subject: tag, answer })
         setNotice(`Analysis complete · ${String(answer.citations.length)} citation(s)`)
       })
       .catch((e: unknown) => { setNotice(`Analysis failed: ${message(e)}`) })
@@ -87,7 +87,7 @@ export function useInvestigationActions(inv: InvestigationRef): InvestigationAct
         const ref = statusLabel === undefined ? { code, tag, title } : { code, tag, title, statusLabel }
         const md = buildInvestigationReport(ref, answer, new Date())
         downloadTextFile(reportFileName(code), md)
-        setResult({ title: `Report — ${code}`, answer })
+        setResult({ title: `Report — ${code}`, subject: tag, answer })
         setNotice(`Report downloaded: ${reportFileName(code)} · ${String(answer.citations.length)} citation(s)`)
       })
       .catch((e: unknown) => { setNotice(`Report failed: ${message(e)}`) })

@@ -25,6 +25,8 @@ import { investigationsConfig } from './config.ts'
 import { codeFromDeepLink } from './investigation-actions.ts'
 import { useInvestigationStore } from './investigation-store.ts'
 import { useInvestigationActions } from './useInvestigationActions.ts'
+import { useInvestigationContext } from './useInvestigationContext.ts'
+import type { MrplAnswerCitation } from '../mrpl/contract.ts'
 import css from './InvestigationDetailView.module.css'
 
 /** The investigation an action applies to (taken from the open record, never hard-coded). */
@@ -42,7 +44,11 @@ export interface InvestigationDetailViewProps {
   readonly onViewEquipmentDetails?: () => void
   readonly onOpenPid?: () => void
   readonly onOpenDocuments?: () => void
+  /** Open a related document at its cited page (falls back to onOpenDocuments). */
+  readonly onOpenCitation?: (documentId: string, page: number) => void
 }
+
+const NO_CITATIONS: readonly MrplAnswerCitation[] = []
 
 function resolveCode(explicit: string | undefined, selected: string | null): string | null {
   if (explicit !== undefined) return explicit
@@ -61,6 +67,7 @@ export function InvestigationDetailView({
   onViewEquipmentDetails,
   onOpenPid,
   onOpenDocuments,
+  onOpenCitation,
 }: InvestigationDetailViewProps) {
   const [local, setData] = useState<InvestigationAnalysisDetailData>(initialData)
   const store = useInvestigationStore()
@@ -79,6 +86,23 @@ export function InvestigationDetailView({
   }
   const subject: InvestigationSubject = { code: data.code, tag: data.tag }
   const actions = useInvestigationActions({ code: subject.code, tag: subject.tag, title: data.title, statusLabel: data.statusLabel })
+  // Equipment Context / Related Documents follow the open record; fixture only when none is open.
+  const live = useInvestigationContext(
+    record === undefined ? null : { tag: record.tag, title: record.title },
+    actions.result?.answer.citations ?? NO_CITATIONS,
+  )
+  const liveEquipment = live?.equipment.state === 'ready' ? live.equipment.value : null
+  // Header metadata of a real record: from its equipment record, never the fixture pump.
+  const headerData: InvestigationAnalysisDetailData = record === undefined ? data : {
+    ...data,
+    unit: liveEquipment?.unit ?? '',
+    equipmentName: liveEquipment?.name ?? '',
+    service: liveEquipment?.service ?? '',
+    equipmentType: liveEquipment?.type ?? '',
+    manufacturer: '',
+    model: '',
+    createdDate: `Created ${new Date(record.createdAt).toLocaleDateString()}`,
+  }
 
   const handleSelectStage = (stageKey: WorkflowStage['key']) => {
     setData(prev => ({
@@ -109,7 +133,7 @@ export function InvestigationDetailView({
       aria-label="Investigation Detail and Analysis Workspace"
     >
       <InvestigationDetailHeader
-        data={data}
+        data={headerData}
         {...(onNavigateBack && { onNavigateBack })}
         onShare={actions.share}
         statusItems={record === undefined ? [] : actions.statusItems(record.status)}
@@ -125,7 +149,7 @@ export function InvestigationDetailView({
       <main className={css.mainWorkspaceGrid}>
         <section className={css.centerAnalysisColumn} aria-label="Investigation Analysis">
           <ActionNotice text={actions.notice} />
-          {actions.result !== null && <AnalysisResult title={actions.result.title} result={actions.result.answer} />}
+          {actions.result !== null && <AnalysisResult title={actions.result.title} result={actions.result.answer} subject={actions.result.subject} />}
           <AnalysisWorkspace
             data={data}
             onRerun={() => { actions.rerun() }}
@@ -151,6 +175,11 @@ export function InvestigationDetailView({
             onViewAllDocuments: onOpenDocuments,
           })}
           onSelectSimilarEquipment={handleSelectSimilar}
+          live={live}
+          onOpenRelated={(doc) => {
+            if (onOpenCitation) onOpenCitation(doc.documentId, doc.page)
+            else onOpenDocuments?.()
+          }}
         />
       </main>
     </div>

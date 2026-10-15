@@ -7,6 +7,7 @@
 
 import type { MrplDataSource } from '../mrpl/api.ts'
 import type { MrplEvidenceAnswerResponse } from '../mrpl/contract.ts'
+import { abstainConfig, describeAbstain } from '../mrpl/abstain.ts'
 import { investigationsConfig } from './config.ts'
 import { investigationStore, type StoredInvestigation } from './investigation-store.ts'
 import type { InvestigationListItem } from './types.ts'
@@ -85,7 +86,7 @@ export function buildInvestigationReport(inv: InvestigationRef, answer: MrplEvid
     '',
     '## Findings',
     '',
-    answer.abstain ? `_No grounded answer: ${answer.abstainReason ?? 'insufficient evidence'}._` : answer.answer,
+    answer.abstain ? `_${abstainConfig().headline}. ${describeAbstain(answer.abstainReason, inv.tag)}_` : answer.answer,
     '',
     '## Citations',
     '',

@@ -7,6 +7,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { MrplEvidenceAnswerResponse } from '../mrpl/contract.ts'
+import { abstainConfig, describeAbstain } from '../mrpl/abstain.ts'
 import css from './ActionMenu.module.css'
 
 export interface ActionMenuItem {
@@ -84,12 +85,17 @@ export function ActionNotice({ text }: { readonly text: string | null }) {
   return <p className={css.notice} role="status">{text}</p>
 }
 
-export function AnalysisResult({ title, result }: { readonly title: string; readonly result: MrplEvidenceAnswerResponse }) {
+export function AnalysisResult({ title, result, subject }: {
+  readonly title: string
+  readonly result: MrplEvidenceAnswerResponse
+  /** Tag / topic asked about, named in the abstention text. */
+  readonly subject?: string | undefined
+}) {
   return (
     <section className={css.result} aria-label={title}>
       <h3 className={css.resultTitle}>{title}</h3>
       <p className={css.answer}>
-        {result.abstain ? `No grounded answer: ${result.abstainReason ?? 'insufficient evidence'}` : result.answer}
+        {result.abstain ? `${abstainConfig().headline}. ${describeAbstain(result.abstainReason, subject)}` : result.answer}
       </p>
       {result.citations.length > 0 && (
         <ol className={css.citations} aria-label="Citations">

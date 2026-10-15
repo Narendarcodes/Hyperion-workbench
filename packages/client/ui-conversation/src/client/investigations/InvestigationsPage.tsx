@@ -172,7 +172,7 @@ export function InvestigationsPage({
           notice={(
             <>
               <ActionNotice text={actions.notice} />
-              {actions.result !== null && <AnalysisResult title={actions.result.title} result={actions.result.answer} />}
+              {actions.result !== null && <AnalysisResult title={actions.result.title} result={actions.result.answer} subject={actions.result.subject} />}
             </>
           )}
         />

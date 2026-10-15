@@ -29,9 +29,33 @@ export interface InvestigationsConfig {
    * Empty string hides a label.
    */
   readonly detailSampleLabels: { readonly metrics: string; readonly evidence: string; readonly similarEquipment: string }
+  /**
+   * Equipment Context / Related Documents on the investigation detail: driven by the
+   * open record (equipment route, evidence search, catalog, analysis citations).
+   */
+  readonly context: InvestigationContextConfig
   /** Question the RAG/LLM analysis asks for an investigation. */
   readonly analysisQuestion: (inv: { readonly tag: string; readonly title: string }) => string
   readonly compareQuestion: (inv: { readonly tag: string; readonly title: string }) => string
+}
+
+export interface InvestigationContextConfig {
+  /** Label on Equipment Context when it shows the bundled fixture (no record open). Empty hides it. */
+  readonly equipmentSampleLabel: string
+  /** Shown when no equipment record in the indexed corpus carries the investigation tag. */
+  readonly equipmentEmpty: (tag: string) => string
+  /** Shown when no indexed document is related to the investigation. */
+  readonly documentsEmpty: (tag: string) => string
+  /** Shown while the equipment record / documents load. */
+  readonly loadingText: string
+  /** Evidence-search query for an investigation's related documents. */
+  readonly documentsQuery: (inv: { readonly tag: string; readonly title: string }) => string
+  /** Passages requested from evidence search. */
+  readonly documentsSearchLimit: number
+  /** Most related documents listed. */
+  readonly documentsMax: number
+  /** Row subtitles per document provenance. */
+  readonly provenanceLabels: { readonly equipment: string; readonly evidence: string; readonly analysis: string }
 }
 
 let current: InvestigationsConfig = {
@@ -48,6 +72,16 @@ let current: InvestigationsConfig = {
     metrics: 'Sample metrics · trend and findings are illustrative, not live sensor data',
     evidence: 'Sample evidence list · use Rerun analysis for cited evidence from the indexed corpus',
     similarEquipment: 'Sample similar equipment · illustrative',
+  },
+  context: {
+    equipmentSampleLabel: 'Sample equipment · illustrative fixture, no investigation open',
+    equipmentEmpty: tag => `No equipment record for ${tag} in the indexed documents.`,
+    documentsEmpty: tag => `No indexed document is linked to ${tag} yet. Rerun analysis to search the corpus again.`,
+    loadingText: 'Loading from the indexed documents…',
+    documentsQuery: ({ tag }) => tag,
+    documentsSearchLimit: 8,
+    documentsMax: 8,
+    provenanceLabels: { equipment: 'cited by equipment record', evidence: 'evidence search match', analysis: 'cited in analysis' },
   },
   // Single-focus questions: the multi-part "causes, limits and checks" / "compare design limits,
   // failure modes and maintenance" forms made gpt-oss abstain (NOT_IN_EVIDENCE) even for assets the

@@ -6,6 +6,7 @@
  * @module @deepseek-ai/dsh-client-ui-conversation/client/investigations/InvestigationDetailHeader
  */
 
+import { Fragment } from 'react'
 import { IconChevronDownOutline14, IconShareOutline16 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { InvestigationAnalysisDetailData } from './types.ts'
 import { ActionMenu, type ActionMenuItem } from './ActionMenu.tsx'
@@ -78,15 +79,14 @@ export function InvestigationDetailHeader({
                 <circle cx="12" cy="7" r="4" />
               </svg>
             </span>
-            <span className={css.metaItem}>{data.tag}</span>
-            <span className={css.metaSep} aria-hidden="true">•</span>
-            <span className={css.metaItem}>{data.unit}</span>
-            <span className={css.metaSep} aria-hidden="true">•</span>
-            <span className={css.metaItem}>{data.equipmentName}</span>
-            <span className={css.metaSep} aria-hidden="true">•</span>
-            <span className={css.metaItem}>{data.createdDate}</span>
-            <span className={css.metaSep} aria-hidden="true">•</span>
-            <span className={css.metaItem}>{data.updatedTimeAgo}</span>
+            {[data.tag, data.unit, data.equipmentName, data.createdDate, data.updatedTimeAgo]
+              .filter(item => item.trim() !== '')
+              .map((item, idx) => (
+                <Fragment key={`${String(idx)}-${item}`}>
+                  {idx > 0 && <span className={css.metaSep} aria-hidden="true">•</span>}
+                  <span className={css.metaItem}>{item}</span>
+                </Fragment>
+              ))}
           </div>
         </div>
 
