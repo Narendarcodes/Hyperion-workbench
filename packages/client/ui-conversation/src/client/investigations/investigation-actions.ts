@@ -8,6 +8,8 @@
 import type { MrplDataSource } from '../mrpl/api.ts'
 import type { MrplEvidenceAnswerResponse } from '../mrpl/contract.ts'
 import { investigationsConfig } from './config.ts'
+import { investigationStore, type StoredInvestigation } from './investigation-store.ts'
+import type { InvestigationListItem } from './types.ts'
 
 export interface InvestigationRef {
   readonly code: string
@@ -112,4 +114,55 @@ export function downloadTextFile(name: string, text: string, mime = 'text/markdo
   a.click()
   a.remove()
   setTimeout(() => { URL.revokeObjectURL(url) }, 0)
+}
+
+/** What a workbench surface knows when its "Start Investigation" is pressed. */
+export interface InvestigationSubject {
+  readonly origin: 'plant' | 'equipment' | 'pid'
+  /** Equipment tag (P&ID / Equipment). */
+  readonly tag?: string | null | undefined
+  /** Human name (equipment or unit). */
+  readonly name?: string | null | undefined
+  /** Unit code (Plant), used as the tag when there is no equipment tag. */
+  readonly code?: string | null | undefined
+}
+
+const EQUIPMENT_TYPE_HINTS: readonly (readonly [RegExp, InvestigationListItem['equipmentType']])[] = [
+  [/exchanger|cooler|condenser|heater|^E-/i, 'exchanger'],
+  [/column|tower|fractionator|^T-/i, 'column'],
+  [/reactor|^R-/i, 'reactor'],
+  [/vessel|drum|tank|separator|^V-|^D-/i, 'vessel'],
+  [/pump|^P-/i, 'pump'],
+]
+
+function guessEquipmentType(...hints: (string | null | undefined)[]): InvestigationListItem['equipmentType'] | undefined {
+  for (const h of hints) {
+    if (h === null || h === undefined || h === '') continue
+    for (const [re, type] of EQUIPMENT_TYPE_HINTS) if (re.test(h)) return type
+  }
+  return undefined
+}
+
+/**
+ * Plant / Equipment / P&ID "Start Investigation": creates a real, persisted
+ * investigation record (origin 'ask') and selects it so the detail view opens on it.
+ */
+export function startInvestigationFor(subject: InvestigationSubject, now = new Date()): StoredInvestigation {
+  const cfg = investigationsConfig()
+  const tag = nonEmpty(subject.tag) ?? nonEmpty(subject.code) ?? cfg.unassignedTag
+  const name = nonEmpty(subject.name)
+  const label = name === undefined ? tag : (tag === cfg.unassignedTag ? name : `${name} (${tag})`)
+  const title = tag === cfg.unassignedTag && name === undefined ? 'New equipment investigation' : `Investigation: ${label}`
+  const ask = `Start equipment investigation for ${label}`
+  return investigationStore().create(ask, now, {
+    tag,
+    title,
+    equipmentType: guessEquipmentType(name, subject.tag),
+    plantMetadata: `MRPL · from ${subject.origin === 'pid' ? 'P&ID' : subject.origin === 'plant' ? 'Plant' : 'Equipment'}`,
+  })
+}
+
+function nonEmpty(v: string | null | undefined): string | undefined {
+  const t = v?.trim()
+  return t === undefined || t === '' ? undefined : t
 }

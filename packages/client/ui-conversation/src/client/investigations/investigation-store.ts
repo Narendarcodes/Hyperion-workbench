@@ -57,10 +57,18 @@ export function seedInvestigations(now = new Date()): StoredInvestigation[] {
   }))
 }
 
+/** Explicit fields for a record started from a workbench surface (Plant / Equipment / P&ID). */
+export interface InvestigationCreateFields {
+  readonly tag?: string | undefined
+  readonly title?: string | undefined
+  readonly equipmentType?: InvestigationListItem['equipmentType'] | undefined
+  readonly plantMetadata?: string | undefined
+}
+
 export interface InvestigationStore {
   getState(): InvestigationStoreState
   subscribe(listener: () => void): () => void
-  create(ask: string, now?: Date): StoredInvestigation
+  create(ask: string, now?: Date, fields?: InvestigationCreateFields): StoredInvestigation
   setStatus(code: string, status: InvestigationStatus, now?: Date): void
   assign(code: string, assignee: string, now?: Date): void
   select(code: string | null): void
@@ -103,19 +111,19 @@ export function createInvestigationStore(storage: StorageLike | null = safeLocal
       listeners.add(listener)
       return () => { listeners.delete(listener) }
     },
-    create(ask, now = new Date()) {
+    create(ask, now = new Date(), fields = {}) {
       const cfg = investigationsConfig()
       const text = ask.trim()
       const year = now.getUTCFullYear()
       const seq = state.investigations.filter(i => i.code.startsWith(`${cfg.codePrefix}-${String(year)}-`)).length + 1
       let code = `${cfg.codePrefix}-${String(year)}-${String(seq).padStart(3, '0')}`
       while (state.investigations.some(i => i.code === code)) code = `${code}a`
-      const tag = TAG_PATTERN.exec(text)?.[1] ?? cfg.unassignedTag
+      const tag = fields.tag ?? TAG_PATTERN.exec(text)?.[1] ?? cfg.unassignedTag
       const iso = now.toISOString()
       const inv: StoredInvestigation = {
         code,
         tag,
-        title: text === '' ? 'New investigation' : text,
+        title: fields.title ?? (text === '' ? 'New investigation' : text),
         severity: 'medium',
         status: 'open',
         assignee: cfg.currentUserName,
@@ -123,8 +131,8 @@ export function createInvestigationStore(storage: StorageLike | null = safeLocal
         ask: text,
         createdAt: iso,
         updatedAt: iso,
-        plantMetadata: 'MRPL',
-        equipmentType: 'pump',
+        plantMetadata: fields.plantMetadata ?? 'MRPL',
+        equipmentType: fields.equipmentType ?? 'pump',
       }
       commit({ investigations: [inv, ...state.investigations], selectedCode: code })
       return inv

@@ -13,6 +13,7 @@ import { PlantOverview } from '../plant/PlantOverview.tsx'
 import { EquipmentPage } from '../equipment/EquipmentPage.tsx'
 import { InvestigationsPage } from '../investigations/InvestigationsPage.tsx'
 import { InvestigationDetailView } from '../investigations/InvestigationDetailView.tsx'
+import { startInvestigationFor } from '../investigations/investigation-actions.ts'
 import { ReportsOverview } from '../reports/ReportsOverview.tsx'
 import { DocumentsOverview } from '../documents/DocumentsOverview.tsx'
 import { PIDView } from '../pid/PIDView.tsx'
@@ -511,9 +512,9 @@ export function ConversationRoot({
                 setWorkbenchView(target)
               }}
               onStartInvestigation={(unit) => {
-                setDraft(
-                  `Start equipment investigation for ${unit.name} (${unit.code}) `,
-                )
+                const inv = startInvestigationFor({ origin: 'plant', name: unit.name, code: unit.code })
+                setDraft(`${inv.ask ?? ''} `)
+                setWorkbenchView('investigation-detail')
               }}
             />
           )}
@@ -529,9 +530,9 @@ export function ConversationRoot({
                 setWorkbenchView('documents')
               }}
               onNewInvestigation={(equipment) => {
-                setDraft(equipment === undefined
-                  ? 'Start new equipment investigation '
-                  : `Start investigation for ${equipment.name}${equipment.tag === null ? '' : ` ${equipment.tag}`} `)
+                const inv = startInvestigationFor({ origin: 'equipment', tag: equipment?.tag, name: equipment?.name })
+                setDraft(`${inv.ask ?? ''} `)
+                setWorkbenchView('investigation-detail')
               }}
               onAskEquipment={(query) => {
                 setDraft(`${query} `)
@@ -608,7 +609,9 @@ export function ConversationRoot({
                 setDraft(`Open document ${doc.fileName} (${doc.title}) `)
               }}
               onStartInvestigation={(tag) => {
-                setDraft(`Start equipment investigation for ${tag} `)
+                const inv = startInvestigationFor({ origin: 'pid', tag })
+                setDraft(`${inv.ask ?? ''} `)
+                setWorkbenchView('investigation-detail')
               }}
               onOpenCitation={() => {
                 setWorkbenchView('documents')

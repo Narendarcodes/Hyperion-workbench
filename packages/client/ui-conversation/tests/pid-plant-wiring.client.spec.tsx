@@ -16,7 +16,7 @@ afterEach(cleanup)
 
 const DATASET = { id: 'mrpl', name: 'MRPL', version: 'test' } as never
 
-function liveSource(overrides: Partial<MrplDataSource> = {}): MrplDataSource & {
+function liveSource(overrides: { [K in keyof MrplDataSource]?: MrplDataSource[K] | undefined } = {}): MrplDataSource & {
   searchEvidence: ReturnType<typeof vi.fn>
   answerEvidence: ReturnType<typeof vi.fn>
 } {
