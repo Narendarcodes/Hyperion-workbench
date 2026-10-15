@@ -28,7 +28,7 @@ import { isUserInvocable } from '@deepseek-ai/dsh-skill'
 import z from '@deepseek-ai/schemastery'
 import { foldHyperionEnvelope } from './envelope.ts'
 import { registerMrplRoutes } from './mrpl-routes.ts'
-import { createRagRetriever, RagClient, registerMrplLiveRoutes } from './mrpl-live.ts'
+import { createRagRetriever, RagClient, ragAnswer, registerMrplLiveRoutes } from './mrpl-live.ts'
 import { bundledSeedDir, MRPL_RETRIEVAL_SERVICE, MrplStore, type MrplRetrievalProvider } from './mrpl-store.ts'
 import type { HyperionSourceEvent } from './shared.ts'
 import {
@@ -677,6 +677,7 @@ export function apply(ctx: Context, config: Config): void {
     rejected,
     sendJson,
     readBody: readBoundedBody,
+    answer: rag === undefined ? undefined : (question, documentIds) => ragAnswer(rag, question, documentIds),
     retriever: () => {
       const provider = optionalService(ctx, MRPL_RETRIEVAL_SERVICE) as MrplRetrievalProvider | undefined
       return provider !== undefined && typeof provider.retrieve === 'function' ? provider : ragRetriever
