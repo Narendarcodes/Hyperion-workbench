@@ -18,6 +18,8 @@ import type {
   VibrationTrendPoint,
 } from './types.ts'
 import css from './AnalysisWorkspace.module.css'
+import { investigationsConfig } from './config.ts'
+import { SampleNote } from '../mrpl/SampleNote.tsx'
 
 export interface AnalysisWorkspaceProps {
   readonly data: InvestigationAnalysisDetailData
@@ -94,7 +96,7 @@ function VibrationMultiTrendChart({
   const activePoint = points[activeIdx]
 
   return (
-    <div className={css.chartContainer} onMouseLeave={() => onHover(5)}>
+    <div className={css.chartContainer} onMouseLeave={() =>{  onHover(5) }}>
       {/* Tooltip Overlay */}
       {activePoint && (
         <div
@@ -189,7 +191,7 @@ function VibrationMultiTrendChart({
           const x = toX(idx)
           const isAct = idx === activeIdx
           return (
-            <g key={idx} onMouseEnter={() => onHover(idx)}>
+            <g key={idx} onMouseEnter={() =>{  onHover(idx) }}>
               <circle
                 cx={x}
                 cy={toY(p.h)}
@@ -276,7 +278,7 @@ export function AnalysisWorkspace({
                     id={`ws-tab-${tab.key}`}
                     aria-selected={isActive}
                     className={`${css.tabBtn} ${isActive ? css.tabActive : ''}`}
-                    onClick={() => handleTabClick(tab.key)}
+                    onClick={() =>{  handleTabClick(tab.key) }}
                   >
                     {tab.label}
                     {isActive && <span className={css.tabActiveIndicator} aria-hidden="true" />}
@@ -366,7 +368,7 @@ export function AnalysisWorkspace({
                       role="tab"
                       aria-selected={isActive}
                       className={`${css.subTabBtn} ${isActive ? css.subTabActive : ''}`}
-                      onClick={() => handleSubTabClick(st.key)}
+                      onClick={() =>{  handleSubTabClick(st.key) }}
                     >
                       {st.label}
                       {isActive && <span className={css.subTabActiveBar} aria-hidden="true" />}
@@ -377,6 +379,7 @@ export function AnalysisWorkspace({
             </ul>
           </nav>
 
+          <SampleNote label={investigationsConfig().detailSampleLabels.metrics} />
           {/* Key Findings Highlight Card */}
           <div className={css.keyFindingsCard}>
             <div className={css.keyFindingsHeader}>
@@ -426,7 +429,7 @@ export function AnalysisWorkspace({
                     key={range}
                     type="button"
                     className={`${css.rangePillBtn} ${trendRange === range ? css.rangePillActive : ''}`}
-                    onClick={() => setTrendRange(range)}
+                    onClick={() =>{  setTrendRange(range) }}
                   >
                     {range}
                   </button>

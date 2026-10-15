@@ -33,7 +33,6 @@ import {
   type MrplEvidenceAnswerResponse,
   type MrplIngestDocument,
   type MrplIngestJob,
-  type MrplIngestStage,
   type MrplIngestStatusResponse,
   type MrplRetrievalMode,
   type MrplRetrievedPassage,
@@ -157,6 +156,20 @@ export class RagClient {
   }
 }
 
+/** Grounded answer over the RAG service in the bridge's wire shape (used by evidence/answer and report generation). */
+export async function ragAnswer(client: RagClient, question: string, documentIds?: readonly string[]): Promise<MrplEvidenceAnswerResponse> {
+  const raw = await client.answer(question, documentIds)
+  return {
+    question,
+    answer: raw.answer ?? '',
+    abstain: raw.abstain,
+    abstainReason: raw.abstain_reason,
+    citations: raw.citations.map(citationOf),
+    retrieval: raw.retrieval,
+    degraded: raw.degraded,
+  }
+}
+
 /** The `MrplRetrievalProvider` seam over the RAG service. */
 export function createRagRetriever(client: RagClient): MrplRetrievalProvider {
   return {
@@ -180,7 +193,7 @@ function ingestDocument(raw: Partial<MrplIngestDocument>): MrplIngestDocument {
     documentId: String(raw.documentId ?? ''),
     title: String(raw.title ?? raw.documentId ?? ''),
     fileName: typeof raw.fileName === 'string' ? raw.fileName : null,
-    status: (raw.status ?? 'indexed') as MrplIngestStage,
+    status: (raw.status ?? 'indexed'),
     uploaded: raw.uploaded === true,
     pages: Number(raw.pages ?? 0),
     chunks: Number(raw.chunks ?? 0),

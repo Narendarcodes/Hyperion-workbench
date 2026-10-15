@@ -138,7 +138,7 @@ describe('Documents page: upload and ask', () => {
 
     fireEvent.change(within(panel).getByRole('textbox', { name: 'Question' }), { target: { value: 'Unrelated?' } })
     fireEvent.click(within(panel).getByRole('button', { name: 'Ask' }))
-    await waitFor(() => { expect(within(panel).getByText(/No supported answer/)).toBeTruthy() })
+    await waitFor(() => { expect(within(panel).getByText(/No grounded answer/)).toBeTruthy() })
     expect(within(panel).getByText(/no supporting passage/)).toBeTruthy()
   })
 

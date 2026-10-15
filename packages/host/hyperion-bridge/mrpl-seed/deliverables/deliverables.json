@@ -1,5 +1,8 @@
 {
   "label": "Hyperion-generated sample deliverables derived from public corpus document DOC-010 (MRPL MG 91 public spec sheet). Not original MRPL-issued records.",
+  "generatedSources": [
+    { "pattern": "MG91|mrpl", "flags": "i", "sourceDocumentIds": ["DOC-010"] }
+  ],
   "deliverables": [
     { "id": "mg91-pdf", "fileName": "MG91_Specification_Summary.pdf", "title": "MG 91 Specification Summary", "sourceDocumentIds": ["DOC-010"] },
     { "id": "mg91-docx", "fileName": "MG91_Specification_Summary.docx", "title": "MG 91 Specification Memo", "sourceDocumentIds": ["DOC-010"] },

@@ -10,6 +10,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { MrplDataSource } from '../mrpl/api.ts'
 import type { MrplEvidenceAnswerResponse, MrplIngestJob } from '../mrpl/contract.ts'
+import { abstainConfig, describeAbstain } from '../mrpl/abstain.ts'
 import { StatusChip, workbenchCardClass } from '../mrpl/Workbench.tsx'
 import css from './UploadAskPanel.module.css'
 
@@ -142,7 +143,7 @@ export function UploadAskPanel({ source, file, pollMs = DEFAULT_INGEST_POLL_MS }
       {ask.kind === 'answer' ? (
         <div className={css.answer} aria-label="Cited answer">
           {ask.res.abstain ? (
-            <p><strong>No supported answer.</strong> {ask.res.abstainReason ?? ''}</p>
+            <p data-abstain-reason={ask.res.abstainReason ?? ''}><strong>{abstainConfig().headline}.</strong> {describeAbstain(ask.res.abstainReason)}</p>
           ) : (
             <p className={css.answerText}>{ask.res.answer}</p>
           )}

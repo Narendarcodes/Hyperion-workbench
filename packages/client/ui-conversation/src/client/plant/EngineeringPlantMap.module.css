@@ -231,3 +231,32 @@
   border-bottom: 7px solid var(--dsw-alias-state-business-primary, #2563eb);
   margin-top: 1px;
 }
+
+/* List view: process units as selectable rows */
+.unitList {
+  list-style: none;
+  margin: 0;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  overflow: auto;
+}
+
+.unitListBtn {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px solid var(--dsw-alias-border-subtle, #e5e7eb);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-base, #fff);
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.unitListBtn:hover {
+  background: var(--dsw-alias-bg-hover, #f3f4f6);
+}

@@ -15,6 +15,7 @@ import type {
   InvestigationSeverity,
   InvestigationStatus,
 } from './types.ts'
+import { ActionMenu, type ActionMenuItem } from './ActionMenu.tsx'
 import css from './InvestigationList.module.css'
 
 export interface InvestigationListProps {
@@ -23,6 +24,8 @@ export interface InvestigationListProps {
   readonly activeTab?: InvestigationFilterTab
   readonly onSelectInvestigation?: (item: InvestigationListItem) => void
   readonly onFilterTabChange?: (tab: InvestigationFilterTab) => void
+  /** Row ⋮ menu: real actions for one investigation (open, copy link, status). */
+  readonly rowMenuItems?: (item: InvestigationListItem) => readonly ActionMenuItem[]
 }
 
 function EquipmentTypeIcon({ type }: { type: InvestigationListItem['equipmentType'] }) {
@@ -89,6 +92,7 @@ export function InvestigationList({
   activeTab = 'all',
   onSelectInvestigation,
   onFilterTabChange,
+  rowMenuItems,
 }: InvestigationListProps) {
   const [currentTab, setCurrentTab] = useState<InvestigationFilterTab>(activeTab)
   const [sortBy, setSortBy] = useState('Updated (Newest)')
@@ -126,7 +130,7 @@ export function InvestigationList({
                 role="tab"
                 aria-selected={isActive}
                 className={`${css.tabBtn} ${isActive ? css.tabBtnActive : ''}`}
-                onClick={() => handleTabClick(tab.key)}
+                onClick={() =>{  handleTabClick(tab.key) }}
               >
                 <span>{tab.label}</span>
                 <span className={css.tabCount}>({tab.count})</span>
@@ -134,18 +138,6 @@ export function InvestigationList({
             )
           })}
         </div>
-        <button
-          type="button"
-          className={css.tabActionBtn}
-          aria-label="Filter options"
-          title="Filter options"
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <line x1="4" y1="6" x2="20" y2="6" />
-            <line x1="4" y1="12" x2="16" y2="12" />
-            <line x1="4" y1="18" x2="11" y2="18" />
-          </svg>
-        </button>
       </div>
 
       {/* Sort Row */}
@@ -187,7 +179,7 @@ export function InvestigationList({
                 <input
                   type="checkbox"
                   className={css.checkbox}
-                  onClick={e => e.stopPropagation()}
+                  onClick={(e) =>{  e.stopPropagation() }}
                   aria-label={`Select ${item.code}`}
                 />
 
@@ -225,16 +217,11 @@ export function InvestigationList({
                     {item.assignee.initial}
                   </span>
 
-                  <button
-                    type="button"
-                    className={css.moreBtn}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                    }}
-                    aria-label={`Options for ${item.code}`}
-                  >
-                    <IconEllipsisOutline16 size={14} />
-                  </button>
+                  {rowMenuItems !== undefined && (
+                    <ActionMenu label={`Options for ${item.code}`} items={rowMenuItems(item)} triggerClassName={css.moreBtn}>
+                      <IconEllipsisOutline16 size={14} />
+                    </ActionMenu>
+                  )}
                 </div>
               </div>
             </li>

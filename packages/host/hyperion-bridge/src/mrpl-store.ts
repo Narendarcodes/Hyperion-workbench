@@ -12,7 +12,7 @@
  * @module @deepseek-ai/dsh-host-hyperion-bridge/mrpl-store
  */
 
-import { readdir, readFile, stat } from 'node:fs/promises'
+import { mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type {
@@ -156,18 +156,62 @@ export function rollUpEvidence(results: readonly MrplCitationResult[]): MrplEvid
 }
 
 const FORMATS: Record<string, MrplDeliverable['format']> = {
-  pdf: 'PDF', docx: 'DOCX', xlsx: 'XLSX', pptx: 'PPTX',
+  pdf: 'PDF', docx: 'DOCX', xlsx: 'XLSX', pptx: 'PPTX', md: 'MD',
 }
 /** Plain basenames with a deliverable extension (no traversal). */
 export const DELIVERABLE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(?:pdf|docx|xlsx|pptx)$/
-/** Generated artifacts the files route can serve (see index.ts). */
-const GENERATED_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*\.xlsx$/
+/** Generated artifacts in the uploads dir: skill XLSX runs and LLM + RAG Markdown reports. */
+export const GENERATED_NAME = /^(?:[A-Za-z0-9][A-Za-z0-9._-]*\.xlsx|Report-[A-Za-z0-9._-]+\.md)$/
+/** Sidecar written next to a generated artifact: `<fileName>.meta.json` = `{ title?, sourceDocumentIds? }`. */
+export const GENERATED_META_SUFFIX = '.meta.json'
+
+/** One `generatedSources` rule from `deliverables/deliverables.json`: file-name pattern → corpus ids. */
+export interface GeneratedSourceRule {
+  readonly pattern: RegExp
+  readonly sourceDocumentIds: readonly string[]
+}
+
+/** Parse the corpus config's `generatedSources` rules (invalid rows dropped). */
+export function parseGeneratedSourceRules(raw: unknown): GeneratedSourceRule[] {
+  if (!Array.isArray(raw)) return []
+  return raw.flatMap((row) => {
+    const rule = record(row)
+    const pattern = str(rule['pattern'])
+    const ids = Array.isArray(rule['sourceDocumentIds'])
+      ? (rule['sourceDocumentIds'] as unknown[]).filter((value): value is string => typeof value === 'string')
+      : []
+    if (pattern === null || ids.length === 0) return []
+    try {
+      return [{ pattern: new RegExp(pattern, str(rule['flags']) ?? 'i'), sourceDocumentIds: ids }]
+    } catch {
+      return []
+    }
+  })
+}
+
+/** Corpus ids for a generated file: its sidecar wins, else the first matching config rule, else none. */
+export function generatedSourcesOf(
+  fileName: string,
+  meta: { readonly sourceDocumentIds?: readonly string[] } | null,
+  rules: readonly GeneratedSourceRule[],
+): readonly string[] {
+  if (meta?.sourceDocumentIds !== undefined && meta.sourceDocumentIds.length > 0) return meta.sourceDocumentIds
+  return rules.find(rule => rule.pattern.test(fileName))?.sourceDocumentIds ?? []
+}
+
+/** File-system-safe slug for a report file name. */
+export function reportFileName(topic: string, now: Date): string {
+  const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'report'
+  const stamp = now.toISOString().replace(/[-:]/g, '').replace(/\..*$/, '').replace('T', '-')
+  return `Report-${slug}-${stamp}.md`
+}
 
 export const DELIVERABLE_CONTENT_TYPES: Record<string, string> = {
   pdf: 'application/pdf',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  md: 'text/markdown; charset=utf-8',
 }
 
 /** File-backed MRPL store over one corpus directory. */
@@ -354,12 +398,12 @@ export class MrplStore {
       if (id === null || name === null) return []
       const citations = Array.isArray(raw['citations'])
         ? (raw['citations'] as unknown[]).flatMap((cite) => {
-            const entry = record(cite)
-            const documentId = str(entry['documentId'])
-            const page = num(entry['page'])
-            const quote = str(entry['quote'])
-            return documentId === null || page === null || quote === null ? [] : [{ documentId, page, quote }]
-          })
+          const entry = record(cite)
+          const documentId = str(entry['documentId'])
+          const page = num(entry['page'])
+          const quote = str(entry['quote'])
+          return documentId === null || page === null || quote === null ? [] : [{ documentId, page, quote }]
+        })
         : []
       return [{
         id,
@@ -420,8 +464,10 @@ export class MrplStore {
     const out: MrplDeliverable[] = []
     const dir = join(this.root, 'deliverables')
     let declared: RawDeliverable[] = []
+    let rules: GeneratedSourceRule[] = []
     try {
       const parsed = record(JSON.parse(await readFile(join(dir, 'deliverables.json'), 'utf8')))
+      rules = parseGeneratedSourceRules(parsed['generatedSources'])
       declared = (Array.isArray(parsed['deliverables']) ? parsed['deliverables'] as unknown[] : []).flatMap((row) => {
         const raw = record(row)
         const id = str(raw['id'])
@@ -465,13 +511,14 @@ export class MrplStore {
       try {
         const info = await stat(join(this.options.uploadsDir(), fileName))
         if (!info.isFile()) continue
+        const meta = await this.generatedMeta(fileName)
         out.push({
           id: `generated:${fileName}`,
           fileName,
-          format: 'XLSX',
-          title: fileName.replace(/\.xlsx$/i, '').replace(/_/g, ' '),
+          format: FORMATS[(fileName.split('.').pop() ?? '').toLowerCase()] ?? 'OTHER',
+          title: meta?.title ?? fileName.replace(/\.(?:xlsx|md)$/i, '').replace(/[_]/g, ' '),
           kind: 'generated',
-          sourceDocumentIds: /MG91|mrpl/i.test(fileName) ? ['DOC-010'] : [],
+          sourceDocumentIds: generatedSourcesOf(fileName, meta, rules),
           sizeBytes: info.size,
           modifiedAt: info.mtime.toISOString(),
           href: hrefFor('generated', fileName),
@@ -483,12 +530,54 @@ export class MrplStore {
     return out
   }
 
-  /** Absolute path of a bundled sample deliverable, or null when it is not a declared file. */
+  /** Absolute path of a listed deliverable (sample or generated), or null when it is not one. */
   async deliverablePath(fileName: string): Promise<string | null> {
-    if (!DELIVERABLE_NAME.test(fileName)) return null
+    if (!DELIVERABLE_NAME.test(fileName) && !GENERATED_NAME.test(fileName)) return null
     const listed = await this.deliverables(() => '')
-    return listed.some(item => item.kind === 'sample' && item.fileName === fileName)
-      ? join(this.root, 'deliverables', fileName)
-      : null
+    const item = listed.find(entry => entry.fileName === fileName)
+    if (item === undefined) return null
+    return item.kind === 'sample' ? join(this.root, 'deliverables', fileName) : join(this.options.uploadsDir(), fileName)
+  }
+
+  /** Sidecar metadata of a generated artifact, or null. */
+  private async generatedMeta(fileName: string): Promise<{ title?: string; sourceDocumentIds?: string[] } | null> {
+    try {
+      const raw = record(JSON.parse(await readFile(join(this.options.uploadsDir(), fileName + GENERATED_META_SUFFIX), 'utf8')))
+      const title = str(raw['title'])
+      const ids = Array.isArray(raw['sourceDocumentIds'])
+        ? (raw['sourceDocumentIds'] as unknown[]).filter((value): value is string => typeof value === 'string')
+        : undefined
+      return { ...(title === null ? {} : { title }), ...(ids === undefined ? {} : { sourceDocumentIds: ids }) }
+    } catch {
+      return null
+    }
+  }
+
+  /** Write a generated Markdown report (+ sidecar) into the uploads dir; returns its file name. */
+  async saveGeneratedReport(
+    fileName: string,
+    markdown: string,
+    meta: { readonly title: string; readonly sourceDocumentIds: readonly string[] },
+  ): Promise<string> {
+    if (!GENERATED_NAME.test(fileName) || !fileName.endsWith('.md')) throw new MrplStoreError(`invalid report file name: ${fileName}`)
+    const dir = this.options.uploadsDir()
+    await mkdir(dir, { recursive: true })
+    await writeFile(join(dir, fileName), markdown, 'utf8')
+    await writeFile(join(dir, fileName + GENERATED_META_SUFFIX), JSON.stringify(meta), 'utf8')
+    return fileName
+  }
+
+  /** Delete a generated artifact (never a bundled sample). True when a file was removed. */
+  async deleteGenerated(fileName: string): Promise<boolean> {
+    if (!GENERATED_NAME.test(fileName)) return false
+    const path = join(this.options.uploadsDir(), fileName)
+    try {
+      if (!(await stat(path)).isFile()) return false
+    } catch {
+      return false
+    }
+    await rm(path, { force: true })
+    await rm(path + GENERATED_META_SUFFIX, { force: true })
+    return true
   }
 }

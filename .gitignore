@@ -43,3 +43,6 @@ apps/web/dist/
 worktrees/
 .agents/worktrees/
 .typert-*/
+
+# pnpm node_modules symlinks (worktree-local)
+node_modules

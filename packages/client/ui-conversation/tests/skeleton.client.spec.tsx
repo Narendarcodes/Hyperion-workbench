@@ -317,10 +317,17 @@ describe('Hero chrome', () => {
     expect(view.queryByText('HYPERION')).toBeNull()
     expect(view.getByRole('heading', { name: 'What are you analyzing?' })).toBeTruthy()
     expect(view.getByText('Ask Hyperion about your plant, equipment, documents or engineering work.')).toBeTruthy()
-    expect(view.getByRole('button', { name: 'Theme' })).toBeTruthy()
-    expect(view.getByRole('button', { name: 'Notifications' })).toBeTruthy()
-    expect(view.getByRole('button', { name: 'User menu' })).toBeTruthy()
-    expect(view.getByText('N')).toBeTruthy()
+    expect(view.queryByRole('button', { name: 'Notifications' })).toBeNull()
+    expect(view.queryByRole('button', { name: 'User menu' })).toBeNull()
+  })
+
+  it('Home theme button toggles the dark theme (was a dead button)', () => {
+    document.body.removeAttribute('data-ds-dark-theme')
+    const view = render(<HeroShell t={makeTranslate(en, commonEn)} />)
+    fireEvent.click(view.getByRole('button', { name: 'Theme' }))
+    expect(document.body.hasAttribute('data-ds-dark-theme')).toBe(true)
+    fireEvent.click(view.getByRole('button', { name: 'Theme' }))
+    expect(document.body.hasAttribute('data-ds-dark-theme')).toBe(false)
   })
 
   it('reports the workspace registry load through the local-state pill', () => {

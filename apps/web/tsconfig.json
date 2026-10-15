@@ -112,7 +112,9 @@
     // Reads the host MRPL store directly (node:fs) to fulfil harness routes.
     "tests/mrpl-screens.e2e.ts",
     // Boots the hyperion-bridge + asr-http host plugins in-process (host plane).
-    "tests/mrpl-live.e2e.ts"
+    "tests/mrpl-live.e2e.ts",
+    // Same: boots hyperion-bridge in-process against the live RAG (host plane).
+    "tests/mrpl-wire-live.e2e.ts"
   ],
   "references": [
     {

@@ -6,6 +6,8 @@
 import { MetricCard } from './MetricCard.tsx'
 import type { PlantMetric } from './types.ts'
 import css from './PlantContext.module.css'
+import { plantConfig } from './config.ts'
+import { SampleNote } from '../mrpl/SampleNote.tsx'
 
 export interface PlantContextProps {
   readonly metrics: readonly PlantMetric[]
@@ -18,6 +20,7 @@ export function PlantContext({ metrics, onMetricClick }: PlantContextProps) {
       <h2 id="plant-context-label" className={css.sectionLabel}>
         PLANT CONTEXT
       </h2>
+      <SampleNote label={plantConfig().metricsSampleLabel} />
       <div className={css.metricsGrid}>
         {metrics.map(metric => (
           <MetricCard

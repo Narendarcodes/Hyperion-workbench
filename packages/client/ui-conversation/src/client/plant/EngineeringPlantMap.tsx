@@ -4,31 +4,47 @@
  * @module @deepseek-ai/dsh-client-ui-conversation/client/plant/EngineeringPlantMap
  */
 
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { IconFullscreenOutline16 } from '@deepseek-ai/dsh-client-ui-primitives'
 import { EngineeringPlantMapPlaceholder } from './EngineeringPlantMapPlaceholder.tsx'
-import type { PlantMapState } from './types.ts'
+import type { PlantMapState, ProcessUnit } from './types.ts'
 import css from './EngineeringPlantMap.module.css'
 
 export interface EngineeringPlantMapProps {
   readonly state?: PlantMapState | undefined
   readonly asset?: ReactNode | undefined
   readonly children?: ReactNode | undefined
+  /** Host fullscreen handler; without one the card uses the browser Fullscreen API when available. */
   readonly onFullscreen?: (() => void) | undefined
+  /** Units shown by the List view (the button is hidden without them). */
+  readonly units?: readonly ProcessUnit[] | undefined
+  readonly onSelectUnit?: ((unit: ProcessUnit) => void) | undefined
 }
 
-export type MapViewMode = 'diagram' | 'satellite' | 'list'
+/** Satellite was removed: no imagery source exists. */
+export type MapViewMode = 'diagram' | 'list'
+
+function fullscreenSupported(): boolean {
+  return typeof document !== 'undefined' && (document as Document & { fullscreenEnabled?: boolean }).fullscreenEnabled === true
+}
 
 export function EngineeringPlantMap({
   state = 'placeholder',
   asset,
   children,
   onFullscreen,
+  units,
+  onSelectUnit,
 }: EngineeringPlantMapProps) {
   const [viewMode, setViewMode] = useState<MapViewMode>('diagram')
+  const cardRef = useRef<HTMLElement>(null)
+  const enterFullscreen = onFullscreen ?? (fullscreenSupported()
+    ? () => { void cardRef.current?.requestFullscreen() }
+    : undefined)
+  const listAvailable = units !== undefined && units.length > 0
 
   return (
-    <section className={css.mapCard} aria-labelledby="plant-map-title">
+    <section ref={cardRef} className={css.mapCard} aria-labelledby="plant-map-title">
       <header className={css.mapHeader}>
         <div className={css.titleArea}>
           <div className={css.mapHeaderIcon} aria-hidden="true">
@@ -55,41 +71,51 @@ export function EngineeringPlantMap({
             >
               Diagram
             </button>
-            <button
-              type="button"
-              className={`${css.segmentBtn} ${viewMode === 'satellite' ? css.active : ''}`}
-              aria-pressed={viewMode === 'satellite'}
-              onClick={() => { setViewMode('satellite') }}
-              title="Satellite view (data will be connected)"
-            >
-              Satellite
-            </button>
-            <button
-              type="button"
-              className={`${css.segmentBtn} ${viewMode === 'list' ? css.active : ''}`}
-              aria-pressed={viewMode === 'list'}
-              onClick={() => { setViewMode('list') }}
-              title="List view (data will be connected)"
-            >
-              List
-            </button>
+            {listAvailable && (
+              <button
+                type="button"
+                className={`${css.segmentBtn} ${viewMode === 'list' ? css.active : ''}`}
+                aria-pressed={viewMode === 'list'}
+                onClick={() => { setViewMode('list') }}
+              >
+                List
+              </button>
+            )}
           </div>
 
-          <button
-            type="button"
-            className={css.fullscreenBtn}
-            aria-label="Expand map to fullscreen"
-            title="Expand map"
-            onClick={onFullscreen}
-          >
-            <IconFullscreenOutline16 size={15} />
-          </button>
+          {enterFullscreen !== undefined && (
+            <button
+              type="button"
+              className={css.fullscreenBtn}
+              aria-label="Expand map to fullscreen"
+              title="Expand map"
+              onClick={enterFullscreen}
+            >
+              <IconFullscreenOutline16 size={15} />
+            </button>
+          )}
         </div>
       </header>
 
       {/* Stable Viewport */}
       <div className={css.mapViewport}>
-        {state === 'ready' && asset ? asset : (children ?? <EngineeringPlantMapPlaceholder />)}
+        {viewMode === 'list' && listAvailable
+          ? (
+              <ul aria-label="Process units (map list view)" className={css.unitList}>
+                {units.map(unit => (
+                  <li key={unit.id}>
+                    <button type="button" className={css.unitListBtn} onClick={() => onSelectUnit?.(unit)}>
+                      <strong>{unit.code}</strong>
+                      {' · '}
+                      {unit.description}
+                      {' · '}
+                      {unit.status}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )
+          : (state === 'ready' && asset ? asset : (children ?? <EngineeringPlantMapPlaceholder />))}
       </div>
     </section>
   )

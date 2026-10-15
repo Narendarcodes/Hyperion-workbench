@@ -225,7 +225,7 @@ export interface MrplEquipmentResponse {
 export interface MrplDeliverable {
   readonly id: string
   readonly fileName: string
-  readonly format: 'PDF' | 'DOCX' | 'XLSX' | 'PPTX' | 'OTHER'
+  readonly format: 'PDF' | 'DOCX' | 'XLSX' | 'PPTX' | 'MD' | 'OTHER'
   readonly title: string
   /** `sample` = bundled corpus-derived sample; `generated` = produced by a skill run on this host. */
   readonly kind: 'sample' | 'generated'
@@ -347,4 +347,26 @@ export interface HyperionTranscribeResponse {
   /** Language the engine decoded with (detected when the request asked for `auto`). */
   readonly language: string
   readonly model: string
+}
+
+// ---------------------------------------------------------------------------
+// MRPL reports (`feat/mrpl-wire-reports`): LLM + RAG generated reports.
+
+/**
+ * POST `{topic, documentIds?}`: generate a cited Markdown report via the RAG answer route;
+ * DELETE generated files under the deliverables route.
+ */
+export const HYPERION_MRPL_REPORTS_ROUTE = '/hyperion/mrpl/reports'
+
+/** POST /hyperion/mrpl/reports body. */
+export interface MrplGenerateReportRequest {
+  readonly topic: string
+  readonly documentIds?: readonly string[]
+}
+
+/** POST /hyperion/mrpl/reports response. */
+export interface MrplGenerateReportResponse {
+  readonly deliverable: MrplDeliverable
+  readonly abstain: boolean
+  readonly citations: number
 }

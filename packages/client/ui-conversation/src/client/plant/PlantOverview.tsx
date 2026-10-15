@@ -14,11 +14,32 @@ import { DEFAULT_PLANT_OVERVIEW_DATA } from './mockData.ts'
 import type { PlantOverviewData, ProcessUnit, UnitDetail, UnitTab } from './types.ts'
 import css from './PlantOverview.module.css'
 
+/** Hyperion workbench views the Plant overview can route to. */
+export type PlantNavTarget = 'equipment' | 'documents' | 'pid' | 'investigations'
+
+/** Unit-detail row category → workbench view (`pids` rows open the P&ID view). */
+export function plantRowTarget(category: string): PlantNavTarget | undefined {
+  switch (category) {
+    case 'equipment': return 'equipment'
+    case 'documents': return 'documents'
+    case 'pids': return 'pid'
+    case 'investigations': return 'investigations'
+    default: return undefined
+  }
+}
+
+/** Metric card → workbench view; the process-unit count opens the unit-grouped Equipment browser. */
+export function plantMetricTarget(metricId: string): PlantNavTarget | undefined {
+  return metricId === 'units' ? 'equipment' : plantRowTarget(metricId)
+}
+
 export interface PlantOverviewProps {
   readonly data?: PlantOverviewData
   readonly onOpenPid?: () => void
   readonly onOpenUnit?: (unit: UnitDetail) => void
   readonly onStartInvestigation?: (unit: UnitDetail) => void
+  /** Route to a workbench view (unit rows, metrics, View all, activity). */
+  readonly onNavigate?: (target: PlantNavTarget) => void
 }
 
 export function PlantOverview({
@@ -26,6 +47,7 @@ export function PlantOverview({
   onOpenPid,
   onOpenUnit,
   onStartInvestigation,
+  onNavigate,
 }: PlantOverviewProps) {
   const [selectedUnit, setSelectedUnit] = useState<UnitDetail>(data.selectedUnit)
   const [searchQuery, setSearchQuery] = useState('')
@@ -56,13 +78,10 @@ export function PlantOverview({
     console.info('[Hyperion] Navigating to P&ID Explorer...')
   }
 
-  const handleOpenUnit = () => {
-    if (onOpenUnit) {
-      onOpenUnit(selectedUnit)
-      return
-    }
-    console.info(`[Hyperion] Opening unit: ${selectedUnit.code}`)
-  }
+  // Open Unit: the host's unit handler, else the unit-grouped Equipment browser; hidden with neither.
+  const handleOpenUnit = onOpenUnit !== undefined
+    ? () => { onOpenUnit(selectedUnit) }
+    : (onNavigate === undefined ? undefined : () => { onNavigate('equipment') })
 
   const handleStartInvestigation = () => {
     if (onStartInvestigation) {
@@ -90,6 +109,12 @@ export function PlantOverview({
         selectedUnit={selectedUnit}
         onOpenUnit={handleOpenUnit}
         onStartInvestigation={handleStartInvestigation}
+        units={data.processUnits}
+        onSelectUnit={handleSelectUnit}
+        onRowClick={onNavigate === undefined ? undefined : (category: string) => {
+          const target = plantRowTarget(category)
+          if (target !== undefined) onNavigate(target)
+        }}
         onSelectTab={(tab: UnitTab) => {
           setSelectedUnit(curr => ({ ...curr, activeTab: tab }))
         }}
@@ -99,7 +124,8 @@ export function PlantOverview({
       <PlantContext
         metrics={data.metrics}
         onMetricClick={(metricId) => {
-          console.info(`[Hyperion] Clicked metric: ${metricId}`)
+          const target = plantMetricTarget(metricId)
+          if (target !== undefined) onNavigate?.(target)
         }}
       />
 
@@ -108,15 +134,9 @@ export function PlantOverview({
         processUnits={data.processUnits}
         recentActivity={data.recentActivity}
         onUnitClick={handleSelectUnit}
-        onActivityClick={(act) => {
-          console.info(`[Hyperion] Clicked activity: ${act.title}`)
-        }}
-        onViewAllUnits={() => {
-          console.info('[Hyperion] View all process units')
-        }}
-        onViewAllActivity={() => {
-          console.info('[Hyperion] View all engineering activity')
-        }}
+        onActivityClick={onNavigate === undefined ? undefined : () => { onNavigate('investigations') }}
+        onViewAllUnits={onNavigate === undefined ? undefined : () => { onNavigate('equipment') }}
+        onViewAllActivity={onNavigate === undefined ? undefined : () => { onNavigate('investigations') }}
       />
     </div>
   )

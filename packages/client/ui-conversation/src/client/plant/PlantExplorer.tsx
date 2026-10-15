@@ -5,7 +5,7 @@
 
 import { EngineeringPlantMap } from './EngineeringPlantMap.tsx'
 import { UnitDetailsPanel } from './UnitDetailsPanel.tsx'
-import type { PlantMapState, UnitDetail, UnitTab } from './types.ts'
+import type { PlantMapState, ProcessUnit, UnitDetail, UnitTab } from './types.ts'
 import css from './PlantExplorer.module.css'
 
 export interface PlantExplorerProps {
@@ -16,6 +16,8 @@ export interface PlantExplorerProps {
   readonly onSelectTab?: ((tab: UnitTab) => void) | undefined
   readonly onRowClick?: ((category: string) => void) | undefined
   readonly onFullscreenMap?: (() => void) | undefined
+  readonly units?: readonly ProcessUnit[] | undefined
+  readonly onSelectUnit?: ((unit: ProcessUnit) => void) | undefined
 }
 
 export function PlantExplorer({
@@ -26,12 +28,16 @@ export function PlantExplorer({
   onSelectTab,
   onRowClick,
   onFullscreenMap,
+  units,
+  onSelectUnit,
 }: PlantExplorerProps) {
   return (
     <div className={css.explorerGrid}>
       <EngineeringPlantMap
         state={mapState}
         onFullscreen={onFullscreenMap}
+        units={units}
+        onSelectUnit={onSelectUnit}
       />
       <UnitDetailsPanel
         unit={selectedUnit}
