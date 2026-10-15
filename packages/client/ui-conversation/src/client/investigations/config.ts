@@ -23,6 +23,12 @@ export interface InvestigationsConfig {
   /** Tag used when a new ask names no equipment. */
   readonly unassignedTag: string
   readonly statusLabels: Readonly<Record<InvestigationStatus, string>>
+  /**
+   * Labels on the investigation-detail panels that still render bundled fixture
+   * data (vibration trend / key findings, related documents, similar equipment).
+   * Empty string hides a label.
+   */
+  readonly detailSampleLabels: { readonly metrics: string; readonly evidence: string; readonly similarEquipment: string }
   /** Question the RAG/LLM analysis asks for an investigation. */
   readonly analysisQuestion: (inv: { readonly tag: string; readonly title: string }) => string
   readonly compareQuestion: (inv: { readonly tag: string; readonly title: string }) => string
@@ -38,10 +44,18 @@ let current: InvestigationsConfig = {
   sampleLabel: 'Sample',
   unassignedTag: 'UNASSIGNED',
   statusLabels: { 'open': 'Open', 'in-progress': 'In Progress', 'resolved': 'Resolved', 'on-hold': 'On Hold' },
+  detailSampleLabels: {
+    metrics: 'Sample metrics · trend and findings are illustrative, not live sensor data',
+    evidence: 'Sample evidence list · use Rerun analysis for cited evidence from the indexed corpus',
+    similarEquipment: 'Sample similar equipment · illustrative',
+  },
+  // Single-focus questions: the multi-part "causes, limits and checks" / "compare design limits,
+  // failure modes and maintenance" forms made gpt-oss abstain (NOT_IN_EVIDENCE) even for assets the
+  // corpus covers (E-6600E, measured live on the droplet 2026-10-15); these forms answer with citations.
   analysisQuestion: ({ tag, title }) =>
-    `Root cause analysis for ${tag}: ${title}. What do the source documents say about likely causes, operating limits and recommended checks?`,
+    `What caused the problem on ${tag} (${title}), according to the indexed documents?`,
   compareQuestion: ({ tag, title }) =>
-    `Compare ${tag} (${title}) with similar equipment in the documents: design limits, known failure modes and maintenance practice.`,
+    `Which similar equipment in the indexed documents had failures like ${tag} (${title}), and what was learned?`,
 }
 
 export function investigationsConfig(): InvestigationsConfig {

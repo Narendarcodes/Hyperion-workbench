@@ -1,5 +1,5 @@
 /**
- * MRPL screen harness entry: `?screen=documents|equipment|reports|evidence|mic|mission`,
+ * MRPL screen harness entry: `?screen=documents|equipment|reports|evidence|mic|mission|pid|investigation`,
  * `&theme=light|dark`. Works on the base branch too (no MrplSourceProvider
  * there), which is how the "before" screenshots are taken.
  */
@@ -10,6 +10,8 @@ import designPlatform from '../../../packages/client/ui-theme/src/styles/design-
 import { DocumentsOverview } from '../../../packages/client/ui-conversation/src/client/documents/DocumentsOverview.tsx'
 import { EquipmentPage } from '../../../packages/client/ui-conversation/src/client/equipment/EquipmentPage.tsx'
 import { ReportsOverview } from '../../../packages/client/ui-conversation/src/client/reports/ReportsOverview.tsx'
+import { PIDView } from '../../../packages/client/ui-conversation/src/client/pid/PIDView.tsx'
+import { InvestigationDetailView } from '../../../packages/client/ui-conversation/src/client/investigations/InvestigationDetailView.tsx'
 import { MrplEvidencePanel } from '../../../packages/client/ui-chat/src/client/chat/MrplEvidenceCard.tsx'
 import { en } from '../../../packages/client/ui-chat/src/client/locale.ts'
 import { MissionView } from '../../../packages/client/ui-mission/src/client/MissionView.tsx'
@@ -124,6 +126,23 @@ async function render(): Promise<void> {
   else if (screen === 'reports') ui = <ReportsOverview />
   else if (screen === 'mic') ui = <MicProbe />
   else if (screen === 'mission') ui = <MissionProbe />
+  else if (screen === 'pid') {
+    const noop = () => undefined
+    ui = (
+      <div style={{ height: '100vh' }}>
+        <PIDView
+          onAskPid={noop}
+          onViewEquipment={noop}
+          onViewAllEquipment={noop}
+          onViewDocuments={noop}
+          onViewAllDocuments={noop}
+          onOpenDocument={noop}
+          onStartInvestigation={noop}
+          onOpenCitation={noop}
+        />
+      </div>
+    )
+  } else if (screen === 'investigation') ui = <InvestigationDetailView />
   else if (screen === 'evidence') {
     const prose = params.get('variant') === 'tampered' ? TAMPERED_PROSE : RESULT_PROSE
     ui = (
