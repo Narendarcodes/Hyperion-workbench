@@ -18,6 +18,8 @@ import type {
   VibrationTrendPoint,
 } from './types.ts'
 import css from './AnalysisWorkspace.module.css'
+import { investigationsConfig } from './config.ts'
+import { SampleNote } from '../mrpl/SampleNote.tsx'
 
 export interface AnalysisWorkspaceProps {
   readonly data: InvestigationAnalysisDetailData
@@ -377,6 +379,7 @@ export function AnalysisWorkspace({
             </ul>
           </nav>
 
+          <SampleNote label={investigationsConfig().detailSampleLabels.metrics} />
           {/* Key Findings Highlight Card */}
           <div className={css.keyFindingsCard}>
             <div className={css.keyFindingsHeader}>

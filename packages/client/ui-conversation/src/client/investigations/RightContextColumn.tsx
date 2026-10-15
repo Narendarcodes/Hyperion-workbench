@@ -13,6 +13,8 @@ import type {
   SimilarEquipmentRecord,
 } from './types.ts'
 import css from './RightContextColumn.module.css'
+import { investigationsConfig } from './config.ts'
+import { SampleNote } from '../mrpl/SampleNote.tsx'
 
 export interface RightContextColumnProps {
   readonly data: InvestigationAnalysisDetailData
@@ -197,6 +199,7 @@ export function RightContextColumn({
             <span aria-hidden="true">→</span>
           </button>
         </div>
+        <SampleNote label={investigationsConfig().detailSampleLabels.evidence} />
 
         <ul className={css.docsList} role="list">
           {data.relatedDocuments.map((doc, idx) => (
@@ -234,6 +237,7 @@ export function RightContextColumn({
         <div className={css.cardHeaderRow}>
           <h3 className={css.cardTitle}>Similar Equipment</h3>
         </div>
+        <SampleNote label={investigationsConfig().detailSampleLabels.similarEquipment} />
 
         <ul className={css.similarList} role="list">
           {data.similarEquipment.map(item => (

@@ -6,6 +6,8 @@
 import { ProcessUnitCard } from './ProcessUnitCard.tsx'
 import type { ProcessUnit } from './types.ts'
 import css from './ProcessUnits.module.css'
+import { plantConfig } from './config.ts'
+import { SampleNote } from '../mrpl/SampleNote.tsx'
 
 export interface ProcessUnitsProps {
   readonly units: readonly ProcessUnit[]
@@ -30,6 +32,7 @@ export function ProcessUnits({ units, onUnitClick, onViewAll }: ProcessUnitsProp
 
         )}
       </div>
+      <SampleNote label={plantConfig().unitsSampleLabel} />
 
       <div className={css.unitsGrid}>
         {units.map(unit => (
