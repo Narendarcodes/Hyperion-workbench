@@ -8,13 +8,14 @@
 
 import { IconChevronDownOutline14, IconShareOutline16 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { InvestigationAnalysisDetailData } from './types.ts'
+import { ActionMenu, type ActionMenuItem } from './ActionMenu.tsx'
 import css from './InvestigationDetailHeader.module.css'
 
 export interface InvestigationDetailHeaderProps {
   readonly data: InvestigationAnalysisDetailData
   readonly onNavigateBack?: () => void
   readonly onShare?: () => void
-  readonly onChangeStatus?: () => void
+  readonly statusItems?: readonly ActionMenuItem[]
   readonly onGenerateReport?: () => void
 }
 
@@ -22,7 +23,7 @@ export function InvestigationDetailHeader({
   data,
   onNavigateBack,
   onShare,
-  onChangeStatus,
+  statusItems,
   onGenerateReport,
 }: InvestigationDetailHeaderProps) {
   return (
@@ -59,7 +60,7 @@ export function InvestigationDetailHeader({
             <h1 className={css.invCodeHeading}>{data.code}</h1>
             <span className={css.severityBadge}>
               <span className={css.sevDot} aria-hidden="true" />
-              <span>High</span>
+              <span>{data.severity.charAt(0).toUpperCase() + data.severity.slice(1)}</span>
             </span>
             <span className={css.statusBadge}>
               <span>{data.statusLabel}</span>
@@ -101,15 +102,12 @@ export function InvestigationDetailHeader({
             <span>Share</span>
           </button>
 
-          <button
-            type="button"
-            className={css.actionSecondaryBtn}
-            onClick={onChangeStatus}
-            aria-label="Change status"
-          >
-            <span>Change Status</span>
-            <IconChevronDownOutline14 size={11} className={css.btnChevron} />
-          </button>
+          {statusItems !== undefined && statusItems.length > 0 && (
+            <ActionMenu label="Change status" items={statusItems} triggerClassName={css.actionSecondaryBtn}>
+              <span>Change Status</span>
+              <IconChevronDownOutline14 size={11} className={css.btnChevron} />
+            </ActionMenu>
+          )}
 
           <button
             type="button"

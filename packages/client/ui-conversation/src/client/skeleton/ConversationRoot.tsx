@@ -540,14 +540,17 @@ export function ConversationRoot({
           )}
           {isInvestigations && (
             <InvestigationsPage
-              onNewInvestigation={() => {
-                setDraft('Start new plant investigation ')
+              onNewInvestigation={(ask) => {
+                setDraft(ask)
               }}
               onAskAI={(query) => {
                 setDraft(`${query} `)
               }}
               onOpenInvestigation={() => {
                 setWorkbenchView('investigation-detail')
+              }}
+              onOpenDocuments={() => {
+                setWorkbenchView('documents')
               }}
             />
           )}
@@ -556,23 +559,17 @@ export function ConversationRoot({
               onNavigateBack={() => {
                 setWorkbenchView('investigations')
               }}
-              onShare={({ code }) => {
-                setDraft(`Share investigation ${code} `)
-              }}
-              onChangeStatus={({ code }) => {
-                setDraft(`Change status of investigation ${code} `)
-              }}
-              onGenerateReport={({ code }) => {
-                setDraft(`Generate comprehensive investigation report for ${code} `)
-              }}
-              onRerun={({ tag }) => {
-                setDraft(`Rerun root cause analysis for ${tag} `)
-              }}
               onSendQuery={(query) => {
                 setDraft(`${query} `)
               }}
               onViewEquipmentDetails={() => {
                 setWorkbenchView('equipment')
+              }}
+              onOpenPid={() => {
+                setWorkbenchView('pid')
+              }}
+              onOpenDocuments={() => {
+                setWorkbenchView('documents')
               }}
             />
           )}

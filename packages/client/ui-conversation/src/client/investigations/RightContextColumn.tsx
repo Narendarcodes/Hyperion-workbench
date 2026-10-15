@@ -5,7 +5,6 @@
  */
 
 import {
-  IconEllipsisOutline16,
   IconShareOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type {
@@ -22,7 +21,6 @@ export interface RightContextColumnProps {
   readonly onOpenDocument?: (doc: InvestigationEvidence) => void
   readonly onViewAllDocuments?: () => void
   readonly onSelectSimilarEquipment?: (item: SimilarEquipmentRecord) => void
-  readonly onViewAllSimilar?: () => void
 }
 
 function MiniSparkline({ data }: { data: readonly number[] }) {
@@ -73,7 +71,6 @@ export function RightContextColumn({
   onOpenDocument,
   onViewAllDocuments,
   onSelectSimilarEquipment,
-  onViewAllSimilar,
 }: RightContextColumnProps) {
   return (
     <aside className={css.columnRoot} aria-label="Investigation context and connected items">
@@ -183,37 +180,7 @@ export function RightContextColumn({
             <span>Open in P&ID</span>
           </button>
 
-          <button
-            type="button"
-            className={css.quickActionBtn}
-            onClick={() => onQuickAction?.('create-work-order')}
-          >
-            <span className={`${css.actionIconSlot} ${css.iconOrange}`}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="9" y1="13" x2="15" y2="13" />
-                <line x1="9" y1="17" x2="13" y2="17" />
-              </svg>
-            </span>
-            <span>Create Work Order</span>
-          </button>
 
-          <button
-            type="button"
-            className={css.quickActionBtn}
-            onClick={() => onQuickAction?.('generate-report')}
-          >
-            <span className={`${css.actionIconSlot} ${css.iconPurple}`}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-              </svg>
-            </span>
-            <span>Generate Report</span>
-          </button>
         </div>
       </div>
 
@@ -256,14 +223,6 @@ export function RightContextColumn({
                 >
                   <IconShareOutline16 size={12} />
                 </button>
-                <button
-                  type="button"
-                  className={css.docIconBtn}
-                  aria-label={`More options for ${doc.name}`}
-                  title="Options"
-                >
-                  <IconEllipsisOutline16 size={12} />
-                </button>
               </div>
             </li>
           ))}
@@ -274,14 +233,6 @@ export function RightContextColumn({
       <div className={css.sideCard}>
         <div className={css.cardHeaderRow}>
           <h3 className={css.cardTitle}>Similar Equipment</h3>
-          <button
-            type="button"
-            className={css.viewAllBtn}
-            onClick={onViewAllSimilar}
-          >
-            <span>View all</span>
-            <span aria-hidden="true">→</span>
-          </button>
         </div>
 
         <ul className={css.similarList} role="list">

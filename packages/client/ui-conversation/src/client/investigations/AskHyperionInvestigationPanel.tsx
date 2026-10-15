@@ -8,10 +8,10 @@ import { useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import {
   IconContextInjectionOutline16,
-  IconPaperclipOutline16,
-  IconPlusOutline16,
   IconSkillOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
+import type { ReactNode } from 'react'
+import { ActionMenu, type ActionMenuItem } from './ActionMenu.tsx'
 import type { AISuggestedAction, SelectedInvestigation } from './types.ts'
 import css from './AskHyperionInvestigationPanel.module.css'
 
@@ -19,7 +19,9 @@ export interface AskHyperionInvestigationPanelProps {
   readonly investigation: SelectedInvestigation
   readonly suggestedActions: readonly AISuggestedAction[]
   readonly onSendQuery?: (query: string) => void
-  readonly onEditContext?: () => void
+  readonly statusItems?: readonly ActionMenuItem[]
+  /** Status / result line of the last action. */
+  readonly notice?: ReactNode
   readonly onQuickAction?: (actionId: string) => void
 }
 
@@ -27,7 +29,8 @@ export function AskHyperionInvestigationPanel({
   investigation,
   suggestedActions,
   onSendQuery,
-  onEditContext,
+  statusItems,
+  notice,
   onQuickAction,
 }: AskHyperionInvestigationPanelProps) {
   const [inputText, setInputText] = useState('')
@@ -99,22 +102,6 @@ export function AskHyperionInvestigationPanel({
             <div className={css.leftTools}>
               <button
                 type="button"
-                className={css.toolBtn}
-                aria-label="Add"
-                title="Add action"
-              >
-                <IconPlusOutline16 size={13} />
-              </button>
-              <button
-                type="button"
-                className={css.toolBtn}
-                aria-label="Attach file"
-                title="Attach"
-              >
-                <IconPaperclipOutline16 size={13} />
-              </button>
-              <button
-                type="button"
                 className={css.chipBtn}
                 onClick={() => setInputText(prev => `${prev} @${investigation.tag} `)}
                 aria-label="Add context tag"
@@ -134,21 +121,6 @@ export function AskHyperionInvestigationPanel({
             </div>
 
             <div className={css.rightTools}>
-              <button
-                type="button"
-                className={css.autoRouteBtn}
-                title="Auto model routing"
-                aria-label="Automatic model selection"
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M12 2a4 4 0 0 0-4 4c0 1.5.8 2.8 2 3.4V14a2 2 0 0 0 2 2v0a2 2 0 0 0 2-2V9.4c1.2-.6 2-1.9 2-3.4a4 4 0 0 0-4-4z" />
-                  <path d="M9 18a3 3 0 0 0 6 0" />
-                </svg>
-                <span>Auto</span>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
 
               <button
                 type="button"
@@ -171,18 +143,6 @@ export function AskHyperionInvestigationPanel({
       <div className={css.contextSection}>
         <div className={css.sectionHeader}>
           <h4 className={css.subTitle}>Context</h4>
-          <button
-            type="button"
-            className={css.editBtn}
-            onClick={onEditContext}
-            aria-label="Edit context"
-          >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-            <span>Edit</span>
-          </button>
         </div>
 
         <dl className={css.contextGrid}>
@@ -248,18 +208,13 @@ export function AskHyperionInvestigationPanel({
             <span>Create Report</span>
           </button>
 
-          <button
-            type="button"
-            className={css.quickBtn}
-            onClick={() => onQuickAction?.('change-status')}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={css.quickTone_amber} aria-hidden="true">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 14 14" />
-            </svg>
-            <span>Change Status</span>
-          </button>
+          {statusItems !== undefined && statusItems.length > 0 && (
+            <ActionMenu label="Change investigation status" items={statusItems} triggerClassName={css.quickBtn}>
+              <span>Change Status</span>
+            </ActionMenu>
+          )}
         </div>
+        {notice}
       </div>
     </aside>
   )
