@@ -1,0 +1,41 @@
+%% Start Investigation data flow (ConversationRoot -> investigation-actions -> store -> detail view)
+flowchart TB
+  subgraph origin["Entry points (ConversationRoot.tsx)"]
+    direction LR
+    p["Plant: unit<br/>Start Investigation"]
+    e["Equipment:<br/>+ New Investigation"]
+    d["P&ID: tag<br/>Start Investigation"]
+  end
+
+  sif["startInvestigationFor(<br/>{origin, tag?, name?, code?})<br/>tag = equipment tag, else unit code,<br/>else UNASSIGNED<br/>type guessed from name / tag prefix"]
+  store[("investigationStore().create()<br/>localStorage key<br/>hyperion.mrpl.investigations.v1<br/>origin 'ask', selected")]
+  view["open the detail view<br/>setWorkbenchView(<br/>'investigation-detail')<br/>+ composer pre-filled<br/>with the ask"]
+
+  p --> sif
+  e --> sif
+  d --> sif
+  sif --> store --> view
+
+  subgraph detail["Investigation detail"]
+    direction TB
+    ctx["useInvestigationContext(record)"]
+    eq["GET /hyperion/mrpl/equipment<br/>record whose tag matches"]
+    ev["GET /hyperion/mrpl/evidence/search<br/>q = tag"]
+    cat["GET /hyperion/mrpl/documents<br/>titles"]
+    run["Rerun / Compare<br/>runInvestigationAnalysis()<br/>single-focus question from config"]
+    ans["POST /hyperion/mrpl/evidence/answer"]
+    rep["Generate Report<br/>buildInvestigationReport()<br/>Markdown download"]
+    out["Equipment Context +<br/>Related Documents<br/>de-duplicated, labelled<br/>by provenance; empty state<br/>on failure, never fixture"]
+    ctx --> eq
+    ctx --> ev
+    ctx --> cat
+    run --> ans
+    eq --> out
+    ev --> out
+    cat --> out
+    ans -- "citations" --> out
+    ans --> rep
+  end
+
+  view --> ctx
+  view --> run

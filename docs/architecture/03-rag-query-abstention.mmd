@@ -1,0 +1,37 @@
+%% RAG grounded answer with layered abstention (pipeline.py answer())
+sequenceDiagram
+  autonumber
+  participant UI as Workbench screen<br/>(P&ID tag, Investigation, Upload & Ask)
+  participant BR as hyperion-bridge<br/>POST /hyperion/mrpl/evidence/answer
+  participant SV as RAG service<br/>POST /v1/answer
+  participant RT as retrieve()<br/>BM25 + dense, RRF k=60, rerank top 30
+  participant LLM as gpt-oss<br/>(temperature 0, JSON reply)
+  participant CV as build_citations()<br/>locate() quote on page
+
+  UI->>BR: {question, documentIds?}
+  BR->>SV: question, documentIds, limit
+  SV->>RT: query (mode hybrid_rerank when dense + rerank load)
+  RT-->>SV: top-k hits
+  alt no hits
+    SV-->>BR: abstain, reason no_evidence
+  else gate set and top rerank score below gate
+    Note over SV: gate is a parameter of answer(). rag.py query passes it.<br/>The HTTP service calls answer() without a gate.
+    SV-->>BR: abstain, reason retrieval_gate#lt;x#gt;
+  else evidence found
+    SV->>SV: expand_neighbors (same-doc chunks, max 8 blocks)
+    SV->>LLM: system prompt + evidence blocks E1..En
+    LLM-->>SV: {answer, abstain, citations[block, quote]}
+    alt model abstains or replies NOT_IN_EVIDENCE
+      SV-->>BR: abstain, reason model
+    else answer with quotes
+      SV->>CV: each quote vs its cited block
+      CV-->>SV: doc_id, page, char span, quote_verified
+      alt no quote verifies
+        SV-->>BR: abstain, reason no_verified_citation (answer withheld)
+      else at least one verified quote
+        SV-->>BR: answer + citations + footnotes
+      end
+    end
+  end
+  BR-->>UI: MrplEvidenceAnswerResponse {abstain, abstainReason, citations[n, documentId, page, quote, verified]}
+  Note over UI: abstain: describeAbstain(code, subject)<br/>else: answer + numbered citations
