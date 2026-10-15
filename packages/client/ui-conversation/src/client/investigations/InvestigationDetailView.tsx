@@ -149,7 +149,9 @@ export function InvestigationDetailView({
       <main className={css.mainWorkspaceGrid}>
         <section className={css.centerAnalysisColumn} aria-label="Investigation Analysis">
           <ActionNotice text={actions.notice} />
-          {actions.result !== null && <AnalysisResult title={actions.result.title} result={actions.result.answer} subject={actions.result.subject} />}
+          {actions.result !== null && (
+            <AnalysisResult title={actions.result.title} result={actions.result.answer} subject={actions.result.subject} />
+          )}
           <AnalysisWorkspace
             data={data}
             onRerun={() => { actions.rerun() }}

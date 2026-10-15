@@ -67,7 +67,9 @@ describe('describeAbstain', () => {
 describe('abstention text on screen', () => {
   it('P&ID tag evidence shows readable text, not the raw code', async () => {
     const src = {
-      searchEvidence: async () => ({ dataset: { id: 'd', label: 'd', kind: 'public-sample' }, retriever: 'r', retrieval: 'configured', query: 'E-101', passages: [] }),
+      searchEvidence: async () => ({
+        dataset: { id: 'd', label: 'd', kind: 'public-sample' }, retriever: 'r', retrieval: 'configured', query: 'E-101', passages: [],
+      }),
       answerEvidence: async () => abstained('model'),
     } as unknown as MrplDataSource
     render(<MrplSourceProvider source={src}><TagEvidencePanel tag="E-101" name="Exchanger" /></MrplSourceProvider>)

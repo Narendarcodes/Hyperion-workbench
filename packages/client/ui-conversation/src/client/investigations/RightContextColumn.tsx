@@ -94,62 +94,62 @@ export function RightContextColumn({
           {...(onViewEquipmentDetails && { onViewEquipmentDetails })}
         />
       ) : (
-      <section className={css.sideCard} aria-label="Equipment Context">
-        <h3 className={css.cardTitle}>Equipment Context</h3>
-        <SampleNote label={context.equipmentSampleLabel} />
+        <section className={css.sideCard} aria-label="Equipment Context">
+          <h3 className={css.cardTitle}>Equipment Context</h3>
+          <SampleNote label={context.equipmentSampleLabel} />
 
-        <div className={css.equipTopRow}>
-          <img
-            src="/equipment-pump.png"
-            alt={data.equipmentName}
-            className={css.equipThumbnail}
-          />
-          <div className={css.equipTopDetails}>
-            <span className={css.equipTagBold}>{data.tag}</span>
-            <span className={css.equipNameText}>{data.equipmentName}</span>
-            <span className={css.inServiceBadge}>
-              <span className={css.greenDot} aria-hidden="true" />
-              <span>{data.equipmentStatus}</span>
-            </span>
+          <div className={css.equipTopRow}>
+            <img
+              src="/equipment-pump.png"
+              alt={data.equipmentName}
+              className={css.equipThumbnail}
+            />
+            <div className={css.equipTopDetails}>
+              <span className={css.equipTagBold}>{data.tag}</span>
+              <span className={css.equipNameText}>{data.equipmentName}</span>
+              <span className={css.inServiceBadge}>
+                <span className={css.greenDot} aria-hidden="true" />
+                <span>{data.equipmentStatus}</span>
+              </span>
+            </div>
           </div>
-        </div>
 
-        <dl className={css.specList}>
-          <div className={css.specRow}>
-            <dt className={css.specKey}>Unit</dt>
-            <dd className={css.specVal}>{data.unit}</dd>
-          </div>
-          <div className={css.specRow}>
-            <dt className={css.specKey}>Service</dt>
-            <dd className={css.specVal}>{data.service}</dd>
-          </div>
-          <div className={css.specRow}>
-            <dt className={css.specKey}>Type</dt>
-            <dd className={css.specVal}>{data.equipmentType}</dd>
-          </div>
-          <div className={css.specRow}>
-            <dt className={css.specKey}>Manufacturer</dt>
-            <dd className={css.specVal}>{data.manufacturer}</dd>
-          </div>
-          <div className={css.specRow}>
-            <dt className={css.specKey}>Model</dt>
-            <dd className={css.specVal}>{data.model}</dd>
-          </div>
-          <div className={css.specRow}>
-            <dt className={css.specKey}>Tag Number</dt>
-            <dd className={css.specVal}>{data.tag}</dd>
-          </div>
-        </dl>
+          <dl className={css.specList}>
+            <div className={css.specRow}>
+              <dt className={css.specKey}>Unit</dt>
+              <dd className={css.specVal}>{data.unit}</dd>
+            </div>
+            <div className={css.specRow}>
+              <dt className={css.specKey}>Service</dt>
+              <dd className={css.specVal}>{data.service}</dd>
+            </div>
+            <div className={css.specRow}>
+              <dt className={css.specKey}>Type</dt>
+              <dd className={css.specVal}>{data.equipmentType}</dd>
+            </div>
+            <div className={css.specRow}>
+              <dt className={css.specKey}>Manufacturer</dt>
+              <dd className={css.specVal}>{data.manufacturer}</dd>
+            </div>
+            <div className={css.specRow}>
+              <dt className={css.specKey}>Model</dt>
+              <dd className={css.specVal}>{data.model}</dd>
+            </div>
+            <div className={css.specRow}>
+              <dt className={css.specKey}>Tag Number</dt>
+              <dd className={css.specVal}>{data.tag}</dd>
+            </div>
+          </dl>
 
-        <button
-          type="button"
-          className={css.viewDetailsLinkBtn}
-          onClick={onViewEquipmentDetails}
-        >
-          <span>View Equipment Details</span>
-          <span aria-hidden="true">→</span>
-        </button>
-      </section>
+          <button
+            type="button"
+            className={css.viewDetailsLinkBtn}
+            onClick={onViewEquipmentDetails}
+          >
+            <span>View Equipment Details</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </section>
       )}
 
       {/* 2. Quick Actions Card */}
@@ -214,50 +214,50 @@ export function RightContextColumn({
           {...(onOpenRelated && { onOpenRelated })}
         />
       ) : (
-      <section className={css.sideCard} aria-label="Related Documents">
-        <div className={css.cardHeaderRow}>
-          <h3 className={css.cardTitle}>Related Documents ({data.totalDocumentsCount})</h3>
-          <button
-            type="button"
-            className={css.viewAllBtn}
-            onClick={onViewAllDocuments}
-          >
-            <span>View all</span>
-            <span aria-hidden="true">→</span>
-          </button>
-        </div>
-        <SampleNote label={investigationsConfig().detailSampleLabels.evidence} />
+        <section className={css.sideCard} aria-label="Related Documents">
+          <div className={css.cardHeaderRow}>
+            <h3 className={css.cardTitle}>Related Documents ({data.totalDocumentsCount})</h3>
+            <button
+              type="button"
+              className={css.viewAllBtn}
+              onClick={onViewAllDocuments}
+            >
+              <span>View all</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+          <SampleNote label={investigationsConfig().detailSampleLabels.evidence} />
 
-        <ul className={css.docsList} role="list">
-          {data.relatedDocuments.map((doc, idx) => (
-            <li key={doc.id} className={css.docItemRow}>
-              <button
-                type="button"
-                className={css.docMainBtn}
-                onClick={() => onOpenDocument?.(doc)}
-              >
-                <DocIcon idx={idx} />
-                <div className={css.docTextColumn}>
-                  <span className={css.docTitleText}>{doc.name}</span>
-                  <span className={css.docSubtitleText}>{doc.description}</span>
-                </div>
-              </button>
-
-              <div className={css.docActionButtons}>
+          <ul className={css.docsList} role="list">
+            {data.relatedDocuments.map((doc, idx) => (
+              <li key={doc.id} className={css.docItemRow}>
                 <button
                   type="button"
-                  className={css.docIconBtn}
+                  className={css.docMainBtn}
                   onClick={() => onOpenDocument?.(doc)}
-                  aria-label={`Open ${doc.name}`}
-                  title="Open"
                 >
-                  <IconShareOutline16 size={12} />
+                  <DocIcon idx={idx} />
+                  <div className={css.docTextColumn}>
+                    <span className={css.docTitleText}>{doc.name}</span>
+                    <span className={css.docSubtitleText}>{doc.description}</span>
+                  </div>
                 </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+
+                <div className={css.docActionButtons}>
+                  <button
+                    type="button"
+                    className={css.docIconBtn}
+                    onClick={() => onOpenDocument?.(doc)}
+                    aria-label={`Open ${doc.name}`}
+                    title="Open"
+                  >
+                    <IconShareOutline16 size={12} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       {/* 4. Similar Equipment */}

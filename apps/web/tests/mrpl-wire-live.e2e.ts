@@ -150,6 +150,12 @@ describe.skipIf(!live)('MRPL wired controls, live (droplet RAG + gpt-oss, nothin
     const text = await evidence.innerText()
     expect(text).not.toMatch(/Answer failed|Evidence search failed|need the live RAG/)
     expect(await evidence.getByRole('list', { name: 'Evidence passages for E-101' }).count()).toBe(1)
+    // Abstention is shown as readable text, never the raw RAG reason code ("…: model.").
+    if (await evidence.getByTestId('pid-tag-abstain').count() > 0) {
+      const abstain = await evidence.getByTestId('pid-tag-abstain').innerText()
+      expect(abstain).toMatch(/^No grounded answer\. \S/)
+      expect(abstain).not.toMatch(/: ?(model|no_evidence|no_verified_citation|retrieval_gate\S*|unparseable_model_output)\.?$/)
+    }
     await writeFile(join(SHOTS, 'live-pid-e101.txt'), text)
     await page.screenshot({ path: join(SHOTS, 'live-pid-tag-evidence.png'), fullPage: true })
     expect((page as PageWithErrors).errors).toEqual([])
@@ -195,6 +201,14 @@ describe.skipIf(!live)('MRPL wired controls, live (droplet RAG + gpt-oss, nothin
     await writeFile(join(SHOTS, 'live-investigation-e6600e.txt'), `${text}\n\n${await page.getByRole('region', { name: /Analysis — E-6600E/ }).innerText()}`)
     expect(text).toMatch(/Analysis complete · [1-9]\d* citation/)
     expect(await page.getByRole('list', { name: 'Citations' }).innerText()).toMatch(/DOC-\d+, p\. \d+ · verified/)
+    // Equipment Context / Related Documents follow the record, not the sample pump fixture.
+    const equipment = page.getByRole('region', { name: 'Equipment Context' })
+    const related = page.getByRole('region', { name: 'Related Documents' })
+    await related.getByText(/DOC-\d+ p\.\d+ · /).first().waitFor({ timeout: 120_000 })
+    const contextText = `${await equipment.innerText()}\n\n${await related.innerText()}`
+    await writeFile(join(SHOTS, 'live-investigation-e6600e-context.txt'), contextText)
+    expect(contextText).toContain('E-6600E')
+    expect(contextText).not.toMatch(/Crude Feed Pump|KSB|P-204_/)
     await page.screenshot({ path: join(SHOTS, 'live-investigation-e6600e.png'), fullPage: true })
     expect(errors).toEqual([])
   }, 900_000)

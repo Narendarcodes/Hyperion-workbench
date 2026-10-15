@@ -53,7 +53,10 @@ export function findEquipmentByTag(equipment: readonly MrplEquipmentRecord[], ta
 
 /** Ordered, de-duplicated (one row per document) related documents. */
 export function mergeRelatedDocuments(
-  sources: { readonly provenance: RelatedDocumentProvenance; readonly refs: readonly { readonly documentId: string; readonly page: number }[] }[],
+  sources: {
+    readonly provenance: RelatedDocumentProvenance
+    readonly refs: readonly { readonly documentId: string; readonly page: number }[]
+  }[],
   catalog: ReadonlyMap<string, string>,
   max: number,
 ): RelatedDocument[] {

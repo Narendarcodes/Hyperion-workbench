@@ -26,16 +26,16 @@ export interface AbstainConfig {
 const DEFAULTS: AbstainConfig = {
   headline: 'No grounded answer',
   reasons: {
-    model: "{subject} isn't covered by the indexed documents. The closest passages don't answer it, so Hyperion didn't guess.",
-    no_evidence: "{subject} isn't in the indexed documents. No passage mentions it.",
-    no_verified_citation: "Hyperion drafted an answer about {subject}, but none of its quotes could be checked against the source pages, so it was withheld.",
-    unparseable_model_output: "The language model's reply about {subject} couldn't be read. Try again.",
+    model: '{subject} is not covered by the indexed documents. The closest passages do not answer it, so Hyperion did not guess.',
+    no_evidence: '{subject} is not in the indexed documents. No passage mentions it.',
+    no_verified_citation: 'An answer about {subject} was withheld: none of its quotes matched the source pages.',
+    unparseable_model_output: 'The language model reply about {subject} could not be read. Try again.',
     infra_error: 'The document search service failed while answering about {subject}. Try again.',
   },
   prefixReasons: {
     retrieval_gate: 'The indexed passages closest to {subject} matched too weakly to support an answer.',
   },
-  fallback: "The indexed documents don't support an answer about {subject}.",
+  fallback: 'The indexed documents do not support an answer about {subject}.',
   defaultSubject: 'this question',
 }
 

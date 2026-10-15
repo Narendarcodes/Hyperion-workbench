@@ -47,7 +47,9 @@ interface Opts {
   documents?: MrplDocumentSummary[]
 }
 function source(o: Opts = {}) {
-  const searchEvidence = vi.fn(async (query: string) => ({ dataset: DATASET, retriever: 'rag', retrieval: 'configured' as const, query, passages: o.passages ?? [] }))
+  const searchEvidence = vi.fn(async (query: string) => ({
+    dataset: DATASET, retriever: 'rag', retrieval: 'configured' as const, query, passages: o.passages ?? [],
+  }))
   const src = {
     getEquipment: async () => ({ dataset: DATASET, equipment: o.equipment ?? [], groups: [], telemetry: 'not-connected' as const }),
     listDocuments: async () => ({ dataset: DATASET, documents: o.documents ?? [], categories: [] }),
@@ -56,7 +58,9 @@ function source(o: Opts = {}) {
   } as unknown as MrplDataSource
   return { src, searchEvidence }
 }
-const wrap = (src: MrplDataSource) => ({ children }: { children?: ReactNode }) => <MrplSourceProvider source={src}>{children}</MrplSourceProvider>
+const wrap = (src: MrplDataSource) => ({ children }: { children?: ReactNode }) => (
+  <MrplSourceProvider source={src}>{children}</MrplSourceProvider>
+)
 
 const invDefaults = investigationsConfig()
 beforeEach(() => { resetInvestigationStore(createInvestigationStore(new MemStorage())) })
