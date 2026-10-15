@@ -220,7 +220,7 @@ export function InvestigationDetail({
                   aria-selected={isActive}
                   aria-controls={`inv-panel-${tab.key}`}
                   className={`${css.tabBtn} ${isActive ? css.tabActive : ''}`}
-                  onClick={() => handleTabClick(tab.key)}
+                  onClick={() =>{  handleTabClick(tab.key) }}
                 >
                   {tab.label}
                   {isActive && <span className={css.tabActiveIndicator} aria-hidden="true" />}

@@ -27,12 +27,12 @@ export interface InvestigationActions {
   readonly notice: string | null
   readonly result: { readonly title: string; readonly answer: MrplEvidenceAnswerResponse } | null
   readonly canAnalyse: boolean
-  share(): void
-  setStatus(status: InvestigationStatus): void
-  assignToMe(): void
-  rerun(kind?: 'root-cause' | 'compare'): void
-  generateReport(): void
-  statusItems(current: InvestigationStatus): ActionMenuItem[]
+  share: () => void
+  setStatus: (status: InvestigationStatus) => void
+  assignToMe: () => void
+  rerun: (kind?: 'root-cause' | 'compare') => void
+  generateReport: () => void
+  statusItems: (current: InvestigationStatus) => ActionMenuItem[]
 }
 
 const message = (e: unknown): string => (e instanceof Error ? e.message : String(e))

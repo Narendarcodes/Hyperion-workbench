@@ -117,7 +117,7 @@ export function downloadTextFile(name: string, text: string, mime = 'text/markdo
 }
 
 /** What a workbench surface knows when its "Start Investigation" is pressed. */
-export interface InvestigationSubject {
+export interface WorkbenchInvestigationSubject {
   readonly origin: 'plant' | 'equipment' | 'pid'
   /** Equipment tag (P&ID / Equipment). */
   readonly tag?: string | null | undefined
@@ -147,7 +147,7 @@ function guessEquipmentType(...hints: (string | null | undefined)[]): Investigat
  * Plant / Equipment / P&ID "Start Investigation": creates a real, persisted
  * investigation record (origin 'ask') and selects it so the detail view opens on it.
  */
-export function startInvestigationFor(subject: InvestigationSubject, now = new Date()): StoredInvestigation {
+export function startInvestigationFor(subject: WorkbenchInvestigationSubject, now = new Date()): StoredInvestigation {
   const cfg = investigationsConfig()
   const tag = nonEmpty(subject.tag) ?? nonEmpty(subject.code) ?? cfg.unassignedTag
   const name = nonEmpty(subject.name)

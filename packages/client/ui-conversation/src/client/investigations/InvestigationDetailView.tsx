@@ -65,7 +65,7 @@ export function InvestigationDetailView({
   const [local, setData] = useState<InvestigationAnalysisDetailData>(initialData)
   const store = useInvestigationStore()
   const code = resolveCode(investigationCode, store.selectedCode) ?? local.code
-  const record = code === null ? undefined : store.investigations.find(i => i.code === code)
+  const record = store.investigations.find(i => i.code === code)
   const labels = investigationsConfig().statusLabels
   const data: InvestigationAnalysisDetailData = record === undefined ? local : {
     ...local,

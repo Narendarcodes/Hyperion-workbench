@@ -68,7 +68,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
               aria-label="Search reports"
               className={css.searchInput}
               value={query}
-              onChange={event => setQuery(event.target.value)}
+              onChange={(event) =>{  setQuery(event.target.value) }}
             />
           </div>
           <button
@@ -77,7 +77,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
             disabled={!canGenerate}
             title={canGenerate ? 'Generate a cited report with Hyperion (LLM + RAG)' : 'Report generation needs the live Hyperion host'}
             aria-expanded={composing}
-            onClick={() => setComposing(open => !open)}
+            onClick={() =>{  setComposing(open => !open) }}
           >
             + Generate Report
           </button>
@@ -92,7 +92,7 @@ export function ReportsOverview(_props: ReportsOverviewProps) {
             placeholder="Topic, e.g. MG 91 sulphur and RVP compliance"
             maxLength={REPORTS_CONFIG.maxTopicLength}
             value={topic}
-            onChange={event => setTopic(event.target.value)}
+            onChange={(event) =>{  setTopic(event.target.value) }}
           />
           <button type="submit" className={css.btnBlue} disabled={generate.status === 'running' || topic.trim().length === 0}>
             {generate.status === 'running' ? 'Generating…' : 'Generate'}

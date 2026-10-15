@@ -66,8 +66,8 @@ export interface InvestigationCreateFields {
 }
 
 export interface InvestigationStore {
-  getState(): InvestigationStoreState
-  subscribe(listener: () => void): () => void
+  getState: () => InvestigationStoreState
+  subscribe: (listener: () => void) => () => void
   create(ask: string, now?: Date, fields?: InvestigationCreateFields): StoredInvestigation
   setStatus(code: string, status: InvestigationStatus, now?: Date): void
   assign(code: string, assignee: string, now?: Date): void

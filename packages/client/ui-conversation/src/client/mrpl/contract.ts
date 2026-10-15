@@ -352,7 +352,10 @@ export interface HyperionTranscribeResponse {
 // ---------------------------------------------------------------------------
 // MRPL reports (`feat/mrpl-wire-reports`): LLM + RAG generated reports.
 
-/** POST `{topic, documentIds?}`: generate a cited Markdown report via the RAG answer route; DELETE generated files under the deliverables route. */
+/**
+ * POST `{topic, documentIds?}`: generate a cited Markdown report via the RAG answer route;
+ * DELETE generated files under the deliverables route.
+ */
 export const HYPERION_MRPL_REPORTS_ROUTE = '/hyperion/mrpl/reports'
 
 /** POST /hyperion/mrpl/reports body. */

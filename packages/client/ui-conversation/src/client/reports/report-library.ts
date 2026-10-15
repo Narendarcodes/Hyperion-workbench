@@ -49,7 +49,11 @@ export function countDeliverables(items: readonly MrplDeliverable[]): {
 }
 
 /** One page (1-based, clamped) and the page count (>= 1). */
-export function paginate<T>(items: readonly T[], page: number, pageSize: number = REPORTS_CONFIG.pageSize): { readonly items: T[]; readonly page: number; readonly pages: number } {
+export function paginate<T>(
+  items: readonly T[],
+  page: number,
+  pageSize: number = REPORTS_CONFIG.pageSize,
+): { readonly items: T[]; readonly page: number; readonly pages: number } {
   const pages = Math.max(1, Math.ceil(items.length / pageSize))
   const current = Math.min(Math.max(1, Math.trunc(page)), pages)
   return { items: items.slice((current - 1) * pageSize, current * pageSize), page: current, pages }

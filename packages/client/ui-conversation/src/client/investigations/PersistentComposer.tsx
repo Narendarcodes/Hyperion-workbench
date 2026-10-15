@@ -59,7 +59,7 @@ export function PersistentComposer({
           className={css.composerInput}
           placeholder="Ask Hyperion a follow-up question..."
           value={inputText}
-          onChange={e => setInputText(e.target.value)}
+          onChange={(e) =>{  setInputText(e.target.value) }}
           onKeyDown={handleKeyDown}
           aria-label="Ask Hyperion a follow-up question"
         />
@@ -82,7 +82,7 @@ export function PersistentComposer({
             <button
               type="button"
               className={css.chipBtn}
-              onClick={() => setInputText(prev => `${prev} ${skillTrigger} `)}
+              onClick={() =>{  setInputText(prev => `${prev} ${skillTrigger} `) }}
               aria-label="Insert skill trigger"
             >
               <IconSkillOutline16 size={12} />

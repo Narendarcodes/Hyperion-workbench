@@ -398,12 +398,12 @@ export class MrplStore {
       if (id === null || name === null) return []
       const citations = Array.isArray(raw['citations'])
         ? (raw['citations'] as unknown[]).flatMap((cite) => {
-            const entry = record(cite)
-            const documentId = str(entry['documentId'])
-            const page = num(entry['page'])
-            const quote = str(entry['quote'])
-            return documentId === null || page === null || quote === null ? [] : [{ documentId, page, quote }]
-          })
+          const entry = record(cite)
+          const documentId = str(entry['documentId'])
+          const page = num(entry['page'])
+          const quote = str(entry['quote'])
+          return documentId === null || page === null || quote === null ? [] : [{ documentId, page, quote }]
+        })
         : []
       return [{
         id,
@@ -515,7 +515,7 @@ export class MrplStore {
         out.push({
           id: `generated:${fileName}`,
           fileName,
-          format: FORMATS[fileName.split('.').pop()!.toLowerCase()] ?? 'OTHER',
+          format: FORMATS[(fileName.split('.').pop() ?? '').toLowerCase()] ?? 'OTHER',
           title: meta?.title ?? fileName.replace(/\.(?:xlsx|md)$/i, '').replace(/[_]/g, ' '),
           kind: 'generated',
           sourceDocumentIds: generatedSourcesOf(fileName, meta, rules),
@@ -554,7 +554,11 @@ export class MrplStore {
   }
 
   /** Write a generated Markdown report (+ sidecar) into the uploads dir; returns its file name. */
-  async saveGeneratedReport(fileName: string, markdown: string, meta: { readonly title: string; readonly sourceDocumentIds: readonly string[] }): Promise<string> {
+  async saveGeneratedReport(
+    fileName: string,
+    markdown: string,
+    meta: { readonly title: string; readonly sourceDocumentIds: readonly string[] },
+  ): Promise<string> {
     if (!GENERATED_NAME.test(fileName) || !fileName.endsWith('.md')) throw new MrplStoreError(`invalid report file name: ${fileName}`)
     const dir = this.options.uploadsDir()
     await mkdir(dir, { recursive: true })

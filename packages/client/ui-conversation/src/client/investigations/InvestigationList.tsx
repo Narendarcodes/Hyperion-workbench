@@ -130,7 +130,7 @@ export function InvestigationList({
                 role="tab"
                 aria-selected={isActive}
                 className={`${css.tabBtn} ${isActive ? css.tabBtnActive : ''}`}
-                onClick={() => handleTabClick(tab.key)}
+                onClick={() =>{  handleTabClick(tab.key) }}
               >
                 <span>{tab.label}</span>
                 <span className={css.tabCount}>({tab.count})</span>
@@ -179,7 +179,7 @@ export function InvestigationList({
                 <input
                   type="checkbox"
                   className={css.checkbox}
-                  onClick={e => e.stopPropagation()}
+                  onClick={(e) =>{  e.stopPropagation() }}
                   aria-label={`Select ${item.code}`}
                 />
 

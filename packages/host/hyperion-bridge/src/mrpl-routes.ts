@@ -385,10 +385,12 @@ export function registerMrplRoutes(ctx: Context, deps: MrplRouteDeps): void {
       try {
         const now = deps.now?.() ?? new Date()
         const sourceDocumentIds = [...new Set(answer.citations.map(citation => citation.documentId))]
-        const fileName = await store.saveGeneratedReport(reportFileName(topic, now), buildReportMarkdown(topic, answer, now), { title: topic, sourceDocumentIds })
+        const markdown = buildReportMarkdown(topic, answer, now)
+        const fileName = await store.saveGeneratedReport(reportFileName(topic, now), markdown, { title: topic, sourceDocumentIds })
         const deliverable = (await store.deliverables(deliverableHref)).find(item => item.fileName === fileName)
         if (deliverable === undefined) throw new MrplStoreError('report written but not listed')
-        sendJson(res, 201, { deliverable, abstain: answer.abstain, citations: answer.citations.length } satisfies MrplGenerateReportResponse)
+        const body: MrplGenerateReportResponse = { deliverable, abstain: answer.abstain, citations: answer.citations.length }
+        sendJson(res, 201, body)
       } catch (error) {
         storeFailure(res, error)
       }

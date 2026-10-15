@@ -78,7 +78,7 @@ export function AskHyperionInvestigationPanel({
               key={action.id}
               type="button"
               className={css.suggestedActionBtn}
-              onClick={() => handleSelectSuggested(action)}
+              onClick={() =>{  handleSelectSuggested(action) }}
               title={action.promptQuery}
             >
               <span className={css.suggestedActionText}>{action.text}</span>
@@ -93,7 +93,7 @@ export function AskHyperionInvestigationPanel({
             className={css.composerInput}
             placeholder="Ask about this investigation..."
             value={inputText}
-            onChange={e => setInputText(e.target.value)}
+            onChange={(e) =>{  setInputText(e.target.value) }}
             onKeyDown={handleKeyDown}
             aria-label="Ask about this investigation"
           />
@@ -103,7 +103,7 @@ export function AskHyperionInvestigationPanel({
               <button
                 type="button"
                 className={css.chipBtn}
-                onClick={() => setInputText(prev => `${prev} @${investigation.tag} `)}
+                onClick={() =>{  setInputText(prev => `${prev} @${investigation.tag} `) }}
                 aria-label="Add context tag"
               >
                 <IconContextInjectionOutline16 size={11} />
@@ -112,7 +112,7 @@ export function AskHyperionInvestigationPanel({
               <button
                 type="button"
                 className={css.chipBtn}
-                onClick={() => setInputText(prev => `${prev} /investigate `)}
+                onClick={() =>{  setInputText(prev => `${prev} /investigate `) }}
                 aria-label="Add skill command"
               >
                 <IconSkillOutline16 size={11} />

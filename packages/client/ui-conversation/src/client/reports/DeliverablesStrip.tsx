@@ -45,7 +45,7 @@ export function DeliverablesStrip({ query = '', reloadKey = 0 }: DeliverablesStr
   )
 
   const share = async (href: string, fileName: string): Promise<void> => {
-    const url = shareUrl(href, globalThis.location?.origin ?? 'http://localhost')
+    const url = shareUrl(href, globalThis.location.origin)
     try {
       await navigator.clipboard.writeText(url)
       setNotice(`Link to ${fileName} copied`)
@@ -126,61 +126,61 @@ export function DeliverablesStrip({ query = '', reloadKey = 0 }: DeliverablesStr
               ))}
             </div>
             <div className={css.toggleGroup} role="group" aria-label="View">
-              <button type="button" className={view === 'grid' ? css.toggleBtnActive : css.toggleBtn} aria-pressed={view === 'grid'} onClick={() => setView('grid')}>Grid</button>
-              <button type="button" className={view === 'list' ? css.toggleBtnActive : css.toggleBtn} aria-pressed={view === 'list'} onClick={() => setView('list')}>List</button>
+              <button type="button" className={view === 'grid' ? css.toggleBtnActive : css.toggleBtn} aria-pressed={view === 'grid'} onClick={() =>{  setView('grid') }}>Grid</button>
+              <button type="button" className={view === 'list' ? css.toggleBtnActive : css.toggleBtn} aria-pressed={view === 'list'} onClick={() =>{  setView('list') }}>List</button>
             </div>
           </div>
           {shown.length === 0
             ? <WorkbenchState kind="empty" label="Matching deliverables" title="No deliverables match" detail="Clear the search or filters." compact />
             : (
-                <div className={view === 'grid' ? css.deliverablesGrid : css.reportList} data-view={view}>
-                  {paged.items.map(item => (
-                    <div key={item.id} className={css.deliverableCard} data-kind={item.kind}>
-                      <span className={css.formatBadge} data-format={item.format}>
-                        {item.format}
-                      </span>
-                      <div className={css.deliverableBody}>
-                        <div className={css.deliverableName}>{item.fileName}</div>
-                        <div className={css.deliverableMeta}>
-                          {[item.title, item.sourceDocumentIds.length > 0 ? `Corpus ${item.sourceDocumentIds.join(', ')}` : null, formatBytes(item.sizeBytes)]
-                            .filter(Boolean).join(' · ')}
-                        </div>
-                        <div className={css.deliverableClass}>
-                          <StatusChip tone={item.kind === 'generated' ? 'info' : 'neutral'}>
-                            {item.kind === 'generated' ? 'Generated on this host' : 'Sample'}
-                          </StatusChip>
-                        </div>
+              <div className={view === 'grid' ? css.deliverablesGrid : css.reportList} data-view={view}>
+                {paged.items.map(item => (
+                  <div key={item.id} className={css.deliverableCard} data-kind={item.kind}>
+                    <span className={css.formatBadge} data-format={item.format}>
+                      {item.format}
+                    </span>
+                    <div className={css.deliverableBody}>
+                      <div className={css.deliverableName}>{item.fileName}</div>
+                      <div className={css.deliverableMeta}>
+                        {[item.title, item.sourceDocumentIds.length > 0 ? `Corpus ${item.sourceDocumentIds.join(', ')}` : null, formatBytes(item.sizeBytes)]
+                          .filter(Boolean).join(' · ')}
                       </div>
-                      <div className={css.deliverableActions}>
-                        <a className={css.deliverableOpen} href={item.href} target="_blank" rel="noreferrer">
-                          {item.format === 'PDF' ? 'Preview' : 'Open'}
-                        </a>
-                        <a className={css.deliverableDownload} href={item.href} download={item.fileName}>
-                          Download
-                        </a>
-                        <button type="button" className={css.deliverableDownload} aria-label={`Share ${item.fileName}`} onClick={() => { void share(item.href, item.fileName) }}>
-                          Share
-                        </button>
-                        {item.kind === 'generated' && source.deleteDeliverable !== undefined && (
-                          <button type="button" className={css.deliverableDownload} aria-label={`Delete ${item.fileName}`} onClick={() => { void remove(item.fileName) }}>
-                            Delete
-                          </button>
-                        )}
+                      <div className={css.deliverableClass}>
+                        <StatusChip tone={item.kind === 'generated' ? 'info' : 'neutral'}>
+                          {item.kind === 'generated' ? 'Generated on this host' : 'Sample'}
+                        </StatusChip>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                    <div className={css.deliverableActions}>
+                      <a className={css.deliverableOpen} href={item.href} target="_blank" rel="noreferrer">
+                        {item.format === 'PDF' ? 'Preview' : 'Open'}
+                      </a>
+                      <a className={css.deliverableDownload} href={item.href} download={item.fileName}>
+                        Download
+                      </a>
+                      <button type="button" className={css.deliverableDownload} aria-label={`Share ${item.fileName}`} onClick={() => { void share(item.href, item.fileName) }}>
+                        Share
+                      </button>
+                      {item.kind === 'generated' && source.deleteDeliverable !== undefined && (
+                        <button type="button" className={css.deliverableDownload} aria-label={`Delete ${item.fileName}`} onClick={() => { void remove(item.fileName) }}>
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           {paged.pages > 1 && (
             <nav className={css.paginationRow} aria-label="Pages">
               <div className={css.paginationControls}>
-                <button type="button" className={css.pageBtn} aria-label="Previous page" disabled={paged.page <= 1} onClick={() => setPage(paged.page - 1)}>&lt;</button>
+                <button type="button" className={css.pageBtn} aria-label="Previous page" disabled={paged.page <= 1} onClick={() =>{  setPage(paged.page - 1) }}>&lt;</button>
                 {Array.from({ length: paged.pages }, (_, i) => i + 1).map(n => (
-                  <button key={n} type="button" className={n === paged.page ? css.pageBtnActive : css.pageBtn} aria-current={n === paged.page ? 'page' : undefined} onClick={() => setPage(n)}>
+                  <button key={n} type="button" className={n === paged.page ? css.pageBtnActive : css.pageBtn} aria-current={n === paged.page ? 'page' : undefined} onClick={() =>{  setPage(n) }}>
                     {String(n)}
                   </button>
                 ))}
-                <button type="button" className={css.pageBtn} aria-label="Next page" disabled={paged.page >= paged.pages} onClick={() => setPage(paged.page + 1)}>&gt;</button>
+                <button type="button" className={css.pageBtn} aria-label="Next page" disabled={paged.page >= paged.pages} onClick={() =>{  setPage(paged.page + 1) }}>&gt;</button>
               </div>
             </nav>
           )}

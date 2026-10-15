@@ -67,7 +67,13 @@ export function InvestigationsPage({
     status: selectedItem.status,
     statusLabel: selectedItem.statusLabel,
     activeTab,
-    metadata: { ...base.metadata, equipmentTag: selectedItem.tag, status: selectedItem.statusLabel, leadEngineer: selectedItem.assignee.name, leadEngineerInitial: selectedItem.assignee.initial },
+    metadata: {
+      ...base.metadata,
+      equipmentTag: selectedItem.tag,
+      status: selectedItem.statusLabel,
+      leadEngineer: selectedItem.assignee.name,
+      leadEngineerInitial: selectedItem.assignee.initial,
+    },
     context: { ...base.context, equipment: selectedItem.tag, investigationId: selectedItem.code },
   }
   const actions = useInvestigationActions({
@@ -100,7 +106,7 @@ export function InvestigationsPage({
     { id: 'open', label: 'Open', onSelect: () => { openItem(item) } },
     { id: 'copy-link', label: 'Copy link', onSelect: () => {
       investigationStore().select(item.code)
-      void navigator.clipboard?.writeText(investigationDeepLink(item.code, window.location.href))
+      void navigator.clipboard.writeText(investigationDeepLink(item.code, window.location.href))
     } },
     ...INVESTIGATION_STATUSES.map(s => ({
       id: `status-${s}`,
@@ -151,7 +157,10 @@ export function InvestigationsPage({
             { id: 'rerun', label: 'Run analysis', onSelect: () => { actions.rerun() } },
           ]}
           onTabChange={setActiveTab}
-          {...(onOpenDocuments && { onOpenEvidence: (_ev: InvestigationEvidence) => { onOpenDocuments() }, onViewAllEvidence: onOpenDocuments })}
+          {...(onOpenDocuments && {
+            onOpenEvidence: (_ev: InvestigationEvidence) => { onOpenDocuments() },
+            onViewAllEvidence: onOpenDocuments,
+          })}
         />
 
         <AskHyperionInvestigationPanel

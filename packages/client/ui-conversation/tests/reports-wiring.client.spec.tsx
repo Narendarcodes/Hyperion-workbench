@@ -112,10 +112,12 @@ describe('Reports screen wiring', () => {
   })
 
   it('disables generation without a live source', async () => {
-    const { generateReport: _g, deleteDeliverable: _d, ...readOnly } = liveSource(seed)
-    mount(readOnly as MrplDataSource)
+    const readOnly: MrplDataSource = { ...liveSource(seed) }
+    delete readOnly.generateReport
+    delete readOnly.deleteDeliverable
+    mount(readOnly)
     await screen.findByText('MG91_Summary.pdf')
-    expect((screen.getByRole('button', { name: '+ Generate Report' }) as HTMLButtonElement).disabled).toBe(true)
+    expect(screen.getByRole<HTMLButtonElement>('button', { name: '+ Generate Report' }).disabled).toBe(true)
     expect(screen.queryByRole('button', { name: 'Delete Pump_Trend.xlsx' })).toBeNull()
   })
 })
