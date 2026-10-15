@@ -1,0 +1,31 @@
+%% Hyperion Workbench - system context (MRPL deployment, branch feat/mrpl-wire-integration)
+flowchart LR
+  user(["Plant engineer / operator<br/>(browser)"])
+
+  subgraph host["Hyperion Workbench host - Node.js, Cordis plugins (pnpm dsh web)"]
+    direction TB
+    web["Web UI<br/>ui-conversation: Chat + MRPL workbench views<br/>ui-mission: Mission View"]
+    bridge["hyperion-bridge<br/>/hyperion/* and /hyperion/mrpl/* HTTP routes"]
+    agent["Agent runtime<br/>agent-loop, tools, sessions, sandbox"]
+    asrp["asr-http provider<br/>(ctx.asr)"]
+    seed[("MRPL store<br/>file-backed public<br/>sample seed:<br/>13 documents,<br/>10 equipment records")]
+    web -- "same-origin fetch" --> bridge
+    bridge --> seed
+    bridge --> asrp
+    web <-- "RPC / SSE" --> agent
+  end
+
+  subgraph gpu["GPU services (on-prem). Dotted: agent model calls via provider config"]
+    direction TB
+    rag["Hyperion RAG service<br/>rag_server.py, default :8120<br/>BM25 + dense retrieval<br/>(embeddinggemma-2)<br/>+ bge-reranker-v2-m3"]
+    llm["Answering LLM<br/>gpt-oss-120b (vLLM)<br/>HYPERION_LLM_URL"]
+    ocr["OCR sidecar (optional)<br/>HYPERION_OCR_URL"]
+    stt["STT sidecar<br/>stt_server.py<br/>IndicConformer te/hi, Whisper turbo en"]
+  end
+
+  user --> web
+  bridge -- "HYPERION_RAG_URL<br/>/v1/search, /v1/answer,<br/>/v1/documents, /v1/jobs" --> rag
+  rag -- "chat/completions" --> llm
+  rag -- "scanned pages" --> ocr
+  asrp -- "HYPERION_STT_URL" --> stt
+  agent -.-> llm

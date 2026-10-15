@@ -1,0 +1,39 @@
+%% Hyperion Workbench - packages involved in the MRPL / RAG wiring
+flowchart TB
+  subgraph client["Client plane (packages/client)"]
+    direction TB
+    root["ui-conversation<br/>skeleton/ConversationRoot.tsx<br/>(workbench view switch)"]
+    views["MRPL views in<br/>ui-conversation/src/client:<br/>plant/, equipment/,<br/>documents/ (UploadAskPanel),<br/>pid/ (TagEvidencePanel),<br/>investigations/, reports/"]
+    mrpl["mrpl/api.ts (MrplDataSource)<br/>mrpl/contract.ts<br/>mrpl/abstain.ts<br/>mrpl/SampleNote.tsx"]
+    input["skeleton/InputBar.tsx<br/>(composer mic)"]
+    mission["ui-mission<br/>(Mission View)"]
+    root --> views --> mrpl
+  end
+
+  subgraph hostp["Host plane"]
+    direction TB
+    br["host/hyperion-bridge<br/>src/index.ts<br/>config + route fence"]
+    routes["mrpl-routes.ts<br/>documents, equipment,<br/>evidence search / verify,<br/>reports, deliverables"]
+    live["mrpl-live.ts<br/>RagClient, upload,<br/>ingest jobs, evidence/answer,<br/>asr/transcribe"]
+    store[("mrpl-store.ts<br/>file-backed seed")]
+    asrhttp["asr/asr-http<br/>+ py/stt_server.py"]
+    br --> routes
+    br --> live
+    routes --> store
+    routes -- "retriever /<br/>answer seam" --> live
+    live -- "ctx.asr" --> asrhttp
+  end
+
+  subgraph tool["Tool plane: packages/tool/tool-hyperion-rag"]
+    direction TB
+    svc["scripts/rag_server.py<br/>hyperion_rag/service.py"]
+    pipe["hyperion_rag/pipeline.py<br/>retrieve, answer,<br/>citations, abstention"]
+    parts["bm25.py, dense.py,<br/>rerank.py, chunk.py,<br/>ingest.py, pdf.py, config.py"]
+    ts["src/index.ts: model tools<br/>hyperion_rag_search,<br/>hyperion_rag_answer<br/>(spawns scripts/rag.py,<br/>which calls pipeline.py)"]
+    svc --> pipe --> parts
+    parts ~~~ ts
+  end
+
+  mrpl -- "/hyperion/mrpl/*" --> br
+  input -- "/hyperion/asr/transcribe" --> live
+  live -- "HTTP /v1/*" --> svc

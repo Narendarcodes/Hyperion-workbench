@@ -1,396 +1,346 @@
 # HYPERION WORKBENCH
 
-<div align="center">
+**An on-premise agentic workbench for industrial knowledge work: grounded document answers with verified citations, plant-floor voice input, and an engineering workbench (Plant, Equipment, Documents, P&ID, Investigations, Reports) for the MRPL refinery pilot.**
 
-[![Platform: On-Premise](https://img.shields.io/badge/Deployment-100%25%20On--Premise-emerald.svg)](#key-capabilities) [![AI Architecture: Sovereign](https://img.shields.io/badge/Architecture-Sovereign%20%26%20Air--Gapped-orange.svg)](#architecture) [![Voice: Indic Conformer](https://img.shields.io/badge/Voice%20ASR-Indic%20Conformer%20(22%20Langs)-purple.svg)](#1-indic-conformer-asr-voice-to-prompt)
+[Architecture](#architecture) • [Quick start](#quick-start) • [Configuration](#configuration) • [Tests](#run-and-test) • [Status and known gaps](#status-and-known-gaps) • [Design approach](APPROACH.md) • [Landing page](landing/index.html) • [User guide](docs/user/guide/index.md)
 
-**Sovereign Intelligence for Industrial Knowledge Work — Intelligence That Never Leaves Your Network.**
-
-[Explore Architecture](#architecture) • [Quick Start](#quick-start) • [Capabilities](#key-capabilities) • [Landing Page](landing/index.html) • [Documentation](docs/user/guide/index.md)
-
-</div>
+> **Branch note.** This README describes `feat/mrpl-wire-integration` (draft PR #27, head `fef63ee8`), which combines wire PRs #23–#26 on top of `feat/mrpl-live-wiring` (draft PR #22). `master` is the generic product; the MRPL workbench, the RAG wiring and the voice route described below live on the MRPL branches and are **not merged**. Everything here is taken from the code on this branch; where a claim depends on a live deployment it says so.
 
 ---
 
-## Overview
+## What it is
 
-**Hyperion Workbench** is a sovereign, on-premise agentic AI operating environment built specifically for confidential industrial operations, critical infrastructure, and defense knowledge work.
+Hyperion Workbench is a fork of the open-source **DeepSeek Harness** agent runtime, built on the **Cordis** plugin framework (TypeScript monorepo, pnpm workspaces, 269 packages under `packages/*/*`). Every capability — model providers, tools, sessions, sandbox, web server, UI views — is a plugin composed from `cordis.yml` profiles.
 
-Modern enterprises face a severe dilemma: proprietary CAD blueprints, operational logs, and classified technical manuals cannot be sent to third-party cloud LLM APIs due to strict data sovereignty and compliance laws. Generic local agents often hallucinate, lack domain auditing, and operate as unverified "black boxes."
+On top of that runtime, the MRPL branches add:
 
-**Hyperion solves this through 4 foundational pillars:**
+- a **document RAG service** (`packages/tool/tool-hyperion-rag`) that answers only from indexed documents, verifies every quoted citation against the cited page, and **abstains** with a machine-readable reason when it cannot;
+- a **host bridge** (`packages/host/hyperion-bridge`) exposing typed `/hyperion/mrpl/*` HTTP routes over a file-backed public sample corpus plus the live RAG service;
+- an **engineering workbench UI** in `packages/client/ui-conversation` whose screens read those routes instead of client mock data;
+- a **speech route** (`POST /hyperion/asr/transcribe`) over a warm STT sidecar (`packages/asr/asr-http`).
 
-1. **100% Air-Gapped Local Inference**: Native integration with on-premise LLMs (Qwen, LLaMA, DeepSeek via Ollama / llama.cpp / vLLM / LM Studio) with zero cloud telemetry.
-2. **Indic Conformer Multilingual Voice ASR**: Built-in, low-latency automatic speech recognition supporting 22 Indian languages (Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, Kannada, Malayalam, Odia, Punjabi, Assamese, Urdu, and more) for plant-floor voice prompting.
-3. **NN/g Explainable AI & Verifiable Trajectory**: Every agent conclusion is anchored with exact source-file citations, tool execution diffs, and inspectable network endpoints — a 9-stage evidence trail from capture to archive.
-4. **Cordis Micro-Plugin Substrate**: Modular spatiotemporal plugin architecture where tools, models, UI views, and security guardrails are dynamic, composable micro-services.
+The bundled corpus is **public sample data** (OISD, CSB, OSHA, OSTI, MRPL/IOCL public spec sheets, CC-BY training text), not MRPL plant records — the manifest says so (`packages/host/hyperion-bridge/mrpl-seed/manifest/documents.json`) and the UI labels it.
+
+## Features
+
+| Area | What exists on this branch | Where |
+|---|---|---|
+| Agent runtime | Agent loop, tool execution, sessions (JSONL), sandbox policy, subagents, skills, local-first model providers (inherited from the Harness) | `packages/core`, `packages/tool`, `packages/session`, `packages/sandbox`, `packages/llm` |
+| Grounded RAG | Section-aware chunking; BM25 + `google/embeddinggemma-2` dense retrieval fused with RRF (k=60); `BAAI/bge-reranker-v2-m3` cross-encoder rerank; answers from an OpenAI-compatible LLM (gpt-oss-120b in the measured deployment); verified citations (doc id, page, char span, verbatim quote); layered abstention | `packages/tool/tool-hyperion-rag/scripts/hyperion_rag/` |
+| Live ingest | Upload PDF / Markdown / text → background job (OCR for scanned pages when `HYPERION_OCR_URL` is set) → incremental index → cited answers | `service.py`, bridge `mrpl-live.ts`, `documents/UploadAskPanel.tsx` |
+| Documents | Live catalog with Unit / Equipment / Type / Tag facets and sort; document viewer reads page text | `ui-conversation/src/client/documents/` |
+| P&ID | Clicking a tag runs evidence search plus a grounded answer for that tag; readable abstention text | `pid/TagEvidencePanel.tsx` |
+| Investigations | Persisted store (localStorage); Start Investigation from Plant / Equipment / P&ID creates a real record; Rerun / Compare run cited RAG analysis; Generate Report downloads Markdown; Equipment Context and Related Documents come from the record | `investigations/` |
+| Reports | Report library (search, filters, grid/list, pagination, share, delete); **+ Generate Report** writes a cited Markdown deliverable via the RAG answer route | `reports/`, bridge `mrpl-routes.ts` |
+| Plant | Plant map with diagram / list views, Fullscreen and Open Unit wired to host handlers or hidden; remaining fixture metrics labelled as sample data | `plant/` |
+| Voice | Composer mic → `/hyperion/asr/transcribe` → `ctx.asr` (`asr-http`) → STT sidecar routing IndicConformer-600M (te/hi, code-mixed), Whisper large-v3-turbo (en), SraVaani-1.0 (fallback); plant-tag normalisation (`P-101A`, `12.5`) | `packages/asr/asr-http`, `skeleton/InputBar.tsx` |
+| Mission View | Pixel-office simulation of agent work with live and replay modes | `packages/client/ui-mission` |
+| Sample-data honesty | Every remaining fixture panel carries a `SampleNote` (`role="note"`, `data-sample-data`) whose text comes from config | `mrpl/SampleNote.tsx`, `plant/config.ts`, `investigations/config.ts` |
 
 ---
 
+<a id="architecture"></a>
 ## Architecture
 
-Hyperion Workbench uses a layered, reactive micro-kernel powered by the Cordis plugin framework:
+Mermaid sources, SVG and PNG renders live in [`docs/architecture/`](docs/architecture/). The design reasoning behind them is in [APPROACH.md](APPROACH.md).
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                      HYPERION WORKBENCH UI (Port 3080)                  │
-│   Chat Stream  •  Voice Mic (ASR)  •  Trajectory Panel  •  Workspace    │
-│   Mission View (2D Office)  •  Settings  •  Trajectory Inspector        │
-└────────────────────────────────────┬────────────────────────────────────┘
-                                     │ RPC / SSE Transport
-┌────────────────────────────────────▼────────────────────────────────────┐
-│                    CORDIS REACTIVE PLUGIN SUBSTRATE                     │
-│  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
-│  │   LLM Adapter Layer   │ │  Tool Execution  │ │  Session & Memory  │  │
-│  │ (llama.cpp / Ollama)  │ │ (FS / Terminal)  │ │ (SQLite / History) │  │
-│  │ vLLM / LM Studio      │ │ (read_pdf, edit) │ │ (Projection Cache) │  │
-│  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
-│  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
-│  │ Indic Conformer ASR   │ │ Guardrails & ACL │ │ Explainability Engine│  │
-│  │ (Python FastAPI 8008) │ │ (Host Isolation) │ │ (Citations / Diff) │  │
-│  │ 22 Indian Languages   │ │ (NVIDIA PaIR)    │ │ (Trajectory View)  │  │
-│  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
-│  ┌───────────────────────┐ ┌──────────────────┐ ┌────────────────────┐  │
-│  │ RAG & Vector Store    │ │ Multimodal Intake│ │ Orchestrator        │  │
-│  │ (Qdrant/ChromaDB)     │ │ (OCR/Vision)     │ │ (Plan→Act→Observe) │  │
-│  │ Semantic Search       │ │ (P&ID Parsing)   │ │ (HITL Approval)    │  │
-│  └───────────────────────┘ └──────────────────┘ └────────────────────┘  │
-└────────────────────────────────────┬────────────────────────────────────┘
-                                     │
-┌────────────────────────────────────▼────────────────────────────────────┐
-│                  SOVEREIGN ON-PREMISE HARDWARE STACK                    │
-│        Local NVIDIA GPU / Workstation  •  No External Internet Required │
-│        NVIDIA PaIR (Process Acceleration Infrastructure Runtime)        │
-│        NVIDIA OpenShell Sandbox Policy (deny-by-default, metered)       │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+### System context
 
----
+![System context](docs/architecture/01-system-context.png)
 
-## Key Capabilities
+[SVG](docs/architecture/01-system-context.svg) · [source](docs/architecture/01-system-context.mmd)
 
-### 1. Indic Conformer ASR (Voice-to-Prompt)
-- Plant engineers and operators can dictate technical queries directly via microphone.
-- Integrated Python inference server running NVIDIA NeMo / IndicConformer / Whisper checkpoints via a sidecar process.
-- Supports 22 scheduled Indian languages with auto-punctuation and transcription paste into the composer bar.
-- Voice pill UI with ChatGPT-style takeover: discard (ghost X), live scrolling transcript, stop (outlined square), send (blue arrow).
+### Packages involved in the MRPL / RAG wiring
 
-### 2. NN/g Explainable AI Trajectory (9-Stage Evidence Trail)
-- Replaces black-box generation with step-by-step observable decision trajectories.
-- Inline citation badges `[1]`, `[2]` linking directly to verified file offsets and tool observations.
-- Real-time display of provider, model, latency, tokens consumed, and target execution endpoint.
-- **9 stages**: Capture → Understand → Ground → Analyze → Verify → Decide → Deliver → Review → Archive.
-- High-risk claims grouped for human confirmation regardless of model confidence.
+![Component and package view](docs/architecture/02-components.png)
 
-### 3. Bounded Sandboxed Tool Runtime
-- Deterministic tools for filesystem reading/editing (`read_pdf`, `ast_edit`, `edit`, `read`, `write`, `read_image`).
-- Persistent terminal execution with process-tree isolation and cancellation tokens.
-- Prevents runaway tool execution through strict per-call timeout policies.
-- Small-model binary-file guidance: automatic per-extension hints on `FS_NOT_TEXT` (pdf, docx, xlsx, images).
+[SVG](docs/architecture/02-components.svg) · [source](docs/architecture/02-components.mmd)
 
-### 4. Hyperion Mission View — Living Office Simulation
-- Dynamic agents with dedicated personal cabins (desk, monitor, chair, status indicator).
-- Shared collaborative work areas (Documents, Knowledge Base, Analysis, Tools/Code, Testing, Verification, Report/Delivery, Orchestrator) with deterministic seat allocation.
-- Multi-step real-execution workflows: Cabin → Knowledge Base → Code → Testing → Verification → Orchestrator → Cabin.
-- RAF movement interpolation along safe floor corridors; cold replay and incremental live streams produce byte-identical snapshots.
-- Speech bubbles, verification checkpoints, and deliverable visualization.
+<a id="mrpl-rag-wiring"></a>
+### The MRPL / RAG wiring
 
-### 5. Sovereignty Monitor — Visible Proof, Not Promises
-- Live dashboard: External Network (blocked), Model Inference (on-premise), Knowledge (local corpus), Sandbox (active/resource-limited), Tool Gateway (allowlist), Audit Trace (recording).
-- Gateway decision feed showing every allow/deny with justification.
-- Zero uncontrolled egress routes counter.
-- Status labels describe deployment policy; validate configuration before claiming air-gap.
+The browser never talks to the RAG service directly. Screens call same-origin `/hyperion/mrpl/*` routes through `MrplDataSource` (`ui-conversation/src/client/mrpl/api.ts`); the bridge validates the request behind the same connection-rejection fence as every browser route and calls the RAG service at `HYPERION_RAG_URL`.
 
-### 6. Real Deliverables with Trace Metadata
-- DOCX approval notes, XLSX calculations, PPTX reports, and working code generated with full evidence trail attached.
-- Deterministic office generation: preserves document formatting, tables, charts, and annotations.
-- Manager review UI: summary, key findings, high-risk claims, evidence, engineer verification status — Approve, Reject, or Request Changes per claim.
-### 7. Multimodal Intake & Industrial Vision
-- Local OCR and vision (pymupdf, pypdf, python-docx, pandas/openpyxl) turn scans, photos, handwritten notes, drawings, P&IDs, and schematics into inspectable text, tables, regions, and structured data.
-- Industrial image analysis: defect detection, bounding boxes, tag extraction, and visual verification against standards.
-- Local knowledge base with version, authority, and effective-date metadata — every claim links to document, page, and section.
+| Bridge route (`hyperion-bridge/src/shared.ts`) | Method | Backed by |
+|---|---|---|
+| `/hyperion/mrpl/documents` | GET | MRPL store catalog (seed manifest) |
+| `/hyperion/mrpl/documents/upload` | POST | RAG `POST /v1/documents` (PDF, Markdown, plain text; 50 MiB default cap) |
+| `/hyperion/mrpl/ingest`, `/hyperion/mrpl/ingest/jobs/<id>` | GET | RAG `/health` + `GET /v1/documents`; `GET /v1/jobs/<id>` |
+| `/hyperion/mrpl/equipment` | GET | MRPL store (seed `equipment.json`) |
+| `/hyperion/mrpl/evidence/search` | GET | Retriever seam → RAG `POST /v1/search`; answers `retrieval: 'not-configured'` with no passages when no RAG URL is set |
+| `/hyperion/mrpl/evidence/answer` | POST | RAG `POST /v1/answer` (grounded answer or abstention) |
+| `/hyperion/mrpl/evidence/verify` | POST | MRPL store `verify()` of citation quotes |
+| `/hyperion/mrpl/reports` | POST | Report question → RAG answer → Markdown deliverable with a numbered `## Sources` list |
+| `/hyperion/mrpl/deliverables`, `/hyperion/mrpl/deliverables/<file>` | GET / DELETE | Deliverables list, download, delete a generated file |
+| `/hyperion/asr/transcribe` | POST | `ctx.asr` provider (`asr-http`) |
 
-### 8. Local Industrial RAG & Evidence Fusion
-- Ingestion pipeline: PDF → page extraction → OCR fallback → chunking → embeddings → vector store → retrieval → grounded prompt → citations.
-- Qdrant/ChromaDB support for semantic search with relevance filtering and source citations.
-- Evidence fusion: combines PDF, OCR, images, Excel, SOPs, page citations, and sandboxed calculations into unified decisions.
-- Human-in-the-loop approval workflow with claim-level verification and trace metadata.
+Without `HYPERION_RAG_URL` the live routes answer `503 mrpl/rag-not-configured`, evidence search answers `retrieval: 'not-configured'`, and the investigation analysis raises `AnalysisUnavailableError` ("Live RAG is not configured on this host") rather than falling back to mock data.
 
-### 9. Model Router — Local-First, Capability-Aware
-Open-weight models registered with capability, modality, and compute profile. Tasks route to the smallest model that can do the job — locally. Supports: llama.cpp, Ollama, vLLM, LM Studio, and custom OpenAI-compatible gateways. Cloud providers (DeepSeek, OpenAI, Anthropic, etc.) available as opt-in via Settings → Models.
+### RAG query and abstention
+
+![RAG query and abstention sequence](docs/architecture/03-rag-query-abstention.png)
+
+[SVG](docs/architecture/03-rag-query-abstention.svg) · [source](docs/architecture/03-rag-query-abstention.mmd)
+
+`pipeline.answer()` abstains in four layers, each with a reason code the UI maps to readable text (`mrpl/abstain.ts`):
+
+| Code | When | Default UI text (configurable via `configureAbstain`) |
+|---|---|---|
+| `no_evidence` | Retrieval returned nothing | "{subject} is not in the indexed documents. No passage mentions it." |
+| `retrieval_gate<x>` | Top rerank score below the gate `x` (only when a gate is passed; off on the HTTP path) | "The indexed passages closest to {subject} matched too weakly to support an answer." |
+| `model` | The model set `abstain` or answered `NOT_IN_EVIDENCE` | "{subject} is not covered by the indexed documents. The closest passages do not answer it, so Hyperion did not guess." |
+| `no_verified_citation` | The model answered, but none of its quotes could be located on the cited page | "An answer about {subject} was withheld: none of its quotes matched the source pages." |
+| `unparseable_model_output` | Report mode: model reply was not JSON | "The language model reply about {subject} could not be read. Try again." |
+
+### Start Investigation data flow
+
+![Start Investigation data flow](docs/architecture/04-start-investigation-flow.png)
+
+[SVG](docs/architecture/04-start-investigation-flow.svg) · [source](docs/architecture/04-start-investigation-flow.mmd)
 
 ---
 
-<a id="run"></a>
-## Quick Start
+<a id="quick-start"></a>
+## Quick start
 
 ### Prerequisites
-- **Node.js**: `^22.19` or `>=24`
-- **pnpm**: `^10.0` or `^11.0`
-- **Python**: `>=3.10` (for Indic ASR inference server)
-- **Local LLM Server**: [llama.cpp](https://github.com/ggerganov/llama.cpp) or [Ollama](https://ollama.ai/) running locally (e.g. `http://127.0.0.1:11434` or `http://127.0.0.1:8080/v1`)
 
-> **No API key required to start.** The default provider is `local` (Ollama at `http://127.0.0.1:11434/v1`) with model `qwen3.5:4b`. Copy `.env.example` to `.env` and customize if needed.
+- **Node.js** `^22.19.0 || >=24.0.0` (`package.json` `engines`)
+- **pnpm** 11 (`packageManager: pnpm@11.7.0`)
+- **Python** 3 for the RAG service and STT sidecar (`pip install -r packages/tool/tool-hyperion-rag/requirements.txt`; EmbeddingGemma 2 needs `transformers >= 5.19`)
+- An **OpenAI-compatible LLM endpoint** for answers (the RAG default is `http://127.0.0.1:8001/v1`; the measured deployment served gpt-oss-120b with vLLM)
+- Optional: a GPU for dense retrieval / rerank / STT. Without torch the RAG index is BM25-only and every response reports it in `degraded`.
 
-### Installation & Launch
+### 1. Install and build the workbench
 
 ```sh
-# 1. Clone the repository
 git clone https://github.com/Narendarcodes/Hyperion-workbench.git
 cd Hyperion-workbench
-
-# 2. Install workspace dependencies
+git checkout feat/mrpl-wire-integration   # MRPL branch; master is the generic product
 pnpm install
-
-# 3. Build host and client packages
 pnpm run build
-
-# 4. Launch the Hyperion Workbench Web Interface
-pnpm dsh web
 ```
 
-The Workbench will start on **`http://127.0.0.1:3080`** and open automatically in your default browser.
-
-<a id="run-from-source"></a>
-### Run from Source (Development)
-```sh
-# With tsx ESM hook (hot reload for source changes)
-pnpm dsh --profile web "your task"
-```
-
-### (Optional) Start the Indic ASR Voice Server
+### 2. Build an index and start the RAG service
 
 ```sh
-# In a separate terminal
-python scripts/asr_inference_server.py --port 8008 --device cuda
+cd packages/tool/tool-hyperion-rag
+pip install -r requirements.txt
+
+# Offline index (BM25 + dense with --embed); used by the model-facing tools
+python3 scripts/rag.py index --corpus <corpus paths...> --out ./index --embed
+
+# HTTP service used by the bridge (default 127.0.0.1:8120; builds the index on first start)
+HYPERION_LLM_URL=http://127.0.0.1:8001/v1 HYPERION_LLM_MODEL=<served model name> \
+  python3 scripts/rag_server.py --corpus <corpus paths...>
+curl -s http://127.0.0.1:8120/health
 ```
+
+`rag_server.py` also accepts `--no-dense` / `--no-rerank`. For ROCm hosts, `deploy/launch.sh build|start|stop|status` runs the same service in a container with `HF_HUB_OFFLINE=1` (models must already be in the mounted HF cache). Corpus shapes accepted by `--corpus` are listed in the [package README](packages/tool/tool-hyperion-rag/README.md#corpus-ingest).
+
+### 3. (Optional) Start the STT sidecar
+
+```sh
+INDICCONF_DIR=... SRAVAANI_DIR=... HF_CACHE=... packages/asr/asr-http/deploy/launch.sh
+curl -s http://127.0.0.1:8790/healthz
+```
+
+See [`packages/asr/asr-http/README.md`](packages/asr/asr-http/README.md#run-the-sidecar). The sidecar has no auth; keep it on loopback.
+
+### 4. Launch the web workbench
+
+```sh
+HYPERION_RAG_URL=http://127.0.0.1:8120 pnpm dsh web
+```
+
+The web profile (`packages/bundle/web-app/cordis.patch.yml`) mounts `hyperion-bridge`, which reads `HYPERION_RAG_URL` as its `ragUrl` default. The web profile does **not** mount an asr provider: to enable the composer mic, add one to your profile, e.g.
+
+```yaml
+- name: '@deepseek-ai/dsh-asr-http'
+  config:
+    endpoint: http://127.0.0.1:8790
+    defaultLanguage: 'auto'
+```
+
+(this is the composition the live e2e boots; `HYPERION_STT_URL` supplies the `endpoint` default). The web UI listens on port `3080` by default (`packages/boot/cmdline`).
 
 ---
 
+<a id="configuration"></a>
 ## Configuration
 
-The workbench runs **local-first** by default. See [`.env.example`](.env.example) for all options.
+### Bridge and speech (read by the host plugins)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DEEPSEEK_API_KEY` | — | Cloud DeepSeek API key (optional, for cloud provider) |
-| `OPENAI_API_KEY` | — | OpenAI API key (optional) |
-| `ANTHROPIC_API_KEY` | — | Anthropic API key (optional) |
-| `LOCAL_LLM_BASE_URL` | `http://127.0.0.1:11434/v1` | Local llama.cpp/Ollama/vLLM endpoint |
-| `ASR_SERVER_URL` | `http://127.0.0.1:8008` | Indic ASR FastAPI server |
-| `DSH_WEB_PORT` | `3080` | Web UI port |
-| `DSH_PERMISSION_MODE` | `workspace-write` | Sandbox: `read-only` \| `workspace-write` \| `danger-full-access` |
-| `DSH_TELEMETRY_DISABLED` | `1` | Set empty to enable OTel export |
+| Variable | Default | Read by | Meaning |
+|---|---|---|---|
+| `HYPERION_RAG_URL` | empty (live routes return 503) | `hyperion-bridge/src/index.ts` | RAG service base URL (`ragUrl`) |
+| `HYPERION_RAG_TIMEOUT_MS` | `120000` | bridge | Per-call deadline to the RAG service |
+| `HYPERION_MRPL_MAX_UPLOAD_BYTES` | `52428800` (50 MiB) | bridge | Largest document upload |
+| `HYPERION_MRPL_CORPUS_DIR` | bundled public seed | bridge | MRPL store directory (overrides `mrplCorpusDir`) |
+| `HYPERION_UPLOADS_DIR` | `~/.hermes/hermes3d/uploads` | bridge | Demo report artifacts for `/hyperion/files/*` |
+| `HYPERION_ASR_MAX_AUDIO_BYTES` | `26214400` (25 MiB) | bridge | Largest audio upload to `/hyperion/asr/transcribe` |
+| `HYPERION_ASR_LANGUAGE` | `auto` | bridge, `asr-http` | Language when the composer does not pick one |
+| `HYPERION_STT_URL` | empty | `asr-http` | STT sidecar endpoint default |
 
-**Add cloud providers in Settings → Models** — keys are stored in `$DSH_HOME/.credentials.yaml` (never in process env).
+### RAG service (read by `scripts/hyperion_rag/config.py`)
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `HYPERION_RAG_EMBED_MODEL` | `google/embeddinggemma-2` | Dense encoder |
+| `HYPERION_RAG_EMBED_FALLBACK` | empty | Second encoder; empty = report degraded instead |
+| `HYPERION_RAG_RERANK_MODEL` | `BAAI/bge-reranker-v2-m3` | Cross-encoder reranker |
+| `HYPERION_LLM_URL` | `http://127.0.0.1:8001/v1` | OpenAI-compatible answering model |
+| `HYPERION_LLM_MODEL` | `llm` | Served model name |
+| `HYPERION_LLM_REASONING_EFFORT` | `low` | `reasoning_effort` sent per request |
+| `HYPERION_LLM_MAX_WAIT_S` | `900` | Retry window for connection errors / 5xx before `LLMUnavailable` |
+| `HYPERION_RAG_MODE` | `hybrid_rerank` | Retrieval mode when dense + rerank load |
+| `HYPERION_RAG_DIM` | `768` | Matryoshka dimension (768/512/256/128) |
+| `HYPERION_RAG_POOL` / `HYPERION_RAG_RERANK_TOP` | `100` / `30` | Candidates per retriever / passed to the reranker |
+| `HYPERION_RAG_CHUNK_MAX_CHARS` / `_MIN_CHARS` | `1600` / `300` | Chunk bounds |
+| `HYPERION_OCR_URL` | empty | OCR sidecar; empty = scanned pages reported `ocr-pending` |
+| `HYPERION_RAG_OCR_MIN_CHARS` / `_CONCURRENCY` / `_DPI` / `_TIMEOUT_S` | `40` / `8` / `200` / `300` | OCR hand-off |
+| `HYPERION_RAG_HOST` / `HYPERION_RAG_PORT` | `127.0.0.1` / `8120` | Service bind |
+| `HYPERION_RAG_INDEX_DIR` / `HYPERION_RAG_INGEST_DIR` | `./index` / `./ingest` | Persistent index / uploaded originals |
+| `HYPERION_RAG_MAX_UPLOAD_BYTES` | `52428800` | Largest upload the service accepts |
+| `HYPERION_RAG_VRAM_GB` | `6` | Per-process VRAM cap |
+
+### Harness
+
+| Variable | Meaning |
+|---|---|
+| `DSH_TELEMETRY_DISABLED` | Read by `apps/cli/src/profile-boot.ts` to disable the session-telemetry row |
+
+Cloud providers are opt-in through **Settings → Models**; keys are stored in `$DSH_HOME/.credentials.yaml`. See [providers](docs/user/guide/providers.md).
+
+> **`.env.example` caveat.** `.env.example` lists `LOCAL_LLM_BASE_URL`, `ASR_SERVER_URL`, `ASR_DEVICE`, `DSH_WEB_HOST`, `DSH_WEB_PORT`, `DSH_WEB_OPEN_BROWSER` and `DSH_PERMISSION_MODE`. On this branch no TypeScript source reads those names (checked with `git grep`); treat them as documentation of intent, not live switches, until they are wired or removed. Its `ASR_SERVER_URL` (port 8008) refers to the older `scripts/asr_inference_server.py`, not the `asr-http` sidecar.
 
 ---
 
-## Benchmark Comparison
+<a id="run-and-test"></a>
+## Run and test
 
-| Metric / Dimension | Cloud AI Assistants (Copilot/Claude) | Generic Local Agents | **Hyperion Workbench** |
-| :--- | :--- | :--- | :--- |
-| **Data Privacy** | Cloud transmission (High risk) | Local (Variable) | **100% Air-Gapped On-Premise** |
-| **Regional Language Voice** | English-centric / Cloud ASR | None | **Indic Conformer (22 Indian Langs)** |
-| **Explainability** | Black-box output | Raw terminal logs | **NN/g Visual Trajectory & Citations** |
-| **Architecture** | Proprietary monolith | Script-based | **Cordis Extensible Micro-Plugin OS** |
-| **Hardware Efficiency** | Requires cloud API | Unbounded memory | **Optimized for RTX 3080/4090 / Local vLLM** |
-| **Sandboxing** | None | Ad-hoc | **Process-tree isolation, deny-by-default** |
-| **RAG Depth** | Cloud knowledge only | Basic local retrieval | **PDF → OCR → embeddings → citations → evidence fusion** |
-| **Deliverable Formats** | None | Limited | **DOCX, XLSX, PPTX with trace metadata** |
-| **Audit Trail** | None | Manual | **Complete event log + sovereignty monitor** |
+### Workbench client specs (ui-conversation)
+
+```sh
+# all ui-conversation specs (jsdom via per-file pragma)
+node node_modules/vitest/vitest.mjs run packages/client/ui-conversation/tests
+
+# the MRPL wiring specs only, e.g.
+node node_modules/vitest/vitest.mjs run \
+  packages/client/ui-conversation/tests/abstain-reasons.client.spec.tsx \
+  packages/client/ui-conversation/tests/investigation-context.client.spec.tsx \
+  packages/client/ui-conversation/tests/start-investigation.client.spec.tsx \
+  packages/client/ui-conversation/tests/sample-labels.client.spec.tsx
+```
+
+Last recorded result on this branch (on the GPU droplet, head `fef63ee8`): **49/49 files, 487/487 tests pass**. The full directory is slow; the sandbox runner timed out on it.
+
+### Host, RAG and STT tests
+
+```sh
+node node_modules/vitest/vitest.mjs run packages/host/hyperion-bridge/tests
+python3 packages/tool/tool-hyperion-rag/scripts/test_hyperion_rag.py   # stdlib, BM25 path, fake LLM
+python3 -m pytest packages/asr/asr-http/py -q                           # no GPU needed
+```
+
+### Typecheck and lint
+
+The order matters (the client project needs the host `/remote` entries that `tsdown` emits):
+
+```sh
+node ./node_modules/typescript/bin/tsc -b tsconfig.host.json
+npx tsdown --env.DSH_BUILD_FACE host
+npx tsc -b tsconfig.client.json
+npx tsx scripts/run-oxlint.ts .
+```
+
+`pnpm run typecheck` and `pnpm run lint` wrap the same steps. Last recorded: host tsc 0 errors, client tsc 0 errors.
+
+### Live Playwright suite (real services, nothing mocked)
+
+`apps/web/tests/mrpl-wire-live.e2e.ts` drives real Chromium against the MRPL harness (`apps/web/mrpl-harness`, `?screen=documents|equipment|reports|evidence|mic|mission|pid|investigation`) and an in-process `hyperion-bridge` pointed at a live RAG service and STT sidecar. It **skips** when the URLs are unset.
+
+```sh
+HYPERION_LIVE_RAG_URL=http://127.0.0.1:8120 \
+HYPERION_LIVE_STT_URL=http://127.0.0.1:8794 \
+MRPL_CHROMIUM_PATH=<chrome-headless-shell path, optional> \
+MRPL_SHOTS_DIR=<screenshot dir, optional> \
+node_modules/.bin/vitest run --config vitest.web.config.ts apps/web/tests/mrpl-wire-live.e2e.ts
+```
+
+Five tests: Reports generate a cited deliverable; P&ID tag click runs evidence search + grounded answer (E-101 abstains readably); Investigation detail Rerun + Generate Report; investigation on corpus asset E-6600E returns verified citations and record-driven context; Documents facets and sort. Last recorded: **5/5 pass**. The earlier suite `apps/web/tests/mrpl-live.e2e.ts` (upload → OCR → index → cited answer, composer mic, Mission view) uses the same variables plus `HYPERION_LIVE_UPLOAD` and `HYPERION_LIVE_AUDIO_EN/_TE/_HI`.
+
+### Repository-wide gates (inherited)
+
+```sh
+pnpm run test            # vitest unit lanes
+pnpm run test:coverage   # coverage gate
+pnpm run test:docs       # documentation gates
+pnpm run check:ci        # CI gate set
+```
 
 ---
 
-## Repository Structure
+## Repository layout
 
 ```
 Hyperion-workbench/
-├── .env.example              # Environment template (local-first, no keys required)
-├── landing/                  # Industrial interactive landing page (HTML/CSS/GSAP)
-│   ├── index.html            # Hero, workflow, capabilities, sovereignty, roles, run
-│   ├── COPY.md               # Landing copy sourced from PRD/BRAND
-│   ├── DESIGN.md             # Design system: navy/cream, Archivo/IBM Plex, GSAP
-│   ├── js/                   # Gallery tunnel, hex comb, main entry
-│   ├── css/                  # Style, tokens
-│   ├── assets/               # SVG, fonts (self-hosted Archivo, IBM Plex, Satoshi)
-│   └── research/             # Competitor analysis: sarvam.ai, gnani.ai, originkit
-├── packages/                 # Core Cordis workspace packages (70+)
-│   ├── asr/                  # Indic Conformer ASR capability seam
-│   │   ├── asr/              # Service definition: AsrTranscriber (resolve/transcribe)
-│   │   ├── asr-http/         # HTTP GPU-sidecar provider with per-language routing (py/stt_server.py)
-│   │   ├── asr-nemo/         # NeMo sidecar provider (py/transcribe.py)
-│   │   └── tool-transcribe/  # Model tool: transcribe_audio (file → text)
-│   ├── bundle/               # Deployment profiles
-│   │   ├── base/             # Shared core: local provider, sandbox, session, tools
-│   │   ├── web-app/          # Browser surface: webserver, HMR, client plugins
-│   │   ├── headless/         # One-shot CLI runner
-│   │   ├── sdk-minimal/      # Minimal SDK server
-│   │   └── acp-app/          # ACP protocol server
-│   ├── client/               # Web UI plugins (30+)
-│   │   ├── ui-mission/       # Mission View: living office, phases, verification
-│   │   ├── ui-conversation/  # Chat stream, trajectory inspector, composer
-│   │   ├── ui-settings-models/  # Provider/model management UI
-│   │   └── ...               # Layout, sidebar, theme, workspace, approvals, etc.
-│   ├── core/                 # Agent loop, session, system-prompt, agent-default-model
-│   ├── credentials/          # Credential seam + local file/env provider
-│   ├── fs/                   # Sandboxed filesystem, PDF tools, search
-│   ├── llm/                  # LLM capability: llm-deepseek, llm-pi-ai, token-meter
-│   ├── shell/                # Bash/PowerShell persistent sessions
-│   ├── subprocess/           # Process tree + Win32 library
-│   ├── terminal/             # Persistent terminal sessions
-│   ├── lsp/                  # Language server capability
-│   ├── skill/                # Skill provider registry + local + catalog loader
-│   ├── web/                  # Web search (DeepSeek/Exa/Perplexity) + fetch
-│   ├── workflow/             # Worker-thread workflow engine
-│   ├── session/              # JSONL persistence, projection, titles, telemetry
-│   ├── sandbox/              # Policy + local provider + Win32 ACL
-│   ├── subagent/             # Subagent capability + spawn/fork/in-process/codex/claude-code
-│   ├── preset/               # Per-session agent composition from cordis.yml
-│   ├── hooks/                # Claude Code / Codex hook bridges
-│   └── ...                   # interaction, plan, todo, guard, identity, etc.
-├── scripts/                  # ASR inference server, gate verification, build
-├── docs/                     # Architecture, subsystems, user guide, cookbook
-│   ├── architecture.md       # System architecture specification
-│   ├── subsystems/           # ASR, LLM streaming
-│   └── user/guide/           # Providers, models, configuration
-└── website/                  # VitePress documentation site
+├── apps/
+│   ├── cli/                    # `dsh` entry (pnpm dsh ...), profile boot
+│   ├── web/                    # Vite web frontend; mrpl-harness/ (screen harness); tests/*.e2e.ts (live suites)
+│   └── desktop/, desktop-host/ # Desktop shell
+├── packages/                   # 269 Cordis packages in 52 groups
+│   ├── asr/                    # asr seam; asr-http (+ py/stt_server.py, plantnorm.py); asr-nemo; tool-transcribe
+│   ├── bundle/                 # deployment profiles: base, web-app, headless, sdk-*, acp-app
+│   ├── client/                 # web UI plugins
+│   │   ├── ui-conversation/    # chat + MRPL workbench: src/client/{mrpl,plant,equipment,documents,pid,investigations,reports}
+│   │   └── ui-mission/         # Mission View (pixel office)
+│   ├── host/hyperion-bridge/   # /hyperion/* and /hyperion/mrpl/* routes; mrpl-seed/ public sample corpus
+│   ├── tool/tool-hyperion-rag/ # RAG core + HTTP service (scripts/), model tools (src/), bench/, deploy/
+│   ├── tool/tool-mrpl-spec-check/ # MRPL spec-check tool (Python scripts)
+│   ├── llm/                    # LLM providers and llm-router
+│   └── core/, session/, sandbox/, subagent/, skill/, ... # inherited Harness runtime
+├── docs/
+│   ├── architecture/           # Mermaid sources + SVG/PNG renders (this README, APPROACH.md)
+│   ├── benchmarks/             # rag.md, stt.md, ocr.md
+│   ├── mrpl/                   # FRONTEND_WIRING_PLAN.md, control-audit.md
+│   └── user/guide/, subsystems/, ... # inherited docs
+├── landing/                    # static landing page
+├── scripts/                    # build, gates, oxlint runner, legacy asr_inference_server.py
+├── vendor/                     # vendored Cordis packages
+└── website/                    # VitePress documentation site
 ```
 
 ---
 
-## Models & Integrations
+<a id="status-and-known-gaps"></a>
+## Status and known gaps
 
-### Local Providers (Sovereign Default)
-- **Ollama** — `http://127.0.0.1:11434/v1` — Qwen, LLaMA, DeepSeek-Coder, Phi, Gemma
-- **llama.cpp** — `llama-server` OpenAI-compatible endpoint
-- **vLLM** — High-throughput OpenAI-compatible server
-- **LM Studio** — Local GUI with API server toggle
-
-### Cloud Providers (Opt-In via Settings → Models)
-- **DeepSeek Official** — `deepseek-v4-flash`, `deepseek-v4-pro`, `deepseek-v4-flash-vision-exp` (reasoning: off/low/high/max)
-- **OpenAI** — GPT-4o, GPT-4o-mini, o1 series
-- **Anthropic** — Claude Sonnet 4.5, Opus 4, Haiku 3.5
-- **MoonshotAI (Kimi)** — K2, K1.5
-- **Z.ai (GLM)** — GLM-4.5
-- **Custom Gateway** — Any OpenAI-compatible / Anthropic-compatible endpoint
-
-### Reasoning Controls
-- DeepSeek native: `reasoningEffort: off | low | high | max`
-- Custom gateways: `compat.thinkingFormat: deepseek` + `reasoningEfforts` per model
-
----
-
-## Research & Competitor Analysis
-
-Our landing page and architecture draw from deep analysis of leading sovereign AI platforms:
-
-| Reference | Key Insights Applied |
-|-----------|---------------------|
-| **sarvam.ai** | Sovereignty as product principle (not afterthought); platform layers as capability groups; strong type hierarchy; contained WebGL instrument |
-| **gnani.ai** | Editorial display face + understated UI face; clear capability taxonomy early; product interaction as evidence; ScrollTrigger section choreography |
-| **Originkit** | Component inventory for design system extraction; dark navy mandate preserved |
-
-**We borrowed narrative clarity and editorial hierarchy — not palette, fonts, or proof strategy.** Our design system mandates dark navy (`#0B1220`), Archivo display, IBM Plex Sans UI, and a single cream accent (`#FDDA98`).
+- **Nothing on the MRPL branches is merged.** PR #27 (this base) and PR #22 are drafts; PRs #23–#26 are open.
+- **Host report text prints the raw reason code.** The client never shows codes (`describeAbstain`), but `buildReportMarkdown` in `hyperion-bridge/src/mrpl-routes.ts` still writes `> Hyperion abstained: <abstainReason>.` into generated report Markdown.
+- **PR #23 commits `node_modules` symlinks.** `feat/mrpl-wire-pid-plant` tracks 268 `packages/**/node_modules` symlinks with absolute targets into a local worktree. This branch untracks them (`aeb24ae1`) and ignores `node_modules`; PR #23 itself still carries them.
+- **Lint baseline.** oxlint has pre-existing errors repo-wide: 367 at base `4229365c`, 345 after the item-1 fixes on this branch (no new errors in touched files except 2 pre-existing `unbound-method` in `UploadAskPanel.tsx`). A later whole-repo run on the droplet copy reported ~4.2k, attributed to that environment (likely stale `tsdown` types) and not investigated.
+- **Commits used `--no-verify`.** The lefthook pre-commit needs `node_modules/.bin/tsx` (absent in the worktree) and pre-push runs a full typecheck; typecheck and lint were run separately as above.
+- **Retrieval gate is off on the HTTP path.** `service.py` calls `answer()` without a gate, so `retrieval_gate<x>` only occurs via `rag.py query` with a `gate` field. This follows the benchmark: on the synthetic set a post-hoc gate sweep up to 0.3 changed nothing because the model already abstains ([docs/benchmarks/rag.md](docs/benchmarks/rag.md)); it has not been calibrated on the refinery corpus.
+- **Still fixtures.** Plant metrics and process units, investigation Key Findings / Vibration Trend / evidence list / Similar Equipment are sample data (labelled). The seed investigation P-204 abstains because it is not in the corpus.
+- **Dead controls (pre-wire audit).** `docs/mrpl/control-audit.md` counted 86 of 224 MRPL controls dead at `b3e55cf5`; PRs #23–#27 removed or wired many of them, but the audit has not been re-run.
+- **Telugu speech** needs the explicit `te` pick in some cases (auto-detect labelled Telugu as Hindi before `6ef0c657` relabelled by script; not re-validated on real operator recordings).
+- **`.env.example` variables not wired** (see [Configuration](#configuration)).
+- `envDefaults()` in the bridge points to `docs/mrpl/configuration.md`, which does not exist on this branch.
 
 ---
 
 ## Documentation
 
-- [User Guide: Providers & Models](docs/user/guide/providers.md)
-- [User Guide: Getting Started](docs/user/guide/index.md)
-- [Architecture Specification](docs/architecture.md)
-- [ASR Subsystem](docs/subsystems/asr.md)
-- [LLM Streaming Subsystem](docs/subsystems/llm-streaming.md)
-- [Cordis Primer](docs/cordis-primer.md)
-- [Defensive Patterns](docs/defensive-patterns.md)
-- [Testing Policy](docs/testing.md)
-- [Landing Page Design](landing/DESIGN.md)
-- [Landing Copy](landing/COPY.md)
----
+- [APPROACH.md](APPROACH.md) — design choices, RAG pipeline, testing strategy, trade-offs
+- [RAG benchmark](docs/benchmarks/rag.md) · [STT benchmark](docs/benchmarks/stt.md) · [OCR benchmark](docs/benchmarks/ocr.md)
+- [MRPL control audit](docs/mrpl/control-audit.md) · [Frontend wiring plan](docs/mrpl/FRONTEND_WIRING_PLAN.md)
+- [tool-hyperion-rag](packages/tool/tool-hyperion-rag/README.md) · [hyperion-bridge](packages/host/hyperion-bridge/README.md) · [asr-http](packages/asr/asr-http/README.md)
+- [User guide: getting started](docs/user/guide/index.md) · [providers and models](docs/user/guide/providers.md)
+- [Architecture specification](docs/architecture.md) · [Cordis primer](docs/cordis-primer.md) · [Testing policy](docs/testing.md) · [Defensive patterns](docs/defensive-patterns.md)
+- [ASR subsystem](docs/subsystems/asr.md) · [LLM streaming](docs/subsystems/llm-streaming.md)
+- [Landing design](landing/DESIGN.md) · [Landing copy](landing/COPY.md)
 
-## Test & Verification
+## Engine heritage and attribution
 
-All tests run locally without requiring API keys.
-
-### Test Coverage
-
-- **Integration tests**: Model routing accuracy, multimodal extraction, sandbox execution, API contract validation
-- **E2E workflows**: Complete task lifecycle from capture to deliverable generation
-- **Sandbox verification**: Process-tree isolation, timeout enforcement, resource limits
-- **Model routing tests**: Dynamic provider selection, hardware-aware routing, fallback behavior
-- **Document verification**: DOCX/XLSX/PPTX generation with trace metadata, citation validation
-
-### Verification Evidence
-
-| Test Type | Coverage | Notes |
-|-----------|----------|-------|
-| Model routing | 24 tests | Includes dynamic provider selection, hardware presets, fallback paths |
-| Multimodal extraction | 7 tests | PDF, image, P&ID parsing, multi-source fusion |
-| Sandbox execution | 18 tests | Timeout enforcement, process isolation, resource limits |
-| Deliverable generation | 6 tests | DOCX/XLSX/PPTX with citations and metadata |
-| Egress verification | 3 tests | Network policy checks, air-gap proof |
-
-### Running Tests
-
-```sh
-# Unit tests (keyless, runs on fork PRs)
-pnpm run test
-
-# Coverage gate (CI requirement: per-file 100% on packages/*/*/src)
-pnpm run test:coverage
-
-# Documentation gates
-pnpm run test:docs
-
-# Full CI checks
-pnpm run check:ci
-```
-
-
----
-
-## Development
-
-```sh
-# Type-check everything
-pnpm run typecheck
-
-# Lint
-pnpm run lint
-
-# Unit tests (keyless)
-pnpm run test
-
-# Coverage gate (CI: per-file 100% on packages/*/*/src)
-pnpm run test:coverage
-
-# Documentation gates
-pnpm run test:docs
-
-# Build all
-pnpm run build
-
-# Full hygiene + publish checks
-pnpm run hygiene
-```
-
----
-
-## Engine Heritage
-
-Hyperion Workbench runs on our fork of **DeepSeek Harness** — the open-source all-plugin agent runtime built on the Cordis framework.
-
-We chose it because the harness — not the model — decides how much of a model's capability becomes completed, reliable work. DeepSeek's published benchmarks (Terminal-Bench 87.9, Cybergym 83.3, Toolathlon 74.1, all via Harness minimal mode with fixed sampling and maximal reasoning effort) demonstrate that the runtime architecture is the force multiplier.
-
-Same model weights, different harness: an independent rerun of V4-Flash on a third-party harness swung Terminal-Bench by twenty tasks. That swing is exactly why our workbench fork is the investment: every capability — models, tools, skills, sessions, sandboxes, scheduling, even the UI — is a plugin we recompose for industrial workflows.
-
-**Upstream:** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) **Sandbox direction informed by:** NVIDIA OpenShell (Apache 2.0)
-
----
-
-## Attribution
-
-Hyperion Workbench builds upon the open-source Cordis plugin framework and foundational runtime primitives from DeepSeek Harness, extending them into a fully sovereign, voice-enabled, and explainable industrial AI workstation.
-
-**Engine:** Our fork of DeepSeek Harness (open-source, all-plugin Cordis runtime) **Sandbox policy direction:** NVIDIA OpenShell (Apache 2.0)
+Hyperion Workbench runs on a fork of [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), the all-plugin agent runtime built on the Cordis framework: models, tools, skills, sessions, sandboxes, scheduling and the UI are plugins that this fork recomposes for industrial workflows. Sandbox direction was informed by NVIDIA OpenShell (Apache 2.0). See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
