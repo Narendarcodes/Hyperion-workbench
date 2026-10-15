@@ -11,14 +11,14 @@ afterEach(cleanup)
 const t = makeTranslate(en) as WorkbenchUtilityRowProps['t']
 
 describe('WorkbenchUtilityRow — single shared top-right control strip', () => {
-  it('renders theme, notifications, profile and the local-state pill on one baseline', () => {
+  it('renders theme and the local-state pill; dead notifications/profile buttons are gone', () => {
     const { container } = render(<WorkbenchUtilityRow state="available" t={t} />)
 
     expect(screen.getByRole('group', { name: 'Home controls' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Theme' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Notifications' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'User menu' })).toBeTruthy()
-    expect(screen.getByText('N')).toBeTruthy()
+    // No notification source and no account system exist, so these had no handler.
+    expect(screen.queryByRole('button', { name: 'Notifications' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'User menu' })).toBeNull()
     expect(screen.getByText('Local state available')).toBeTruthy()
     expect(container.querySelector('[aria-hidden="true"]')).not.toBeNull()
   })

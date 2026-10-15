@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import type { ReactNode, RefObject } from 'react'
 import clsx from 'clsx'
 import {
-  IconBellOutline16, IconBranchOutline16, IconChecklistOutline14, IconChevronDownOutline14,
+  IconBranchOutline16, IconChecklistOutline14, IconChevronDownOutline14,
   IconCopyOutline16, IconEllipsisOutline16, IconFolderClose16, IconFolderOpen16, IconLightOutline16, IconQueueOutline14,
   IconSettingsOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
@@ -13,6 +13,7 @@ import { workspaceTitleOf } from '@deepseek-ai/dsh-util-workspace-path'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import type { ConversationSlotProps } from '../contract/slots.ts'
 import css from './HeroShell.module.css'
+import { toggleWorkbenchTheme } from './theme-toggle.ts'
 
 type HeroTranslate = ConversationSlotProps['t']
 
@@ -80,15 +81,14 @@ export type HomeLocalState = 'available' | 'unavailable' | undefined
 function HomeHeaderAffordances({ t }: { t: HeroTranslate }) {
   return (
     <div className={css.headerAffordances} role="group" aria-label={t('home.controls.aria')}>
-      <button type="button" className={css.headerAffordance} aria-label={t('home.controls.theme')}>
+      <button
+        type="button"
+        className={css.headerAffordance}
+        aria-label={t('home.controls.theme')}
+        title={t('home.controls.theme')}
+        onClick={() => { toggleWorkbenchTheme() }}
+      >
         <IconLightOutline16 size={18} />
-      </button>
-      <button type="button" className={css.headerAffordance} aria-label={t('home.controls.notifications')}>
-        <IconBellOutline16 size={18} />
-      </button>
-      <button type="button" className={css.profileAffordance} aria-label={t('home.controls.profile')}>
-        <span className={css.profileAvatar}>{t('home.profile.initial')}</span>
-        <IconChevronDownOutline14 className={css.profileChevron} size={16} />
       </button>
     </div>
   )

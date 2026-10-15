@@ -913,19 +913,6 @@ export function WorkspaceBrowser({
     typeof process !== 'undefined' && process.env.NODE_ENV === 'test',
   )
   const workbenchView = useWorkbenchView()
-  const plannedItem = (label: string, icon?: React.ReactNode) => (
-    <button
-      key={label}
-      type="button"
-      className={css.navItem}
-      disabled
-      title={t('nav.planned')}
-      aria-label={t('nav.plannedItem', { name: label })}
-    >
-      {icon != null && <span className={css.navIcon} aria-hidden="true">{icon}</span>}
-      <span>{label}</span>
-    </button>
-  )
   const [revealSessionId, setRevealSessionId] = useState<SessionId | undefined>(undefined)
   const normalizedQuery = sanitizeSearchQuery(query).trim()
   const [remoteSearch, setRemoteSearch] = useState<RemoteSearchState>({
@@ -1477,11 +1464,6 @@ export function WorkspaceBrowser({
           <section aria-labelledby="workbench-system" className={css.navSection}>
             <h2 id="workbench-system" className={css.navGroupLabel}>{t('nav.system')}</h2>
             <div className={css.navItems}>
-              {plannedItem(t('nav.agentRuns'), (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polygon points="5 3 19 12 5 21 5 3" />
-                </svg>
-              ))}
               <button
                 type="button"
                 className={css.navItem}
@@ -1500,13 +1482,6 @@ export function WorkspaceBrowser({
                 </span>
                 <span>{t('nav.modelHub')}</span>
               </button>
-              {plannedItem(t('nav.auditLogs'), (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                  <rect x="8" y="2" width="8" height="4" rx="1" />
-                  <path d="M9 14l2 2 4-4" />
-                </svg>
-              ))}
             </div>
           </section>
         </nav>
